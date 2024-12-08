@@ -27,10 +27,10 @@ export const SWOTAnalysis = ({ strengths, weaknesses, opportunities, threats }: 
         {renderList(strengths)}
       </Card>
       <Card className="p-4">
-        <h3 className="font-semibold text-red-600 mb-2">Findings & Areas of Concern</h3>
+        <h3 className="font-semibold text-red-600 mb-2">Areas for Improvement</h3>
         <p className="text-sm text-gray-600 mb-3">
-          Note critical hazards (-5 points), process inefficiencies (-3 points),
-          and minor organizational issues (-1 point).
+          Identify areas that need attention and improvement in the workspace
+          organization, cleanliness, and standardization.
         </p>
         {renderList(weaknesses)}
       </Card>
