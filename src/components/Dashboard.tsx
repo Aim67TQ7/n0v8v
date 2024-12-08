@@ -4,7 +4,8 @@ import {
   Settings, 
   Database,
   ChartBar,
-  Building2
+  Building2,
+  GraduationCap
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
@@ -22,6 +23,13 @@ const modules = [
     description: "Manage your team and assignments",
     icon: Users,
     href: "/team",
+    status: "ready"
+  },
+  {
+    title: "Training Matrix",
+    description: "Track employee training and certifications",
+    icon: GraduationCap,
+    href: "/training/matrix",
     status: "ready"
   },
   {

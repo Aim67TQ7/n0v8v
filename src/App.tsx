@@ -18,6 +18,7 @@ import PartAnalysis from "./pages/quality/PartAnalysis";
 import ProductInspection from "./pages/quality/ProductInspection";
 import DMRDocumentation from "./pages/quality/DMRDocumentation";
 import FiveWhys from "./pages/quality/FiveWhys";
+import TrainingMatrix from "./pages/training/TrainingMatrix";
 
 const queryClient = new QueryClient();
 
@@ -136,6 +137,17 @@ const App = () => (
                   <div className="min-h-screen flex flex-col">
                     <Header />
                     <FiveWhys />
+                  </div>
+                </AuthWrapper>
+              }
+            />
+            <Route
+              path="/training/matrix"
+              element={
+                <AuthWrapper>
+                  <div className="min-h-screen flex flex-col">
+                    <Header />
+                    <TrainingMatrix />
                   </div>
                 </AuthWrapper>
               }
