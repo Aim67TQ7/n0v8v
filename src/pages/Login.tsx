@@ -31,7 +31,11 @@ const Login = () => {
             supabaseClient={supabase}
             appearance={{ theme: ThemeSupa }}
             providers={[]}
+            view="sign_in"
+            showLinks={true}
             redirectTo={window.location.origin}
+            magicLink={false}
+            onlyThirdPartyProviders={false}
           />
         </div>
       </div>
