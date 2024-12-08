@@ -17,18 +17,27 @@ serve(async (req) => {
 
   try {
     const { imageUrls } = await req.json();
-    console.log('Analyzing images:', imageUrls);
+    console.log('Processing images:', imageUrls.length);
 
     const analyses = [];
     for (const url of imageUrls) {
-      console.log('Fetching image:', url);
-      const response = await fetch(url);
-      const arrayBuffer = await response.arrayBuffer();
-      const base64Image = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-      
-      console.log('Analyzing image with Anthropic');
-      const analysis = await analyzeImageWithAI(base64Image, anthropicApiKey || '');
-      analyses.push(analysis);
+      try {
+        console.log('Fetching image:', url);
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch image: ${response.status}`);
+        }
+        
+        const arrayBuffer = await response.arrayBuffer();
+        const base64Image = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+        
+        console.log('Analyzing image with Anthropic');
+        const analysis = await analyzeImageWithAI(base64Image, anthropicApiKey || '');
+        analyses.push(analysis);
+      } catch (error) {
+        console.error('Error processing image:', url, error);
+        throw error;
+      }
     }
 
     // Consolidate analyses across all images
@@ -49,8 +58,7 @@ serve(async (req) => {
     const totalScore = calculateTotalScore(consolidatedAnalysis);
     consolidatedAnalysis.total_score = totalScore;
 
-    console.log('Final consolidated analysis:', consolidatedAnalysis);
-
+    console.log('Analysis completed successfully');
     return new Response(
       JSON.stringify(consolidatedAnalysis),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

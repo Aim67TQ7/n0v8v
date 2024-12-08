@@ -79,7 +79,7 @@ Provide your response in valid JSON format with these exact fields:
           content: [
             {
               type: 'text',
-              text: systemPrompt + '\n\nAnalyze this workplace image for 5S implementation.'
+              text: 'Analyze this workplace image for 5S implementation using the following criteria:\n\n' + systemPrompt
             },
             {
               type: 'image',
@@ -91,7 +91,7 @@ Provide your response in valid JSON format with these exact fields:
             }
           ]
         }]
-      }),
+      })
     });
 
     if (!response.ok) {
@@ -101,7 +101,7 @@ Provide your response in valid JSON format with these exact fields:
     }
 
     const data = await response.json();
-    console.log('Anthropic API response:', data);
+    console.log('Anthropic API response structure:', Object.keys(data));
     
     if (!data.content?.[0]?.text) {
       console.error('Unexpected API response format:', data);
@@ -126,10 +126,10 @@ Provide your response in valid JSON format with these exact fields:
         sustain_score: analysis.sustain_score,
         safety_deduction
       },
-      findings: analysis.findings,
-      opportunities: analysis.opportunities,
-      strengths: analysis.strengths,
-      actions: analysis.actions
+      findings: analysis.findings || [],
+      opportunities: analysis.opportunities || [],
+      strengths: analysis.strengths || [],
+      actions: analysis.actions || []
     };
   } catch (error) {
     console.error('Error analyzing image:', error);
