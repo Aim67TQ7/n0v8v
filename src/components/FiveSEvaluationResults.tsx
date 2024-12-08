@@ -34,11 +34,20 @@ export const FiveSEvaluationResults = ({
       if (!element) return;
 
       const opt = {
-        margin: 10,
+        margin: 5,
         filename: `5S-Evaluation-${evaluation.workcenter?.name}-${new Date().toISOString().split('T')[0]}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { 
+          scale: 1,
+          useCORS: true,
+          letterRendering: true
+        },
+        jsPDF: { 
+          unit: 'mm', 
+          format: 'letter', 
+          orientation: 'portrait',
+          compress: true
+        }
       };
 
       await html2pdf().set(opt).from(element).save();
@@ -81,8 +90,8 @@ export const FiveSEvaluationResults = ({
         onEmailPDF={handleEmailPDF}
       />
 
-      <div id="evaluation-content">
-        <Card className="p-6">
+      <div id="evaluation-content" className="scale-[0.85] origin-top">
+        <Card className="p-4">
           <FiveSEvaluationSummary
             workcenterName={evaluation.workcenter?.name}
             evaluationDate={new Date(evaluation.created_at).toLocaleDateString()}
@@ -91,16 +100,16 @@ export const FiveSEvaluationResults = ({
           
           <FiveSEvaluationImages images={evaluation.evaluation_images} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <Card className="p-6">
-              <h3 className="text-xl font-semibold mb-4">5S Scores</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <Card className="p-4">
+              <h3 className="text-lg font-semibold mb-2">5S Scores</h3>
               <FiveSRadarChart scores={evaluation} />
             </Card>
             <FiveSTrend workcenterId={evaluation.workcenter_id} />
           </div>
 
-          <Card className="p-6 mt-6">
-            <h3 className="text-xl font-semibold mb-4">Analysis & Recommendations</h3>
+          <Card className="p-4 mt-4">
+            <h3 className="text-lg font-semibold mb-2">Analysis & Recommendations</h3>
             <SWOTAnalysis
               strengths={evaluation.strengths || []}
               weaknesses={evaluation.weaknesses || []}
@@ -110,10 +119,11 @@ export const FiveSEvaluationResults = ({
             />
           </Card>
 
-          <div className="text-center mt-6">
+          <div className="text-center mt-4">
             <Button
               onClick={onNewEvaluation}
               variant="outline"
+              size="sm"
             >
               Start New Evaluation
             </Button>
