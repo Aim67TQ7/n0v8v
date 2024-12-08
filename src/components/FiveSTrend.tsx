@@ -37,12 +37,13 @@ export const FiveSTrend = ({ workcenterId }: FiveSTrendProps) => {
       
       // Calculate percentage as (sum of scores)/50 * 100
       const scorePercentage = (totalScore / 50) * 100;
-      const concernCount = evaluation.weaknesses?.length || 0;
 
       return {
         date: new Date(evaluation.created_at).toLocaleDateString(),
         scorePercentage: Number(scorePercentage.toFixed(1)),
-        concernCount
+        sortScore: evaluation.sort_score,
+        setScore: evaluation.set_in_order_score,
+        shineScore: evaluation.shine_score
       };
     });
   };
@@ -55,15 +56,15 @@ export const FiveSTrend = ({ workcenterId }: FiveSTrendProps) => {
           <LineChart data={formatData(historicalData || [])} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
-            <YAxis yAxisId="left" domain={[0, 100]} label={{ value: 'Score %', angle: -90, position: 'insideLeft' }} />
-            <YAxis yAxisId="right" orientation="right" domain={[0, 'auto']} label={{ value: 'Number of Concerns', angle: 90, position: 'insideRight' }} />
+            <YAxis yAxisId="left" domain={[0, 100]} label={{ value: 'Overall Score %', angle: -90, position: 'insideLeft' }} />
+            <YAxis yAxisId="right" orientation="right" domain={[0, 10]} label={{ value: 'Individual Scores', angle: 90, position: 'insideRight' }} />
             <Tooltip />
             <Legend />
             <Line
               yAxisId="left"
               type="monotone"
               dataKey="scorePercentage"
-              name="Score %"
+              name="Overall Score %"
               stroke="#000000"
               strokeWidth={2}
               dot={{ fill: '#000000' }}
@@ -71,11 +72,29 @@ export const FiveSTrend = ({ workcenterId }: FiveSTrendProps) => {
             <Line
               yAxisId="right"
               type="monotone"
-              dataKey="concernCount"
-              name="Number of Concerns"
+              dataKey="sortScore"
+              name="Sort Score"
               stroke="#666666"
               strokeDasharray="5 5"
               dot={{ fill: '#666666' }}
+            />
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey="setScore"
+              name="Set in Order Score"
+              stroke="#888888"
+              strokeDasharray="5 5"
+              dot={{ fill: '#888888' }}
+            />
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey="shineScore"
+              name="Shine Score"
+              stroke="#aaaaaa"
+              strokeDasharray="5 5"
+              dot={{ fill: '#aaaaaa' }}
             />
           </LineChart>
         </ResponsiveContainer>
