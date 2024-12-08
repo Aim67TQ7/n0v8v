@@ -79,11 +79,9 @@ Provide your response in valid JSON format with these exact fields:
             content: [
               { type: 'text', text: 'Analyze this workplace image for 5S implementation.' },
               { 
-                type: 'image', 
-                source: {
-                  type: 'base64',
-                  media_type: 'image/jpeg',
-                  data: base64Image
+                type: 'image_url', 
+                image_url: {
+                  url: `data:image/jpeg;base64,${base64Image}`
                 }
               }
             ]
@@ -95,13 +93,19 @@ Provide your response in valid JSON format with these exact fields:
     });
 
     if (!response.ok) {
-      console.error('OpenAI API error:', response.status, await response.text());
-      throw new Error(`OpenAI API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('OpenAI API error details:', errorText);
+      throw new Error(`OpenAI API error: ${response.status}\nDetails: ${errorText}`);
     }
 
     const data = await response.json();
     console.log('OpenAI API response:', data);
     
+    if (!data.choices?.[0]?.message?.content) {
+      console.error('Unexpected API response format:', data);
+      throw new Error('Invalid response format from OpenAI API');
+    }
+
     const analysis = JSON.parse(data.choices[0].message.content);
     const safety_deduction = calculateSafetyDeduction(analysis.findings);
 
