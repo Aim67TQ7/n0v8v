@@ -11,10 +11,20 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, Edit } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Plus, Edit, ArrowUpDown, Filter } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 const TeamManagement = () => {
+  const { toast } = useToast();
   const [filter, setFilter] = useState("");
+  const [filterBy, setFilterBy] = useState("department");
   const [sortField, setSortField] = useState<string>("department");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
@@ -25,29 +35,53 @@ const TeamManagement = () => {
         .from("departments")
         .select(`
           *,
-          leader:profiles(first_name, last_name),
+          leader:profiles(id, first_name, last_name, photo_url),
           department_members(
             profile:profiles(id, first_name, last_name, photo_url)
           )
         `);
 
-      if (error) throw error;
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Error fetching departments",
+          description: error.message,
+        });
+        throw error;
+      }
       return data;
     },
   });
 
-  const filteredDepartments = departments?.filter((dept) =>
-    Object.values(dept).some((value) =>
-      String(value).toLowerCase().includes(filter.toLowerCase())
-    )
-  );
+  const filteredDepartments = departments?.filter((dept) => {
+    const searchValue = filter.toLowerCase();
+    switch (filterBy) {
+      case "department":
+        return dept.name.toLowerCase().includes(searchValue);
+      case "location":
+        return dept.location.toLowerCase().includes(searchValue);
+      case "leader":
+        return (
+          dept.leader?.first_name?.toLowerCase().includes(searchValue) ||
+          dept.leader?.last_name?.toLowerCase().includes(searchValue)
+        );
+      default:
+        return true;
+    }
+  });
 
   const sortedDepartments = filteredDepartments?.sort((a, b) => {
-    const aValue = String(a[sortField]);
-    const bValue = String(b[sortField]);
+    let aValue = a[sortField];
+    let bValue = b[sortField];
+
+    if (sortField === "leader") {
+      aValue = `${a.leader?.first_name || ""} ${a.leader?.last_name || ""}`;
+      bValue = `${b.leader?.first_name || ""} ${b.leader?.last_name || ""}`;
+    }
+
     return sortDirection === "asc"
-      ? aValue.localeCompare(bValue)
-      : bValue.localeCompare(aValue);
+      ? String(aValue).localeCompare(String(bValue))
+      : String(bValue).localeCompare(String(aValue));
   });
 
   const handleSort = (field: string) => {
@@ -60,7 +94,7 @@ const TeamManagement = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
   return (
@@ -68,6 +102,16 @@ const TeamManagement = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Team Management</h1>
         <div className="flex gap-4">
+          <Select value={filterBy} onValueChange={setFilterBy}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="department">Department</SelectItem>
+              <SelectItem value="location">Location</SelectItem>
+              <SelectItem value="leader">Leader</SelectItem>
+            </SelectContent>
+          </Select>
           <Input
             placeholder="Filter..."
             value={filter}
@@ -77,7 +121,7 @@ const TeamManagement = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-white rounded-lg shadow overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -85,21 +129,38 @@ const TeamManagement = () => {
                 className="cursor-pointer"
                 onClick={() => handleSort("name")}
               >
-                Work Station
+                <div className="flex items-center gap-2">
+                  Work Station
+                  <ArrowUpDown className="h-4 w-4" />
+                </div>
               </TableHead>
               <TableHead
                 className="cursor-pointer"
                 onClick={() => handleSort("location")}
               >
-                Location
+                <div className="flex items-center gap-2">
+                  Location
+                  <ArrowUpDown className="h-4 w-4" />
+                </div>
               </TableHead>
               <TableHead
                 className="cursor-pointer"
                 onClick={() => handleSort("department")}
               >
-                Department
+                <div className="flex items-center gap-2">
+                  Department
+                  <ArrowUpDown className="h-4 w-4" />
+                </div>
               </TableHead>
-              <TableHead>Leader</TableHead>
+              <TableHead
+                className="cursor-pointer"
+                onClick={() => handleSort("leader")}
+              >
+                <div className="flex items-center gap-2">
+                  Leader
+                  <ArrowUpDown className="h-4 w-4" />
+                </div>
+              </TableHead>
               <TableHead>Team Members</TableHead>
               <TableHead>Labor Rate ($)</TableHead>
               <TableHead>Burden Rate ($)</TableHead>
@@ -108,12 +169,23 @@ const TeamManagement = () => {
           </TableHeader>
           <TableBody>
             {sortedDepartments?.map((dept) => (
-              <TableRow key={dept.id}>
+              <TableRow key={dept.id} className="hover:bg-gray-50">
                 <TableCell>{dept.name}</TableCell>
                 <TableCell>{dept.location}</TableCell>
                 <TableCell>{dept.name}</TableCell>
                 <TableCell>
-                  {dept.leader?.first_name} {dept.leader?.last_name}
+                  <div className="flex items-center gap-2">
+                    {dept.leader?.photo_url && (
+                      <img
+                        src={dept.leader.photo_url}
+                        alt={`${dept.leader.first_name} ${dept.leader.last_name}`}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                    )}
+                    <span>
+                      {dept.leader?.first_name} {dept.leader?.last_name}
+                    </span>
+                  </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex -space-x-2">
@@ -122,14 +194,14 @@ const TeamManagement = () => {
                         key={member.profile.id}
                         src={member.profile.photo_url || "/placeholder.svg"}
                         alt={`${member.profile.first_name} ${member.profile.last_name}`}
-                        className="w-8 h-8 rounded-full border-2 border-white"
+                        className="w-8 h-8 rounded-full border-2 border-white object-cover"
                         title={`${member.profile.first_name} ${member.profile.last_name}`}
                       />
                     ))}
                   </div>
                 </TableCell>
-                <TableCell>${dept.labor_rate}</TableCell>
-                <TableCell>${dept.burden_rate}</TableCell>
+                <TableCell>${dept.labor_rate || 0}</TableCell>
+                <TableCell>${dept.burden_rate || 0}</TableCell>
                 <TableCell>{dept.primary_purpose}</TableCell>
               </TableRow>
             ))}
