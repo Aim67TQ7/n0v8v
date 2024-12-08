@@ -176,6 +176,7 @@ export type Database = {
           created_by: string
           id: string
           opportunities: string[] | null
+          safety_deduction: number | null
           set_in_order_score: number | null
           shine_score: number | null
           sort_score: number | null
@@ -191,6 +192,7 @@ export type Database = {
           created_by: string
           id?: string
           opportunities?: string[] | null
+          safety_deduction?: number | null
           set_in_order_score?: number | null
           shine_score?: number | null
           sort_score?: number | null
@@ -206,6 +208,7 @@ export type Database = {
           created_by?: string
           id?: string
           opportunities?: string[] | null
+          safety_deduction?: number | null
           set_in_order_score?: number | null
           shine_score?: number | null
           sort_score?: number | null
