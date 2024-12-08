@@ -13,6 +13,11 @@ import Modules from "./pages/Modules";
 import LeanManufacturing from "./pages/LeanManufacturing";
 import FiveSVision from "./pages/FiveSVision";
 import TeamManagement from "./pages/TeamManagement";
+import QualityAssurance from "./pages/QualityAssurance";
+import ProcessImprovement from "./pages/quality/ProcessImprovement";
+import ProductInspection from "./pages/quality/ProductInspection";
+import DMRDocumentation from "./pages/quality/DMRDocumentation";
+import FiveWhys from "./pages/quality/FiveWhys";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +81,61 @@ const App = () => (
                   <div className="min-h-screen flex flex-col">
                     <Header />
                     <FiveSVision />
+                  </div>
+                </AuthWrapper>
+              }
+            />
+            <Route
+              path="/operations/quality"
+              element={
+                <AuthWrapper>
+                  <div className="min-h-screen flex flex-col">
+                    <Header />
+                    <QualityAssurance />
+                  </div>
+                </AuthWrapper>
+              }
+            />
+            <Route
+              path="/operations/quality/process-improvement"
+              element={
+                <AuthWrapper>
+                  <div className="min-h-screen flex flex-col">
+                    <Header />
+                    <ProcessImprovement />
+                  </div>
+                </AuthWrapper>
+              }
+            />
+            <Route
+              path="/operations/quality/product-inspection"
+              element={
+                <AuthWrapper>
+                  <div className="min-h-screen flex flex-col">
+                    <Header />
+                    <ProductInspection />
+                  </div>
+                </AuthWrapper>
+              }
+            />
+            <Route
+              path="/operations/quality/dmr"
+              element={
+                <AuthWrapper>
+                  <div className="min-h-screen flex flex-col">
+                    <Header />
+                    <DMRDocumentation />
+                  </div>
+                </AuthWrapper>
+              }
+            />
+            <Route
+              path="/operations/quality/five-whys"
+              element={
+                <AuthWrapper>
+                  <div className="min-h-screen flex flex-col">
+                    <Header />
+                    <FiveWhys />
                   </div>
                 </AuthWrapper>
               }
