@@ -12,8 +12,14 @@ serve(async (req) => {
   }
 
   try {
+    // Get the API key from environment variables
+    const apiKey = Deno.env.get('ANTHROPIC_API_KEY')
+    if (!apiKey) {
+      throw new Error('ANTHROPIC_API_KEY is not set in environment variables')
+    }
+
     const anthropic = new Anthropic({
-      apiKey: Deno.env.get('ANTHROPIC_API_KEY'),
+      apiKey: apiKey,
     });
 
     const { imageUrls } = await req.json()
