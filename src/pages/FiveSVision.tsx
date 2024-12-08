@@ -160,6 +160,7 @@ const FiveSVision = () => {
                 <FiveSEvaluationSummary
                   workcenterName={evaluation.workcenter?.name}
                   evaluationDate={new Date(evaluation.created_at).toLocaleDateString()}
+                  scores={evaluation}
                 />
                 
                 <FiveSEvaluationImages images={evaluation.evaluation_images} />
@@ -179,6 +180,7 @@ const FiveSVision = () => {
                     weaknesses={evaluation.weaknesses || []}
                     sortScore={evaluation.sort_score}
                     setScore={evaluation.set_in_order_score}
+                    shineScore={evaluation.shine_score}
                   />
                 </Card>
 

@@ -5,9 +5,10 @@ interface SWOTAnalysisProps {
   weaknesses: string[];
   sortScore?: number;
   setScore?: number;
+  shineScore?: number;
 }
 
-export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore }: SWOTAnalysisProps) => {
+export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shineScore }: SWOTAnalysisProps) => {
   const renderList = (items: string[]) => (
     <ul className="list-disc pl-5 space-y-4">
       {items.map((item, index) => (
@@ -17,13 +18,14 @@ export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore }: SWO
   );
 
   // Filter weaknesses based on scores
-  const shouldShowAllWeaknesses = (sortScore === undefined || setScore === undefined) || 
-    (sortScore >= 8 && setScore >= 8);
+  const shouldShowAllWeaknesses = (sortScore === undefined || setScore === undefined || shineScore === undefined) || 
+    (sortScore >= 8 && setScore >= 8 && shineScore >= 8);
   
   const filteredWeaknesses = shouldShowAllWeaknesses ? weaknesses : 
     weaknesses.filter(weakness => 
       (sortScore < 8 && weakness.toLowerCase().includes('sort')) || 
-      (setScore < 8 && weakness.toLowerCase().includes('set in order'))
+      (setScore < 8 && weakness.toLowerCase().includes('set in order')) ||
+      (shineScore < 8 && weakness.toLowerCase().includes('shine'))
     );
 
   return (
