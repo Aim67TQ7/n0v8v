@@ -9,6 +9,7 @@ import { AuthWrapper } from "@/components/AuthWrapper";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Modules from "./pages/Modules";
+import LeanManufacturing from "./pages/LeanManufacturing";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,14 @@ const App = () => (
               element={
                 <AuthWrapper>
                   <Modules />
+                </AuthWrapper>
+              }
+            />
+            <Route
+              path="/operations/lean"
+              element={
+                <AuthWrapper>
+                  <LeanManufacturing />
                 </AuthWrapper>
               }
             />
