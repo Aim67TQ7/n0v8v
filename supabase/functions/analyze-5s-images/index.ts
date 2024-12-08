@@ -51,7 +51,7 @@ For each 5S principle, provide a score from 0-10 based on visible evidence acros
 Sort (Seiri):
 - Look for unnecessary items, clutter, or excess materials
 - Check if only essential tools and materials are present
-- Identify any obvious waste or excess inventory
+- Identify opportunities for better organization
 
 Set in Order (Seiton):
 - Observe if items have designated storage locations
@@ -61,7 +61,7 @@ Set in Order (Seiton):
 Shine (Seiso):
 - Assess cleanliness of equipment, floors, and surfaces
 - Look for signs of regular cleaning
-- Check for any dirt, dust, or debris
+- Check for any maintenance needs
 
 Standardize (Seiketsu):
 - Look for visual standards or procedures posted
@@ -73,17 +73,15 @@ Sustain (Shitsuke):
 - Check if improvements appear to be maintained
 - Observe signs of continuous improvement
 
-When evaluating conditions, only apply deductions (-3 points) for significant safety hazards. All other observations should be noted as improvement opportunities without score deductions.
-
-Consolidate findings across all images and avoid duplicate reports. For each finding, provide:
-1. The specific issue observed
-2. The impact on operations (e.g., "reduces productivity by causing unnecessary motion")
-3. A clear, actionable solution with expected benefits
+For each finding, provide:
+1. The specific condition or practice observed
+2. The impact on operations (e.g., "enhances workflow efficiency")
+3. Suggestions for improvement or maintaining good practices
 
 Example findings:
-"Scattered tools on workbench visible in multiple areas. Current state causes time waste searching for tools. Create shadow boards with designated spots for each tool and label clearly to improve efficiency and reduce search time."
+"Well-organized tool shadow board visible in work area. Current setup enables quick tool access and accountability. Maintain this system and consider implementing in other areas to further improve efficiency."
 
-"Excess inventory boxes in walkways. Current placement creates safety hazard and restricts movement (-3 points). Establish dedicated staging area with clear max/min quantity markers to ensure safe passage and improve material flow."
+"Organized storage area with clear labeling system. This practice reduces search time and maintains inventory control. Consider expanding labeling system to include quantity indicators for better stock management."
 
 Provide your response in valid JSON format with these exact fields:
 {
@@ -93,9 +91,8 @@ Provide your response in valid JSON format with these exact fields:
   "standardize_score": number (0-10),
   "sustain_score": number (0-10),
   "strengths": string[] (only include clearly visible positive practices),
-  "weaknesses": string[] (include consolidated findings, noting safety issues with -3 points),
-  "opportunities": string[] (specific improvements with expected benefits),
-  "threats": string[] (detailed action items with clear steps and reasoning)
+  "weaknesses": string[] (include areas needing improvement),
+  "opportunities": string[] (specific improvements with expected benefits)
 }`;
 
     const analyses = [];
@@ -164,7 +161,7 @@ Provide your response in valid JSON format with these exact fields:
       const requiredFields = [
         'sort_score', 'set_in_order_score', 'shine_score', 
         'standardize_score', 'sustain_score', 'strengths', 
-        'weaknesses', 'opportunities', 'threats'
+        'weaknesses', 'opportunities'
       ];
 
       for (const field of requiredFields) {
@@ -183,11 +180,9 @@ Provide your response in valid JSON format with these exact fields:
       shine_score: Math.round(analyses.reduce((sum, a) => sum + a.shine_score, 0) / analyses.length * 10) / 10,
       standardize_score: Math.round(analyses.reduce((sum, a) => sum + a.standardize_score, 0) / analyses.length * 10) / 10,
       sustain_score: Math.round(analyses.reduce((sum, a) => sum + a.sustain_score, 0) / analyses.length * 10) / 10,
-      // Deduplicate and consolidate findings
       strengths: [...new Set(analyses.flatMap(a => a.strengths))],
       weaknesses: [...new Set(analyses.flatMap(a => a.weaknesses))],
-      opportunities: [...new Set(analyses.flatMap(a => a.opportunities))],
-      threats: [...new Set(analyses.flatMap(a => a.threats))]
+      opportunities: [...new Set(analyses.flatMap(a => a.opportunities))]
     };
 
     console.log('Final combined analysis:', combinedAnalysis);
