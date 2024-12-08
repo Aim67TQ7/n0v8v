@@ -6,6 +6,18 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+async function fetchImageAsBase64(imageUrl: string): Promise<string> {
+  try {
+    const response = await fetch(imageUrl);
+    const arrayBuffer = await response.arrayBuffer();
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    return base64;
+  } catch (error) {
+    console.error('Error fetching and converting image:', error);
+    throw new Error('Failed to fetch and convert image to base64');
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -64,7 +76,10 @@ Provide your response in valid JSON format with these exact fields:
   "threats": string[] (specific action items based on visible conditions)
 }`;
 
-      console.log('Sending request to Anthropic for image:', url);
+      console.log('Converting image to base64:', url);
+      const base64Image = await fetchImageAsBase64(url);
+      
+      console.log('Sending request to Anthropic for image analysis');
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
@@ -80,7 +95,14 @@ Provide your response in valid JSON format with these exact fields:
               role: 'user',
               content: [
                 { type: 'text', text: systemPrompt },
-                { type: 'image', source: { type: 'url', url } }
+                { 
+                  type: 'image', 
+                  source: {
+                    type: 'base64',
+                    media_type: 'image/jpeg',
+                    data: base64Image
+                  }
+                }
               ]
             }
           ]
