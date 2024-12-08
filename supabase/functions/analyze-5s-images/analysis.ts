@@ -2,7 +2,7 @@ import { Score, calculateSafetyDeduction } from './scoring.ts';
 
 export const analyzeImageWithAI = async (
   base64Image: string,
-  openAIApiKey: string
+  anthropicApiKey: string
 ): Promise<{
   scores: Score;
   findings: string[];
@@ -63,50 +63,58 @@ Provide your response in valid JSON format with these exact fields:
 }`;
 
   try {
-    console.log('Sending request to OpenAI API');
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    console.log('Sending request to Anthropic API');
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
+        'x-api-key': anthropicApiKey,
+        'anthropic-version': '2023-06-01',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { 
-            role: 'user',
-            content: [
-              { type: 'text', text: 'Analyze this workplace image for 5S implementation.' },
-              { 
-                type: 'image_url', 
-                image_url: {
-                  url: `data:image/jpeg;base64,${base64Image}`
-                }
+        model: 'claude-3-opus-20240229',
+        max_tokens: 1024,
+        messages: [{
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: systemPrompt + '\n\nAnalyze this workplace image for 5S implementation.'
+            },
+            {
+              type: 'image',
+              source: {
+                type: 'base64',
+                media_type: 'image/jpeg',
+                data: base64Image
               }
-            ]
-          }
-        ],
-        max_tokens: 1000,
-        temperature: 0.7
+            }
+          ]
+        }]
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenAI API error details:', errorText);
-      throw new Error(`OpenAI API error: ${response.status}\nDetails: ${errorText}`);
+      console.error('Anthropic API error details:', errorText);
+      throw new Error(`Anthropic API error: ${response.status}\nDetails: ${errorText}`);
     }
 
     const data = await response.json();
-    console.log('OpenAI API response:', data);
+    console.log('Anthropic API response:', data);
     
-    if (!data.choices?.[0]?.message?.content) {
+    if (!data.content?.[0]?.text) {
       console.error('Unexpected API response format:', data);
-      throw new Error('Invalid response format from OpenAI API');
+      throw new Error('Invalid response format from Anthropic API');
     }
 
-    const analysis = JSON.parse(data.choices[0].message.content);
+    // Extract the JSON from the response text
+    const jsonMatch = data.content[0].text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error('No JSON found in response');
+    }
+
+    const analysis = JSON.parse(jsonMatch[0]);
     const safety_deduction = calculateSafetyDeduction(analysis.findings);
 
     return {

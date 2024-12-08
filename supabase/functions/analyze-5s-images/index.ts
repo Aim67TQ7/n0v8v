@@ -3,7 +3,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { analyzeImageWithAI } from './analysis.ts';
 import { calculateTotalScore } from './scoring.ts';
 
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+const anthropicApiKey = Deno.env.get('ANTHROPIC_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -26,8 +26,8 @@ serve(async (req) => {
       const arrayBuffer = await response.arrayBuffer();
       const base64Image = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
       
-      console.log('Analyzing image with AI');
-      const analysis = await analyzeImageWithAI(base64Image, openAIApiKey || '');
+      console.log('Analyzing image with Anthropic');
+      const analysis = await analyzeImageWithAI(base64Image, anthropicApiKey || '');
       analyses.push(analysis);
     }
 
