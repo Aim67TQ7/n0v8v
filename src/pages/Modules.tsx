@@ -51,7 +51,7 @@ const modulesList = [
     description: "Optimize processes and reduce waste",
     icon: ChartBar,
     href: "/operations/lean",
-    status: "coming-soon"
+    status: "ready"
   },
   {
     title: "Compliance",
