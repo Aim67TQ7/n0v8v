@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { FiveSImageUpload } from "@/components/FiveSImageUpload";
 
 const FiveSVision = () => {
   const [selectedWorkcenter, setSelectedWorkcenter] = useState<string>("");
@@ -53,20 +54,15 @@ const FiveSVision = () => {
 
   const analysisMutation = useMutation({
     mutationFn: async (imageUrls: string[]) => {
-      const response = await fetch('/functions/v1/analyze-5s-images', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY}`
-        },
-        body: JSON.stringify({ imageUrls })
+      const response = await supabase.functions.invoke('analyze-5s-images', {
+        body: { imageUrls }
       });
 
-      if (!response.ok) {
+      if (response.error) {
         throw new Error('Failed to analyze images');
       }
 
-      return response.json();
+      return response.data;
     }
   });
 
@@ -80,7 +76,11 @@ const FiveSVision = () => {
       });
       return;
     }
-    setImages(files);
+    setImages([...images, ...files].slice(0, 4));
+  };
+
+  const handleImageRemove = (index: number) => {
+    setImages(images.filter((_, i) => i !== index));
   };
 
   const handleCameraCapture = async () => {
@@ -111,12 +111,15 @@ const FiveSVision = () => {
 
     try {
       setIsAnalyzing(true);
+      console.log('Starting image upload...');
       
       // Upload images
       const imageUrls = await uploadMutation.mutateAsync(images);
+      console.log('Images uploaded:', imageUrls);
       
       // Analyze images
       const analysis = await analysisMutation.mutateAsync(imageUrls);
+      console.log('Analysis received:', analysis);
       
       // Create evaluation
       const { data: evaluation, error: evalError } = await supabase
@@ -129,6 +132,7 @@ const FiveSVision = () => {
         .single();
         
       if (evalError) throw evalError;
+      console.log('Evaluation created:', evaluation);
       
       // Save image references
       const imagePromises = imageUrls.map(url => 
@@ -153,6 +157,7 @@ const FiveSVision = () => {
       setSelectedWorkcenter("");
       
     } catch (error) {
+      console.error('Error during evaluation:', error);
       toast({
         title: "Error",
         description: "Failed to complete 5S evaluation",
@@ -218,17 +223,7 @@ const FiveSVision = () => {
               onChange={handleImageUpload}
             />
             {images.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                {images.map((image, index) => (
-                  <div key={index} className="relative">
-                    <img
-                      src={URL.createObjectURL(image)}
-                      alt={`Preview ${index + 1}`}
-                      className="w-full h-24 object-cover rounded-lg"
-                    />
-                  </div>
-                ))}
-              </div>
+              <FiveSImageUpload images={images} onImageRemove={handleImageRemove} />
             )}
           </div>
 
