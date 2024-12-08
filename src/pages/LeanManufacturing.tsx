@@ -18,7 +18,7 @@ const leanModules = [
       "Pattern recognition for optimal tool placement",
       "Real-time compliance tracking"
     ],
-    status: "coming-soon"
+    status: "ready"
   },
   {
     title: "Motion & Process Analysis",

@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Modules from "./pages/Modules";
 import LeanManufacturing from "./pages/LeanManufacturing";
+import FiveSVision from "./pages/FiveSVision";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,14 @@ const App = () => (
               element={
                 <AuthWrapper>
                   <LeanManufacturing />
+                </AuthWrapper>
+              }
+            />
+            <Route
+              path="/operations/lean/5s-vision"
+              element={
+                <AuthWrapper>
+                  <FiveSVision />
                 </AuthWrapper>
               }
             />
