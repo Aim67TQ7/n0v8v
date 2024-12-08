@@ -36,10 +36,19 @@ export const analyzeImages = async (imageUrls: string[]) => {
 };
 
 export const createEvaluation = async (workcenter_id: string, analysis: any) => {
+  // Get the current user's session
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError) throw sessionError;
+  
+  if (!session?.user?.id) {
+    throw new Error('No authenticated user found');
+  }
+
   const { data: evaluation, error: evalError } = await supabase
     .from('five_s_evaluations')
     .insert({
       workcenter_id,
+      created_by: session.user.id, // Add the user ID here
       ...analysis
     })
     .select()
