@@ -72,8 +72,29 @@ Format your response as a JSON object with the following structure:
     });
     console.log('Received response from Anthropic');
 
-    const analysis = JSON.parse(message.content[0].text);
-    console.log('Parsed analysis:', analysis);
+    // Parse the response text as JSON
+    let analysis;
+    try {
+      analysis = JSON.parse(message.content[0].text);
+    } catch (parseError) {
+      console.error('Failed to parse Anthropic response:', message.content[0].text);
+      throw new Error('Failed to parse AI response as JSON. Please ensure the response follows the required format.');
+    }
+
+    // Validate the response structure
+    const requiredFields = [
+      'sort_score', 'set_in_order_score', 'shine_score', 
+      'standardize_score', 'sustain_score', 'strengths', 
+      'weaknesses', 'opportunities', 'threats'
+    ];
+
+    for (const field of requiredFields) {
+      if (!(field in analysis)) {
+        throw new Error(`Missing required field in AI response: ${field}`);
+      }
+    }
+
+    console.log('Parsed and validated analysis:', analysis);
 
     return new Response(
       JSON.stringify(analysis),
