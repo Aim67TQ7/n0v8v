@@ -13,7 +13,11 @@ const ProcessImprovement = () => {
   const [selectedWorkcenter, setSelectedWorkcenter] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
-  const [analysis, setAnalysis] = useState<string>("");
+  const [analysis, setAnalysis] = useState<{
+    status: 'success' | 'concerns';
+    message: string;
+    details: string;
+  } | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedArea, setSelectedArea] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
   const { toast } = useToast();
@@ -21,7 +25,7 @@ const ProcessImprovement = () => {
   const handleImageUpload = (file: File) => {
     setImage(file);
     setImagePreview(URL.createObjectURL(file));
-    setAnalysis("");
+    setAnalysis(null);
     setSelectedArea(null);
   };
 
@@ -78,7 +82,7 @@ const ProcessImprovement = () => {
     setSelectedWorkcenter("");
     setImage(null);
     setImagePreview("");
-    setAnalysis("");
+    setAnalysis(null);
     setSelectedArea(null);
     setIsAnalyzing(false);
     toast({
@@ -100,7 +104,7 @@ const ProcessImprovement = () => {
           className="flex items-center gap-2"
         >
           <RotateCcw className="h-4 w-4" />
-          Start New Part Analysis
+          Start New Analysis
         </Button>
       </div>
       
