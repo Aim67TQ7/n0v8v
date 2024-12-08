@@ -7,6 +7,7 @@ interface FiveSEvaluationSummaryProps {
 }
 
 export const FiveSEvaluationSummary = ({ workcenterName, averageScore, evaluationDate }: FiveSEvaluationSummaryProps) => {
+  // Calculate percentage as (sum of scores)/50 * 100
   const percentageScore = (averageScore / 50) * 100;
 
   return (
