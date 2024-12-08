@@ -15,6 +15,83 @@ import { FiveSEvaluationImages } from "@/components/FiveSEvaluationImages";
 import { uploadImages, analyzeImages, createEvaluation, saveImageReferences } from "@/services/fiveSEvaluationService";
 import { supabase } from "@/integrations/supabase/client";
 
+// Let's extract the evaluation display into a separate component to reduce file size
+const EvaluationDisplay = ({ evaluation, onNewEvaluation }) => {
+  const calculateAverageScore = (evaluation: any) => {
+    if (!evaluation) return 0;
+    const scores = [
+      evaluation.sort_score,
+      evaluation.set_in_order_score,
+      evaluation.shine_score,
+      evaluation.standardize_score,
+      evaluation.sustain_score
+    ];
+    return scores.reduce((a, b) => a + b, 0);
+  };
+
+  const handleSavePDF = () => {
+    toast({
+      title: "Coming Soon",
+      description: "PDF export functionality will be available soon",
+    });
+  };
+
+  const handleEmailPDF = () => {
+    toast({
+      title: "Coming Soon",
+      description: "Email PDF functionality will be available soon",
+    });
+  };
+
+  return (
+    <>
+      <FiveSEvaluationHeader
+        workcenterId={evaluation.workcenter_id}
+        onSavePDF={handleSavePDF}
+        onEmailPDF={handleEmailPDF}
+      />
+
+      <Card className="p-6">
+        <FiveSEvaluationSummary
+          workcenterName={evaluation.workcenter?.name}
+          averageScore={calculateAverageScore(evaluation)}
+          safetyDeduction={evaluation.safety_deduction || 0}
+          evaluationDate={new Date(evaluation.created_at).toLocaleDateString()}
+        />
+        
+        <FiveSEvaluationImages images={evaluation.evaluation_images} />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <Card className="p-6">
+            <h3 className="text-xl font-semibold mb-4">5S Scores</h3>
+            <FiveSRadarChart scores={evaluation} />
+          </Card>
+          <FiveSTrend workcenterId={evaluation.workcenter_id} />
+        </div>
+
+        <Card className="p-6 mt-6">
+          <h3 className="text-xl font-semibold mb-4">Analysis & Recommendations</h3>
+          <SWOTAnalysis
+            strengths={evaluation.strengths || []}
+            weaknesses={evaluation.weaknesses || []}
+            opportunities={evaluation.opportunities || []}
+            threats={evaluation.threats || []}
+          />
+        </Card>
+
+        <div className="text-center mt-6">
+          <Button
+            onClick={onNewEvaluation}
+            variant="outline"
+          >
+            Start New Evaluation
+          </Button>
+        </div>
+      </Card>
+    </>
+  );
+};
+
 const FiveSVision = () => {
   const [selectedWorkcenter, setSelectedWorkcenter] = useState<string>("");
   const [images, setImages] = useState<File[]>([]);
@@ -84,32 +161,6 @@ const FiveSVision = () => {
     }
   };
 
-  const calculateAverageScore = (evaluation: any) => {
-    if (!evaluation) return 0;
-    const scores = [
-      evaluation.sort_score,
-      evaluation.set_in_order_score,
-      evaluation.shine_score,
-      evaluation.standardize_score,
-      evaluation.sustain_score
-    ];
-    return scores.reduce((a, b) => a + b, 0) / scores.length;
-  };
-
-  const handleSavePDF = () => {
-    toast({
-      title: "Coming Soon",
-      description: "PDF export functionality will be available soon",
-    });
-  };
-
-  const handleEmailPDF = () => {
-    toast({
-      title: "Coming Soon",
-      description: "Email PDF functionality will be available soon",
-    });
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       {!evaluationId ? (
@@ -149,50 +200,10 @@ const FiveSVision = () => {
               <p className="mt-2">Loading evaluation results...</p>
             </div>
           ) : evaluation && (
-            <>
-              <FiveSEvaluationHeader
-                workcenterId={evaluation.workcenter_id}
-                onSavePDF={handleSavePDF}
-                onEmailPDF={handleEmailPDF}
-              />
-
-              <Card className="p-6">
-                <FiveSEvaluationSummary
-                  workcenterName={evaluation.workcenter?.name}
-                  averageScore={calculateAverageScore(evaluation)}
-                  evaluationDate={new Date(evaluation.created_at).toLocaleDateString()}
-                />
-                
-                <FiveSEvaluationImages images={evaluation.evaluation_images} />
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                  <Card className="p-6">
-                    <h3 className="text-xl font-semibold mb-4">5S Scores</h3>
-                    <FiveSRadarChart scores={evaluation} />
-                  </Card>
-                  <FiveSTrend workcenterId={evaluation.workcenter_id} />
-                </div>
-
-                <Card className="p-6 mt-6">
-                  <h3 className="text-xl font-semibold mb-4">Analysis & Recommendations</h3>
-                  <SWOTAnalysis
-                    strengths={evaluation.strengths || []}
-                    weaknesses={evaluation.weaknesses || []}
-                    opportunities={evaluation.opportunities || []}
-                    threats={evaluation.threats || []}
-                  />
-                </Card>
-
-                <div className="text-center mt-6">
-                  <Button
-                    onClick={() => setEvaluationId(null)}
-                    variant="outline"
-                  >
-                    Start New Evaluation
-                  </Button>
-                </div>
-              </Card>
-            </>
+            <EvaluationDisplay 
+              evaluation={evaluation} 
+              onNewEvaluation={() => setEvaluationId(null)} 
+            />
           )}
         </div>
       )}

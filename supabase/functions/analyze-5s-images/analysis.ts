@@ -39,18 +39,15 @@ Sustain (Shitsuke):
 - Check if improvements appear to be maintained
 - Observe signs of continuous improvement
 
-Safety concerns should be noted separately and categorized as:
-- Severe safety hazard (-5 points): Immediate risk of injury
-- Moderate safety concern (-3 points): Potential risk requiring attention
-- Minor safety issue (-1 point): Low-risk situation needing improvement
+Safety concerns should be noted separately and categorized by severity:
+- Severe safety hazard: Immediate risk of injury
+- Moderate safety concern: Potential risk requiring attention
+- Minor safety issue: Low-risk situation needing improvement
 
 For each finding, provide:
 1. The specific issue observed
 2. The impact on operations
 3. A clear, actionable solution with expected benefits
-
-Example:
-"Scattered tools on workbench visible in multiple areas. Current state causes time waste searching for tools. Create shadow boards with designated spots for each tool and label clearly to improve efficiency and reduce search time."
 
 Provide your response in valid JSON format with these exact fields:
 {
@@ -66,6 +63,7 @@ Provide your response in valid JSON format with these exact fields:
 }`;
 
   try {
+    console.log('Sending request to OpenAI API');
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -95,12 +93,14 @@ Provide your response in valid JSON format with these exact fields:
     });
 
     if (!response.ok) {
+      console.error('OpenAI API error:', response.status, await response.text());
       throw new Error(`OpenAI API error: ${response.status}`);
     }
 
     const data = await response.json();
-    const analysis = JSON.parse(data.choices[0].message.content);
+    console.log('OpenAI API response:', data);
     
+    const analysis = JSON.parse(data.choices[0].message.content);
     const safety_deduction = calculateSafetyDeduction(analysis.findings);
 
     return {

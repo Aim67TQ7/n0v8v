@@ -8,22 +8,20 @@ export interface Score {
 }
 
 export const calculateSafetyDeduction = (findings: string[]): number => {
-  let deduction = 0;
-  
   for (const finding of findings) {
-    if (finding.toLowerCase().includes('severe safety hazard')) {
-      deduction = -5;
-      break;
-    } else if (finding.toLowerCase().includes('moderate safety concern')) {
-      deduction = -3;
-      break;
-    } else if (finding.toLowerCase().includes('minor safety issue')) {
-      deduction = -1;
-      break;
+    const lowercaseFinding = finding.toLowerCase();
+    if (lowercaseFinding.includes('severe safety hazard') || 
+        lowercaseFinding.includes('immediate risk')) {
+      return -5;
+    } else if (lowercaseFinding.includes('moderate safety concern') || 
+               lowercaseFinding.includes('potential risk')) {
+      return -3;
+    } else if (lowercaseFinding.includes('minor safety issue') || 
+               lowercaseFinding.includes('low-risk')) {
+      return -1;
     }
   }
-  
-  return deduction;
+  return 0;
 };
 
 export const calculateTotalScore = (scores: Score): number => {
@@ -33,6 +31,6 @@ export const calculateTotalScore = (scores: Score): number => {
                    scores.standardize_score + 
                    scores.sustain_score;
                    
-  // Apply safety deduction (if any) to the total score
+  // Apply safety deduction (if any) to the total score, ensuring it doesn't go below 0
   return Math.max(0, baseScore + scores.safety_deduction);
 };
