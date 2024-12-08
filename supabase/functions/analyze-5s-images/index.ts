@@ -69,7 +69,7 @@ Provide your response in valid JSON format with these exact fields:
         method: 'POST',
         headers: {
           'anthropic-version': '2023-06-01',
-          'x-api-key': apiKey,
+          'anthropic-api-key': apiKey,
           'content-type': 'application/json',
         },
         body: JSON.stringify({
@@ -90,7 +90,7 @@ Provide your response in valid JSON format with these exact fields:
       if (!response.ok) {
         const errorData = await response.text();
         console.error('Anthropic API error:', errorData);
-        throw new Error(`Anthropic API error: ${response.status}`);
+        throw new Error(`Anthropic API error: ${response.status} - ${errorData}`);
       }
 
       const data = await response.json();
