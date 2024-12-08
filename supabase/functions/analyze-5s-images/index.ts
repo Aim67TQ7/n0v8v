@@ -39,7 +39,7 @@ serve(async (req) => {
 For each 5S principle, provide a score from 0-10 based on visible evidence:
 
 Sort (Seiri):
-- Look for unnecessary items, clutter, or obsolete materials
+- Look for unnecessary items, clutter, or excess materials
 - Check if only essential tools and materials are present
 - Identify any obvious waste or excess inventory
 
@@ -63,6 +63,11 @@ Sustain (Shitsuke):
 - Check if improvements appear to be maintained
 - Observe signs of continuous improvement
 
+When evaluating conditions that need improvement:
+- Critical conditions (-3 points): Significant impediments to workflow or operations
+- Moderate conditions (-2 points): Notable inefficiencies or organizational issues
+- Minor conditions (-1 point): Small improvements needed in organization or processes
+
 Provide your response in valid JSON format with these exact fields:
 {
   "sort_score": number (0-10),
@@ -71,7 +76,7 @@ Provide your response in valid JSON format with these exact fields:
   "standardize_score": number (0-10),
   "sustain_score": number (0-10),
   "strengths": string[] (only include clearly visible positive practices),
-  "weaknesses": string[] (include visible hazards with their severity: -5 for critical, -3 for moderate, -1 for minor),
+  "weaknesses": string[] (include visible conditions with their impact: -3 for critical, -2 for moderate, -1 for minor),
   "opportunities": string[] (specific improvements based on visible issues),
   "threats": string[] (specific action items based on visible conditions)
 }`;
