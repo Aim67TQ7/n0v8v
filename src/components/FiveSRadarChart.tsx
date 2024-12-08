@@ -1,4 +1,4 @@
-import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts';
+import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar, Tooltip, Text } from 'recharts';
 
 interface FiveSScores {
   sort_score: number;
@@ -12,13 +12,22 @@ interface FiveSRadarChartProps {
   scores: FiveSScores;
 }
 
+const CustomLabel = ({ x, y, value, cx }: any) => {
+  const adjustedX = x > cx ? x + 10 : x - 30;
+  return (
+    <Text x={adjustedX} y={y} fontSize={12}>
+      {value.toFixed(1)}
+    </Text>
+  );
+};
+
 export const FiveSRadarChart = ({ scores }: FiveSRadarChartProps) => {
   const data = [
-    { category: 'Sort', value: scores.sort_score },
-    { category: 'Set in Order', value: scores.set_in_order_score },
-    { category: 'Shine', value: scores.shine_score },
-    { category: 'Standardize', value: scores.standardize_score },
-    { category: 'Sustain', value: scores.sustain_score },
+    { category: 'Sort', value: scores.sort_score, fullMark: 10 },
+    { category: 'Set in Order', value: scores.set_in_order_score, fullMark: 10 },
+    { category: 'Shine', value: scores.shine_score, fullMark: 10 },
+    { category: 'Standardize', value: scores.standardize_score, fullMark: 10 },
+    { category: 'Sustain', value: scores.sustain_score, fullMark: 10 },
   ];
 
   return (
@@ -32,7 +41,9 @@ export const FiveSRadarChart = ({ scores }: FiveSRadarChartProps) => {
           stroke="#2563eb"
           fill="#3b82f6"
           fillOpacity={0.6}
+          label={<CustomLabel />}
         />
+        <Tooltip />
       </RadarChart>
     </ResponsiveContainer>
   );

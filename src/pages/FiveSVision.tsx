@@ -8,6 +8,7 @@ import { WorkcenterSelect } from "@/components/WorkcenterSelect";
 import { FiveSVisionImageUploader } from "@/components/FiveSVisionImageUploader";
 import { FiveSRadarChart } from "@/components/FiveSRadarChart";
 import { SWOTAnalysis } from "@/components/SWOTAnalysis";
+import { FiveSTrend } from "@/components/FiveSTrend";
 import { uploadImages, analyzeImages, createEvaluation, saveImageReferences } from "@/services/fiveSEvaluationService";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -148,6 +149,7 @@ const FiveSVision = () => {
                     <div className="space-y-2">
                       <p><span className="font-medium">Workcenter:</span> {evaluation.workcenter?.name}</p>
                       <p><span className="font-medium">Average Score:</span> {calculateAverageScore(evaluation).toFixed(2)}</p>
+                      <p><span className="font-medium">Evaluation Date:</span> {new Date(evaluation.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
                   <div>
@@ -157,8 +159,10 @@ const FiveSVision = () => {
                 </div>
               </Card>
 
+              <FiveSTrend workcenterId={evaluation.workcenter_id} />
+
               <Card className="p-6">
-                <h3 className="text-xl font-semibold mb-4">SWOT Analysis</h3>
+                <h3 className="text-xl font-semibold mb-4">Analysis & Recommendations</h3>
                 <SWOTAnalysis
                   strengths={evaluation.strengths || []}
                   weaknesses={evaluation.weaknesses || []}
