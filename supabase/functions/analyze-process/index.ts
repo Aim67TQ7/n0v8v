@@ -15,7 +15,6 @@ serve(async (req) => {
     console.log('Processing request for process analysis');
     const formData = await req.formData();
     
-    // Extract and validate required fields
     const imageFile = formData.get('image');
     const workcenter = formData.get('workcenter');
     const selectedAreaStr = formData.get('selectedArea');
@@ -25,7 +24,6 @@ serve(async (req) => {
     }
 
     console.log('Converting image to base64');
-    // Convert image to base64 efficiently
     const imageArrayBuffer = await (imageFile as File).arrayBuffer();
     const base64Image = btoa(
       new Uint8Array(imageArrayBuffer)
@@ -55,11 +53,15 @@ serve(async (req) => {
                   selectedArea ? 'Focus specifically on the highlighted area.' : ''
                 }
                 
-                Provide a detailed analysis covering:
+                Look for any quality issues, process inconsistencies, or areas of concern. If you don't see any issues, explicitly state that no problems were identified.
+                
+                Provide your analysis covering:
                 1. Quality Issues: Identify any visible quality concerns or process inconsistencies
                 2. Impact Analysis: Explain how these issues affect downstream operations or product quality
                 3. Improvement Recommendations: Suggest specific, actionable improvements
                 4. Expected Benefits: Outline the anticipated benefits of implementing the suggested improvements
+                
+                If no issues are found, respond with a clear statement that the process appears to be running correctly with no visible quality concerns.
                 
                 Format your response in clear, concise bullet points.`
               },
@@ -91,10 +93,22 @@ serve(async (req) => {
       throw new Error('Invalid response structure from Anthropic API');
     }
 
-    const analysis = data.content[0].text;
+    const analysisText = data.content[0].text;
+    const noIssuesFound = analysisText.toLowerCase().includes('no issues') || 
+                         analysisText.toLowerCase().includes('no problems') ||
+                         analysisText.toLowerCase().includes('no visible quality concerns');
+
+    // Format the response to include a status indicator
+    const analysis = {
+      status: noIssuesFound ? 'success' : 'concerns',
+      message: noIssuesFound ? 
+        '✅ No quality issues or process concerns identified in the analyzed area.' : 
+        '⚠️ Some areas of improvement identified.',
+      details: analysisText
+    };
 
     return new Response(
-      JSON.stringify({ analysis }),
+      JSON.stringify(analysis),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
