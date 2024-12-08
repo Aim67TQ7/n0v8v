@@ -73,15 +73,16 @@ Sustain (Shitsuke):
 - Check if improvements appear to be maintained
 - Observe signs of continuous improvement
 
-For each finding, provide:
-1. The specific condition or practice observed
-2. The impact on operations (e.g., "enhances workflow efficiency")
-3. Suggestions for improvement or maintaining good practices
+For strengths, provide specific positive practices observed:
+"Well-organized tool shadow board visible in work area. Current setup enables quick tool access and accountability. Maintain this system and consider implementing in other areas."
 
-Example findings:
-"Well-organized tool shadow board visible in work area. Current setup enables quick tool access and accountability. Maintain this system and consider implementing in other areas to further improve efficiency."
+For areas of improvement, each finding must follow this format:
+1. The specific issue observed
+2. The impact on operations
+3. A clear, actionable solution with expected benefits
 
-"Organized storage area with clear labeling system. This practice reduces search time and maintains inventory control. Consider expanding labeling system to include quantity indicators for better stock management."
+Example improvement finding:
+"Scattered tools on workbench visible in multiple areas. Current state causes time waste searching for tools. Create shadow boards with designated spots for each tool and label clearly to improve efficiency and reduce search time."
 
 Provide your response in valid JSON format with these exact fields:
 {
@@ -91,8 +92,7 @@ Provide your response in valid JSON format with these exact fields:
   "standardize_score": number (0-10),
   "sustain_score": number (0-10),
   "strengths": string[] (only include clearly visible positive practices),
-  "weaknesses": string[] (include areas needing improvement),
-  "opportunities": string[] (specific improvements with expected benefits)
+  "weaknesses": string[] (include specific issues, impacts, and solutions)
 }`;
 
     const analyses = [];
@@ -161,7 +161,7 @@ Provide your response in valid JSON format with these exact fields:
       const requiredFields = [
         'sort_score', 'set_in_order_score', 'shine_score', 
         'standardize_score', 'sustain_score', 'strengths', 
-        'weaknesses', 'opportunities'
+        'weaknesses'
       ];
 
       for (const field of requiredFields) {
@@ -181,8 +181,7 @@ Provide your response in valid JSON format with these exact fields:
       standardize_score: Math.round(analyses.reduce((sum, a) => sum + a.standardize_score, 0) / analyses.length * 10) / 10,
       sustain_score: Math.round(analyses.reduce((sum, a) => sum + a.sustain_score, 0) / analyses.length * 10) / 10,
       strengths: [...new Set(analyses.flatMap(a => a.strengths))],
-      weaknesses: [...new Set(analyses.flatMap(a => a.weaknesses))],
-      opportunities: [...new Set(analyses.flatMap(a => a.opportunities))]
+      weaknesses: [...new Set(analyses.flatMap(a => a.weaknesses))]
     };
 
     console.log('Final combined analysis:', combinedAnalysis);

@@ -28,8 +28,8 @@ export const SWOTAnalysis = ({ strengths, weaknesses }: SWOTAnalysisProps) => {
       <Card className="p-4">
         <h3 className="font-semibold text-red-600 mb-2">Areas for Improvement</h3>
         <p className="text-sm text-gray-600 mb-3">
-          Identify areas that need attention and improvement in the workspace
-          organization, cleanliness, and standardization.
+          For each finding below, we identify the specific issue, its impact on operations,
+          and provide a clear, actionable solution with expected benefits.
         </p>
         {renderList(weaknesses)}
       </Card>
