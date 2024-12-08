@@ -15,18 +15,8 @@ async function fetchImageAsBase64(imageUrl: string): Promise<string> {
       throw new Error(`Failed to fetch image: ${response.status} ${response.statusText}`);
     }
     
-    const arrayBuffer = await response.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
-    
-    const chunkSize = 0x8000;
-    let binary = '';
-    
-    for (let i = 0; i < uint8Array.length; i += chunkSize) {
-      const chunk = uint8Array.slice(i, i + chunkSize);
-      binary += String.fromCharCode.apply(null, chunk);
-    }
-    
-    const base64 = btoa(binary);
+    const buffer = await response.arrayBuffer();
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
     console.log('Successfully converted image to base64');
     return base64;
   } catch (error) {
@@ -44,7 +34,7 @@ serve(async (req) => {
     const { imageUrls } = await req.json();
     console.log('Analyzing images:', imageUrls);
 
-    const systemPrompt = `You are a 5S workplace organization expert analyzing workplace images. Focus ONLY on what you can actually see in the images and provide a consolidated analysis across all images as a group.
+    const systemPrompt = `You are a 5S workplace organization expert analyzing workplace images. Evaluate all photos as a single workcenter and consolidate common issues across photos. Focus ONLY on what you can actually see in the images.
 
 For each 5S principle, provide a score from 0-10 based on visible evidence across all images:
 
@@ -73,11 +63,11 @@ Sustain (Shitsuke):
 - Check if improvements appear to be maintained
 - Observe signs of continuous improvement
 
-For strengths, provide specific positive practices observed:
+For strengths, provide specific positive practices observed across all photos:
 "Well-organized tool shadow board visible in work area. Current setup enables quick tool access and accountability. Maintain this system and consider implementing in other areas."
 
-For areas of improvement, each finding must follow this format:
-1. The specific issue observed
+For areas of improvement, consolidate common issues across all photos into single findings. Each finding must follow this format:
+1. The specific issue observed across photos
 2. The impact on operations
 3. A clear, actionable solution with expected benefits
 
@@ -92,7 +82,7 @@ Provide your response in valid JSON format with these exact fields:
   "standardize_score": number (0-10),
   "sustain_score": number (0-10),
   "strengths": string[] (only include clearly visible positive practices),
-  "weaknesses": string[] (include specific issues, impacts, and solutions)
+  "weaknesses": string[] (include consolidated issues, impacts, and solutions)
 }`;
 
     const analyses = [];
