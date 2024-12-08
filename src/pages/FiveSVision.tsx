@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, Loader2, Save, Mail } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -9,6 +9,9 @@ import { FiveSVisionImageUploader } from "@/components/FiveSVisionImageUploader"
 import { FiveSRadarChart } from "@/components/FiveSRadarChart";
 import { SWOTAnalysis } from "@/components/SWOTAnalysis";
 import { FiveSTrend } from "@/components/FiveSTrend";
+import { FiveSEvaluationHeader } from "@/components/FiveSEvaluationHeader";
+import { FiveSEvaluationSummary } from "@/components/FiveSEvaluationSummary";
+import { FiveSEvaluationImages } from "@/components/FiveSEvaluationImages";
 import { uploadImages, analyzeImages, createEvaluation, saveImageReferences } from "@/services/fiveSEvaluationService";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -51,21 +54,12 @@ const FiveSVision = () => {
 
     try {
       setIsAnalyzing(true);
-      console.log('Starting image upload...');
-      
       const imageUrls = await uploadImages(images);
-      console.log('Images uploaded:', imageUrls);
-      
       const analysis = await analyzeImages(imageUrls);
-      console.log('Analysis received:', analysis);
-      
       const evaluation = await createEvaluation(selectedWorkcenter, analysis);
-      console.log('Evaluation created:', evaluation);
-      
       await saveImageReferences(evaluation.id, imageUrls);
       
       setEvaluationId(evaluation.id);
-      
       toast({
         title: "Success",
         description: "5S evaluation completed successfully",
@@ -73,7 +67,6 @@ const FiveSVision = () => {
       
       setImages([]);
       setSelectedWorkcenter("");
-      
     } catch (error) {
       console.error('Error during evaluation:', error);
       toast({
@@ -114,11 +107,6 @@ const FiveSVision = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center gap-3 mb-8">
-        <Eye className="h-8 w-8 text-secondary" />
-        <h1 className="text-3xl font-bold">5S Vision Evaluation</h1>
-      </div>
-
       {!evaluationId ? (
         <Card className="p-6">
           <div className="space-y-6">
@@ -157,82 +145,48 @@ const FiveSVision = () => {
             </div>
           ) : evaluation && (
             <>
-              <Card className="p-6">
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h2 className="text-2xl font-semibold">Results Summary</h2>
-                      <div className="space-y-2 mt-4">
-                        <p><span className="font-medium">Workcenter:</span> {evaluation.workcenter?.name}</p>
-                        <p><span className="font-medium">Average Score:</span> {calculateAverageScore(evaluation).toFixed(2)}</p>
-                        <p><span className="font-medium">Evaluation Date:</span> {new Date(evaluation.created_at).toLocaleDateString()}</p>
-                      </div>
-                    </div>
-                    <div className="space-x-4">
-                      <Button variant="outline" onClick={handleSavePDF}>
-                        <Save className="w-4 h-4 mr-2" />
-                        Save as PDF
-                      </Button>
-                      <Button variant="outline" onClick={handleEmailPDF}>
-                        <Mail className="w-4 h-4 mr-2" />
-                        Email PDF
-                      </Button>
-                    </div>
-                  </div>
+              <FiveSEvaluationHeader
+                workcenterId={evaluation.workcenter_id}
+                onSavePDF={handleSavePDF}
+                onEmailPDF={handleEmailPDF}
+              />
 
-                  {/* 2x2 Image Grid */}
-                  <div className="grid grid-cols-2 gap-4 mt-6">
-                    <img
-                      src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7"
-                      alt="Evaluation Image 1"
-                      className="w-full h-48 object-cover rounded-lg"
-                    />
-                    <img
-                      src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b"
-                      alt="Evaluation Image 2"
-                      className="w-full h-48 object-cover rounded-lg"
-                    />
-                    <img
-                      src="https://images.unsplash.com/photo-1518770660439-4636190af475"
-                      alt="Evaluation Image 3"
-                      className="w-full h-48 object-cover rounded-lg"
-                    />
-                    <img
-                      src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6"
-                      alt="Evaluation Image 4"
-                      className="w-full h-48 object-cover rounded-lg"
-                    />
-                  </div>
+              <Card className="p-6">
+                <FiveSEvaluationSummary
+                  workcenterName={evaluation.workcenter?.name}
+                  averageScore={calculateAverageScore(evaluation)}
+                  evaluationDate={new Date(evaluation.created_at).toLocaleDateString()}
+                />
+                
+                <FiveSEvaluationImages images={evaluation.evaluation_images} />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                  <Card className="p-6">
+                    <h3 className="text-xl font-semibold mb-4">5S Scores</h3>
+                    <FiveSRadarChart scores={evaluation} />
+                  </Card>
+                  <FiveSTrend workcenterId={evaluation.workcenter_id} />
+                </div>
+
+                <Card className="p-6 mt-6">
+                  <h3 className="text-xl font-semibold mb-4">Analysis & Recommendations</h3>
+                  <SWOTAnalysis
+                    strengths={evaluation.strengths || []}
+                    weaknesses={evaluation.weaknesses || []}
+                    opportunities={evaluation.opportunities || []}
+                    threats={evaluation.threats || []}
+                  />
+                </Card>
+
+                <div className="text-center mt-6">
+                  <Button
+                    onClick={() => setEvaluationId(null)}
+                    variant="outline"
+                  >
+                    Start New Evaluation
+                  </Button>
                 </div>
               </Card>
-
-              {/* Side by side charts */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="p-6">
-                  <h3 className="text-xl font-semibold mb-4">5S Scores</h3>
-                  <FiveSRadarChart scores={evaluation} />
-                </Card>
-                <FiveSTrend workcenterId={evaluation.workcenter_id} />
-              </div>
-
-              <Card className="p-6">
-                <h3 className="text-xl font-semibold mb-4">Analysis & Recommendations</h3>
-                <SWOTAnalysis
-                  strengths={evaluation.strengths || []}
-                  weaknesses={evaluation.weaknesses || []}
-                  opportunities={evaluation.opportunities || []}
-                  threats={evaluation.threats || []}
-                />
-              </Card>
-
-              <div className="text-center">
-                <Button
-                  onClick={() => setEvaluationId(null)}
-                  variant="outline"
-                >
-                  Start New Evaluation
-                </Button>
-              </div>
             </>
           )}
         </div>

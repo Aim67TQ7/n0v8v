@@ -1,4 +1,4 @@
-import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar, Tooltip, Text } from 'recharts';
+import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Tooltip } from 'recharts';
 
 interface FiveSScores {
   sort_score: number;
@@ -11,15 +11,6 @@ interface FiveSScores {
 interface FiveSRadarChartProps {
   scores: FiveSScores;
 }
-
-const CustomLabel = ({ x, y, value, cx }: any) => {
-  const adjustedX = x > cx ? x + 10 : x - 30;
-  return (
-    <Text x={adjustedX} y={y} fontSize={12}>
-      {value.toFixed(1)}
-    </Text>
-  );
-};
 
 export const FiveSRadarChart = ({ scores }: FiveSRadarChartProps) => {
   const data = [
@@ -35,15 +26,18 @@ export const FiveSRadarChart = ({ scores }: FiveSRadarChartProps) => {
       <RadarChart data={data}>
         <PolarGrid />
         <PolarAngleAxis dataKey="category" />
+        <PolarRadiusAxis domain={[0, 10]} tickCount={6} />
         <Radar
           name="Score"
           dataKey="value"
           stroke="#2563eb"
           fill="#3b82f6"
           fillOpacity={0.6}
-          label={<CustomLabel />}
         />
-        <Tooltip />
+        <Tooltip 
+          formatter={(value: number) => [value.toFixed(1), 'Score']}
+          labelFormatter={(label: string) => `${label}`}
+        />
       </RadarChart>
     </ResponsiveContainer>
   );
