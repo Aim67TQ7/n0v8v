@@ -69,7 +69,7 @@ Provide your response in valid JSON format with these exact fields:
         method: 'POST',
         headers: {
           'anthropic-version': '2023-06-01',
-          'anthropic-api-key': apiKey,
+          'x-api-key': apiKey,
           'content-type': 'application/json',
         },
         body: JSON.stringify({
