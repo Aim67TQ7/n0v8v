@@ -1,4 +1,4 @@
-import { Eye, ClipboardList } from "lucide-react";
+import { Eye, ClipboardList, Headset, Wrench, ShieldCheck, Factory, Package } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 
@@ -16,6 +16,40 @@ const modulesList = [
     icon: ClipboardList,
     href: "/processes",
     status: "coming-soon"
+  },
+  {
+    title: "Operations Management",
+    description: "Comprehensive operations control and optimization",
+    icon: Factory,
+    href: "/operations",
+    status: "coming-soon",
+    sections: [
+      {
+        title: "Customer Support",
+        description: "Manage customer service operations",
+        icon: Headset
+      },
+      {
+        title: "Engineering",
+        description: "Technical operations and development",
+        icon: Wrench
+      },
+      {
+        title: "Quality Assurance",
+        description: "Quality control and testing processes",
+        icon: ShieldCheck
+      },
+      {
+        title: "Production",
+        description: "Manufacturing and production management",
+        icon: Factory
+      },
+      {
+        title: "Supply Chain",
+        description: "Supply chain and logistics management",
+        icon: Package
+      }
+    ]
   }
 ];
 
@@ -41,6 +75,16 @@ const Modules = () => {
                 <div>
                   <h3 className="text-xl font-semibold mb-2">{module.title}</h3>
                   <p className="text-gray-600">{module.description}</p>
+                  {module.sections && (
+                    <div className="mt-4 space-y-2">
+                      {module.sections.map((section) => (
+                        <div key={section.title} className="flex items-center gap-2 text-sm text-gray-500">
+                          <section.icon className="h-4 w-4" />
+                          <span>{section.title}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   {module.status === "coming-soon" && (
                     <span className="inline-block mt-2 text-sm bg-accent px-2 py-1 rounded">
                       Coming Soon

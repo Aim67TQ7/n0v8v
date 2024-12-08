@@ -3,7 +3,8 @@ import {
   Users, 
   Settings, 
   Database,
-  ChartBar 
+  ChartBar,
+  Building2
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
@@ -42,6 +43,13 @@ const modules = [
     description: "Configure your workspace",
     icon: Settings,
     href: "/settings",
+    status: "coming-soon"
+  },
+  {
+    title: "Operations Management",
+    description: "Manage and optimize operational processes",
+    icon: Building2,
+    href: "/operations",
     status: "coming-soon"
   }
 ];
