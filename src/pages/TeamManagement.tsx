@@ -7,22 +7,7 @@ import { TeamFilter } from "@/components/team/TeamFilter";
 import { DepartmentTable } from "@/components/team/DepartmentTable";
 import { Database } from "@/integrations/supabase/types";
 
-type Department = Database["public"]["Tables"]["departments"]["Row"] & {
-  leader: {
-    id: string;
-    first_name: string | null;
-    last_name: string | null;
-    photo_url: string | null;
-  } | null;
-  department_members: {
-    profile: {
-      id: string;
-      first_name: string | null;
-      last_name: string | null;
-      photo_url: string | null;
-    } | null;
-  }[];
-};
+type Workcenter = Database["public"]["Tables"]["workcenters"]["Row"];
 
 const TeamManagement = () => {
   const session = useSession();
@@ -31,32 +16,16 @@ const TeamManagement = () => {
   const [sortField, setSortField] = useState("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-  const { data: departments, isLoading } = useQuery<Department[]>({
-    queryKey: ["departments"],
+  const { data: workcenters, isLoading } = useQuery<Workcenter[]>({
+    queryKey: ["workcenters"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("departments")
-        .select(`
-          *,
-          leader:leader_id(
-            id,
-            first_name,
-            last_name,
-            photo_url
-          ),
-          department_members(
-            profile:profile_id(
-              id,
-              first_name,
-              last_name,
-              photo_url
-            )
-          )
-        `)
+        .from("workcenters")
+        .select("*")
         .order(sortField, { ascending: sortDirection === "asc" });
 
       if (error) throw error;
-      return data as Department[];
+      return data;
     },
     enabled: !!session?.user?.id,
   });
@@ -70,20 +39,15 @@ const TeamManagement = () => {
     }
   };
 
-  const filteredDepartments = departments?.filter((dept) => {
+  const filteredWorkcenters = workcenters?.filter((workcenter) => {
     if (!filter) return true;
     const searchTerm = filter.toLowerCase();
 
     switch (filterBy) {
       case "department":
-        return dept.name.toLowerCase().includes(searchTerm);
-      case "location":
-        return dept.location.toLowerCase().includes(searchTerm);
-      case "leader":
-        return (
-          dept.leader?.first_name?.toLowerCase().includes(searchTerm) ||
-          dept.leader?.last_name?.toLowerCase().includes(searchTerm)
-        );
+        return workcenter.department.toLowerCase().includes(searchTerm);
+      case "name":
+        return workcenter.name.toLowerCase().includes(searchTerm);
       default:
         return true;
     }
@@ -92,7 +56,7 @@ const TeamManagement = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Team Management</h1>
+        <h1 className="text-3xl font-bold">Work Centers</h1>
       </div>
 
       <div className="space-y-6">
@@ -111,7 +75,7 @@ const TeamManagement = () => {
         ) : (
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <DepartmentTable
-              departments={filteredDepartments || []}
+              departments={filteredWorkcenters || []}
               sortField={sortField}
               sortDirection={sortDirection}
               onSort={handleSort}

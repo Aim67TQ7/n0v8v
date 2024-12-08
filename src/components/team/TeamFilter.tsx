@@ -27,9 +27,8 @@ export const TeamFilter = ({
           <SelectValue placeholder="Filter by..." />
         </SelectTrigger>
         <SelectContent>
+          <SelectItem value="name">Work Center</SelectItem>
           <SelectItem value="department">Department</SelectItem>
-          <SelectItem value="location">Location</SelectItem>
-          <SelectItem value="leader">Leader</SelectItem>
         </SelectContent>
       </Select>
       <Input
