@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import Anthropic from 'https://esm.sh/@anthropic-ai/sdk@0.17.1'
+import { compress } from "https://deno.land/x/compress@v0.4.5/mod.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,7 +13,6 @@ serve(async (req) => {
   }
 
   try {
-    // Get the API key from environment variables
     const apiKey = Deno.env.get('ANTHROPIC_API_KEY')
     if (!apiKey) {
       throw new Error('ANTHROPIC_API_KEY is not set in environment variables')
@@ -25,26 +25,12 @@ serve(async (req) => {
     const { imageUrls } = await req.json()
     console.log('Received image URLs:', imageUrls);
 
-    const systemPrompt = `You are a 5S workplace organization expert. Analyze the provided workplace images and evaluate them based on the 5S principles:
+    // Analyze each image separately and collect results
+    const analyses = [];
+    for (const url of imageUrls) {
+      const systemPrompt = `You are a 5S workplace organization expert. Analyze the provided workplace image and evaluate it based on the 5S principles. Provide your response in valid JSON format with numerical scores from 1-5 for each principle and lists of observations.
 
-1. Sort (Seiri): Evaluate how well items are organized and unnecessary items are removed
-2. Set in Order (Seiton): Assess the arrangement and accessibility of necessary items
-3. Shine (Seiso): Check cleanliness and maintenance of the workspace
-4. Standardize (Seiketsu): Look for evidence of consistent procedures and visual management
-5. Sustain (Shitsuke): Evaluate adherence to standards and continuous improvement practices
-
-For each principle, provide:
-1. A numerical score from 1-5
-2. Specific observations that justify the score
-3. Clear, actionable recommendations for improvement
-
-Also identify:
-- Key strengths: What's working well and should be maintained
-- Weaknesses: Areas that need immediate attention
-- Opportunities: Potential improvements that could enhance efficiency
-- Threats: Safety concerns or risks that need addressing
-
-Format your response as a JSON object with the following structure:
+Your response must be a JSON object with exactly these fields and types:
 {
   "sort_score": number,
   "set_in_order_score": number,
@@ -57,47 +43,60 @@ Format your response as a JSON object with the following structure:
   "threats": string[]
 }`;
 
-    const imagePrompt = imageUrls.map((url: string) => `Image URL: ${url}`).join('\n')
-
-    console.log('Sending request to Anthropic...');
-    const message = await anthropic.messages.create({
-      model: "claude-3-opus-20240229",
-      max_tokens: 1024,
-      messages: [
-        { role: "user", content: [
-          { type: "text", text: systemPrompt },
-          { type: "text", text: imagePrompt }
-        ]}
-      ],
-    });
-    console.log('Received response from Anthropic');
-
-    // Parse the response text as JSON
-    let analysis;
-    try {
-      analysis = JSON.parse(message.content[0].text);
-    } catch (parseError) {
-      console.error('Failed to parse Anthropic response:', message.content[0].text);
-      throw new Error('Failed to parse AI response as JSON. Please ensure the response follows the required format.');
-    }
-
-    // Validate the response structure
-    const requiredFields = [
-      'sort_score', 'set_in_order_score', 'shine_score', 
-      'standardize_score', 'sustain_score', 'strengths', 
-      'weaknesses', 'opportunities', 'threats'
-    ];
-
-    for (const field of requiredFields) {
-      if (!(field in analysis)) {
-        throw new Error(`Missing required field in AI response: ${field}`);
+      console.log('Sending request to Anthropic for image:', url);
+      const message = await anthropic.messages.create({
+        model: "claude-3-opus-20240229",
+        max_tokens: 1024,
+        messages: [
+          { role: "user", content: [
+            { type: "text", text: systemPrompt },
+            { type: "text", text: `Image URL: ${url}` }
+          ]}
+        ],
+      });
+      
+      let analysis;
+      try {
+        analysis = JSON.parse(message.content[0].text);
+        console.log('Successfully parsed analysis for image:', url);
+      } catch (error) {
+        console.error('Failed to parse Anthropic response:', message.content[0].text);
+        throw new Error('Failed to parse AI response as JSON. Response must be valid JSON.');
       }
+
+      // Validate required fields
+      const requiredFields = [
+        'sort_score', 'set_in_order_score', 'shine_score', 
+        'standardize_score', 'sustain_score', 'strengths', 
+        'weaknesses', 'opportunities', 'threats'
+      ];
+
+      for (const field of requiredFields) {
+        if (!(field in analysis)) {
+          throw new Error(`Missing required field in AI response: ${field}`);
+        }
+      }
+
+      analyses.push(analysis);
     }
 
-    console.log('Parsed and validated analysis:', analysis);
+    // Calculate average scores and combine observations
+    const combinedAnalysis = {
+      sort_score: analyses.reduce((sum, a) => sum + a.sort_score, 0) / analyses.length,
+      set_in_order_score: analyses.reduce((sum, a) => sum + a.set_in_order_score, 0) / analyses.length,
+      shine_score: analyses.reduce((sum, a) => sum + a.shine_score, 0) / analyses.length,
+      standardize_score: analyses.reduce((sum, a) => sum + a.standardize_score, 0) / analyses.length,
+      sustain_score: analyses.reduce((sum, a) => sum + a.sustain_score, 0) / analyses.length,
+      strengths: [...new Set(analyses.flatMap(a => a.strengths))],
+      weaknesses: [...new Set(analyses.flatMap(a => a.weaknesses))],
+      opportunities: [...new Set(analyses.flatMap(a => a.opportunities))],
+      threats: [...new Set(analyses.flatMap(a => a.threats))]
+    };
+
+    console.log('Final combined analysis:', combinedAnalysis);
 
     return new Response(
-      JSON.stringify(analysis),
+      JSON.stringify(combinedAnalysis),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {

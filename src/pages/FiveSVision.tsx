@@ -7,6 +7,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { FiveSImageUpload } from "@/components/FiveSImageUpload";
+import { compressImage } from "@/utils/imageCompression";
 
 const FiveSVision = () => {
   const [selectedWorkcenter, setSelectedWorkcenter] = useState<string>("");
@@ -26,6 +27,49 @@ const FiveSVision = () => {
       return data;
     }
   });
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length > 4) {
+      toast({
+        title: "Too many images",
+        description: "Please select up to 4 images only",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const compressedFiles = await Promise.all(files.map(compressImage));
+      setImages([...images, ...compressedFiles].slice(0, 4));
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to process images",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleImageRemove = (index: number) => {
+    setImages(images.filter((_, i) => i !== index));
+  };
+
+  const handleCameraCapture = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      // Here you would typically open a modal with the camera stream
+      // and allow the user to capture an image
+      // For now, we'll just stop the stream
+      stream.getTracks().forEach(track => track.stop());
+    } catch (error) {
+      toast({
+        title: "Camera access denied",
+        description: "Please allow camera access to take photos",
+        variant: "destructive"
+      });
+    }
+  };
 
   const uploadMutation = useMutation({
     mutationFn: async (files: File[]) => {
@@ -65,39 +109,6 @@ const FiveSVision = () => {
       return response.data;
     }
   });
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
-    if (files.length > 4) {
-      toast({
-        title: "Too many images",
-        description: "Please select up to 4 images only",
-        variant: "destructive"
-      });
-      return;
-    }
-    setImages([...images, ...files].slice(0, 4));
-  };
-
-  const handleImageRemove = (index: number) => {
-    setImages(images.filter((_, i) => i !== index));
-  };
-
-  const handleCameraCapture = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      // Here you would typically open a modal with the camera stream
-      // and allow the user to capture an image
-      // For now, we'll just stop the stream
-      stream.getTracks().forEach(track => track.stop());
-    } catch (error) {
-      toast({
-        title: "Camera access denied",
-        description: "Please allow camera access to take photos",
-        variant: "destructive"
-      });
-    }
-  };
 
   const handleSubmit = async () => {
     if (!selectedWorkcenter || images.length === 0) {
