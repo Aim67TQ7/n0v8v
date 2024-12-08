@@ -1,61 +1,33 @@
-import { 
-  LayoutDashboard, 
-  Users, 
-  Settings, 
-  Database,
-  ChartBar 
-} from "lucide-react";
-import { Link } from "react-router-dom";
+import { Eye, ClipboardList } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
-const modules = [
+const modulesList = [
   {
-    title: "Modules",
-    description: "Overview of available modules and features",
-    icon: LayoutDashboard,
-    href: "/modules",
-    status: "ready"
-  },
-  {
-    title: "Team Management",
-    description: "Manage your team and assignments",
-    icon: Users,
-    href: "/team",
+    title: "5S Vision",
+    description: "Visual workplace organization and standardization",
+    icon: Eye,
+    href: "/5svision",
     status: "coming-soon"
   },
   {
-    title: "Analytics",
-    description: "Performance metrics and insights",
-    icon: ChartBar,
-    href: "/analytics",
-    status: "coming-soon"
-  },
-  {
-    title: "Data Management",
-    description: "Manage and organize your data",
-    icon: Database,
-    href: "/data",
-    status: "coming-soon"
-  },
-  {
-    title: "Settings",
-    description: "Configure your workspace",
-    icon: Settings,
-    href: "/settings",
+    title: "Process Documentation",
+    description: "Create and manage standard operating procedures",
+    icon: ClipboardList,
+    href: "/processes",
     status: "coming-soon"
   }
 ];
 
-export const Dashboard = () => {
+const Modules = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-3 mb-8">
-        <LayoutDashboard className="h-8 w-8 text-secondary" />
-        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <h1 className="text-3xl font-bold">Available Modules</h1>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {modules.map((module) => (
+        {modulesList.map((module) => (
           <Link 
             key={module.title} 
             to={module.href}
@@ -83,3 +55,5 @@ export const Dashboard = () => {
     </div>
   );
 };
+
+export default Modules;

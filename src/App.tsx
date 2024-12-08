@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AuthWrapper } from "@/components/AuthWrapper";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
+import Modules from "./pages/Modules";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,14 @@ const App = () => (
               element={
                 <AuthWrapper>
                   <Index />
+                </AuthWrapper>
+              }
+            />
+            <Route
+              path="/modules"
+              element={
+                <AuthWrapper>
+                  <Modules />
                 </AuthWrapper>
               }
             />
