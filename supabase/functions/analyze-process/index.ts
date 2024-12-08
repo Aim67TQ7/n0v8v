@@ -15,6 +15,7 @@ serve(async (req) => {
     console.log('Processing request for process analysis');
     const formData = await req.formData();
     
+    // Extract and validate required fields
     const imageFile = formData.get('image');
     const workcenter = formData.get('workcenter');
     const selectedAreaStr = formData.get('selectedArea');
@@ -24,6 +25,7 @@ serve(async (req) => {
     }
 
     console.log('Converting image to base64');
+    // Convert image to base64 efficiently
     const imageArrayBuffer = await (imageFile as File).arrayBuffer();
     const base64Image = btoa(
       new Uint8Array(imageArrayBuffer)
@@ -32,17 +34,15 @@ serve(async (req) => {
     
     const selectedArea = selectedAreaStr ? JSON.parse(selectedAreaStr as string) : null;
     
-    console.log('Sending request to Anthropic API');
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    console.log('Preparing OpenAI request');
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'x-api-key': Deno.env.get('ANTHROPIC_API_KEY') || '',
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
+        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-3-opus-20240229',
-        max_tokens: 1024,
+        model: 'gpt-4o',
         messages: [
           {
             role: 'user',
@@ -62,34 +62,33 @@ serve(async (req) => {
                 Format your response in clear, concise bullet points.`
               },
               {
-                type: 'image',
-                source: {
-                  type: 'base64',
-                  media_type: 'image/jpeg',
-                  data: base64Image
+                type: 'image_url',
+                image_url: {
+                  url: `data:image/jpeg;base64,${base64Image}`,
+                  detail: 'high'
                 }
               }
             ]
           }
-        ]
+        ],
+        max_tokens: 1000,
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.text();
-      console.error('Anthropic API error:', errorData);
-      throw new Error(`Anthropic API error: ${response.status} - ${errorData}`);
+      console.error('OpenAI API error:', errorData);
+      throw new Error(`OpenAI API error: ${response.status} - ${errorData}`);
     }
 
     const data = await response.json();
-    console.log('Successfully received Anthropic response');
+    console.log('Successfully received OpenAI response');
 
-    if (!data.content || !data.content[0] || !data.content[0].text) {
-      console.error('Unexpected Anthropic response structure:', data);
-      throw new Error('Invalid response structure from Anthropic API');
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error('Invalid response structure from OpenAI API');
     }
 
-    const analysis = data.content[0].text;
+    const analysis = data.choices[0].message.content;
 
     return new Response(
       JSON.stringify({ analysis }),
