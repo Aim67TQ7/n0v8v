@@ -68,8 +68,8 @@ Provide your response in valid JSON format with these exact fields:
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
-          'x-api-key': apiKey,
           'anthropic-version': '2023-06-01',
+          'x-api-key': apiKey,
           'content-type': 'application/json',
         },
         body: JSON.stringify({
@@ -83,7 +83,7 @@ Provide your response in valid JSON format with these exact fields:
                 { type: 'image', source: { type: 'url', url } }
               ]
             }
-          ],
+          ]
         }),
       });
 
