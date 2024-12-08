@@ -68,7 +68,7 @@ const modulesList = [
 
 const qaModules = [
   {
-    title: "Process Improvement",
+    title: "Part Analysis",
     description: "AI-powered quality analysis and process optimization",
     icon: Microscope,
     href: "/operations/quality/process-improvement",
