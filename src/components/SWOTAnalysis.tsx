@@ -3,10 +3,11 @@ import { Card } from "@/components/ui/card";
 interface SWOTAnalysisProps {
   strengths: string[];
   weaknesses: string[];
-  opportunities?: string[]; // Made optional since we won't use it
+  sortScore?: number;
+  setScore?: number;
 }
 
-export const SWOTAnalysis = ({ strengths, weaknesses }: SWOTAnalysisProps) => {
+export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore }: SWOTAnalysisProps) => {
   const renderList = (items: string[]) => (
     <ul className="list-disc pl-5 space-y-4">
       {items.map((item, index) => (
@@ -14,6 +15,16 @@ export const SWOTAnalysis = ({ strengths, weaknesses }: SWOTAnalysisProps) => {
       ))}
     </ul>
   );
+
+  // Filter weaknesses based on scores
+  const shouldShowAllWeaknesses = (sortScore === undefined || setScore === undefined) || 
+    (sortScore >= 8 && setScore >= 8);
+  
+  const filteredWeaknesses = shouldShowAllWeaknesses ? weaknesses : 
+    weaknesses.filter(weakness => 
+      (sortScore < 8 && weakness.toLowerCase().includes('sort')) || 
+      (setScore < 8 && weakness.toLowerCase().includes('set in order'))
+    );
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -31,7 +42,7 @@ export const SWOTAnalysis = ({ strengths, weaknesses }: SWOTAnalysisProps) => {
           Each finding below identifies a specific issue across the workcenter,
           its impact on operations, and provides a clear solution with expected benefits.
         </p>
-        {renderList(weaknesses)}
+        {renderList(filteredWeaknesses)}
       </Card>
     </div>
   );

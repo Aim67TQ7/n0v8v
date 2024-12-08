@@ -177,6 +177,8 @@ const FiveSVision = () => {
                   <SWOTAnalysis
                     strengths={evaluation.strengths || []}
                     weaknesses={evaluation.weaknesses || []}
+                    sortScore={evaluation.sort_score}
+                    setScore={evaluation.set_in_order_score}
                   />
                 </Card>
 
