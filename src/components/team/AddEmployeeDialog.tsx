@@ -56,27 +56,27 @@ export const AddEmployeeDialog = () => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      // First create a profile
-      const { data: newProfile, error: profileError } = await supabase
-        .from("profiles")
-        .insert({
-          first_name: data.firstName,
-          last_name: data.lastName,
-          email: data.email,
-          company_id: profile?.company_id,
-          role: "employee"
-        })
-        .select()
-        .single();
+      // First create auth user
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: data.email,
+        password: Math.random().toString(36).slice(-8), // Generate random password
+        options: {
+          data: {
+            first_name: data.firstName,
+            last_name: data.lastName,
+          }
+        }
+      });
 
-      if (profileError) throw profileError;
+      if (authError) throw authError;
+      if (!authData.user) throw new Error("No user returned from auth signup");
 
       // Then create the employee record
       const { error: employeeError } = await supabase
         .from("employees")
         .insert({
           employee_number: data.employeeNumber,
-          profile_id: newProfile.id,
+          profile_id: authData.user.id,
           company_id: profile?.company_id,
           start_date: data.startDate,
           manager_id: data.managerId

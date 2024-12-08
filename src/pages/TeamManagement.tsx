@@ -16,7 +16,7 @@ const TeamManagement = () => {
   const session = useSession();
   const [filter, setFilter] = useState("");
   const [filterBy, setFilterBy] = useState("department");
-  const [sortField, setSortField] = useState("name");
+  const [sortField, setSortField] = useState("employee_number");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   const { data: workcenters, isLoading: isLoadingWorkcenters } = useQuery({
@@ -34,7 +34,7 @@ const TeamManagement = () => {
   });
 
   const { data: employees, isLoading: isLoadingEmployees } = useQuery({
-    queryKey: ["employees"],
+    queryKey: ["employees", sortField, sortDirection],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("employees")
