@@ -10,10 +10,19 @@ export const FiveSEvaluationSummary = ({ workcenterName, averageScore, evaluatio
   const percentageScore = (averageScore / 50) * 100;
 
   return (
-    <div className="space-y-2 mt-4">
-      <p><span className="font-medium">Workcenter:</span> {workcenterName}</p>
-      <p><span className="font-medium">Score:</span> {percentageScore.toFixed(1)}% ({averageScore.toFixed(1)} / 50 points)</p>
-      <p><span className="font-medium">Evaluation Date:</span> {evaluationDate}</p>
+    <div className="space-y-4 mt-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold">{workcenterName}</h2>
+          <p className="text-gray-600">{evaluationDate}</p>
+        </div>
+        <div className="text-right">
+          <div className="text-4xl font-bold text-primary">
+            {percentageScore.toFixed(1)}%
+          </div>
+          <p className="text-sm text-gray-600">({averageScore.toFixed(1)} / 50 points)</p>
+        </div>
+      </div>
     </div>
   );
 };

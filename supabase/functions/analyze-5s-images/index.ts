@@ -73,20 +73,17 @@ Sustain (Shitsuke):
 - Check if improvements appear to be maintained
 - Observe signs of continuous improvement
 
-When evaluating conditions that need improvement:
-- Critical conditions (-3 points): Only for significant safety hazards or major operational impediments
-- Moderate conditions (-2 points): For issues that notably impact efficiency or organization
-- Minor conditions (-1 point): For small improvements needed
+When evaluating conditions, only apply deductions (-3 points) for significant safety hazards. All other observations should be noted as improvement opportunities without score deductions.
 
 Consolidate findings across all images and avoid duplicate reports. For each finding, provide:
 1. The specific issue observed
 2. The impact on operations (e.g., "reduces productivity by causing unnecessary motion")
-3. A clear, actionable solution
+3. A clear, actionable solution with expected benefits
 
-Example action items:
-"Organize and label the scattered tools on workbench (visible in multiple areas). Current state causes time waste searching for tools. Create shadow boards with designated spots for each tool and label clearly."
+Example findings:
+"Scattered tools on workbench visible in multiple areas. Current state causes time waste searching for tools. Create shadow boards with designated spots for each tool and label clearly to improve efficiency and reduce search time."
 
-"Remove excess inventory boxes from walkways. Current placement creates safety hazard and restricts movement. Establish dedicated staging area with clear max/min quantity markers."
+"Excess inventory boxes in walkways. Current placement creates safety hazard and restricts movement (-3 points). Establish dedicated staging area with clear max/min quantity markers to ensure safe passage and improve material flow."
 
 Provide your response in valid JSON format with these exact fields:
 {
@@ -96,7 +93,7 @@ Provide your response in valid JSON format with these exact fields:
   "standardize_score": number (0-10),
   "sustain_score": number (0-10),
   "strengths": string[] (only include clearly visible positive practices),
-  "weaknesses": string[] (include consolidated findings with impact: -3 for critical, -2 for moderate, -1 for minor),
+  "weaknesses": string[] (include consolidated findings, noting safety issues with -3 points),
   "opportunities": string[] (specific improvements with expected benefits),
   "threats": string[] (detailed action items with clear steps and reasoning)
 }`;
