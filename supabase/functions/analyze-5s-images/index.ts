@@ -10,7 +10,22 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Helper function to convert ArrayBuffer to base64 in chunks
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  const chunkSize = 8192; // Process in 8KB chunks
+  let binary = '';
+  
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const chunk = bytes.slice(i, i + chunkSize);
+    binary += String.fromCharCode(...chunk);
+  }
+  
+  return btoa(binary);
+}
+
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -29,8 +44,7 @@ serve(async (req) => {
         }
         
         const buffer = await response.arrayBuffer();
-        const bytes = new Uint8Array(buffer);
-        const base64Image = btoa(String.fromCharCode.apply(null, bytes));
+        const base64Image = arrayBufferToBase64(buffer);
         
         console.log('Analyzing image with Anthropic');
         const analysis = await analyzeImageWithAI(base64Image, anthropicApiKey || '');
