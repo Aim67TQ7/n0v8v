@@ -87,8 +87,19 @@ Provide your response in valid JSON format with these exact fields:
         }),
       });
 
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Anthropic API error:', errorData);
+        throw new Error(`Anthropic API error: ${response.status}`);
+      }
+
       const data = await response.json();
-      console.log('Anthropic response:', data);
+      console.log('Raw Anthropic response:', data);
+
+      if (!data.content || !data.content[0] || !data.content[0].text) {
+        console.error('Unexpected Anthropic response structure:', data);
+        throw new Error('Invalid response structure from Anthropic API');
+      }
 
       let analysis;
       try {
@@ -115,11 +126,11 @@ Provide your response in valid JSON format with these exact fields:
     }
 
     const combinedAnalysis = {
-      sort_score: analyses.reduce((sum, a) => sum + a.sort_score, 0) / analyses.length,
-      set_in_order_score: analyses.reduce((sum, a) => sum + a.set_in_order_score, 0) / analyses.length,
-      shine_score: analyses.reduce((sum, a) => sum + a.shine_score, 0) / analyses.length,
-      standardize_score: analyses.reduce((sum, a) => sum + a.standardize_score, 0) / analyses.length,
-      sustain_score: analyses.reduce((sum, a) => sum + a.sustain_score, 0) / analyses.length,
+      sort_score: Math.round(analyses.reduce((sum, a) => sum + a.sort_score, 0) / analyses.length * 10) / 10,
+      set_in_order_score: Math.round(analyses.reduce((sum, a) => sum + a.set_in_order_score, 0) / analyses.length * 10) / 10,
+      shine_score: Math.round(analyses.reduce((sum, a) => sum + a.shine_score, 0) / analyses.length * 10) / 10,
+      standardize_score: Math.round(analyses.reduce((sum, a) => sum + a.standardize_score, 0) / analyses.length * 10) / 10,
+      sustain_score: Math.round(analyses.reduce((sum, a) => sum + a.sustain_score, 0) / analyses.length * 10) / 10,
       strengths: [...new Set(analyses.flatMap(a => a.strengths))],
       weaknesses: [...new Set(analyses.flatMap(a => a.weaknesses))],
       opportunities: [...new Set(analyses.flatMap(a => a.opportunities))],
