@@ -40,9 +40,9 @@ Sustain (Shitsuke):
 - Observe signs of continuous improvement
 
 Safety concerns should be noted separately and categorized by severity:
-- Severe safety hazard: Immediate risk of injury
-- Moderate safety concern: Potential risk requiring attention
-- Minor safety issue: Low-risk situation needing improvement
+- Severe safety hazard (-5 points): Immediate risk of injury
+- Moderate safety concern (-3 points): Potential risk requiring attention
+- Minor safety issue (-1 point): Low-risk situation needing improvement
 
 For each finding, provide:
 1. The specific issue observed
@@ -89,6 +89,8 @@ Provide your response in valid JSON format with these exact fields:
             ]
           }
         ],
+        max_tokens: 1000,
+        temperature: 0.7
       }),
     });
 

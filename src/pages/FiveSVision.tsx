@@ -15,8 +15,13 @@ import { FiveSEvaluationImages } from "@/components/FiveSEvaluationImages";
 import { uploadImages, analyzeImages, createEvaluation, saveImageReferences } from "@/services/fiveSEvaluationService";
 import { supabase } from "@/integrations/supabase/client";
 
-// Let's extract the evaluation display into a separate component to reduce file size
-const EvaluationDisplay = ({ evaluation, onNewEvaluation }) => {
+// Let's extract the evaluation display into a separate component
+const EvaluationDisplay = ({ evaluation, onNewEvaluation }: { 
+  evaluation: any; 
+  onNewEvaluation: () => void;
+}) => {
+  const { toast } = useToast();
+  
   const calculateAverageScore = (evaluation: any) => {
     if (!evaluation) return 0;
     const scores = [
