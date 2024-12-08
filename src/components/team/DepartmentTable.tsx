@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/table";
 import { ArrowUpDown } from "lucide-react";
 import { Database } from "@/integrations/supabase/types";
+import { UpdateWorkCenterDialog } from "./UpdateWorkCenterDialog";
 
 type Workcenter = Database["public"]["Tables"]["workcenters"]["Row"];
 
@@ -41,6 +42,7 @@ export const DepartmentTable = ({
             </div>
           </TableHead>
           <TableHead>Created At</TableHead>
+          <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -49,6 +51,9 @@ export const DepartmentTable = ({
             <TableCell>{workcenter.name}</TableCell>
             <TableCell>{workcenter.department}</TableCell>
             <TableCell>{new Date(workcenter.created_at).toLocaleDateString()}</TableCell>
+            <TableCell>
+              <UpdateWorkCenterDialog workcenter={workcenter} />
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
