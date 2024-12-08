@@ -236,6 +236,48 @@ export type Database = {
           },
         ]
       }
+      process_improvements: {
+        Row: {
+          analysis: string
+          created_at: string
+          created_by: string | null
+          id: string
+          image_url: string
+          workcenter_id: string | null
+        }
+        Insert: {
+          analysis: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_url: string
+          workcenter_id?: string | null
+        }
+        Update: {
+          analysis?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_url?: string
+          workcenter_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "process_improvements_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "process_improvements_workcenter_id_fkey"
+            columns: ["workcenter_id"]
+            isOneToOne: false
+            referencedRelation: "workcenters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           company_id: string | null
