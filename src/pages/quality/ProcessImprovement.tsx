@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Microscope, Upload, Camera, Loader2 } from "lucide-react";
+import { Microscope, Upload, Camera, Loader2, AlertCircle } from "lucide-react";
 import { WorkcenterSelect } from "@/components/WorkcenterSelect";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ImageSelector } from "@/components/ImageSelector";
 
 const ProcessImprovement = () => {
   const [selectedWorkcenter, setSelectedWorkcenter] = useState<string>("");
@@ -12,6 +14,7 @@ const ProcessImprovement = () => {
   const [imagePreview, setImagePreview] = useState<string>("");
   const [analysis, setAnalysis] = useState<string>("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [selectedArea, setSelectedArea] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
   const { toast } = useToast();
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,16 +23,14 @@ const ProcessImprovement = () => {
       setImage(file);
       setImagePreview(URL.createObjectURL(file));
       setAnalysis("");
+      setSelectedArea(null);
     }
   };
 
   const handleCameraCapture = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      // Clean up the stream after use
       stream.getTracks().forEach(track => track.stop());
-      
-      // Trigger file input click for mobile camera
       document.getElementById('image-upload')?.click();
     } catch (error) {
       toast({
@@ -50,11 +51,21 @@ const ProcessImprovement = () => {
       return;
     }
 
+    if (!selectedArea) {
+      toast({
+        title: "Area not selected",
+        description: "Please select the specific area to analyze by dragging on the image",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       setIsAnalyzing(true);
       const formData = new FormData();
       formData.append('image', image);
       formData.append('workcenter', selectedWorkcenter);
+      formData.append('selectedArea', JSON.stringify(selectedArea));
 
       const { data: { data, error } } = await supabase.functions.invoke('analyze-process', {
         body: formData
@@ -86,6 +97,19 @@ const ProcessImprovement = () => {
         <h1 className="text-3xl font-bold">Process Improvement</h1>
       </div>
       
+      <Alert className="mb-6">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          For best results, ensure your photo:
+          <ul className="list-disc ml-6 mt-2">
+            <li>Shows only the specific part or area to be analyzed</li>
+            <li>Is well-lit and in focus</li>
+            <li>Has minimal background clutter</li>
+            <li>After uploading, select the specific area to analyze by dragging on the image</li>
+          </ul>
+        </AlertDescription>
+      </Alert>
+
       <div className="grid md:grid-cols-2 gap-6">
         <Card className="p-6">
           <div className="space-y-6">
@@ -124,17 +148,17 @@ const ProcessImprovement = () => {
 
             {imagePreview && (
               <div className="relative">
-                <img
-                  src={imagePreview}
-                  alt="Process preview"
-                  className="w-full h-48 object-cover rounded-lg"
+                <ImageSelector
+                  imageUrl={imagePreview}
+                  onAreaSelect={setSelectedArea}
+                  selectedArea={selectedArea}
                 />
               </div>
             )}
 
             <Button
               onClick={handleAnalyze}
-              disabled={!selectedWorkcenter || !image || isAnalyzing}
+              disabled={!selectedWorkcenter || !image || isAnalyzing || !selectedArea}
               className="w-full"
             >
               {isAnalyzing ? (
