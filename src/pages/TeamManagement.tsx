@@ -16,16 +16,20 @@ const TeamManagement = () => {
   const session = useSession();
   const [filter, setFilter] = useState("");
   const [filterBy, setFilterBy] = useState("department");
-  const [sortField, setSortField] = useState("employee_number");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  
+  // Separate sort states for employees and workcenters
+  const [employeeSortField, setEmployeeSortField] = useState("employee_number");
+  const [employeeSortDirection, setEmployeeSortDirection] = useState<"asc" | "desc">("asc");
+  const [workcenterSortField, setWorkcenterSortField] = useState("name");
+  const [workcenterSortDirection, setWorkcenterSortDirection] = useState<"asc" | "desc">("asc");
 
   const { data: workcenters, isLoading: isLoadingWorkcenters } = useQuery({
-    queryKey: ["workcenters"],
+    queryKey: ["workcenters", workcenterSortField, workcenterSortDirection],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("workcenters")
         .select("*")
-        .order(sortField, { ascending: sortDirection === "asc" });
+        .order(workcenterSortField, { ascending: workcenterSortDirection === "asc" });
 
       if (error) throw error;
       return data;
@@ -34,7 +38,7 @@ const TeamManagement = () => {
   });
 
   const { data: employees, isLoading: isLoadingEmployees } = useQuery({
-    queryKey: ["employees", sortField, sortDirection],
+    queryKey: ["employees", employeeSortField, employeeSortDirection],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("employees")
@@ -45,7 +49,7 @@ const TeamManagement = () => {
             profile:profiles(first_name, last_name)
           )
         `)
-        .order(sortField, { ascending: sortDirection === "asc" });
+        .order(employeeSortField, { ascending: employeeSortDirection === "asc" });
 
       if (error) throw error;
       return data;
@@ -53,12 +57,21 @@ const TeamManagement = () => {
     enabled: !!session?.user?.id,
   });
 
-  const handleSort = (field: string) => {
-    if (field === sortField) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+  const handleWorkcenterSort = (field: string) => {
+    if (field === workcenterSortField) {
+      setWorkcenterSortDirection(workcenterSortDirection === "asc" ? "desc" : "asc");
     } else {
-      setSortField(field);
-      setSortDirection("asc");
+      setWorkcenterSortField(field);
+      setWorkcenterSortDirection("asc");
+    }
+  };
+
+  const handleEmployeeSort = (field: string) => {
+    if (field === employeeSortField) {
+      setEmployeeSortDirection(employeeSortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setEmployeeSortField(field);
+      setEmployeeSortDirection("asc");
     }
   };
 
@@ -121,9 +134,9 @@ const TeamManagement = () => {
               <div className="bg-white rounded-lg shadow overflow-hidden">
                 <DepartmentTable
                   departments={filteredWorkcenters || []}
-                  sortField={sortField}
-                  sortDirection={sortDirection}
-                  onSort={handleSort}
+                  sortField={workcenterSortField}
+                  sortDirection={workcenterSortDirection}
+                  onSort={handleWorkcenterSort}
                 />
               </div>
             )}
@@ -152,9 +165,9 @@ const TeamManagement = () => {
               <div className="bg-white rounded-lg shadow overflow-hidden">
                 <EmployeeTable
                   employees={filteredEmployees || []}
-                  sortField={sortField}
-                  sortDirection={sortDirection}
-                  onSort={handleSort}
+                  sortField={employeeSortField}
+                  sortDirection={employeeSortDirection}
+                  onSort={handleEmployeeSort}
                 />
               </div>
             )}
