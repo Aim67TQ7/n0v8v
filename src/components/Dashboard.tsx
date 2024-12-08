@@ -22,7 +22,7 @@ const modules = [
     description: "Manage your team and assignments",
     icon: Users,
     href: "/team",
-    status: "coming-soon"
+    status: "ready"
   },
   {
     title: "Analytics",

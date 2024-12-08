@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Modules from "./pages/Modules";
 import LeanManufacturing from "./pages/LeanManufacturing";
 import FiveSVision from "./pages/FiveSVision";
+import TeamManagement from "./pages/TeamManagement";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,14 @@ const App = () => (
               element={
                 <AuthWrapper>
                   <Modules />
+                </AuthWrapper>
+              }
+            />
+            <Route
+              path="/team"
+              element={
+                <AuthWrapper>
+                  <TeamManagement />
                 </AuthWrapper>
               }
             />
