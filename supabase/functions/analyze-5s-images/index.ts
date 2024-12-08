@@ -18,8 +18,7 @@ async function fetchImageAsBase64(imageUrl: string): Promise<string> {
     const arrayBuffer = await response.arrayBuffer();
     const uint8Array = new Uint8Array(arrayBuffer);
     
-    // Convert to base64 in chunks to avoid call stack size exceeded
-    const chunkSize = 0x8000; // Process 32KB at a time
+    const chunkSize = 0x8000;
     let binary = '';
     
     for (let i = 0; i < uint8Array.length; i += chunkSize) {
@@ -45,11 +44,9 @@ serve(async (req) => {
     const { imageUrls } = await req.json();
     console.log('Analyzing images:', imageUrls);
 
-    const analyses = [];
-    for (const url of imageUrls) {
-      const systemPrompt = `You are a 5S workplace organization expert analyzing a workplace image. Focus ONLY on what you can actually see in the image.
+    const systemPrompt = `You are a 5S workplace organization expert analyzing workplace images. Focus ONLY on what you can actually see in the images and provide a consolidated analysis across all images as a group.
 
-For each 5S principle, provide a score from 0-10 based on visible evidence:
+For each 5S principle, provide a score from 0-10 based on visible evidence across all images:
 
 Sort (Seiri):
 - Look for unnecessary items, clutter, or excess materials
@@ -77,9 +74,19 @@ Sustain (Shitsuke):
 - Observe signs of continuous improvement
 
 When evaluating conditions that need improvement:
-- Critical conditions (-3 points): Significant impediments to workflow or operations
-- Moderate conditions (-2 points): Notable inefficiencies or organizational issues
-- Minor conditions (-1 point): Small improvements needed in organization or processes
+- Critical conditions (-3 points): Only for significant safety hazards or major operational impediments
+- Moderate conditions (-2 points): For issues that notably impact efficiency or organization
+- Minor conditions (-1 point): For small improvements needed
+
+Consolidate findings across all images and avoid duplicate reports. For each finding, provide:
+1. The specific issue observed
+2. The impact on operations (e.g., "reduces productivity by causing unnecessary motion")
+3. A clear, actionable solution
+
+Example action items:
+"Organize and label the scattered tools on workbench (visible in multiple areas). Current state causes time waste searching for tools. Create shadow boards with designated spots for each tool and label clearly."
+
+"Remove excess inventory boxes from walkways. Current placement creates safety hazard and restricts movement. Establish dedicated staging area with clear max/min quantity markers."
 
 Provide your response in valid JSON format with these exact fields:
 {
@@ -89,11 +96,13 @@ Provide your response in valid JSON format with these exact fields:
   "standardize_score": number (0-10),
   "sustain_score": number (0-10),
   "strengths": string[] (only include clearly visible positive practices),
-  "weaknesses": string[] (include visible conditions with their impact: -3 for critical, -2 for moderate, -1 for minor),
-  "opportunities": string[] (specific improvements based on visible issues),
-  "threats": string[] (specific action items based on visible conditions)
+  "weaknesses": string[] (include consolidated findings with impact: -3 for critical, -2 for moderate, -1 for minor),
+  "opportunities": string[] (specific improvements with expected benefits),
+  "threats": string[] (detailed action items with clear steps and reasoning)
 }`;
 
+    const analyses = [];
+    for (const url of imageUrls) {
       console.log('Converting image to base64:', url);
       const base64Image = await fetchImageAsBase64(url);
       
@@ -143,7 +152,6 @@ Provide your response in valid JSON format with these exact fields:
 
       let analysis;
       try {
-        // Extract JSON from the response text - it might be wrapped in markdown code blocks
         const responseText = data.content[0].text;
         const jsonMatch = responseText.match(/\{[\s\S]*\}/);
         if (!jsonMatch) {
@@ -171,12 +179,14 @@ Provide your response in valid JSON format with these exact fields:
       analyses.push(analysis);
     }
 
+    // Consolidate analyses across all images
     const combinedAnalysis = {
       sort_score: Math.round(analyses.reduce((sum, a) => sum + a.sort_score, 0) / analyses.length * 10) / 10,
       set_in_order_score: Math.round(analyses.reduce((sum, a) => sum + a.set_in_order_score, 0) / analyses.length * 10) / 10,
       shine_score: Math.round(analyses.reduce((sum, a) => sum + a.shine_score, 0) / analyses.length * 10) / 10,
       standardize_score: Math.round(analyses.reduce((sum, a) => sum + a.standardize_score, 0) / analyses.length * 10) / 10,
       sustain_score: Math.round(analyses.reduce((sum, a) => sum + a.sustain_score, 0) / analyses.length * 10) / 10,
+      // Deduplicate and consolidate findings
       strengths: [...new Set(analyses.flatMap(a => a.strengths))],
       weaknesses: [...new Set(analyses.flatMap(a => a.weaknesses))],
       opportunities: [...new Set(analyses.flatMap(a => a.opportunities))],
