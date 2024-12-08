@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,15 +13,33 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Processing request for process analysis');
+    console.log('Processing request for part analysis');
     const formData = await req.formData();
     
     const imageFile = formData.get('image');
     const workcenter = formData.get('workcenter');
+    const inspectionTypeId = formData.get('inspectionTypeId');
     const selectedAreaStr = formData.get('selectedArea');
 
-    if (!imageFile || !workcenter) {
-      throw new Error('Missing required fields: image and workcenter are required');
+    if (!imageFile || !workcenter || !inspectionTypeId) {
+      throw new Error('Missing required fields');
+    }
+
+    // Initialize Supabase client
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    // Fetch inspection type details
+    const { data: inspectionType, error: inspectionError } = await supabase
+      .from('inspection_types')
+      .select('prompt_template')
+      .eq('id', inspectionTypeId)
+      .single();
+
+    if (inspectionError || !inspectionType) {
+      throw new Error('Failed to fetch inspection type details');
     }
 
     console.log('Converting image to base64');
@@ -49,19 +68,19 @@ serve(async (req) => {
             content: [
               {
                 type: 'text',
-                text: `Analyze this manufacturing process image from workcenter ${workcenter}. ${
+                text: `${inspectionType.prompt_template} ${
                   selectedArea ? 'Focus specifically on the highlighted area.' : ''
                 }
                 
-                Look for any quality issues, process inconsistencies, or areas of concern. If you don't see any issues, explicitly state that no problems were identified.
+                If you don't see any issues, explicitly state that no problems were identified.
                 
                 Provide your analysis covering:
-                1. Quality Issues: Identify any visible quality concerns or process inconsistencies
-                2. Impact Analysis: Explain how these issues affect downstream operations or product quality
-                3. Improvement Recommendations: Suggest specific, actionable improvements
-                4. Expected Benefits: Outline the anticipated benefits of implementing the suggested improvements
+                1. Quality Assessment: Document your findings based on the inspection criteria
+                2. Impact Analysis: If issues are found, explain their potential impact
+                3. Recommendations: Suggest specific improvements or actions if needed
+                4. Compliance Status: State whether the part meets quality standards
                 
-                If no issues are found, respond with a clear statement that the process appears to be running correctly with no visible quality concerns.
+                If no issues are found, respond with a clear statement that the part meets all quality criteria for this inspection type.
                 
                 Format your response in clear, concise bullet points.`
               },
@@ -95,20 +114,20 @@ serve(async (req) => {
 
     const analysisText = data.content[0].text;
     const noIssuesFound = analysisText.toLowerCase().includes('no issues') || 
+                         analysisText.toLowerCase().includes('meets all quality criteria') ||
                          analysisText.toLowerCase().includes('no problems') ||
                          analysisText.toLowerCase().includes('no visible quality concerns');
 
-    // Format the response to include a status indicator
     const analysis = {
       status: noIssuesFound ? 'success' : 'concerns',
       message: noIssuesFound ? 
-        '✅ No quality issues or process concerns identified in the analyzed area.' : 
-        '⚠️ Some areas of improvement identified.',
+        '✅ Part meets quality standards for this inspection type.' : 
+        '⚠️ Quality concerns identified during inspection.',
       details: analysisText
     };
 
     return new Response(
-      JSON.stringify(analysis),
+      JSON.stringify({ data: { analysis } }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 

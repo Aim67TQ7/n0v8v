@@ -14,7 +14,7 @@ import LeanManufacturing from "./pages/LeanManufacturing";
 import FiveSVision from "./pages/FiveSVision";
 import TeamManagement from "./pages/TeamManagement";
 import QualityAssurance from "./pages/QualityAssurance";
-import ProcessImprovement from "./pages/quality/ProcessImprovement";
+import PartAnalysis from "./pages/quality/PartAnalysis";
 import ProductInspection from "./pages/quality/ProductInspection";
 import DMRDocumentation from "./pages/quality/DMRDocumentation";
 import FiveWhys from "./pages/quality/FiveWhys";
@@ -102,7 +102,7 @@ const App = () => (
                 <AuthWrapper>
                   <div className="min-h-screen flex flex-col">
                     <Header />
-                    <ProcessImprovement />
+                    <PartAnalysis />
                   </div>
                 </AuthWrapper>
               }

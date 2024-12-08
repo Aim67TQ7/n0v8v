@@ -236,6 +236,30 @@ export type Database = {
           },
         ]
       }
+      inspection_types: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          prompt_template: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          prompt_template: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          prompt_template?: string
+        }
+        Relationships: []
+      }
       process_improvements: {
         Row: {
           analysis: string
