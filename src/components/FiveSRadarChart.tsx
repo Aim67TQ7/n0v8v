@@ -23,8 +23,8 @@ export const FiveSRadarChart = ({ scores }: FiveSRadarChartProps) => {
 
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <RadarChart data={data}>
-        <PolarGrid />
+      <RadarChart data={data} margin={{ top: 20, right: 30, bottom: 20, left: 30 }}>
+        <PolarGrid gridType="circle" />
         <PolarAngleAxis dataKey="category" />
         <PolarRadiusAxis domain={[0, 10]} tickCount={6} />
         <Radar
@@ -35,7 +35,7 @@ export const FiveSRadarChart = ({ scores }: FiveSRadarChartProps) => {
           fillOpacity={0.6}
         />
         <Tooltip 
-          formatter={(value: number) => [value.toFixed(1), 'Score']}
+          formatter={(value: number) => [`${value.toFixed(1)} / 10`, 'Score']}
           labelFormatter={(label: string) => `${label}`}
         />
       </RadarChart>
