@@ -17,7 +17,7 @@ serve(async (req) => {
 
   try {
     const { imageUrls } = await req.json();
-    console.log('Processing images:', imageUrls.length);
+    console.log(`Processing ${imageUrls.length} images`);
 
     const analyses = [];
     for (const url of imageUrls) {
@@ -28,14 +28,15 @@ serve(async (req) => {
           throw new Error(`Failed to fetch image: ${response.status}`);
         }
         
-        const arrayBuffer = await response.arrayBuffer();
-        const base64Image = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+        const buffer = await response.arrayBuffer();
+        const bytes = new Uint8Array(buffer);
+        const base64Image = btoa(String.fromCharCode.apply(null, bytes));
         
         console.log('Analyzing image with Anthropic');
         const analysis = await analyzeImageWithAI(base64Image, anthropicApiKey || '');
         analyses.push(analysis);
       } catch (error) {
-        console.error('Error processing image:', url, error);
+        console.error('Error processing image:', error);
         throw error;
       }
     }
@@ -47,14 +48,13 @@ serve(async (req) => {
       shine_score: Math.round(analyses.reduce((sum, a) => sum + a.scores.shine_score, 0) / analyses.length * 10) / 10,
       standardize_score: Math.round(analyses.reduce((sum, a) => sum + a.scores.standardize_score, 0) / analyses.length * 10) / 10,
       sustain_score: Math.round(analyses.reduce((sum, a) => sum + a.scores.sustain_score, 0) / analyses.length * 10) / 10,
-      safety_deduction: Math.min(...analyses.map(a => a.scores.safety_deduction)), // Use the most severe deduction
+      safety_deduction: Math.min(...analyses.map(a => a.scores.safety_deduction)),
       strengths: [...new Set(analyses.flatMap(a => a.strengths))],
       weaknesses: [...new Set(analyses.flatMap(a => a.findings))],
       opportunities: [...new Set(analyses.flatMap(a => a.opportunities))],
       threats: [...new Set(analyses.flatMap(a => a.actions))]
     };
 
-    // Calculate final score
     const totalScore = calculateTotalScore(consolidatedAnalysis);
     consolidatedAnalysis.total_score = totalScore;
 

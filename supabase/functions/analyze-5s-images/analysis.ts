@@ -97,11 +97,11 @@ Provide your response in valid JSON format with these exact fields:
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Anthropic API error details:', errorText);
-      throw new Error(`Anthropic API error: ${response.status}\nDetails: ${errorText}`);
+      throw new Error(`Anthropic API error: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('Anthropic API response structure:', Object.keys(data));
+    console.log('Received response from Anthropic API');
     
     if (!data.content?.[0]?.text) {
       console.error('Unexpected API response format:', data);
