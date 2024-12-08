@@ -14,21 +14,27 @@ serve(async (req) => {
   try {
     console.log('Processing request for process analysis');
     const formData = await req.formData();
-    const image = formData.get('image') as File;
+    
+    // Extract and validate required fields
+    const imageFile = formData.get('image');
     const workcenter = formData.get('workcenter');
-    const selectedArea = formData.get('selectedArea');
+    const selectedAreaStr = formData.get('selectedArea');
 
-    if (!image || !workcenter) {
-      console.error('Missing required fields:', { image: !!image, workcenter: !!workcenter });
-      throw new Error('Image and workcenter are required');
+    if (!imageFile || !workcenter) {
+      throw new Error('Missing required fields: image and workcenter are required');
     }
 
-    // Convert image to base64
-    const arrayBuffer = await image.arrayBuffer();
-    const base64Image = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-    const imageDataUrl = `data:${image.type};base64,${base64Image}`;
-
-    console.log('Sending request to OpenAI for image analysis');
+    console.log('Converting image to base64');
+    // Convert image to base64 efficiently
+    const imageArrayBuffer = await (imageFile as File).arrayBuffer();
+    const base64Image = btoa(
+      new Uint8Array(imageArrayBuffer)
+        .reduce((data, byte) => data + String.fromCharCode(byte), '')
+    );
+    
+    const selectedArea = selectedAreaStr ? JSON.parse(selectedAreaStr as string) : null;
+    
+    console.log('Preparing OpenAI request');
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -44,7 +50,7 @@ serve(async (req) => {
               {
                 type: 'text',
                 text: `Analyze this manufacturing process image from workcenter ${workcenter}. ${
-                  selectedArea ? 'Focus specifically on the highlighted area marked in blue in the image.' : ''
+                  selectedArea ? 'Focus specifically on the highlighted area.' : ''
                 }
                 
                 Provide a detailed analysis covering:
@@ -58,7 +64,7 @@ serve(async (req) => {
               {
                 type: 'image_url',
                 image_url: {
-                  url: imageDataUrl,
+                  url: `data:image/jpeg;base64,${base64Image}`,
                   detail: 'high'
                 }
               }
@@ -76,10 +82,9 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log('OpenAI response received:', data);
+    console.log('Successfully received OpenAI response');
 
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      console.error('Unexpected OpenAI response structure:', data);
+    if (!data.choices?.[0]?.message?.content) {
       throw new Error('Invalid response structure from OpenAI API');
     }
 
@@ -94,7 +99,10 @@ serve(async (req) => {
     console.error('Error in analyze-process function:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      { 
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
     );
   }
 });
