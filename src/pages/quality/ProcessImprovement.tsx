@@ -1,12 +1,13 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Microscope, Upload, Camera, Loader2, AlertCircle, RotateCcw } from "lucide-react";
+import { Microscope, Loader2, AlertCircle, RotateCcw } from "lucide-react";
 import { WorkcenterSelect } from "@/components/WorkcenterSelect";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ImageSelector } from "@/components/ImageSelector";
+import { ProcessImageUploader } from "@/components/ProcessImageUploader";
+import { ProcessAnalysisResults } from "@/components/ProcessAnalysisResults";
 
 const ProcessImprovement = () => {
   const [selectedWorkcenter, setSelectedWorkcenter] = useState<string>("");
@@ -17,28 +18,11 @@ const ProcessImprovement = () => {
   const [selectedArea, setSelectedArea] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
   const { toast } = useToast();
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setImage(file);
-      setImagePreview(URL.createObjectURL(file));
-      setAnalysis("");
-      setSelectedArea(null);
-    }
-  };
-
-  const handleCameraCapture = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      stream.getTracks().forEach(track => track.stop());
-      document.getElementById('image-upload')?.click();
-    } catch (error) {
-      toast({
-        title: "Camera access denied",
-        description: "Please allow camera access to take photos",
-        variant: "destructive"
-      });
-    }
+  const handleImageUpload = (file: File) => {
+    setImage(file);
+    setImagePreview(URL.createObjectURL(file));
+    setAnalysis("");
+    setSelectedArea(null);
   };
 
   const handleAnalyze = async () => {
@@ -141,43 +125,12 @@ const ProcessImprovement = () => {
               onChange={setSelectedWorkcenter} 
             />
 
-            <div className="flex gap-4">
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => document.getElementById('image-upload')?.click()}
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Upload Photo
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={handleCameraCapture}
-              >
-                <Camera className="w-4 h-4 mr-2" />
-                Take Photo
-              </Button>
-            </div>
-
-            <input
-              id="image-upload"
-              type="file"
-              className="hidden"
-              accept="image/*"
-              capture="environment"
-              onChange={handleImageUpload}
+            <ProcessImageUploader
+              imagePreview={imagePreview}
+              onImageUpload={handleImageUpload}
+              onAreaSelect={setSelectedArea}
+              selectedArea={selectedArea}
             />
-
-            {imagePreview && (
-              <div className="relative">
-                <ImageSelector
-                  imageUrl={imagePreview}
-                  onAreaSelect={setSelectedArea}
-                  selectedArea={selectedArea}
-                />
-              </div>
-            )}
 
             <Button
               onClick={handleAnalyze}
@@ -196,16 +149,7 @@ const ProcessImprovement = () => {
           </div>
         </Card>
 
-        {analysis && (
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Analysis Results</h2>
-            <div className="prose prose-sm">
-              {analysis.split('\n').map((line, index) => (
-                <p key={index} className="mb-2">{line}</p>
-              ))}
-            </div>
-          </Card>
-        )}
+        <ProcessAnalysisResults analysis={analysis} />
       </div>
     </div>
   );
