@@ -68,8 +68,8 @@ Provide your response in valid JSON format with these exact fields:
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
-          'anthropic-version': '2023-06-01',
           'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
           'content-type': 'application/json',
         },
         body: JSON.stringify({
@@ -89,7 +89,7 @@ Provide your response in valid JSON format with these exact fields:
 
       if (!response.ok) {
         const errorData = await response.text();
-        console.error('Anthropic API error:', errorData);
+        console.error('Anthropic API error response:', errorData);
         throw new Error(`Anthropic API error: ${response.status} - ${errorData}`);
       }
 
