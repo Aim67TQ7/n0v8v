@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Microscope, Upload, Camera, Loader2, AlertCircle } from "lucide-react";
+import { Microscope, Upload, Camera, Loader2, AlertCircle, RotateCcw } from "lucide-react";
 import { WorkcenterSelect } from "@/components/WorkcenterSelect";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -90,11 +90,34 @@ const ProcessImprovement = () => {
     }
   };
 
+  const handleStartNew = () => {
+    setSelectedWorkcenter("");
+    setImage(null);
+    setImagePreview("");
+    setAnalysis("");
+    setSelectedArea(null);
+    setIsAnalyzing(false);
+    toast({
+      title: "Reset Complete",
+      description: "You can now start a new part analysis.",
+    });
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center gap-3 mb-8">
-        <Microscope className="h-8 w-8 text-secondary" />
-        <h1 className="text-3xl font-bold">Process Improvement</h1>
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-3">
+          <Microscope className="h-8 w-8 text-secondary" />
+          <h1 className="text-3xl font-bold">Process Improvement</h1>
+        </div>
+        <Button
+          onClick={handleStartNew}
+          variant="outline"
+          className="flex items-center gap-2"
+        >
+          <RotateCcw className="h-4 w-4" />
+          Start New Part Analysis
+        </Button>
       </div>
       
       <Alert className="mb-6">
