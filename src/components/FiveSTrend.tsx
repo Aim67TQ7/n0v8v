@@ -26,7 +26,7 @@ export const FiveSTrend = ({ workcenterId }: FiveSTrendProps) => {
 
   const formatData = (data: any[]) => {
     return data?.map(evaluation => {
-      // Calculate total score
+      // Sum up all scores
       const totalScore = (
         (evaluation.sort_score || 0) +
         (evaluation.set_in_order_score || 0) +
@@ -35,17 +35,14 @@ export const FiveSTrend = ({ workcenterId }: FiveSTrendProps) => {
         (evaluation.sustain_score || 0)
       );
       
-      // Calculate percentage
+      // Calculate percentage as (sum of scores)/50 * 100
       const scorePercentage = (totalScore / 50) * 100;
+      const concernCount = evaluation.weaknesses?.length || 0;
 
       return {
         date: new Date(evaluation.created_at).toLocaleDateString(),
-        totalScore: Number(scorePercentage.toFixed(1)),
-        sort: evaluation.sort_score || 0,
-        setInOrder: evaluation.set_in_order_score || 0,
-        shine: evaluation.shine_score || 0,
-        standardize: evaluation.standardize_score || 0,
-        sustain: evaluation.sustain_score || 0
+        scorePercentage: Number(scorePercentage.toFixed(1)),
+        concernCount
       };
     });
   };
@@ -58,22 +55,28 @@ export const FiveSTrend = ({ workcenterId }: FiveSTrendProps) => {
           <LineChart data={formatData(historicalData || [])} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
-            <YAxis domain={[0, 100]} label={{ value: 'Score', angle: -90, position: 'insideLeft' }} />
+            <YAxis yAxisId="left" domain={[0, 100]} label={{ value: 'Score %', angle: -90, position: 'insideLeft' }} />
+            <YAxis yAxisId="right" orientation="right" domain={[0, 'auto']} label={{ value: 'Number of Concerns', angle: 90, position: 'insideRight' }} />
             <Tooltip />
             <Legend />
             <Line
+              yAxisId="left"
               type="monotone"
-              dataKey="totalScore"
-              name="Total Score %"
+              dataKey="scorePercentage"
+              name="Score %"
               stroke="#000000"
               strokeWidth={2}
               dot={{ fill: '#000000' }}
             />
-            <Line type="monotone" dataKey="sort" name="Sort" stroke="#2563eb" />
-            <Line type="monotone" dataKey="setInOrder" name="Set in Order" stroke="#16a34a" />
-            <Line type="monotone" dataKey="shine" name="Shine" stroke="#dc2626" />
-            <Line type="monotone" dataKey="standardize" name="Standardize" stroke="#9333ea" />
-            <Line type="monotone" dataKey="sustain" name="Sustain" stroke="#ea580c" />
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey="concernCount"
+              name="Number of Concerns"
+              stroke="#666666"
+              strokeDasharray="5 5"
+              dot={{ fill: '#666666' }}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
