@@ -11,11 +11,18 @@ import { Link } from "react-router-dom";
 
 const modules = [
   {
+    title: "Modules",
+    description: "Overview of available modules and features",
+    icon: LayoutDashboard,
+    href: "/modules",
+    status: "ready"
+  },
+  {
     title: "5SVision",
     description: "Visual workplace organization and standardization",
     icon: Eye,
     href: "/5svision",
-    status: "ready"
+    status: "coming-soon"
   },
   {
     title: "Team Management",
