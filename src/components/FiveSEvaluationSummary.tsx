@@ -29,11 +29,11 @@ export const FiveSEvaluationSummary = ({ workcenterName, evaluationDate, scores 
           <p className="text-gray-600">{evaluationDate}</p>
         </div>
         <div className="text-right">
-          <p className="text-lg font-semibold">
-            Composite Score: {totalScore.toFixed(1)} / 50
-          </p>
-          <p className="text-gray-600">
+          <p className="text-3xl font-bold text-primary">
             {scorePercentage.toFixed(1)}%
+          </p>
+          <p className="text-gray-600 text-sm">
+            Score: {totalScore.toFixed(1)} / 50
           </p>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface SWOTAnalysisProps {
   strengths: string[];
@@ -28,6 +29,14 @@ export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shine
       (shineScore < 8 && weakness.toLowerCase().includes('shine'))
     );
 
+  const checklistItems = [
+    "Verify all tools have designated storage locations",
+    "Ensure cleaning supplies are readily available",
+    "Check if visual management boards are up-to-date",
+    "Confirm standard work procedures are posted",
+    "Review daily 5S checklist completion"
+  ];
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <Card className="p-4">
@@ -45,6 +54,23 @@ export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shine
           its impact on operations, and provides a clear solution with expected benefits.
         </p>
         {renderList(filteredWeaknesses)}
+        
+        <div className="mt-6 border-t pt-4">
+          <h4 className="font-semibold text-sm mb-3">Additional Action Items:</h4>
+          <div className="space-y-3">
+            {checklistItems.map((item, index) => (
+              <div key={index} className="flex items-start space-x-2">
+                <Checkbox id={`checklist-${index}`} />
+                <label
+                  htmlFor={`checklist-${index}`}
+                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  {item}
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
       </Card>
     </div>
   );
