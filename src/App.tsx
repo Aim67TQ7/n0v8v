@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthWrapper } from "@/components/AuthWrapper";
+import { Header } from "@/components/Header";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Modules from "./pages/Modules";
@@ -28,7 +29,10 @@ const App = () => (
               path="/"
               element={
                 <AuthWrapper>
-                  <Index />
+                  <div className="min-h-screen flex flex-col">
+                    <Header />
+                    <Index />
+                  </div>
                 </AuthWrapper>
               }
             />
@@ -36,7 +40,10 @@ const App = () => (
               path="/modules"
               element={
                 <AuthWrapper>
-                  <Modules />
+                  <div className="min-h-screen flex flex-col">
+                    <Header />
+                    <Modules />
+                  </div>
                 </AuthWrapper>
               }
             />
@@ -44,7 +51,10 @@ const App = () => (
               path="/team"
               element={
                 <AuthWrapper>
-                  <TeamManagement />
+                  <div className="min-h-screen flex flex-col">
+                    <Header />
+                    <TeamManagement />
+                  </div>
                 </AuthWrapper>
               }
             />
@@ -52,7 +62,10 @@ const App = () => (
               path="/operations/lean"
               element={
                 <AuthWrapper>
-                  <LeanManufacturing />
+                  <div className="min-h-screen flex flex-col">
+                    <Header />
+                    <LeanManufacturing />
+                  </div>
                 </AuthWrapper>
               }
             />
@@ -60,7 +73,10 @@ const App = () => (
               path="/operations/lean/5s-vision"
               element={
                 <AuthWrapper>
-                  <FiveSVision />
+                  <div className="min-h-screen flex flex-col">
+                    <Header />
+                    <FiveSVision />
+                  </div>
                 </AuthWrapper>
               }
             />
