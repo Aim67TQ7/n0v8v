@@ -5,6 +5,24 @@ import { supabase } from "@/integrations/supabase/client";
 import { TeamActions } from "@/components/team/TeamActions";
 import { TeamFilter } from "@/components/team/TeamFilter";
 import { DepartmentTable } from "@/components/team/DepartmentTable";
+import { Database } from "@/integrations/supabase/types";
+
+type Department = Database["public"]["Tables"]["departments"]["Row"] & {
+  leader: {
+    id: string;
+    first_name: string | null;
+    last_name: string | null;
+    photo_url: string | null;
+  } | null;
+  department_members: {
+    profile: {
+      id: string;
+      first_name: string | null;
+      last_name: string | null;
+      photo_url: string | null;
+    } | null;
+  }[];
+};
 
 const TeamManagement = () => {
   const session = useSession();
@@ -13,7 +31,7 @@ const TeamManagement = () => {
   const [sortField, setSortField] = useState("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-  const { data: departments, isLoading } = useQuery({
+  const { data: departments, isLoading } = useQuery<Department[]>({
     queryKey: ["departments"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -38,7 +56,7 @@ const TeamManagement = () => {
         .order(sortField, { ascending: sortDirection === "asc" });
 
       if (error) throw error;
-      return data;
+      return data as Department[];
     },
     enabled: !!session?.user?.id,
   });
@@ -63,8 +81,8 @@ const TeamManagement = () => {
         return dept.location.toLowerCase().includes(searchTerm);
       case "leader":
         return (
-          dept.leader?.first_name.toLowerCase().includes(searchTerm) ||
-          dept.leader?.last_name.toLowerCase().includes(searchTerm)
+          dept.leader?.first_name?.toLowerCase().includes(searchTerm) ||
+          dept.leader?.last_name?.toLowerCase().includes(searchTerm)
         );
       default:
         return true;
