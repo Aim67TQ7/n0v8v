@@ -34,15 +34,17 @@ serve(async (req) => {
     
     const selectedArea = selectedAreaStr ? JSON.parse(selectedAreaStr as string) : null;
     
-    console.log('Preparing OpenAI request');
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    console.log('Preparing Anthropic request');
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-        'Content-Type': 'application/json',
+        'x-api-key': Deno.env.get('ANTHROPIC_API_KEY') || '',
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'claude-3-sonnet-20240229',
+        max_tokens: 1024,
         messages: [
           {
             role: 'user',
@@ -62,33 +64,34 @@ serve(async (req) => {
                 Format your response in clear, concise bullet points.`
               },
               {
-                type: 'image_url',
-                image_url: {
-                  url: `data:image/jpeg;base64,${base64Image}`,
-                  detail: 'high'
+                type: 'image',
+                source: {
+                  type: 'base64',
+                  media_type: 'image/jpeg',
+                  data: base64Image
                 }
               }
             ]
           }
-        ],
-        max_tokens: 1000,
+        ]
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.text();
-      console.error('OpenAI API error:', errorData);
-      throw new Error(`OpenAI API error: ${response.status} - ${errorData}`);
+      console.error('Anthropic API error:', errorData);
+      throw new Error(`Anthropic API error: ${response.status} - ${errorData}`);
     }
 
     const data = await response.json();
-    console.log('Successfully received OpenAI response');
+    console.log('Successfully received Anthropic response');
 
-    if (!data.choices?.[0]?.message?.content) {
-      throw new Error('Invalid response structure from OpenAI API');
+    if (!data.content || !data.content[0] || !data.content[0].text) {
+      console.error('Unexpected Anthropic response structure:', data);
+      throw new Error('Invalid response structure from Anthropic API');
     }
 
-    const analysis = data.choices[0].message.content;
+    const analysis = data.content[0].text;
 
     return new Response(
       JSON.stringify({ analysis }),
