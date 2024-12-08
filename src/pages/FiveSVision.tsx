@@ -54,6 +54,11 @@ const FiveSVision = () => {
 
     try {
       setIsAnalyzing(true);
+      toast({
+        title: "Analysis in Progress",
+        description: "The AI is analyzing your images. This may take up to 60 seconds...",
+      });
+      
       const imageUrls = await uploadImages(images);
       const analysis = await analyzeImages(imageUrls);
       const evaluation = await createEvaluation(selectedWorkcenter, analysis);
@@ -71,7 +76,7 @@ const FiveSVision = () => {
       console.error('Error during evaluation:', error);
       toast({
         title: "Error",
-        description: "Failed to complete 5S evaluation",
+        description: "Failed to complete 5S evaluation. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -128,7 +133,7 @@ const FiveSVision = () => {
               {isAnalyzing ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Analyzing...
+                  Analyzing Images (This may take up to 60 seconds)...
                 </>
               ) : (
                 'Submit Evaluation'

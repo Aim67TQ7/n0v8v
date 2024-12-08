@@ -42,11 +42,6 @@ serve(async (req) => {
   }
 
   try {
-    const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
-    if (!apiKey) {
-      throw new Error('ANTHROPIC_API_KEY is not set');
-    }
-
     const { imageUrls } = await req.json();
     console.log('Analyzing images:', imageUrls);
 
@@ -106,7 +101,7 @@ Provide your response in valid JSON format with these exact fields:
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
-          'x-api-key': apiKey,
+          'x-api-key': Deno.env.get('ANTHROPIC_API_KEY') || '',
           'anthropic-version': '2023-06-01',
           'content-type': 'application/json',
         },
@@ -148,11 +143,17 @@ Provide your response in valid JSON format with these exact fields:
 
       let analysis;
       try {
-        analysis = JSON.parse(data.content[0].text);
+        // Extract JSON from the response text - it might be wrapped in markdown code blocks
+        const responseText = data.content[0].text;
+        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) {
+          throw new Error('No JSON object found in response');
+        }
+        analysis = JSON.parse(jsonMatch[0]);
         console.log('Successfully parsed analysis for image:', url);
       } catch (error) {
         console.error('Failed to parse Anthropic response:', data.content[0].text);
-        throw new Error('Failed to parse AI response as JSON');
+        throw new Error(`Failed to parse AI response as JSON: ${error.message}`);
       }
 
       const requiredFields = [
