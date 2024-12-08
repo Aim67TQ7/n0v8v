@@ -47,26 +47,24 @@ serve(async (req) => {
       .from('process-images')
       .getPublicUrl(fileName);
 
-    console.log('Image uploaded successfully, analyzing with Anthropic');
+    console.log('Image uploaded successfully, analyzing with OpenAI');
 
-    // Call Anthropic API for analysis
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    // Call OpenAI API for analysis
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': Deno.env.get('ANTHROPIC_API_KEY') ?? '',
-        'anthropic-version': '2023-06-01'
+        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        max_tokens: 1024,
+        model: 'gpt-4o',
         messages: [{
           role: 'user',
           content: [
             {
               type: 'text',
               text: `Analyze this manufacturing process image from workcenter ${workcenter}. ${
-                selectedArea ? 'Focus specifically on the selected area in the image.' : ''
+                selectedArea ? 'Focus specifically on the highlighted area marked in blue in the image.' : ''
               }
               
               Provide a detailed analysis covering:
@@ -78,10 +76,10 @@ serve(async (req) => {
               Format your response in clear, concise bullet points.`
             },
             {
-              type: 'image',
-              source: {
-                type: 'url',
-                url: publicUrl
+              type: 'image_url',
+              image_url: {
+                url: publicUrl,
+                detail: 'high'
               }
             }
           ]
@@ -90,8 +88,8 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      console.error('Anthropic API error:', await response.text());
-      throw new Error('Failed to analyze image with Anthropic API');
+      console.error('OpenAI API error:', await response.text());
+      throw new Error('Failed to analyze image with OpenAI API');
     }
 
     const analysisData = await response.json();
@@ -103,7 +101,7 @@ serve(async (req) => {
       .insert({
         workcenter_id: workcenter,
         image_url: publicUrl,
-        analysis: analysisData.content[0].text,
+        analysis: analysisData.choices[0].message.content,
       });
 
     if (dbError) {
@@ -113,7 +111,7 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({ 
-        analysis: analysisData.content[0].text,
+        analysis: analysisData.choices[0].message.content,
         imageUrl: publicUrl 
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
