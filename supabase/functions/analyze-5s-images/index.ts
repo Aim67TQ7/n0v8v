@@ -44,12 +44,12 @@ serve(async (req) => {
     const { imageUrls } = await req.json();
     console.log('Analyzing images:', imageUrls);
 
-    const systemPrompt = `You are a 5S workplace organization expert analyzing workplace images. Focus ONLY on what you can actually see in the images and provide a consolidated analysis across all images as a group.
+    const systemPrompt = `You are a 5S workplace organization expert analyzing workplace images. Evaluate all provided images as a single workcenter, focusing on what you can actually see. Consolidate common issues across all images into single, comprehensive findings.
 
 For each 5S principle, provide a score from 0-10 based on visible evidence across all images:
 
 Sort (Seiri):
-- Look for unnecessary items, clutter, or excess materials
+- Look for unnecessary items or excess materials
 - Check if only essential tools and materials are present
 - Identify opportunities for better organization
 
@@ -73,11 +73,11 @@ Sustain (Shitsuke):
 - Check if improvements appear to be maintained
 - Observe signs of continuous improvement
 
-For strengths, provide specific positive practices observed:
-"Well-organized tool shadow board visible in work area. Current setup enables quick tool access and accountability. Maintain this system and consider implementing in other areas."
+For strengths, provide specific positive practices observed across all images:
+Example: "Well-organized tool shadow board visible in work area. Current setup enables quick tool access and accountability. Maintain this system and consider implementing in other areas."
 
-For areas of improvement, each finding must follow this format:
-1. The specific issue observed
+For areas of improvement, consolidate common issues across all images and format each finding as:
+1. The specific issue observed across the workcenter
 2. The impact on operations
 3. A clear, actionable solution with expected benefits
 
