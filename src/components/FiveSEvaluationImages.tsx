@@ -7,18 +7,18 @@ export const FiveSEvaluationImages = ({ images }: FiveSEvaluationImagesProps) =>
   const displayImages = Array(4).fill(undefined).map((_, index) => images[index]);
 
   return (
-    <div className="grid grid-cols-2 gap-4 mt-6">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
       {displayImages.map((image, index) => (
-        <div key={index} className="aspect-video">
+        <div key={index} className="relative group">
           {image ? (
             <img
               src={image.image_url}
               alt={`Evaluation Image ${index + 1}`}
-              className="w-full h-48 object-cover rounded-lg"
+              className="w-full h-24 object-cover rounded-lg"
             />
           ) : (
-            <div className="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center">
-              <p className="text-gray-400">Image placeholder {index + 1}</p>
+            <div className="w-full h-24 bg-gray-100 rounded-lg flex items-center justify-center">
+              <p className="text-gray-400">Image {index + 1}</p>
             </div>
           )}
         </div>
