@@ -17,16 +17,7 @@ async function fetchImageAsBase64(imageUrl: string): Promise<string> {
     
     const arrayBuffer = await response.arrayBuffer();
     const uint8Array = new Uint8Array(arrayBuffer);
-    
-    const chunkSize = 0x8000;
-    let binary = '';
-    
-    for (let i = 0; i < uint8Array.length; i += chunkSize) {
-      const chunk = uint8Array.slice(i, i + chunkSize);
-      binary += String.fromCharCode.apply(null, chunk);
-    }
-    
-    const base64 = btoa(binary);
+    const base64 = btoa(String.fromCharCode.apply(null, uint8Array));
     console.log('Successfully converted image to base64');
     return base64;
   } catch (error) {
@@ -78,10 +69,11 @@ For each finding, provide:
 2. The impact on operations (e.g., "enhances workflow efficiency")
 3. Suggestions for improvement or maintaining good practices
 
-Example findings:
+Example strengths:
 "Well-organized tool shadow board visible in work area. Current setup enables quick tool access and accountability. Maintain this system and consider implementing in other areas to further improve efficiency."
 
-"Organized storage area with clear labeling system. This practice reduces search time and maintains inventory control. Consider expanding labeling system to include quantity indicators for better stock management."
+Example opportunities:
+"Scattered tools on workbench visible in multiple areas. Current state causes time waste searching for tools. Create shadow boards with designated spots for each tool and label clearly to improve efficiency and reduce search time."
 
 Provide your response in valid JSON format with these exact fields:
 {
@@ -91,13 +83,11 @@ Provide your response in valid JSON format with these exact fields:
   "standardize_score": number (0-10),
   "sustain_score": number (0-10),
   "strengths": string[] (only include clearly visible positive practices),
-  "weaknesses": string[] (include areas needing improvement),
   "opportunities": string[] (specific improvements with expected benefits)
 }`;
 
     const analyses = [];
     for (const url of imageUrls) {
-      console.log('Converting image to base64:', url);
       const base64Image = await fetchImageAsBase64(url);
       
       console.log('Sending request to Anthropic for image analysis');
@@ -139,11 +129,6 @@ Provide your response in valid JSON format with these exact fields:
       const data = await response.json();
       console.log('Raw Anthropic response:', data);
 
-      if (!data.content || !data.content[0] || !data.content[0].text) {
-        console.error('Unexpected Anthropic response structure:', data);
-        throw new Error('Invalid response structure from Anthropic API');
-      }
-
       let analysis;
       try {
         const responseText = data.content[0].text;
@@ -158,22 +143,9 @@ Provide your response in valid JSON format with these exact fields:
         throw new Error(`Failed to parse AI response as JSON: ${error.message}`);
       }
 
-      const requiredFields = [
-        'sort_score', 'set_in_order_score', 'shine_score', 
-        'standardize_score', 'sustain_score', 'strengths', 
-        'weaknesses', 'opportunities'
-      ];
-
-      for (const field of requiredFields) {
-        if (!(field in analysis)) {
-          throw new Error(`Missing required field in AI response: ${field}`);
-        }
-      }
-
       analyses.push(analysis);
     }
 
-    // Consolidate analyses across all images
     const combinedAnalysis = {
       sort_score: Math.round(analyses.reduce((sum, a) => sum + a.sort_score, 0) / analyses.length * 10) / 10,
       set_in_order_score: Math.round(analyses.reduce((sum, a) => sum + a.set_in_order_score, 0) / analyses.length * 10) / 10,
@@ -181,7 +153,6 @@ Provide your response in valid JSON format with these exact fields:
       standardize_score: Math.round(analyses.reduce((sum, a) => sum + a.standardize_score, 0) / analyses.length * 10) / 10,
       sustain_score: Math.round(analyses.reduce((sum, a) => sum + a.sustain_score, 0) / analyses.length * 10) / 10,
       strengths: [...new Set(analyses.flatMap(a => a.strengths))],
-      weaknesses: [...new Set(analyses.flatMap(a => a.weaknesses))],
       opportunities: [...new Set(analyses.flatMap(a => a.opportunities))]
     };
 
