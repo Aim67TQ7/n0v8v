@@ -17,7 +17,17 @@ async function fetchImageAsBase64(imageUrl: string): Promise<string> {
     
     const arrayBuffer = await response.arrayBuffer();
     const uint8Array = new Uint8Array(arrayBuffer);
-    const base64 = btoa(String.fromCharCode.apply(null, uint8Array));
+    
+    // Convert to base64 in chunks to avoid call stack size exceeded
+    const chunkSize = 0x8000; // Process 32KB at a time
+    let binary = '';
+    
+    for (let i = 0; i < uint8Array.length; i += chunkSize) {
+      const chunk = uint8Array.slice(i, i + chunkSize);
+      binary += String.fromCharCode.apply(null, chunk);
+    }
+    
+    const base64 = btoa(binary);
     console.log('Successfully converted image to base64');
     return base64;
   } catch (error) {
