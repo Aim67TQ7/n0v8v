@@ -26,15 +26,16 @@ export const FiveSTrend = ({ workcenterId }: FiveSTrendProps) => {
 
   const formatData = (data: any[]) => {
     return data?.map(evaluation => {
-      const averageScore = (
+      const baseScore = (
         evaluation.sort_score +
         evaluation.set_in_order_score +
         evaluation.shine_score +
         evaluation.standardize_score +
         evaluation.sustain_score
-      ) / 5;
+      );
       
-      const scorePercentage = (averageScore / 10) * 100;
+      const finalScore = Math.max(0, baseScore + (evaluation.safety_deduction || 0));
+      const scorePercentage = (finalScore / 50) * 100;
       const concernCount = evaluation.weaknesses?.length || 0;
 
       return {
