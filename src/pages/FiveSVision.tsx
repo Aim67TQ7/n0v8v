@@ -159,7 +159,6 @@ const FiveSVision = () => {
               <Card className="p-6">
                 <FiveSEvaluationSummary
                   workcenterName={evaluation.workcenter?.name}
-                  averageScore={calculateAverageScore(evaluation)}
                   evaluationDate={new Date(evaluation.created_at).toLocaleDateString()}
                 />
                 

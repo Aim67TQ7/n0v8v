@@ -8,7 +8,7 @@ interface SWOTAnalysisProps {
 
 export const SWOTAnalysis = ({ strengths, weaknesses }: SWOTAnalysisProps) => {
   const renderList = (items: string[]) => (
-    <ul className="list-disc pl-5 space-y-2">
+    <ul className="list-disc pl-5 space-y-4">
       {items.map((item, index) => (
         <li key={index} className="text-sm">{item}</li>
       ))}
@@ -28,8 +28,8 @@ export const SWOTAnalysis = ({ strengths, weaknesses }: SWOTAnalysisProps) => {
       <Card className="p-4">
         <h3 className="font-semibold text-red-600 mb-2">Areas for Improvement</h3>
         <p className="text-sm text-gray-600 mb-3">
-          For each finding below, we identify the specific issue, its impact on operations,
-          and provide a clear, actionable solution with expected benefits.
+          Each finding below identifies a specific issue across the workcenter,
+          its impact on operations, and provides a clear solution with expected benefits.
         </p>
         {renderList(weaknesses)}
       </Card>
