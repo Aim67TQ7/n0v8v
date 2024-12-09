@@ -21,9 +21,11 @@ import {
 import { Plus, Database } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
+type LicenseType = 'basic' | 'premium' | 'enterprise' | 'demo';
+
 const AdminPanel = () => {
   const [companyName, setCompanyName] = useState("");
-  const [licenseType, setLicenseType] = useState("basic");
+  const [licenseType, setLicenseType] = useState<LicenseType>("basic");
   const [maxUsers, setMaxUsers] = useState("5");
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -99,7 +101,7 @@ const AdminPanel = () => {
 
         <div className="space-y-2">
           <label className="text-sm font-medium">License Type</label>
-          <Select value={licenseType} onValueChange={setLicenseType}>
+          <Select value={licenseType} onValueChange={(value: LicenseType) => setLicenseType(value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select license type" />
             </SelectTrigger>

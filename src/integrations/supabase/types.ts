@@ -598,7 +598,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_licensed_company: {
+        Args: {
+          company_name: string
+          license_type?: string
+          max_users?: number
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
