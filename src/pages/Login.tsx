@@ -16,14 +16,14 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // Get the DEMO company by name
-      const { data: demoCompany } = await supabase
+      // Get the DEMO company by name, using single() to expect one row
+      const { data: demoCompany, error: companyError } = await supabase
         .from("companies")
         .select("id")
         .eq("name", "DEMO")
         .single();
 
-      if (!demoCompany) {
+      if (companyError) {
         throw new Error("Demo company not found");
       }
 
@@ -59,6 +59,7 @@ const Login = () => {
       });
 
     } catch (error: any) {
+      console.error("Demo access error:", error);
       toast({
         variant: "destructive",
         title: "Error",
