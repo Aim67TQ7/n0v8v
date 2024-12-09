@@ -78,7 +78,10 @@ const CompanyGPT = () => {
     fetchChatHistory();
   }, [profile?.company_id]);
 
-  const gptName = profile?.company?.settings?.[0]?.gpt_name || "CompanyGPT";
+  // Update the gptName to use the company name if available
+  const companyName = profile?.company?.name || "Company";
+  const gptName = `${companyName}GPT`;
+
   const allowedModels = ["gpt-4o", "gpt-4o-mini"];
 
   const handleNewChat = () => {
@@ -92,7 +95,7 @@ const CompanyGPT = () => {
   return (
     <div className="flex-1 bg-gradient-ocean">
       <SidebarProvider>
-        <div className="flex min-h-[calc(100vh-4rem)] w-full">
+        <div className="flex min-h-screen w-full">
           <Sidebar>
             <SidebarHeader className="border-b p-4 bg-background/95">
               <div className="flex items-center justify-between">
