@@ -45,7 +45,7 @@ const CompanyGPT = () => {
 
   useEffect(() => {
     // Set initial prompt
-    setPrompt(`Hello ${gptName}! I'm ready to brainstorm ideas. Please help me outline lovable improvements to our customer onboarding process.`);
+    setPrompt(`Hello ${gptName}! I'm ready to brainstorm ideas. Please help me outline improvements to our customer onboarding process.`);
   }, [gptName]);
 
   const handleSubmit = async (e: React.FormEvent) => {
