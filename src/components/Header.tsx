@@ -34,7 +34,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200">
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Navigation Links */}
@@ -60,21 +60,23 @@ export const Header = () => {
           {/* User Info & Logout */}
           <div className="flex items-center space-x-4">
             {profile && (
-              <div className="text-sm text-gray-600">
-                <span className="font-medium">
-                  {profile.first_name} {profile.last_name}
-                </span>
-                {profile.company && (
-                  <span className="ml-2 px-2 py-1 bg-gray-100 rounded-full text-xs">
-                    {profile.company.name}
+              <div className="flex items-center gap-3">
+                <div className="flex flex-col items-end">
+                  <span className="font-medium text-sm text-gray-900">
+                    {profile.first_name} {profile.last_name}
                   </span>
-                )}
+                  {profile.company && (
+                    <span className="text-xs text-gray-600">
+                      {profile.company.name}
+                    </span>
+                  )}
+                </div>
+                <Button variant="ghost" onClick={handleLogout} size="sm" className="gap-2">
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </Button>
               </div>
             )}
-            <Button variant="ghost" onClick={handleLogout} className="gap-2">
-              <LogOut className="h-4 w-4" />
-              Logout
-            </Button>
           </div>
         </div>
       </div>
