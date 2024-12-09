@@ -22,7 +22,22 @@ export const SignInForm = () => {
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message === "Invalid login credentials") {
+          toast({
+            variant: "destructive",
+            title: "Invalid credentials",
+            description: "Please check your email and password and try again.",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: error.message,
+          });
+        }
+        return;
+      }
 
       toast({
         title: "Welcome back!",
@@ -54,7 +69,22 @@ export const SignInForm = () => {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes("already registered")) {
+          toast({
+            variant: "destructive",
+            title: "Account exists",
+            description: "This email is already registered. Please sign in instead.",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: error.message,
+          });
+        }
+        return;
+      }
 
       toast({
         title: "Check your email",
