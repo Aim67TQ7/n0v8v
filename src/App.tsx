@@ -7,6 +7,7 @@ import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthWrapper } from "@/components/AuthWrapper";
 import { Header } from "@/components/Header";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import AdminPanel from "./pages/AdminPanel";
@@ -25,25 +26,26 @@ import CompanyGPT from "./pages/CompanyGPT";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <SessionContextProvider supabaseClient={supabase}>
-      <BrowserRouter>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/admin"
-              element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <AdminPanel />
-                  </div>
-                </AuthWrapper>
-              }
-            />
+  <ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <SessionContextProvider supabaseClient={supabase}>
+        <BrowserRouter>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/admin"
+                element={
+                  <AuthWrapper>
+                    <div className="min-h-screen flex flex-col">
+                      <Header />
+                      <AdminPanel />
+                    </div>
+                  </AuthWrapper>
+                }
+              />
             <Route
               path="/"
               element={
@@ -176,11 +178,12 @@ const App = () => (
                 </AuthWrapper>
               }
             />
-          </Routes>
-        </TooltipProvider>
-      </BrowserRouter>
-    </SessionContextProvider>
-  </QueryClientProvider>
+            </Routes>
+          </TooltipProvider>
+        </BrowserRouter>
+      </SessionContextProvider>
+    </QueryClientProvider>
+  </ThemeProvider>
 );
 
 export default App;
