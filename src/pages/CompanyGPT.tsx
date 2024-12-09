@@ -9,7 +9,6 @@ import { ChatInterface } from "@/components/gpt/ChatInterface";
 import { ChatHistory } from "@/components/gpt/ChatHistory";
 import { ApiStatus } from "@/components/gpt/ApiStatus";
 import { ResourceSidebar } from "@/components/gpt/ResourceSidebar";
-import { Header } from "@/components/Header";
 import {
   SidebarProvider,
   Sidebar,
@@ -92,62 +91,59 @@ const CompanyGPT = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <div className="flex-1">
-        <SidebarProvider>
-          <div className="flex min-h-[calc(100vh-4rem)] w-full">
-            <Sidebar>
-              <SidebarHeader className="border-b p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <ApiStatus />
-                    <h2 className="text-lg font-semibold">{gptName}</h2>
-                  </div>
-                  <SidebarTrigger />
+    <div className="flex-1">
+      <SidebarProvider>
+        <div className="flex min-h-[calc(100vh-4rem)] w-full">
+          <Sidebar>
+            <SidebarHeader className="border-b p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <ApiStatus />
+                  <h2 className="text-lg font-semibold">{gptName}</h2>
                 </div>
-                <Button
-                  variant="outline"
-                  className="w-full mt-2 gap-2"
-                  onClick={handleNewChat}
-                >
-                  <Plus className="h-4 w-4" />
-                  New Chat
-                </Button>
-              </SidebarHeader>
-              <SidebarContent>
-                <ChatHistory
-                  sessions={chatSessions}
-                  onSelect={handleSessionSelect}
-                  selectedId={selectedSession}
-                />
-              </SidebarContent>
-            </Sidebar>
-
-            <div className="flex-1 flex">
-              <div className="flex-1 flex flex-col">
-                <div className="p-4 border-b">
-                  <ModelSelector
-                    selectedModel={selectedModel}
-                    allowedModels={allowedModels}
-                    onModelChange={setSelectedModel}
-                  />
-                </div>
-
-                <div className="flex-1 overflow-hidden">
-                  <ChatInterface 
-                    onHistoryUpdate={fetchChatHistory}
-                  />
-                </div>
+                <SidebarTrigger />
               </div>
-              
-              <div className="border-l p-4 hidden lg:block">
-                <ResourceSidebar />
+              <Button
+                variant="outline"
+                className="w-full mt-2 gap-2"
+                onClick={handleNewChat}
+              >
+                <Plus className="h-4 w-4" />
+                New Chat
+              </Button>
+            </SidebarHeader>
+            <SidebarContent>
+              <ChatHistory
+                sessions={chatSessions}
+                onSelect={handleSessionSelect}
+                selectedId={selectedSession}
+              />
+            </SidebarContent>
+          </Sidebar>
+
+          <div className="flex-1 flex">
+            <div className="flex-1 flex flex-col">
+              <div className="p-4 border-b">
+                <ModelSelector
+                  selectedModel={selectedModel}
+                  allowedModels={allowedModels}
+                  onModelChange={setSelectedModel}
+                />
+              </div>
+
+              <div className="flex-1 overflow-hidden">
+                <ChatInterface 
+                  onHistoryUpdate={fetchChatHistory}
+                />
               </div>
             </div>
+            
+            <div className="border-l p-4 hidden lg:block">
+              <ResourceSidebar />
+            </div>
           </div>
-        </SidebarProvider>
-      </div>
+        </div>
+      </SidebarProvider>
     </div>
   );
 };
