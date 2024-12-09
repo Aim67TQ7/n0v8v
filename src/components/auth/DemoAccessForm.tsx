@@ -14,71 +14,24 @@ export const DemoAccessForm = () => {
     setLoading(true);
 
     try {
-      // First check if DEMO company exists
-      const { data: demoCompany, error: companyError } = await supabase
-        .from("companies")
-        .select("id")
-        .eq("name", "DEMO")
-        .single();
-
-      if (companyError && companyError.code !== 'PGRST116') {
-        throw companyError;
-      }
-
-      let demoCompanyId;
-
-      if (!demoCompany) {
-        try {
-          const { data: newCompany, error: createError } = await supabase.rpc(
-            "create_licensed_company",
-            {
-              company_name: "DEMO",
-              license_type: "demo",
-              max_users: 1
-            }
-          );
-          
-          if (createError) throw createError;
-          demoCompanyId = newCompany;
-        } catch (createError: any) {
-          if (createError.message?.includes('companies_name_key')) {
-            const { data: existingCompany, error: fetchError } = await supabase
-              .from("companies")
-              .select("id")
-              .eq("name", "DEMO")
-              .single();
-            
-            if (fetchError) throw fetchError;
-            demoCompanyId = existingCompany.id;
-          } else {
-            throw createError;
-          }
-        }
-      } else {
-        demoCompanyId = demoCompany.id;
-      }
-
-      // Send magic link for passwordless sign in
-      const { error: signInError } = await supabase.auth.signInWithOtp({
+      const { error } = await supabase.auth.signUp({
         email,
+        password: crypto.randomUUID(), // Generate a random password
         options: {
+          emailRedirectTo: `${window.location.origin}/login`,
           data: {
             first_name: "Demo",
             last_name: "User",
-            company_id: demoCompanyId,
-            role: "admin",
-            demo_access_expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
           }
         }
       });
 
-      if (signInError) throw signInError;
+      if (error) throw error;
 
       toast({
         title: "Demo Access Link Sent",
         description: "Check your email for a magic link to access the demo. You'll have 24 hours of full access once you sign in.",
       });
-
     } catch (error: any) {
       console.error("Demo access error:", error);
       toast({
@@ -105,7 +58,7 @@ export const DemoAccessForm = () => {
           placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+          className="appearance-none rounded-md relative block w-full"
         />
         <Button
           type="submit"

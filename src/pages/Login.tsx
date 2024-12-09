@@ -10,18 +10,18 @@ const Login = () => {
           <h2 className="mt-6 text-3xl font-bold text-gray-900">Welcome</h2>
         </div>
 
-        <Tabs defaultValue="demo" className="w-full">
+        <Tabs defaultValue="signin" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="demo">Get Demo Access</TabsTrigger>
             <TabsTrigger value="signin">Sign In</TabsTrigger>
+            <TabsTrigger value="demo">Get Demo Access</TabsTrigger>
           </TabsList>
-
-          <TabsContent value="demo">
-            <DemoAccessForm />
-          </TabsContent>
 
           <TabsContent value="signin">
             <SignInForm />
+          </TabsContent>
+
+          <TabsContent value="demo">
+            <DemoAccessForm />
           </TabsContent>
         </Tabs>
       </div>

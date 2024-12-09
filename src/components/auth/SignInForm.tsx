@@ -9,7 +9,6 @@ export const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPasswordReset, setShowPasswordReset] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -18,32 +17,49 @@ export const SignInForm = () => {
     setLoading(true);
 
     try {
-      if (showPasswordReset) {
-        // Send magic link for password reset
-        const { error } = await supabase.auth.resetPasswordForEmail(email);
-        if (error) throw error;
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        toast({
-          title: "Password reset link sent!",
-          description: "Check your email for a link to reset your password.",
-        });
-      } else {
-        // Regular email/password sign in
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+      if (error) throw error;
 
-        if (error) throw error;
+      toast({
+        title: "Welcome back!",
+        description: "You have successfully signed in.",
+      });
+      
+      navigate("/");
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        toast({
-          title: "Welcome back!",
-          description: "You have successfully signed in.",
-        });
-        
-        // Redirect to dashboard after successful login
-        navigate("/");
-      }
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/login`,
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Check your email",
+        description: "We've sent you a confirmation link to complete your registration.",
+      });
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -59,12 +75,10 @@ export const SignInForm = () => {
     <div>
       <div className="text-center mb-6">
         <p className="mt-2 text-sm text-gray-600">
-          {showPasswordReset 
-            ? "Enter your email to receive a password reset link" 
-            : "Sign in to your existing account"}
+          Sign in to your account or create a new one
         </p>
       </div>
-      <form onSubmit={handleSignIn} className="space-y-4">
+      <form className="space-y-4">
         <Input
           type="email"
           required
@@ -73,37 +87,33 @@ export const SignInForm = () => {
           onChange={(e) => setEmail(e.target.value)}
           className="appearance-none rounded-md relative block w-full"
         />
-        {!showPasswordReset && (
-          <Input
-            type="password"
-            required
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="appearance-none rounded-md relative block w-full"
-          />
-        )}
-        <div className="flex justify-end">
+        <Input
+          type="password"
+          required
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="appearance-none rounded-md relative block w-full"
+        />
+        <div className="flex gap-4">
           <Button
             type="button"
-            variant="link"
-            className="text-sm"
-            onClick={() => setShowPasswordReset(!showPasswordReset)}
+            className="flex-1"
+            onClick={handleSignIn}
+            disabled={loading}
           >
-            {showPasswordReset ? "Back to sign in" : "Forgot password?"}
+            {loading ? "Processing..." : "Sign In"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1"
+            onClick={handleSignUp}
+            disabled={loading}
+          >
+            {loading ? "Processing..." : "Sign Up"}
           </Button>
         </div>
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={loading}
-        >
-          {loading 
-            ? "Processing..." 
-            : showPasswordReset 
-              ? "Send Reset Link"
-              : "Sign In"}
-        </Button>
       </form>
     </div>
   );
