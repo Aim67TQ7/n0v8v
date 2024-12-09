@@ -28,6 +28,8 @@ export const ApiStatus = () => {
         setOpenaiStatus(openaiResponse.error ? 'down' : 'up');
       } catch (error) {
         console.error('Error checking API status:', error);
+        // If there's an error checking either API, we'll mark both as down
+        // since we can't be sure which one failed
         setGroqStatus('down');
         setOpenaiStatus('down');
       }
