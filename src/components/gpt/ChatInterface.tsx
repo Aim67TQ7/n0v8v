@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from "@supabase/auth-helpers-react";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -19,6 +20,7 @@ export const ChatInterface = ({
   onHistoryUpdate 
 }: ChatInterfaceProps) => {
   const { session } = useSessionContext();
+  const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([
     { role: "system", content: systemPrompt }
   ]);
@@ -68,58 +70,45 @@ export const ChatInterface = ({
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error("No session");
+      if (!session) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to use the chat",
+          variant: "destructive"
+        });
+        return;
+      }
 
-      const response = await fetch(`${process.env.SUPABASE_URL}/functions/v1/chat-with-groq`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const response = await supabase.functions.invoke('chat-with-groq', {
+        body: {
           messages: [...messages, userMessage],
-        }),
+        },
       });
 
-      if (!response.ok) throw new Error('Failed to fetch response');
-
-      const reader = response.body?.getReader();
-      if (!reader) throw new Error('No reader available');
-
-      let assistantMessage = { role: "assistant" as const, content: "" };
-      setMessages(prev => [...prev, assistantMessage]);
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = new TextDecoder().decode(value);
-        const lines = chunk.split('\n').filter(line => line.trim() !== '');
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') continue;
-            
-            try {
-              const parsed = JSON.parse(data);
-              const content = parsed.choices[0]?.delta?.content || '';
-              assistantMessage.content += content;
-              setMessages(prev => [
-                ...prev.slice(0, -1),
-                { ...assistantMessage }
-              ]);
-            } catch (e) {
-              console.error('Error parsing SSE message:', e);
-            }
-          }
-        }
+      if (response.error) {
+        throw new Error(response.error.message);
       }
+
+      if (!response.data) {
+        throw new Error('No response data received');
+      }
+
+      const assistantMessage = { 
+        role: "assistant" as const, 
+        content: response.data.choices[0].message.content 
+      };
+      
+      setMessages(prev => [...prev, userMessage, assistantMessage]);
 
       // Save chat log after completion
       await saveChatLog([...messages, userMessage, assistantMessage]);
     } catch (error) {
       console.error('Error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to get response from AI. Please try again.",
+        variant: "destructive"
+      });
       setMessages(prev => [...prev, {
         role: "assistant",
         content: "I apologize, but I encountered an error. Please try again."
