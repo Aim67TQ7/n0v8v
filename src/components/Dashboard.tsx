@@ -26,6 +26,13 @@ const modules = [
     status: "ready" as const
   },
   {
+    title: "Company GPT",
+    description: "Chat with your AI assistant",
+    icon: MessageSquare,
+    href: "/company-gpt",
+    status: "ready" as const
+  },
+  {
     title: "Analytics",
     description: "Performance metrics and insights",
     icon: ChartBar,
