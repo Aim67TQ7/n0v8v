@@ -16,10 +16,17 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 
+interface ChatSession {
+  id: string;
+  title: string;
+  timestamp: Date;
+}
+
 const CompanyGPT = () => {
   const { session } = useSessionContext();
   const [selectedModel, setSelectedModel] = useState("groq");
   const [selectedSession, setSelectedSession] = useState<string>();
+  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
 
   const { data: profile } = useQuery({
     queryKey: ["profile"],
@@ -44,22 +51,35 @@ const CompanyGPT = () => {
     enabled: !!session?.user?.id,
   });
 
+  const fetchChatHistory = async () => {
+    if (!profile?.company_id) return;
+
+    const { data, error } = await supabase
+      .from('chat_logs')
+      .select('*')
+      .eq('company_id', profile.company_id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching chat history:', error);
+      return;
+    }
+
+    const sessions = data.map(log => ({
+      id: log.id,
+      title: log.messages[1]?.content?.slice(0, 30) + "..." || "New Chat",
+      timestamp: new Date(log.created_at)
+    }));
+
+    setChatSessions(sessions);
+  };
+
+  useEffect(() => {
+    fetchChatHistory();
+  }, [profile?.company_id]);
+
   const gptName = profile?.company?.settings?.[0]?.gpt_name || "CompanyGPT";
   const allowedModels = profile?.allowed_models || ["groq"];
-
-  // Mock chat sessions for demo
-  const chatSessions = [
-    {
-      id: "1",
-      title: "Production Efficiency Ideas",
-      timestamp: new Date("2024-03-10"),
-    },
-    {
-      id: "2",
-      title: "Safety Procedures",
-      timestamp: new Date("2024-03-09"),
-    },
-  ];
 
   const handleNewChat = () => {
     setSelectedSession(undefined);
@@ -107,7 +127,9 @@ const CompanyGPT = () => {
             </div>
 
             <div className="flex-1 overflow-hidden">
-              <ChatInterface />
+              <ChatInterface 
+                onHistoryUpdate={fetchChatHistory}
+              />
             </div>
           </div>
 

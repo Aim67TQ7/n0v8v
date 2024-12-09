@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
+import { useSessionContext } from "@supabase/auth-helpers-react";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -10,9 +11,14 @@ interface Message {
 
 interface ChatInterfaceProps {
   systemPrompt?: string;
+  onHistoryUpdate?: () => void;
 }
 
-export const ChatInterface = ({ systemPrompt = "You are a helpful AI assistant." }: ChatInterfaceProps) => {
+export const ChatInterface = ({ 
+  systemPrompt = "You are a helpful AI assistant.",
+  onHistoryUpdate 
+}: ChatInterfaceProps) => {
+  const { session } = useSessionContext();
   const [messages, setMessages] = useState<Message[]>([
     { role: "system", content: systemPrompt }
   ]);
@@ -27,6 +33,29 @@ export const ChatInterface = ({ systemPrompt = "You are a helpful AI assistant."
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const saveChatLog = async (messages: Message[]) => {
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('company_id')
+        .eq('id', session?.user?.id)
+        .single();
+
+      if (!profile?.company_id) return;
+
+      await supabase.from('chat_logs').insert({
+        company_id: profile.company_id,
+        user_id: session?.user?.id,
+        model: 'groq',
+        messages
+      });
+
+      onHistoryUpdate?.();
+    } catch (error) {
+      console.error('Error saving chat log:', error);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,6 +115,9 @@ export const ChatInterface = ({ systemPrompt = "You are a helpful AI assistant."
           }
         }
       }
+
+      // Save chat log after completion
+      await saveChatLog([...messages, userMessage, assistantMessage]);
     } catch (error) {
       console.error('Error:', error);
       setMessages(prev => [...prev, {
