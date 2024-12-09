@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +7,6 @@ import { supabase } from "@/integrations/supabase/client";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleDemoAccess = async (e: React.FormEvent) => {
@@ -16,15 +14,31 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // Get the DEMO company by name, using single() to expect one row
-      const { data: demoCompany, error: companyError } = await supabase
+      // First check if DEMO company exists
+      const { data: demoCompanies, error: companyError } = await supabase
         .from("companies")
         .select("id")
-        .eq("name", "DEMO")
-        .single();
+        .eq("name", "DEMO");
 
-      if (companyError) {
-        throw new Error("Demo company not found");
+      if (companyError) throw companyError;
+
+      let demoCompanyId;
+
+      // If no DEMO company exists, create one
+      if (!demoCompanies || demoCompanies.length === 0) {
+        const { data: newCompany, error: createError } = await supabase.rpc(
+          "create_licensed_company",
+          {
+            company_name: "DEMO",
+            license_type: "demo",
+            max_users: 1
+          }
+        );
+        
+        if (createError) throw createError;
+        demoCompanyId = newCompany;
+      } else {
+        demoCompanyId = demoCompanies[0].id;
       }
 
       // Create or update the user
@@ -45,7 +59,7 @@ const Login = () => {
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
-          company_id: demoCompany.id,
+          company_id: demoCompanyId,
           role: "admin",
           demo_access_expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         })
