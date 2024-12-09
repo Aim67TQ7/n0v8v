@@ -5,11 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
-import { AuthWrapper } from "@/components/AuthWrapper";
 import { Header } from "@/components/Header";
 import Index from "./pages/Index";
-import Login from "./pages/Login";
-import AdminPanel from "./pages/AdminPanel";
 import Modules from "./pages/Modules";
 import LeanManufacturing from "./pages/LeanManufacturing";
 import FiveSVision from "./pages/FiveSVision";
@@ -32,148 +29,112 @@ const App = () => (
           <Toaster />
           <Sonner />
           <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/admin"
-              element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <AdminPanel />
-                  </div>
-                </AuthWrapper>
-              }
-            />
             <Route
               path="/"
               element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <Index />
-                  </div>
-                </AuthWrapper>
+                <div className="min-h-screen flex flex-col">
+                  <Header />
+                  <Index />
+                </div>
               }
             />
             <Route
               path="/modules"
               element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <Modules />
-                  </div>
-                </AuthWrapper>
+                <div className="min-h-screen flex flex-col">
+                  <Header />
+                  <Modules />
+                </div>
               }
             />
             <Route
               path="/team"
               element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <TeamManagement />
-                  </div>
-                </AuthWrapper>
+                <div className="min-h-screen flex flex-col">
+                  <Header />
+                  <TeamManagement />
+                </div>
               }
             />
             <Route
               path="/operations/lean"
               element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <LeanManufacturing />
-                  </div>
-                </AuthWrapper>
+                <div className="min-h-screen flex flex-col">
+                  <Header />
+                  <LeanManufacturing />
+                </div>
               }
             />
             <Route
               path="/operations/lean/5s-vision"
               element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <FiveSVision />
-                  </div>
-                </AuthWrapper>
+                <div className="min-h-screen flex flex-col">
+                  <Header />
+                  <FiveSVision />
+                </div>
               }
             />
             <Route
               path="/operations/quality"
               element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <QualityAssurance />
-                  </div>
-                </AuthWrapper>
+                <div className="min-h-screen flex flex-col">
+                  <Header />
+                  <QualityAssurance />
+                </div>
               }
             />
             <Route
               path="/operations/quality/process-improvement"
               element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <PartAnalysis />
-                  </div>
-                </AuthWrapper>
+                <div className="min-h-screen flex flex-col">
+                  <Header />
+                  <PartAnalysis />
+                </div>
               }
             />
             <Route
               path="/operations/quality/product-inspection"
               element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <ProductInspection />
-                  </div>
-                </AuthWrapper>
+                <div className="min-h-screen flex flex-col">
+                  <Header />
+                  <ProductInspection />
+                </div>
               }
             />
             <Route
               path="/operations/quality/dmr"
               element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <DMRDocumentation />
-                  </div>
-                </AuthWrapper>
+                <div className="min-h-screen flex flex-col">
+                  <Header />
+                  <DMRDocumentation />
+                </div>
               }
             />
             <Route
               path="/operations/quality/five-whys"
               element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <FiveWhys />
-                  </div>
-                </AuthWrapper>
+                <div className="min-h-screen flex flex-col">
+                  <Header />
+                  <FiveWhys />
+                </div>
               }
             />
             <Route
               path="/training/matrix"
               element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <TrainingMatrix />
-                  </div>
-                </AuthWrapper>
+                <div className="min-h-screen flex flex-col">
+                  <Header />
+                  <TrainingMatrix />
+                </div>
               }
             />
             <Route
               path="/company-gpt"
               element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <CompanyGPT />
-                  </div>
-                </AuthWrapper>
+                <div className="min-h-screen flex flex-col">
+                  <Header />
+                  <CompanyGPT />
+                </div>
               }
             />
           </Routes>
