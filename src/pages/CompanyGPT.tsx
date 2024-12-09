@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { ModelSelector } from "@/components/gpt/ModelSelector";
 import { ChatInterface } from "@/components/gpt/ChatInterface";
 import { ChatHistory } from "@/components/gpt/ChatHistory";
-import { ApiStatus } from "@/components/gpt/ApiStatus";
 import { ResourceSidebar } from "@/components/gpt/ResourceSidebar";
 import {
   SidebarProvider,
@@ -25,7 +24,7 @@ interface ChatSession {
 
 const CompanyGPT = () => {
   const { session } = useSessionContext();
-  const [selectedModel, setSelectedModel] = useState("groq");
+  const [selectedModel, setSelectedModel] = useState("gpt-4o");
   const [selectedSession, setSelectedSession] = useState<string>();
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
 
@@ -80,7 +79,7 @@ const CompanyGPT = () => {
   }, [profile?.company_id]);
 
   const gptName = profile?.company?.settings?.[0]?.gpt_name || "CompanyGPT";
-  const allowedModels = profile?.allowed_models || ["groq"];
+  const allowedModels = ["gpt-4o", "gpt-4o-mini"];
 
   const handleNewChat = () => {
     setSelectedSession(undefined);
@@ -91,14 +90,13 @@ const CompanyGPT = () => {
   };
 
   return (
-    <div className="flex-1">
+    <div className="flex-1 bg-gradient-ocean">
       <SidebarProvider>
         <div className="flex min-h-[calc(100vh-4rem)] w-full">
           <Sidebar>
-            <SidebarHeader className="border-b p-4">
+            <SidebarHeader className="border-b p-4 bg-background/95">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <ApiStatus />
                   <h2 className="text-lg font-semibold">{gptName}</h2>
                 </div>
                 <SidebarTrigger />
@@ -112,7 +110,7 @@ const CompanyGPT = () => {
                 New Chat
               </Button>
             </SidebarHeader>
-            <SidebarContent>
+            <SidebarContent className="bg-background/95">
               <ChatHistory
                 sessions={chatSessions}
                 onSelect={handleSessionSelect}
@@ -122,7 +120,7 @@ const CompanyGPT = () => {
           </Sidebar>
 
           <div className="flex-1 flex">
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col bg-background/95">
               <div className="p-4 border-b">
                 <ModelSelector
                   selectedModel={selectedModel}
@@ -138,7 +136,7 @@ const CompanyGPT = () => {
               </div>
             </div>
             
-            <div className="border-l p-4 hidden lg:block">
+            <div className="border-l p-4 hidden lg:block bg-background/95">
               <ResourceSidebar />
             </div>
           </div>

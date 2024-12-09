@@ -15,8 +15,8 @@ interface ModelSelectorProps {
 }
 
 const modelInfo = {
-  groq: "Fast responses, good for general queries",
-  "gpt-4o-mini": "Trainable, lower latency, good for company-specific tasks"
+  "gpt-4o": "Most capable model, best for complex tasks",
+  "gpt-4o-mini": "Faster responses, good for simpler tasks"
 };
 
 export const ModelSelector = ({ selectedModel, allowedModels, onModelChange }: ModelSelectorProps) => {

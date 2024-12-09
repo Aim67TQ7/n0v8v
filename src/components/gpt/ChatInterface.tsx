@@ -16,7 +16,7 @@ interface ChatInterfaceProps {
 }
 
 export const ChatInterface = ({ 
-  systemPrompt = "You are a helpful AI assistant.",
+  systemPrompt = "You are a helpful AI assistant with access to company resources and tools.",
   onHistoryUpdate 
 }: ChatInterfaceProps) => {
   const { session } = useSessionContext();
@@ -49,7 +49,7 @@ export const ChatInterface = ({
       await supabase.from('chat_logs').insert({
         company_id: profile.company_id,
         user_id: session?.user?.id,
-        model: 'groq',
+        model: 'gpt-4o',
         messages: JSON.stringify(messages)
       });
 
@@ -79,7 +79,7 @@ export const ChatInterface = ({
         return;
       }
 
-      const response = await supabase.functions.invoke('chat-with-groq', {
+      const response = await supabase.functions.invoke('chat-with-openai', {
         body: {
           messages: [...messages, userMessage],
         },
@@ -99,8 +99,6 @@ export const ChatInterface = ({
       };
       
       setMessages(prev => [...prev, userMessage, assistantMessage]);
-
-      // Save chat log after completion
       await saveChatLog([...messages, userMessage, assistantMessage]);
     } catch (error) {
       console.error('Error:', error);
