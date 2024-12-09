@@ -93,7 +93,7 @@ const CompanyGPT = () => {
   };
 
   return (
-    <div className="flex-1 bg-gradient-ocean">
+    <div className="flex-1 bg-gradient-to-br from-[#F2FCE2] to-[#F1F0FB]">
       <SidebarProvider>
         <div className="flex min-h-screen w-full">
           <Sidebar>
