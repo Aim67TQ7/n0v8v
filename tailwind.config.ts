@@ -44,6 +44,13 @@ export default {
       fontFamily: {
         sans: ["Inter", "sans-serif"],
       },
+      backgroundImage: {
+        'gradient-ocean': 'linear-gradient(to right, #243949 0%, #517fa4 100%)',
+        'gradient-emerald': 'linear-gradient(to right, #0F766E 0%, #34D399 100%)',
+        'gradient-aqua': 'linear-gradient(90deg, hsla(186, 33%, 94%, 1) 0%, hsla(216, 41%, 79%, 1) 100%)',
+        'gradient-teal': 'linear-gradient(90deg, #0d9488 0%, #5eead4 100%)',
+        'gradient-seafoam': 'linear-gradient(to right, #0EA5E9 0%, #22C55E 100%)',
+      },
       keyframes: {
         "fade-up": {
           "0%": {
