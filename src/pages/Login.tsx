@@ -15,30 +15,50 @@ const Login = () => {
 
     try {
       // First check if DEMO company exists
-      const { data: demoCompanies, error: companyError } = await supabase
+      const { data: demoCompany, error: companyError } = await supabase
         .from("companies")
         .select("id")
-        .eq("name", "DEMO");
+        .eq("name", "DEMO")
+        .single();
 
-      if (companyError) throw companyError;
+      if (companyError && companyError.code !== 'PGRST116') {
+        // If it's any error other than "no rows returned", throw it
+        throw companyError;
+      }
 
       let demoCompanyId;
 
-      // If no DEMO company exists, create one
-      if (!demoCompanies || demoCompanies.length === 0) {
-        const { data: newCompany, error: createError } = await supabase.rpc(
-          "create_licensed_company",
-          {
-            company_name: "DEMO",
-            license_type: "demo",
-            max_users: 1
+      if (!demoCompany) {
+        try {
+          // Try to create the DEMO company
+          const { data: newCompany, error: createError } = await supabase.rpc(
+            "create_licensed_company",
+            {
+              company_name: "DEMO",
+              license_type: "demo",
+              max_users: 1
+            }
+          );
+          
+          if (createError) throw createError;
+          demoCompanyId = newCompany;
+        } catch (createError: any) {
+          if (createError.message?.includes('companies_name_key')) {
+            // If creation failed due to duplicate name, try fetching again
+            const { data: existingCompany, error: fetchError } = await supabase
+              .from("companies")
+              .select("id")
+              .eq("name", "DEMO")
+              .single();
+            
+            if (fetchError) throw fetchError;
+            demoCompanyId = existingCompany.id;
+          } else {
+            throw createError;
           }
-        );
-        
-        if (createError) throw createError;
-        demoCompanyId = newCompany;
+        }
       } else {
-        demoCompanyId = demoCompanies[0].id;
+        demoCompanyId = demoCompany.id;
       }
 
       // Create or update the user
