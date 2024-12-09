@@ -46,138 +46,135 @@ const App = () => (
                   </AuthWrapper>
                 }
               />
-            <Route
-              path="/"
-              element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <Index />
-                  </div>
-                </AuthWrapper>
-              }
-            />
-            <Route
-              path="/modules"
-              element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <Modules />
-                  </div>
-                </AuthWrapper>
-              }
-            />
-            <Route
-              path="/team"
-              element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <TeamManagement />
-                  </div>
-                </AuthWrapper>
-              }
-            />
-            <Route
-              path="/operations/lean"
-              element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <LeanManufacturing />
-                  </div>
-                </AuthWrapper>
-              }
-            />
-            <Route
-              path="/operations/lean/5s-vision"
-              element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <FiveSVision />
-                  </div>
-                </AuthWrapper>
-              }
-            />
-            <Route
-              path="/operations/quality"
-              element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <QualityAssurance />
-                  </div>
-                </AuthWrapper>
-              }
-            />
-            <Route
-              path="/operations/quality/process-improvement"
-              element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <PartAnalysis />
-                  </div>
-                </AuthWrapper>
-              }
-            />
-            <Route
-              path="/operations/quality/product-inspection"
-              element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <ProductInspection />
-                  </div>
-                </AuthWrapper>
-              }
-            />
-            <Route
-              path="/operations/quality/dmr"
-              element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <DMRDocumentation />
-                  </div>
-                </AuthWrapper>
-              }
-            />
-            <Route
-              path="/operations/quality/five-whys"
-              element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <FiveWhys />
-                  </div>
-                </AuthWrapper>
-              }
-            />
-            <Route
-              path="/training/matrix"
-              element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
-                    <TrainingMatrix />
-                  </div>
-                </AuthWrapper>
-              }
-            />
-            <Route
-              path="/company-gpt"
-              element={
-                <AuthWrapper>
-                  <div className="min-h-screen flex flex-col">
-                    <Header />
+              <Route
+                path="/"
+                element={
+                  <AuthWrapper>
+                    <div className="min-h-screen flex flex-col">
+                      <Header />
+                      <Index />
+                    </div>
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/modules"
+                element={
+                  <AuthWrapper>
+                    <div className="min-h-screen flex flex-col">
+                      <Header />
+                      <Modules />
+                    </div>
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/team"
+                element={
+                  <AuthWrapper>
+                    <div className="min-h-screen flex flex-col">
+                      <Header />
+                      <TeamManagement />
+                    </div>
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/operations/lean"
+                element={
+                  <AuthWrapper>
+                    <div className="min-h-screen flex flex-col">
+                      <Header />
+                      <LeanManufacturing />
+                    </div>
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/operations/lean/5s-vision"
+                element={
+                  <AuthWrapper>
+                    <div className="min-h-screen flex flex-col">
+                      <Header />
+                      <FiveSVision />
+                    </div>
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/operations/quality"
+                element={
+                  <AuthWrapper>
+                    <div className="min-h-screen flex flex-col">
+                      <Header />
+                      <QualityAssurance />
+                    </div>
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/operations/quality/process-improvement"
+                element={
+                  <AuthWrapper>
+                    <div className="min-h-screen flex flex-col">
+                      <Header />
+                      <PartAnalysis />
+                    </div>
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/operations/quality/product-inspection"
+                element={
+                  <AuthWrapper>
+                    <div className="min-h-screen flex flex-col">
+                      <Header />
+                      <ProductInspection />
+                    </div>
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/operations/quality/dmr"
+                element={
+                  <AuthWrapper>
+                    <div className="min-h-screen flex flex-col">
+                      <Header />
+                      <DMRDocumentation />
+                    </div>
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/operations/quality/five-whys"
+                element={
+                  <AuthWrapper>
+                    <div className="min-h-screen flex flex-col">
+                      <Header />
+                      <FiveWhys />
+                    </div>
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/training/matrix"
+                element={
+                  <AuthWrapper>
+                    <div className="min-h-screen flex flex-col">
+                      <Header />
+                      <TrainingMatrix />
+                    </div>
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/company-gpt"
+                element={
+                  <AuthWrapper>
                     <CompanyGPT />
-                  </div>
-                </AuthWrapper>
-              }
-            />
+                  </AuthWrapper>
+                }
+              />
             </Routes>
           </TooltipProvider>
         </BrowserRouter>
