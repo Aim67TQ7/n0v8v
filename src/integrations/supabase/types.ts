@@ -433,6 +433,7 @@ export type Database = {
           allowed_models: string[] | null
           company_id: string | null
           created_at: string
+          demo_access_expires: string | null
           department: string | null
           email: string
           first_name: string | null
@@ -445,6 +446,7 @@ export type Database = {
           allowed_models?: string[] | null
           company_id?: string | null
           created_at?: string
+          demo_access_expires?: string | null
           department?: string | null
           email: string
           first_name?: string | null
@@ -457,6 +459,7 @@ export type Database = {
           allowed_models?: string[] | null
           company_id?: string | null
           created_at?: string
+          demo_access_expires?: string | null
           department?: string | null
           email?: string
           first_name?: string | null
