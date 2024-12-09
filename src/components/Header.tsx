@@ -75,29 +75,38 @@ export const Header = () => {
               <div className="flex items-center gap-3">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      <User className="h-4 w-4" />
-                      {profile.first_name} {profile.last_name}
-                      <ChevronDown className="h-4 w-4" />
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="gap-2 font-semibold text-foreground hover:bg-accent"
+                    >
+                      <User className="h-4 w-4 text-foreground" />
+                      <span className="text-foreground">
+                        {profile.first_name} {profile.last_name}
+                      </span>
+                      <ChevronDown className="h-4 w-4 text-foreground" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="flex flex-col items-start gap-1">
-                      <span className="font-medium">Company</span>
-                      <span className="text-sm text-muted-foreground">{profile.company?.name}</span>
+                      <span className="font-medium text-foreground">Company</span>
+                      <span className="text-sm text-foreground/80">{profile.company?.name}</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="flex flex-col items-start gap-1">
-                      <span className="font-medium">Role</span>
-                      <span className="text-sm text-muted-foreground capitalize">{profile.role}</span>
+                      <span className="font-medium text-foreground">Role</span>
+                      <span className="text-sm text-foreground/80 capitalize">{profile.role}</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="flex flex-col items-start gap-1">
-                      <span className="font-medium">Plan</span>
-                      <span className="text-sm text-muted-foreground capitalize">{profile.company?.license_type}</span>
+                      <span className="font-medium text-foreground">Plan</span>
+                      <span className="text-sm text-foreground/80 capitalize">{profile.company?.license_type}</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="gap-2" onClick={handleLogout}>
+                    <DropdownMenuItem 
+                      className="gap-2 text-red-500 focus:text-red-500 focus:bg-red-50" 
+                      onClick={handleLogout}
+                    >
                       <LogOut className="h-4 w-4" />
                       <span>Logout</span>
                     </DropdownMenuItem>
