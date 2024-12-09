@@ -17,19 +17,17 @@ export const ApiStatus = () => {
       try {
         // Check GROQ API
         const groqResponse = await supabase.functions.invoke('chat-with-groq', {
-          body: { messages: [{ role: 'user', content: 'test' }] },
+          body: { messages: [{ role: 'system', content: 'test' }] },
         });
         setGroqStatus(groqResponse.error ? 'down' : 'up');
 
         // Check OpenAI API
-        const openaiResponse = await supabase.functions.invoke('chat-with-ai', {
-          body: { messages: [{ role: 'user', content: 'test' }] },
+        const openaiResponse = await supabase.functions.invoke('chat-with-groq', {
+          body: { messages: [{ role: 'system', content: 'test' }] },
         });
         setOpenaiStatus(openaiResponse.error ? 'down' : 'up');
       } catch (error) {
         console.error('Error checking API status:', error);
-        // If there's an error checking either API, we'll mark both as down
-        // since we can't be sure which one failed
         setGroqStatus('down');
         setOpenaiStatus('down');
       }
