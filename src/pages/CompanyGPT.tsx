@@ -28,7 +28,7 @@ const CompanyGPT = () => {
   const [selectedSession, setSelectedSession] = useState<string>();
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
 
-  const { data: profile } = useQuery({
+  const { data: profile, isLoading } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
       if (!session?.user?.id) return null;
@@ -78,9 +78,9 @@ const CompanyGPT = () => {
     fetchChatHistory();
   }, [profile?.company_id]);
 
-  // Update the gptName to use the company name if available
-  const companyName = profile?.company?.name || "Company";
-  const gptName = `${companyName}GPT`;
+  // Get the company name from the profile data
+  const companyName = profile?.company?.name;
+  const gptName = companyName ? `${companyName}GPT` : "Loading...";
 
   const allowedModels = ["gpt-4o", "gpt-4o-mini"];
 
@@ -100,7 +100,9 @@ const CompanyGPT = () => {
             <SidebarHeader className="border-b p-4 bg-background/95">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <h2 className="text-lg font-semibold">{gptName}</h2>
+                  <h2 className="text-lg font-semibold">
+                    {isLoading ? "Loading..." : gptName}
+                  </h2>
                 </div>
                 <SidebarTrigger />
               </div>
