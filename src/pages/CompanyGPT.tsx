@@ -27,29 +27,54 @@ const CompanyGPT = () => {
   const [selectedModel, setSelectedModel] = useState("gpt-4o");
   const [selectedSession, setSelectedSession] = useState<string>();
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
+  const [companyName, setCompanyName] = useState<string>("Loading...");
 
-  const { data: profile, isLoading } = useQuery({
-    queryKey: ["profile"],
+  // First, fetch the profile to get the company_id
+  const { data: profile, isLoading: isProfileLoading } = useQuery({
+    queryKey: ["profile-basic"],
     queryFn: async () => {
       if (!session?.user?.id) return null;
       const { data, error } = await supabase
         .from("profiles")
-        .select(`
-          *,
-          company:companies(
-            id,
-            name,
-            settings:company_settings(gpt_name)
-          )
-        `)
+        .select("company_id")
         .eq("id", session.user.id)
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error("Profile fetch error:", error);
+        throw error;
+      }
       return data;
     },
     enabled: !!session?.user?.id,
   });
+
+  // Then, fetch the company name separately
+  const { data: company } = useQuery({
+    queryKey: ["company-name", profile?.company_id],
+    queryFn: async () => {
+      if (!profile?.company_id) return null;
+      const { data, error } = await supabase
+        .from("companies")
+        .select("name")
+        .eq("id", profile.company_id)
+        .single();
+      
+      if (error) {
+        console.error("Company fetch error:", error);
+        throw error;
+      }
+      return data;
+    },
+    enabled: !!profile?.company_id,
+  });
+
+  // Update company name when data is available
+  useEffect(() => {
+    if (company?.name) {
+      setCompanyName(company.name);
+    }
+  }, [company]);
 
   const fetchChatHistory = async () => {
     if (!profile?.company_id) return;
@@ -78,9 +103,7 @@ const CompanyGPT = () => {
     fetchChatHistory();
   }, [profile?.company_id]);
 
-  // Get the company name from the profile data
-  const companyName = profile?.company?.name;
-  const gptName = companyName ? `${companyName}GPT` : "Loading...";
+  const gptName = `${companyName}GPT`;
 
   const allowedModels = ["gpt-4o", "gpt-4o-mini"];
 
@@ -101,7 +124,7 @@ const CompanyGPT = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <h2 className="text-lg font-semibold">
-                    {isLoading ? "Loading..." : gptName}
+                    {isProfileLoading ? "Loading..." : gptName}
                   </h2>
                 </div>
                 <SidebarTrigger />
