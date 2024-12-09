@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { useSession } from "@supabase/auth-helpers-react";
-import { useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,43 +12,30 @@ export const AddWorkCenterDialog = () => {
   const [name, setName] = useState("");
   const [department, setDepartment] = useState("");
   const { toast } = useToast();
-  const session = useSession();
-  const queryClient = useQueryClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!session?.user?.id) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "You must be logged in to add a work center",
-      });
-      return;
-    }
-
     try {
-      // Get user's company_id from their profile
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("company_id")
-        .eq("id", session.user.id)
+      // Get the DEMO company ID
+      const { data: demoCompany } = await supabase
+        .from('companies')
+        .select('id')
+        .eq('name', 'DEMO')
+        .eq('license_type', 'demo')
         .single();
 
-      if (!profileData?.company_id) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "No company associated with your profile",
-        });
-        return;
+      if (!demoCompany) {
+        throw new Error("Demo company not found");
       }
 
-      const { error } = await supabase.from("workcenters").insert({
-        name,
-        department,
-        company_id: profileData.company_id,
-      });
+      const { error } = await supabase
+        .from("workcenters")
+        .insert({
+          name,
+          department,
+          company_id: demoCompany.id
+        });
 
       if (error) throw error;
 
@@ -59,13 +44,9 @@ export const AddWorkCenterDialog = () => {
         description: "Work center added successfully",
       });
 
-      // Reset form and close dialog
       setName("");
       setDepartment("");
       setOpen(false);
-
-      // Refresh the departments data
-      queryClient.invalidateQueries({ queryKey: ["departments"] });
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -79,7 +60,8 @@ export const AddWorkCenterDialog = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="gap-2">
-          <Plus className="h-4 w-4" /> Add Work Center
+          <Plus className="h-4 w-4" />
+          Add Work Center
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -107,9 +89,12 @@ export const AddWorkCenterDialog = () => {
               required
             />
           </div>
-          <Button type="submit" className="w-full">
-            Add Work Center
-          </Button>
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit">Add Work Center</Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSessionContext } from "@supabase/auth-helpers-react";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -34,50 +32,29 @@ interface FormData {
 
 export const AddEmployeeDialog = () => {
   const [open, setOpen] = useState(false);
-  const { session } = useSessionContext();
   const { toast } = useToast();
   const form = useForm<FormData>();
 
-  const { data: profile } = useQuery({
-    queryKey: ["profile"],
-    queryFn: async () => {
-      if (!session?.user?.id) return null;
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("company_id")
-        .eq("id", session.user.id)
-        .single();
-      
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!session?.user?.id,
-  });
-
   const onSubmit = async (data: FormData) => {
     try {
-      // First create auth user
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: data.email,
-        password: Math.random().toString(36).slice(-8), // Generate random password
-        options: {
-          data: {
-            first_name: data.firstName,
-            last_name: data.lastName,
-          }
-        }
-      });
+      // Get the DEMO company ID
+      const { data: demoCompany } = await supabase
+        .from('companies')
+        .select('id')
+        .eq('name', 'DEMO')
+        .eq('license_type', 'demo')
+        .single();
 
-      if (authError) throw authError;
-      if (!authData.user) throw new Error("No user returned from auth signup");
+      if (!demoCompany) {
+        throw new Error("Demo company not found");
+      }
 
-      // Then create the employee record
+      // Create the employee record directly without auth
       const { error: employeeError } = await supabase
         .from("employees")
         .insert({
           employee_number: data.employeeNumber,
-          profile_id: authData.user.id,
-          company_id: profile?.company_id,
+          company_id: demoCompany.id,
           start_date: data.startDate,
           manager_id: data.managerId
         });
