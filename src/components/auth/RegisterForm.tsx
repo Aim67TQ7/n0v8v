@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,21 @@ export const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Add this useEffect to log available license numbers during development
+  useEffect(() => {
+    const fetchLicenses = async () => {
+      const { data, error } = await supabase
+        .from("companies")
+        .select("name, license_number");
+      
+      if (data) {
+        console.log("Available companies and their license numbers:", data);
+      }
+    };
+
+    fetchLicenses();
+  }, []);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
