@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const DemoAccessForm = () => {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -14,23 +16,28 @@ export const DemoAccessForm = () => {
     setLoading(true);
 
     try {
+      if (password !== confirmPassword) {
+        toast({
+          variant: "destructive",
+          title: "Passwords don't match",
+          description: "Please make sure your passwords match.",
+        });
+        return;
+      }
+
       const { error } = await supabase.auth.signUp({
         email,
-        password: crypto.randomUUID(), // Generate a random password
+        password,
         options: {
           emailRedirectTo: `${window.location.origin}/login`,
-          data: {
-            first_name: "Demo",
-            last_name: "User",
-          }
         }
       });
 
       if (error) throw error;
 
       toast({
-        title: "Demo Access Link Sent",
-        description: "Check your email for a magic link to access the demo. You'll have 24 hours of full access once you sign in.",
+        title: "Demo Access Created",
+        description: "Please check your email to confirm your account. You'll have 24 hours of full access once you sign in.",
       });
     } catch (error: any) {
       console.error("Demo access error:", error);
@@ -48,16 +55,32 @@ export const DemoAccessForm = () => {
     <div>
       <div className="text-center mb-6">
         <p className="mt-2 text-sm text-gray-600">
-          Enter your email to get 24-hour full access to the platform
+          Create a demo account for 24-hour access
         </p>
       </div>
-      <form onSubmit={handleDemoAccess} className="space-y-6">
+      <form onSubmit={handleDemoAccess} className="space-y-4">
         <Input
           type="email"
           required
-          placeholder="Enter your email"
+          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          className="appearance-none rounded-md relative block w-full"
+        />
+        <Input
+          type="password"
+          required
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="appearance-none rounded-md relative block w-full"
+        />
+        <Input
+          type="password"
+          required
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
           className="appearance-none rounded-md relative block w-full"
         />
         <Button

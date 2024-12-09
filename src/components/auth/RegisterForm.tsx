@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -13,21 +13,6 @@ export const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  // Add this useEffect to log available license numbers during development
-  useEffect(() => {
-    const fetchLicenses = async () => {
-      const { data, error } = await supabase
-        .from("companies")
-        .select("name, license_number");
-      
-      if (data) {
-        console.log("Available companies and their license numbers:", data);
-      }
-    };
-
-    fetchLicenses();
-  }, []);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,10 +114,18 @@ export const RegisterForm = () => {
     <div>
       <div className="text-center mb-6">
         <p className="mt-2 text-sm text-gray-600">
-          Create a new account
+          Register with your company license
         </p>
       </div>
       <form onSubmit={handleRegister} className="space-y-4">
+        <Input
+          type="text"
+          required
+          placeholder="Company License Number"
+          value={licenseNumber}
+          onChange={(e) => setLicenseNumber(e.target.value)}
+          className="appearance-none rounded-md relative block w-full"
+        />
         <Input
           type="email"
           required
@@ -155,14 +148,6 @@ export const RegisterForm = () => {
           placeholder="Confirm Password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="appearance-none rounded-md relative block w-full"
-        />
-        <Input
-          type="text"
-          required
-          placeholder="Company License Number"
-          value={licenseNumber}
-          onChange={(e) => setLicenseNumber(e.target.value)}
           className="appearance-none rounded-md relative block w-full"
         />
         <Button
