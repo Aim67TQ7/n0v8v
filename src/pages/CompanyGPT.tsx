@@ -135,10 +135,6 @@ const CompanyGPT = () => {
               />
             </div>
           </div>
-
-          <div className="w-80 border-l p-4 overflow-auto">
-            <Dashboard />
-          </div>
         </div>
       </div>
     </SidebarProvider>
