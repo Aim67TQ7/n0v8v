@@ -48,7 +48,7 @@ export const ChatInterface = ({
         company_id: profile.company_id,
         user_id: session?.user?.id,
         model: 'groq',
-        messages
+        messages: JSON.stringify(messages)
       });
 
       onHistoryUpdate?.();
