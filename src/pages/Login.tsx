@@ -16,11 +16,11 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // Get the DEMO company ID
+      // Get the DEMO company by name
       const { data: demoCompany } = await supabase
         .from("companies")
         .select("id")
-        .eq("license_type", "demo")
+        .eq("name", "DEMO")
         .single();
 
       if (!demoCompany) {
