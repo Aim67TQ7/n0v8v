@@ -48,6 +48,38 @@ export type Database = {
         }
         Relationships: []
       }
+      company_settings: {
+        Row: {
+          company_id: string | null
+          created_at: string | null
+          gpt_name: string
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string | null
+          gpt_name: string
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string | null
+          gpt_name?: string
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_settings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       department_members: {
         Row: {
           created_at: string
@@ -356,6 +388,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          allowed_models: string[] | null
           company_id: string | null
           created_at: string
           department: string | null
@@ -367,6 +400,7 @@ export type Database = {
           role: string
         }
         Insert: {
+          allowed_models?: string[] | null
           company_id?: string | null
           created_at?: string
           department?: string | null
@@ -378,6 +412,7 @@ export type Database = {
           role?: string
         }
         Update: {
+          allowed_models?: string[] | null
           company_id?: string | null
           created_at?: string
           department?: string | null

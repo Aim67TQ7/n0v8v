@@ -5,7 +5,8 @@ import {
   Database,
   ChartBar,
   Building2,
-  GraduationCap
+  GraduationCap,
+  MessageSquare
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
@@ -30,6 +31,13 @@ const modules = [
     description: "Track employee training and certifications",
     icon: GraduationCap,
     href: "/training/matrix",
+    status: "ready"
+  },
+  {
+    title: "Company GPT",
+    description: "AI-powered assistant for your company",
+    icon: MessageSquare,
+    href: "/company-gpt",
     status: "ready"
   },
   {

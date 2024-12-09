@@ -19,6 +19,7 @@ import ProductInspection from "./pages/quality/ProductInspection";
 import DMRDocumentation from "./pages/quality/DMRDocumentation";
 import FiveWhys from "./pages/quality/FiveWhys";
 import TrainingMatrix from "./pages/training/TrainingMatrix";
+import CompanyGPT from "./pages/CompanyGPT";
 
 const queryClient = new QueryClient();
 
@@ -148,6 +149,17 @@ const App = () => (
                   <div className="min-h-screen flex flex-col">
                     <Header />
                     <TrainingMatrix />
+                  </div>
+                </AuthWrapper>
+              }
+            />
+            <Route
+              path="/company-gpt"
+              element={
+                <AuthWrapper>
+                  <div className="min-h-screen flex flex-col">
+                    <Header />
+                    <CompanyGPT />
                   </div>
                 </AuthWrapper>
               }
