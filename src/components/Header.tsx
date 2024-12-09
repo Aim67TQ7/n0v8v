@@ -81,14 +81,6 @@ export const Header = () => {
                     <span className="font-medium text-foreground">Plan</span>
                     <span className="text-sm text-foreground/80 capitalize">{profile.company?.license_type}</span>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    className="gap-2 text-red-500 focus:text-red-500 focus:bg-red-50" 
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="h-4 w-4" />
-                    <span>Logout</span>
-                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
@@ -110,9 +102,18 @@ export const Header = () => {
             </Button>
           </nav>
 
-          {/* Theme Toggle */}
+          {/* Theme Toggle and Logout */}
           <div className="flex items-center space-x-4">
             <ThemeToggle />
+            <Button 
+              variant="destructive" 
+              size="sm" 
+              onClick={handleLogout}
+              className="gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
           </div>
         </div>
       </div>
