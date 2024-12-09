@@ -9,6 +9,7 @@ import { AuthWrapper } from "@/components/AuthWrapper";
 import { Header } from "@/components/Header";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
+import AdminPanel from "./pages/AdminPanel";
 import Modules from "./pages/Modules";
 import LeanManufacturing from "./pages/LeanManufacturing";
 import FiveSVision from "./pages/FiveSVision";
@@ -32,6 +33,17 @@ const App = () => (
           <Sonner />
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route
+              path="/admin"
+              element={
+                <AuthWrapper>
+                  <div className="min-h-screen flex flex-col">
+                    <Header />
+                    <AdminPanel />
+                  </div>
+                </AuthWrapper>
+              }
+            />
             <Route
               path="/"
               element={
