@@ -15,13 +15,8 @@ interface ModelSelectorProps {
 }
 
 const modelInfo = {
-  "gpt-4o": "Magnus - Direct and thorough, takes its time to provide comprehensive answers",
-  "gpt-4o-mini": "Maggie - Faster and more considerate, good for quick conversations"
-};
-
-const modelDisplayNames = {
-  "gpt-4o": "Magnus",
-  "gpt-4o-mini": "Maggie"
+  groq: "Fast responses, good for general queries",
+  "gpt-4o-mini": "Trainable, lower latency, good for company-specific tasks"
 };
 
 export const ModelSelector = ({ selectedModel, allowedModels, onModelChange }: ModelSelectorProps) => {
@@ -36,7 +31,7 @@ export const ModelSelector = ({ selectedModel, allowedModels, onModelChange }: M
           <div key={model} className="flex items-center space-x-2">
             <RadioGroupItem value={model} id={model} />
             <Label htmlFor={model} className="flex items-center gap-1">
-              <span className="capitalize">{modelDisplayNames[model as keyof typeof modelDisplayNames]}</span>
+              <span className="capitalize">{model}</span>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
