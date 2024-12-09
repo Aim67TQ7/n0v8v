@@ -70,6 +70,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          license_number: string
           license_type: string
           max_users: number
           name: string
@@ -77,6 +78,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          license_number?: string
           license_type?: string
           max_users?: number
           name: string
@@ -84,6 +86,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          license_number?: string
           license_type?: string
           max_users?: number
           name?: string
