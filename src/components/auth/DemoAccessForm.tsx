@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +8,6 @@ export const DemoAccessForm = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   const handleDemoAccess = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,17 +28,32 @@ export const DemoAccessForm = () => {
       let demoCompanyId;
 
       if (!demoCompany) {
-        const { data: newCompany, error: createError } = await supabase.rpc(
-          "create_licensed_company",
-          {
-            company_name: "DEMO",
-            license_type: "demo",
-            max_users: 1000
+        try {
+          const { data: newCompany, error: createError } = await supabase.rpc(
+            "create_licensed_company",
+            {
+              company_name: "DEMO",
+              license_type: "demo",
+              max_users: 1
+            }
+          );
+          
+          if (createError) throw createError;
+          demoCompanyId = newCompany;
+        } catch (createError: any) {
+          if (createError.message?.includes('companies_name_key')) {
+            const { data: existingCompany, error: fetchError } = await supabase
+              .from("companies")
+              .select("id")
+              .eq("name", "DEMO")
+              .single();
+            
+            if (fetchError) throw fetchError;
+            demoCompanyId = existingCompany.id;
+          } else {
+            throw createError;
           }
-        );
-        
-        if (createError) throw createError;
-        demoCompanyId = newCompany;
+        }
       } else {
         demoCompanyId = demoCompany.id;
       }
@@ -53,7 +66,7 @@ export const DemoAccessForm = () => {
             first_name: "Demo",
             last_name: "User",
             company_id: demoCompanyId,
-            role: "employee",
+            role: "admin",
             demo_access_expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
           }
         }
@@ -63,11 +76,8 @@ export const DemoAccessForm = () => {
 
       toast({
         title: "Demo Access Link Sent",
-        description: "Check your email for a magic link to access the demo.",
+        description: "Check your email for a magic link to access the demo. You'll have 24 hours of full access once you sign in.",
       });
-
-      // Redirect to DemoGPT page after successful email submission
-      navigate("/company-gpt");
 
     } catch (error: any) {
       console.error("Demo access error:", error);
@@ -82,22 +92,29 @@ export const DemoAccessForm = () => {
   };
 
   return (
-    <form onSubmit={handleDemoAccess} className="space-y-6">
-      <Input
-        type="email"
-        required
-        placeholder="Enter your email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-      />
-      <Button
-        type="submit"
-        className="w-full"
-        disabled={loading || !email}
-      >
-        {loading ? "Processing..." : "Get Demo Access"}
-      </Button>
-    </form>
+    <div>
+      <div className="text-center mb-6">
+        <p className="mt-2 text-sm text-gray-600">
+          Enter your email to get 24-hour full access to the platform
+        </p>
+      </div>
+      <form onSubmit={handleDemoAccess} className="space-y-6">
+        <Input
+          type="email"
+          required
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+        />
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={loading}
+        >
+          {loading ? "Processing..." : "Get Demo Access"}
+        </Button>
+      </form>
+    </div>
   );
 };
