@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,7 @@ export const SignInForm = () => {
   const [loading, setLoading] = useState(false);
   const [showPasswordReset, setShowPasswordReset] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +40,9 @@ export const SignInForm = () => {
           title: "Welcome back!",
           description: "You have successfully signed in.",
         });
+        
+        // Redirect to dashboard after successful login
+        navigate("/");
       }
     } catch (error: any) {
       toast({
