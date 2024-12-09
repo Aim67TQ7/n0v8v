@@ -1,4 +1,4 @@
-import { Building, MessageSquare, FileText } from "lucide-react";
+import { Building, Package, Settings } from "lucide-react";
 import { ResourceCard } from "./ResourceCard";
 
 export const ResourceSidebar = () => {
@@ -8,16 +8,19 @@ export const ResourceSidebar = () => {
         icon={Building}
         title="Open Epicor"
         description="Access ERP system"
+        onClick={() => window.open('https://epicor.com', '_blank')}
       />
       <ResourceCard
-        icon={MessageSquare}
-        title="Webpages"
-        description="Internal resources"
+        icon={Package}
+        title="Modules"
+        description="Access all modules"
+        href="/modules"
       />
       <ResourceCard
-        icon={FileText}
-        title="Shared Folder"
-        description="Access documents"
+        icon={Settings}
+        title="Settings"
+        description="Configure system settings"
+        href="/settings"
       />
     </div>
   );
