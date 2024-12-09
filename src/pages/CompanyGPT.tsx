@@ -8,6 +8,7 @@ import { ModelSelector } from "@/components/gpt/ModelSelector";
 import { ChatInterface } from "@/components/gpt/ChatInterface";
 import { ChatHistory } from "@/components/gpt/ChatHistory";
 import { ApiStatus } from "@/components/gpt/ApiStatus";
+import { ResourceSidebar } from "@/components/gpt/ResourceSidebar";
 import {
   SidebarProvider,
   Sidebar,
@@ -134,6 +135,11 @@ const CompanyGPT = () => {
                 onHistoryUpdate={fetchChatHistory}
               />
             </div>
+          </div>
+          
+          {/* Add ResourceSidebar */}
+          <div className="border-l p-4 hidden lg:block">
+            <ResourceSidebar />
           </div>
         </div>
       </div>
