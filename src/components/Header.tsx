@@ -49,8 +49,49 @@ export const Header = () => {
     <header className="bg-background border-b border-border sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Navigation Links */}
+          {/* User Profile and Navigation Links */}
           <nav className="flex items-center space-x-4">
+            {profile && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="gap-2 font-semibold text-foreground hover:bg-accent"
+                  >
+                    <User className="h-4 w-4 text-foreground" />
+                    <span className="text-foreground">
+                      {profile.first_name} {profile.last_name}
+                    </span>
+                    <ChevronDown className="h-4 w-4 text-foreground" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="flex flex-col items-start gap-1">
+                    <span className="font-medium text-foreground">Company</span>
+                    <span className="text-sm text-foreground/80">{profile.company?.name}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="flex flex-col items-start gap-1">
+                    <span className="font-medium text-foreground">Role</span>
+                    <span className="text-sm text-foreground/80 capitalize">{profile.role}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="flex flex-col items-start gap-1">
+                    <span className="font-medium text-foreground">Plan</span>
+                    <span className="text-sm text-foreground/80 capitalize">{profile.company?.license_type}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    className="gap-2 text-red-500 focus:text-red-500 focus:bg-red-50" 
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Logout</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
             <Button variant="ghost" onClick={() => navigate("/")} className="gap-2">
               <Home className="h-4 w-4" />
               Home
@@ -69,52 +110,9 @@ export const Header = () => {
             </Button>
           </nav>
 
-          {/* User Info, Theme Toggle & Logout */}
+          {/* Theme Toggle */}
           <div className="flex items-center space-x-4">
-            {profile && (
-              <div className="flex items-center gap-3">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="gap-2 font-semibold text-foreground hover:bg-accent"
-                    >
-                      <User className="h-4 w-4 text-foreground" />
-                      <span className="text-foreground">
-                        {profile.first_name} {profile.last_name}
-                      </span>
-                      <ChevronDown className="h-4 w-4 text-foreground" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem className="flex flex-col items-start gap-1">
-                      <span className="font-medium text-foreground">Company</span>
-                      <span className="text-sm text-foreground/80">{profile.company?.name}</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="flex flex-col items-start gap-1">
-                      <span className="font-medium text-foreground">Role</span>
-                      <span className="text-sm text-foreground/80 capitalize">{profile.role}</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="flex flex-col items-start gap-1">
-                      <span className="font-medium text-foreground">Plan</span>
-                      <span className="text-sm text-foreground/80 capitalize">{profile.company?.license_type}</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      className="gap-2 text-red-500 focus:text-red-500 focus:bg-red-50" 
-                      onClick={handleLogout}
-                    >
-                      <LogOut className="h-4 w-4" />
-                      <span>Logout</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <ThemeToggle />
-              </div>
-            )}
+            <ThemeToggle />
           </div>
         </div>
       </div>
