@@ -3,8 +3,16 @@ import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { Home, Package, Mail, Settings, LogOut } from "lucide-react";
+import { Home, Package, Mail, Settings, LogOut, User, ChevronDown } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -18,7 +26,10 @@ export const Header = () => {
         .from("profiles")
         .select(`
           *,
-          company:companies(name)
+          company:companies(
+            name,
+            license_type
+          )
         `)
         .eq("id", session.user.id)
         .single();
@@ -62,21 +73,37 @@ export const Header = () => {
           <div className="flex items-center space-x-4">
             {profile && (
               <div className="flex items-center gap-3">
-                <div className="flex flex-col items-end">
-                  <span className="font-medium text-sm">
-                    {profile.first_name} {profile.last_name}
-                  </span>
-                  {profile.company && (
-                    <span className="text-xs text-muted-foreground">
-                      {profile.company.name}
-                    </span>
-                  )}
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <User className="h-4 w-4" />
+                      {profile.first_name} {profile.last_name}
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="flex flex-col items-start gap-1">
+                      <span className="font-medium">Company</span>
+                      <span className="text-sm text-muted-foreground">{profile.company?.name}</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="flex flex-col items-start gap-1">
+                      <span className="font-medium">Role</span>
+                      <span className="text-sm text-muted-foreground capitalize">{profile.role}</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="flex flex-col items-start gap-1">
+                      <span className="font-medium">Plan</span>
+                      <span className="text-sm text-muted-foreground capitalize">{profile.company?.license_type}</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="gap-2" onClick={handleLogout}>
+                      <LogOut className="h-4 w-4" />
+                      <span>Logout</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <ThemeToggle />
-                <Button variant="ghost" onClick={handleLogout} size="sm" className="gap-2">
-                  <LogOut className="h-4 w-4" />
-                  Logout
-                </Button>
               </div>
             )}
           </div>
