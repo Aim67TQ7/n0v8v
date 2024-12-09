@@ -3,16 +3,8 @@ import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { Home, Package, Mail, Settings, LogOut, User, ChevronDown } from "lucide-react";
+import { Home, Package, Mail, Settings, LogOut } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -26,10 +18,7 @@ export const Header = () => {
         .from("profiles")
         .select(`
           *,
-          company:companies(
-            name,
-            license_type
-          )
+          company:companies(name)
         `)
         .eq("id", session.user.id)
         .single();
@@ -49,41 +38,8 @@ export const Header = () => {
     <header className="bg-background border-b border-border sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* User Profile and Navigation Links */}
+          {/* Navigation Links */}
           <nav className="flex items-center space-x-4">
-            {profile && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="gap-2 font-semibold text-foreground hover:bg-accent"
-                  >
-                    <User className="h-4 w-4 text-foreground" />
-                    <span className="text-foreground">
-                      {profile.first_name} {profile.last_name}
-                    </span>
-                    <ChevronDown className="h-4 w-4 text-foreground" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-56">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="flex flex-col items-start gap-1">
-                    <span className="font-medium text-foreground">Company</span>
-                    <span className="text-sm text-foreground/80">{profile.company?.name}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="flex flex-col items-start gap-1">
-                    <span className="font-medium text-foreground">Role</span>
-                    <span className="text-sm text-foreground/80 capitalize">{profile.role}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="flex flex-col items-start gap-1">
-                    <span className="font-medium text-foreground">Plan</span>
-                    <span className="text-sm text-foreground/80 capitalize">{profile.company?.license_type}</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
             <Button variant="ghost" onClick={() => navigate("/")} className="gap-2">
               <Home className="h-4 w-4" />
               Home
@@ -102,18 +58,27 @@ export const Header = () => {
             </Button>
           </nav>
 
-          {/* Theme Toggle and Logout */}
+          {/* User Info, Theme Toggle & Logout */}
           <div className="flex items-center space-x-4">
-            <ThemeToggle />
-            <Button 
-              variant="destructive" 
-              size="sm" 
-              onClick={handleLogout}
-              className="gap-2"
-            >
-              <LogOut className="h-4 w-4" />
-              Logout
-            </Button>
+            {profile && (
+              <div className="flex items-center gap-3">
+                <div className="flex flex-col items-end">
+                  <span className="font-medium text-sm">
+                    {profile.first_name} {profile.last_name}
+                  </span>
+                  {profile.company && (
+                    <span className="text-xs text-muted-foreground">
+                      {profile.company.name}
+                    </span>
+                  )}
+                </div>
+                <ThemeToggle />
+                <Button variant="ghost" onClick={handleLogout} size="sm" className="gap-2">
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>

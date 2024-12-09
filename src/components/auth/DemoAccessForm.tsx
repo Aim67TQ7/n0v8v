@@ -6,8 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const DemoAccessForm = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -16,29 +14,71 @@ export const DemoAccessForm = () => {
     setLoading(true);
 
     try {
-      if (password !== confirmPassword) {
-        toast({
-          variant: "destructive",
-          title: "Passwords don't match",
-          description: "Please make sure your passwords match.",
-        });
-        return;
+      // First check if DEMO company exists
+      const { data: demoCompany, error: companyError } = await supabase
+        .from("companies")
+        .select("id")
+        .eq("name", "DEMO")
+        .single();
+
+      if (companyError && companyError.code !== 'PGRST116') {
+        throw companyError;
       }
 
-      const { error } = await supabase.auth.signUp({
+      let demoCompanyId;
+
+      if (!demoCompany) {
+        try {
+          const { data: newCompany, error: createError } = await supabase.rpc(
+            "create_licensed_company",
+            {
+              company_name: "DEMO",
+              license_type: "demo",
+              max_users: 1
+            }
+          );
+          
+          if (createError) throw createError;
+          demoCompanyId = newCompany;
+        } catch (createError: any) {
+          if (createError.message?.includes('companies_name_key')) {
+            const { data: existingCompany, error: fetchError } = await supabase
+              .from("companies")
+              .select("id")
+              .eq("name", "DEMO")
+              .single();
+            
+            if (fetchError) throw fetchError;
+            demoCompanyId = existingCompany.id;
+          } else {
+            throw createError;
+          }
+        }
+      } else {
+        demoCompanyId = demoCompany.id;
+      }
+
+      // Send magic link for passwordless sign in
+      const { error: signInError } = await supabase.auth.signInWithOtp({
         email,
-        password,
         options: {
-          emailRedirectTo: `${window.location.origin}/login`,
+          data: {
+            first_name: "Demo",
+            last_name: "User",
+            company_id: demoCompanyId,
+            role: "admin",
+            demo_access_expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          }
         }
       });
 
-      if (error) throw error;
+      if (signInError) throw signInError;
 
       toast({
-        title: "Demo Access Created",
-        description: "Please check your email to confirm your account. You'll have 24 hours of full access once you sign in.",
+        title: "Demo Access Link Sent",
+        description: "Check your email for a magic link to access the demo. You'll have 24 hours of full access once you sign in.",
       });
+
     } catch (error: any) {
       console.error("Demo access error:", error);
       toast({
@@ -55,33 +95,17 @@ export const DemoAccessForm = () => {
     <div>
       <div className="text-center mb-6">
         <p className="mt-2 text-sm text-gray-600">
-          Create a demo account for 24-hour access
+          Enter your email to get 24-hour full access to the platform
         </p>
       </div>
-      <form onSubmit={handleDemoAccess} className="space-y-4">
+      <form onSubmit={handleDemoAccess} className="space-y-6">
         <Input
           type="email"
           required
-          placeholder="Email"
+          placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="appearance-none rounded-md relative block w-full"
-        />
-        <Input
-          type="password"
-          required
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="appearance-none rounded-md relative block w-full"
-        />
-        <Input
-          type="password"
-          required
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          className="appearance-none rounded-md relative block w-full"
+          className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
         />
         <Button
           type="submit"
