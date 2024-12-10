@@ -1,12 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Package, Mail, Settings } from "lucide-react";
+import { Home, Package, Mail, Users, Settings } from "lucide-react";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { ApiStatus } from "@/components/gpt/ApiStatus";
 
 export const Header = () => {
   const navigate = useNavigate();
   const { session } = useSessionContext();
+
+  const openOutlook = () => {
+    window.location.href = "mailto:";
+  };
+
+  const openTeams = () => {
+    window.location.href = "msteams:/";
+  };
 
   return (
     <header className="bg-white border-b border-gray-200">
@@ -22,9 +30,13 @@ export const Header = () => {
               <Package className="h-4 w-4" />
               Modules
             </Button>
-            <Button variant="ghost" onClick={() => navigate("/contact")} className="gap-2">
+            <Button variant="ghost" onClick={openOutlook} className="gap-2">
               <Mail className="h-4 w-4" />
               Contact
+            </Button>
+            <Button variant="ghost" onClick={openTeams} className="gap-2">
+              <Users className="h-4 w-4" />
+              Teams
             </Button>
             <Button variant="ghost" onClick={() => navigate("/settings")} className="gap-2">
               <Settings className="h-4 w-4" />
