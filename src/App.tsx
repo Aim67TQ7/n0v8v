@@ -130,12 +130,7 @@ const App = () => (
             />
             <Route
               path="/company-gpt"
-              element={
-                <div className="min-h-screen flex flex-col">
-                  <Header />
-                  <CompanyGPT />
-                </div>
-              }
+              element={<CompanyGPT />}
             />
           </Routes>
         </TooltipProvider>

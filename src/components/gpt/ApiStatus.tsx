@@ -8,12 +8,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-type ApiProvider = 'groq' | 'openai' | 'anthropic' | 'perplexity';
+type ApiProvider = 'openai' | 'anthropic' | 'perplexity';
 type ApiStatus = 'checking' | 'up' | 'down';
 
 export const ApiStatus = () => {
   const [statuses, setStatuses] = useState<Record<ApiProvider, ApiStatus>>({
-    groq: 'checking',
     openai: 'checking',
     anthropic: 'checking',
     perplexity: 'checking'
@@ -22,7 +21,7 @@ export const ApiStatus = () => {
   useEffect(() => {
     const checkApiStatus = async () => {
       try {
-        const providers: ApiProvider[] = ['groq', 'openai', 'anthropic', 'perplexity'];
+        const providers: ApiProvider[] = ['openai', 'anthropic', 'perplexity'];
         
         const results = await Promise.all(
           providers.map(async (provider) => {
@@ -30,10 +29,10 @@ export const ApiStatus = () => {
               const response = await supabase.functions.invoke('check-ai-status', {
                 body: { provider }
               });
-              return { provider, status: response.error ? 'down' : 'up' };
+              return { provider, status: response.error ? 'down' : 'up' as ApiStatus };
             } catch (error) {
               console.error(`Error checking ${provider} API:`, error);
-              return { provider, status: 'down' };
+              return { provider, status: 'down' as ApiStatus };
             }
           })
         );
@@ -49,7 +48,6 @@ export const ApiStatus = () => {
         console.error('Error checking API statuses:', error);
         setStatuses(prev => ({
           ...prev,
-          groq: 'down',
           openai: 'down',
           anthropic: 'down',
           perplexity: 'down'
@@ -79,7 +77,6 @@ export const ApiStatus = () => {
   const providerLabels: Record<ApiProvider, string> = {
     perplexity: 'P',
     openai: 'O',
-    groq: 'G',
     anthropic: 'A'
   };
 

@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { ModelSelector } from "@/components/gpt/ModelSelector";
 import { ChatInterface } from "@/components/gpt/ChatInterface";
 import { ChatHistory } from "@/components/gpt/ChatHistory";
-import { ApiStatus } from "@/components/gpt/ApiStatus";
 import { ResourceSidebar } from "@/components/gpt/ResourceSidebar";
 import { ConversationStarters } from "@/components/gpt/ConversationStarters";
 import { Card } from "@/components/ui/card";
@@ -110,10 +109,7 @@ const CompanyGPT = () => {
             <Sidebar className="border-r w-64 flex flex-col">
               <SidebarHeader className="border-b p-4 shrink-0">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <ApiStatus />
-                    <h2 className="text-lg font-semibold">{gptName}</h2>
-                  </div>
+                  <h2 className="text-lg font-semibold">{gptName}</h2>
                   <SidebarTrigger />
                 </div>
                 <Button
