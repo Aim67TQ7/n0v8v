@@ -131,16 +131,6 @@ const CompanyGPT = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      <div className="w-full border-b bg-white">
-        <div className="container mx-auto px-4 py-3">
-          <ModelSelector
-            selectedModel={selectedModel}
-            allowedModels={allowedModels}
-            onModelChange={setSelectedModel}
-          />
-        </div>
-      </div>
-
       <div className="flex-1 flex overflow-hidden">
         <SidebarProvider>
           <div className="flex w-full h-full">
@@ -199,8 +189,17 @@ const CompanyGPT = () => {
                 )}
               </div>
               
-              <div className="w-64 border-l bg-white overflow-y-auto hidden lg:block">
-                <ResourceSidebar />
+              <div className="w-64 border-l bg-white flex flex-col">
+                <div className="flex-1 mt-8 overflow-y-auto">
+                  <ResourceSidebar />
+                </div>
+                <Card className="m-4 p-4">
+                  <ModelSelector
+                    selectedModel={selectedModel}
+                    allowedModels={allowedModels}
+                    onModelChange={setSelectedModel}
+                  />
+                </Card>
               </div>
             </div>
           </div>

@@ -21,11 +21,12 @@ const modelInfo = {
 
 export const ModelSelector = ({ selectedModel, allowedModels, onModelChange }: ModelSelectorProps) => {
   return (
-    <div className="mb-6">
+    <div>
+      <h3 className="font-medium mb-3">Select Model</h3>
       <RadioGroup
         value={selectedModel}
         onValueChange={onModelChange}
-        className="flex gap-4"
+        className="flex flex-col gap-3"
       >
         {allowedModels.map((model) => (
           <div key={model} className="flex items-center space-x-2">
