@@ -42,13 +42,21 @@ export const ChatInterface = ({
     try {
       if (!session?.user?.id) return;
 
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('company_id')
         .eq('id', session.user.id)
-        .single();
+        .maybeSingle();
 
-      if (!profile?.company_id) return;
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+        return;
+      }
+
+      if (!profile?.company_id) {
+        console.error('No company ID found for user');
+        return;
+      }
 
       // Convert messages to a format that matches the Json type
       const jsonMessages = messages.map(msg => ({
@@ -56,16 +64,21 @@ export const ChatInterface = ({
         content: msg.content
       })) as Json;
 
-      await supabase.from('chat_logs').insert({
+      const { error: insertError } = await supabase.from('chat_logs').insert({
         company_id: profile.company_id,
         user_id: session.user.id,
         model: 'groq',
         messages: jsonMessages
       });
 
+      if (insertError) {
+        console.error('Error saving chat log:', insertError);
+        return;
+      }
+
       onHistoryUpdate?.();
     } catch (error) {
-      console.error('Error saving chat log:', error);
+      console.error('Error in saveChatLog:', error);
     }
   };
 
