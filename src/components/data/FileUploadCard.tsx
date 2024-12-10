@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useSessionContext } from "@supabase/auth-helpers-react";
 
 export const FileUploadCard = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
+  const { session } = useSessionContext();
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
@@ -35,21 +37,43 @@ export const FileUploadCard = () => {
     setUploading(true);
 
     try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('company_id')
+        .eq('id', session?.user?.id)
+        .single();
+
+      if (!profile?.company_id) {
+        throw new Error('No company ID found');
+      }
+
       for (const file of files) {
         const fileExt = file.name.split('.').pop();
         const fileName = `${crypto.randomUUID()}.${fileExt}`;
         const filePath = `${fileName}`;
 
+        // Upload file to storage
         const { error: uploadError } = await supabase.storage
           .from('rag-documents')
           .upload(filePath, file);
 
         if (uploadError) throw uploadError;
+
+        // Process the document for RAG
+        const { error: processError } = await supabase.functions
+          .invoke('process-rag-document', {
+            body: { 
+              filePath,
+              companyId: profile.company_id
+            }
+          });
+
+        if (processError) throw processError;
       }
 
       toast({
         title: "Upload successful",
-        description: "Your documents have been uploaded successfully"
+        description: "Your documents have been uploaded and processed successfully"
       });
 
       setFiles([]);
