@@ -9,6 +9,7 @@ import { ChatInterface } from "@/components/gpt/ChatInterface";
 import { ChatHistory } from "@/components/gpt/ChatHistory";
 import { ApiStatus } from "@/components/gpt/ApiStatus";
 import { ResourceSidebar } from "@/components/gpt/ResourceSidebar";
+import { ConversationStarters } from "@/components/gpt/ConversationStarters";
 import {
   SidebarProvider,
   Sidebar,
@@ -135,12 +136,21 @@ const CompanyGPT = () => {
             </Sidebar>
 
             <div className="flex-1 flex">
-              <div className="flex-1 relative">
-                <div className="absolute inset-0">
+              <div className="flex-1 flex flex-col">
+                {!selectedSession && !chatSessions.length ? (
+                  <div className="flex-1 flex items-center justify-center">
+                    <ConversationStarters onSelect={(prompt) => {
+                      const chatInterface = document.querySelector('textarea');
+                      if (chatInterface) {
+                        (chatInterface as HTMLTextAreaElement).value = prompt;
+                      }
+                    }} />
+                  </div>
+                ) : (
                   <ChatInterface 
                     onHistoryUpdate={fetchChatHistory}
                   />
-                </div>
+                )}
               </div>
               
               <div className="w-64 border-l p-4 overflow-y-auto hidden lg:block">
