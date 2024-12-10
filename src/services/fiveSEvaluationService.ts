@@ -36,18 +36,30 @@ export const analyzeImages = async (imageUrls: string[]) => {
 };
 
 export const createEvaluation = async (workcenter_id: string, analysis: any) => {
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  // First verify that the user has a valid session and profile
+  const { data: { user }, error: sessionError } = await supabase.auth.getUser();
   if (sessionError) throw sessionError;
   
-  if (!session?.user?.id) {
+  if (!user?.id) {
     throw new Error('No authenticated user found');
+  }
+
+  // Verify the user has a profile
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('id', user.id)
+    .single();
+
+  if (profileError || !profile) {
+    throw new Error('User profile not found. Please ensure you are properly logged in.');
   }
 
   const { data: evaluation, error: evalError } = await supabase
     .from('five_s_evaluations')
     .insert({
       workcenter_id,
-      created_by: session.user.id,
+      created_by: user.id,
       sort_score: analysis.sort_score,
       set_in_order_score: analysis.set_in_order_score,
       shine_score: analysis.shine_score,
