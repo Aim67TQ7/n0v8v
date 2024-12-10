@@ -492,7 +492,6 @@ export type Database = {
           company_id: string | null
           created_at: string
           demo_access_expires: string | null
-          department: string | null
           email: string
           first_name: string | null
           id: string
@@ -505,7 +504,6 @@ export type Database = {
           company_id?: string | null
           created_at?: string
           demo_access_expires?: string | null
-          department?: string | null
           email: string
           first_name?: string | null
           id: string
@@ -518,7 +516,6 @@ export type Database = {
           company_id?: string | null
           created_at?: string
           demo_access_expires?: string | null
-          department?: string | null
           email?: string
           first_name?: string | null
           id?: string
