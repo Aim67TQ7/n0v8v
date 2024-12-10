@@ -38,19 +38,21 @@ export const ChatInterface = ({
 
   const saveChatLog = async (messages: Message[]) => {
     try {
+      if (!session?.user?.id) return;
+
       const { data: profile } = await supabase
         .from('profiles')
         .select('company_id')
-        .eq('id', session?.user?.id)
+        .eq('id', session.user.id)
         .single();
 
       if (!profile?.company_id) return;
 
       await supabase.from('chat_logs').insert({
         company_id: profile.company_id,
-        user_id: session?.user?.id,
+        user_id: session.user.id,
         model: 'groq',
-        messages: JSON.stringify(messages)
+        messages: messages
       });
 
       onHistoryUpdate?.();
@@ -81,7 +83,7 @@ export const ChatInterface = ({
 
       const response = await supabase.functions.invoke('chat-with-groq', {
         body: {
-          messages: [...messages, userMessage],
+          messages: [...messages, userMessage]
         },
       });
 
@@ -89,19 +91,16 @@ export const ChatInterface = ({
         throw new Error(response.error.message);
       }
 
-      if (!response.data) {
-        throw new Error('No response data received');
-      }
-
       const assistantMessage = { 
         role: "assistant" as const, 
         content: response.data.choices[0].message.content 
       };
       
-      setMessages(prev => [...prev, userMessage, assistantMessage]);
+      const updatedMessages = [...messages, userMessage, assistantMessage];
+      setMessages(updatedMessages);
 
       // Save chat log after completion
-      await saveChatLog([...messages, userMessage, assistantMessage]);
+      await saveChatLog(updatedMessages);
     } catch (error) {
       console.error('Error:', error);
       toast({
@@ -109,10 +108,6 @@ export const ChatInterface = ({
         description: "Failed to get response from AI. Please try again.",
         variant: "destructive"
       });
-      setMessages(prev => [...prev, {
-        role: "assistant",
-        content: "I apologize, but I encountered an error. Please try again."
-      }]);
     } finally {
       setIsLoading(false);
     }

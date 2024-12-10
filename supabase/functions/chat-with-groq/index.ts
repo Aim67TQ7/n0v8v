@@ -16,6 +16,8 @@ serve(async (req) => {
   try {
     const { messages } = await req.json();
 
+    console.log('Sending request to GROQ API with messages:', messages);
+
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -26,16 +28,20 @@ serve(async (req) => {
         model: 'mixtral-8x7b-32768',
         messages,
         temperature: 0.7,
-        stream: true,
       }),
     });
 
     if (!response.ok) {
+      const errorData = await response.text();
+      console.error('GROQ API error:', errorData);
       throw new Error(`GROQ API error: ${response.status}`);
     }
 
-    return new Response(response.body, {
-      headers: { ...corsHeaders, 'Content-Type': 'text/event-stream' },
+    const data = await response.json();
+    console.log('Received response from GROQ API:', data);
+
+    return new Response(JSON.stringify(data), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('Error in chat-with-groq function:', error);
