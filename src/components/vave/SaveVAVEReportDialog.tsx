@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -22,7 +23,8 @@ export const SaveVAVEReportDialog = ({
   analysis,
   onSaveSuccess 
 }: SaveVAVEReportDialogProps) => {
-  const [partNumber, setPartNumber] = useState("");
+  const [reportTitle, setReportTitle] = useState("");
+  const [reportDescription, setReportDescription] = useState("");
   const [jobNumber, setJobNumber] = useState("");
   const [poNumber, setPoNumber] = useState("");
   const { toast } = useToast();
@@ -35,7 +37,7 @@ export const SaveVAVEReportDialog = ({
           workcenter_id: workcenter,
           image_url: imageUrl,
           analysis_data: analysis,
-          part_number: partNumber,
+          part_number: reportTitle, // Using part_number field for report title
           job_number: jobNumber,
           po_number: poNumber
         })
@@ -72,11 +74,20 @@ export const SaveVAVEReportDialog = ({
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Part Number</label>
+            <label className="text-sm font-medium">Report Title</label>
             <Input
-              value={partNumber}
-              onChange={(e) => setPartNumber(e.target.value)}
-              placeholder="Enter part number"
+              value={reportTitle}
+              onChange={(e) => setReportTitle(e.target.value)}
+              placeholder="Enter a descriptive title for this report"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Report Description</label>
+            <Textarea
+              value={reportDescription}
+              onChange={(e) => setReportDescription(e.target.value)}
+              placeholder="Enter a detailed description of the analysis"
+              className="min-h-[100px]"
             />
           </div>
           <div className="space-y-2">

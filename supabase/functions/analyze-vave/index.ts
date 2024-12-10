@@ -32,24 +32,6 @@ serve(async (req) => {
         .reduce((data, byte) => data + String.fromCharCode(byte), '')
     );
 
-    // Build analysis categories based on selected value checks
-    const analysisCategories = [];
-    if (valueChecks.functionalImprovements) {
-      analysisCategories.push("Functional Improvements: Analyze potential improvements to part functionality and performance");
-    }
-    if (valueChecks.manufacturingOptimization) {
-      analysisCategories.push("Manufacturing Process: Evaluate opportunities to optimize manufacturing processes and reduce costs");
-    }
-    if (valueChecks.assemblyErgonomics) {
-      analysisCategories.push("Assembly & Ergonomics: Assess assembly efficiency and ergonomic considerations");
-    }
-    if (valueChecks.designOptimization) {
-      analysisCategories.push("Design Optimization: Review potential design simplifications and standardization opportunities");
-    }
-    if (valueChecks.materialOptimization) {
-      analysisCategories.push("Material Analysis: Evaluate material selection and thickness optimization possibilities");
-    }
-
     console.log('Preparing Anthropic request');
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -68,18 +50,28 @@ serve(async (req) => {
               {
                 type: 'text',
                 text: `You are a manufacturing process expert conducting a Value Analysis and Value Engineering (VAVE) review. 
-                Analyze the provided image ${selectedArea ? 'focusing on the highlighted area' : ''} and provide detailed insights for the following categories:
+                Analyze the provided image ${selectedArea ? 'focusing on the highlighted area' : ''} and provide a comprehensive analysis with the following structure:
 
-                ${analysisCategories.join('\n')}
+                1. Current Process Overview:
+                   - Detailed description of the current manufacturing process or design
+                   - Key characteristics and potential inefficiencies
 
-                For each applicable category:
-                1. Current State: Describe the current design/process
-                2. Opportunities: Identify specific improvement opportunities
-                3. Benefits: List potential benefits (cost savings, quality, efficiency)
-                4. Implementation: Suggest practical implementation steps
+                2. Value Enhancement Opportunities:
+                   - Specific, actionable improvements for:
+                     * Process efficiency
+                     * Cost reduction
+                     * Quality improvement
+                     * Material optimization
+                     * Design simplification
+                   - Quantify benefits where possible (e.g., estimated time/cost savings)
 
-                Format your response as a structured analysis with clear sections and bullet points.
-                Be specific and practical in your recommendations.`
+                3. Implementation Roadmap:
+                   - Step-by-step implementation plan
+                   - Required resources and timeline estimates
+                   - Potential challenges and mitigation strategies
+
+                Be creative but practical in your recommendations. Focus on specific, measurable improvements rather than general suggestions.
+                Format your response with clear sections and bullet points for readability.`
               },
               {
                 type: 'image',
