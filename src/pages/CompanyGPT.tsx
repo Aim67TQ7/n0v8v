@@ -11,6 +11,7 @@ import { ResourceSidebar } from "@/components/gpt/ResourceSidebar";
 import { ConversationStarters } from "@/components/gpt/ConversationStarters";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   SidebarProvider,
   Sidebar,
@@ -134,6 +135,7 @@ const CompanyGPT = () => {
       <div className="flex-1 flex overflow-hidden">
         <SidebarProvider>
           <div className="flex w-full h-full">
+            {/* Left Sidebar - Fixed */}
             <Sidebar className="border-r w-64 flex flex-col">
               <SidebarHeader className="border-b p-4 shrink-0">
                 <div className="flex items-center justify-between">
@@ -149,7 +151,7 @@ const CompanyGPT = () => {
                   New Chat
                 </Button>
               </SidebarHeader>
-              <div className="flex-1 overflow-hidden">
+              <ScrollArea className="flex-1">
                 <SidebarContent>
                   <ChatHistory
                     sessions={chatSessions}
@@ -157,22 +159,25 @@ const CompanyGPT = () => {
                     selectedId={selectedSession}
                   />
                 </SidebarContent>
-              </div>
+              </ScrollArea>
             </Sidebar>
 
+            {/* Main Content - Scrollable */}
             <div className="flex-1 flex">
               <div className="flex-1 flex flex-col">
                 {!selectedSession && !chatSessions.length ? (
                   <div className="flex-1 flex flex-col">
-                    <Card className="flex-1 m-4 flex items-center justify-center">
-                      <ConversationStarters onSelect={(prompt) => {
-                        const chatInterface = document.querySelector('textarea');
-                        if (chatInterface) {
-                          (chatInterface as HTMLTextAreaElement).value = prompt;
-                        }
-                      }} />
-                    </Card>
-                    <div className="p-4">
+                    <ScrollArea className="flex-1">
+                      <Card className="m-4 flex items-center justify-center">
+                        <ConversationStarters onSelect={(prompt) => {
+                          const chatInterface = document.querySelector('textarea');
+                          if (chatInterface) {
+                            (chatInterface as HTMLTextAreaElement).value = prompt;
+                          }
+                        }} />
+                      </Card>
+                    </ScrollArea>
+                    <div className="p-4 border-t">
                       <ChatInterface 
                         systemPrompt={`You are ${gptName}, an AI assistant.`}
                         onHistoryUpdate={fetchChatHistory}
@@ -189,8 +194,9 @@ const CompanyGPT = () => {
                 )}
               </div>
               
+              {/* Right Sidebar - Fixed */}
               <div className="w-64 border-l bg-white flex flex-col">
-                <div className="flex-1 mt-8 overflow-y-auto">
+                <div className="flex-1 overflow-y-auto">
                   <ResourceSidebar />
                 </div>
                 <Card className="m-4 p-4">

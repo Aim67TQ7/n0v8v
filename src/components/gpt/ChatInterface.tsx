@@ -121,27 +121,29 @@ export const ChatInterface = ({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.slice(1).map((message, index) => (
-          <div
-            key={index}
-            className={`flex ${
-              message.role === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
+      <ScrollArea className="flex-1">
+        <div className="p-4 space-y-4">
+          {messages.slice(1).map((message, index) => (
             <div
-              className={`max-w-[80%] rounded-lg p-3 ${
-                message.role === "user"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted"
+              key={index}
+              className={`flex ${
+                message.role === "user" ? "justify-end" : "justify-start"
               }`}
             >
-              <p className="whitespace-pre-wrap">{message.content}</p>
+              <div
+                className={`max-w-[80%] rounded-lg p-3 ${
+                  message.role === "user"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted"
+                }`}
+              >
+                <p className="whitespace-pre-wrap">{message.content}</p>
+              </div>
             </div>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+      </ScrollArea>
 
       <form onSubmit={handleSubmit} className="p-4 border-t">
         <div className="flex gap-2">
