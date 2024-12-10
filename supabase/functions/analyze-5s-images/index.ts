@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { Anthropic } from "https://esm.sh/anthropic@0.9.1";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,22 +12,33 @@ serve(async (req) => {
 
   try {
     const { imageUrls } = await req.json();
-    const anthropic = new Anthropic({
-      apiKey: Deno.env.get('ANTHROPIC_API_KEY') || '',
+    
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': Deno.env.get('ANTHROPIC_API_KEY') || '',
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: "claude-3-sonnet-20240229",
+        max_tokens: 1000,
+        temperature: 0.5,
+        system: "You are an expert in 5S workplace organization methodology. Analyze the provided image and identify key aspects related to Sort, Set in Order, Shine, Standardize, and Sustain principles.",
+        messages: [{
+          role: "user",
+          content: `Analyze these workplace images (${imageUrls.join(', ')}) for 5S compliance. Focus on visible organization, cleanliness, and standardization. Provide specific observations and recommendations.`
+        }]
+      })
     });
 
-    const message = await anthropic.messages.create({
-      model: "claude-3-sonnet-20240229",
-      max_tokens: 1000,
-      temperature: 0.5,
-      system: "You are an expert in 5S workplace organization methodology. Analyze the provided image and identify key aspects related to Sort, Set in Order, Shine, Standardize, and Sustain principles.",
-      messages: [{
-        role: "user",
-        content: `Analyze these workplace images (${imageUrls.join(', ')}) for 5S compliance. Focus on visible organization, cleanliness, and standardization. Provide specific observations and recommendations.`
-      }]
-    });
+    if (!response.ok) {
+      throw new Error(`Anthropic API error: ${response.status}`);
+    }
 
-    return new Response(JSON.stringify(message.content), {
+    const data = await response.json();
+    
+    return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
