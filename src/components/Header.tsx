@@ -45,11 +45,13 @@ export const Header = () => {
           </nav>
 
           {/* API Status Indicators and User Info */}
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center gap-6">
             <ApiStatus />
-            <div className="text-sm text-gray-600">
-              <span className="font-medium">{session?.user?.email}</span>
-              <span className="ml-2 px-2 py-1 bg-gray-100 rounded-full text-xs">
+            <div className="flex flex-col items-end">
+              <span className="text-sm font-medium text-gray-900">
+                {session?.user?.email}
+              </span>
+              <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
                 DEMO Company
               </span>
             </div>
