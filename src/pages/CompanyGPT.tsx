@@ -79,7 +79,7 @@ const CompanyGPT = () => {
     fetchChatHistory();
   }, [profile?.company_id]);
 
-  const gptName = profile?.company?.settings?.[0]?.gpt_name || "CompanyGPT";
+  const gptName = "DemoGPT";
   const allowedModels = profile?.allowed_models || ["groq"];
 
   const handleNewChat = () => {
@@ -107,7 +107,7 @@ const CompanyGPT = () => {
           <div className="flex w-full h-full">
             <Sidebar className="border-r w-64 flex flex-col">
               <SidebarHeader className="border-b p-4 shrink-0">
-                <div className="flex items-center justify-between">
+                <div className="mt-4 flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <ApiStatus />
                     <h2 className="text-lg font-semibold">{gptName}</h2>
