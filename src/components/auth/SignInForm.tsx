@@ -19,16 +19,20 @@ export const SignInForm = () => {
 
     try {
       if (showPasswordReset) {
-        // Send magic link for password reset
-        const { error } = await supabase.auth.resetPasswordForEmail(email);
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/reset-password`,
+        });
+        
         if (error) throw error;
 
         toast({
           title: "Password reset link sent!",
           description: "Check your email for a link to reset your password.",
         });
+        
+        // Reset form state
+        setShowPasswordReset(false);
       } else {
-        // Regular email/password sign in
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
@@ -41,10 +45,10 @@ export const SignInForm = () => {
           description: "You have successfully signed in.",
         });
         
-        // Redirect to dashboard after successful login
         navigate("/");
       }
     } catch (error: any) {
+      console.error("Auth error:", error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -76,7 +80,7 @@ export const SignInForm = () => {
         {!showPasswordReset && (
           <Input
             type="password"
-            required
+            required={!showPasswordReset}
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -88,7 +92,10 @@ export const SignInForm = () => {
             type="button"
             variant="link"
             className="text-sm"
-            onClick={() => setShowPasswordReset(!showPasswordReset)}
+            onClick={() => {
+              setShowPasswordReset(!showPasswordReset);
+              setPassword(""); // Clear password when switching modes
+            }}
           >
             {showPasswordReset ? "Back to sign in" : "Forgot password?"}
           </Button>
