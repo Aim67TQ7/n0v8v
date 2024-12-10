@@ -11,6 +11,7 @@ interface SaveVAVEReportDialogProps {
   workcenter: string;
   imageUrl: string;
   analysis: any;
+  onSaveSuccess?: (reportId: string) => void;
 }
 
 export const SaveVAVEReportDialog = ({ 
@@ -18,7 +19,8 @@ export const SaveVAVEReportDialog = ({
   onOpenChange, 
   workcenter,
   imageUrl,
-  analysis 
+  analysis,
+  onSaveSuccess 
 }: SaveVAVEReportDialogProps) => {
   const [partNumber, setPartNumber] = useState("");
   const [jobNumber, setJobNumber] = useState("");
@@ -27,7 +29,7 @@ export const SaveVAVEReportDialog = ({
 
   const handleSave = async () => {
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('vave_analysis_reports')
         .insert({
           workcenter_id: workcenter,
@@ -36,7 +38,9 @@ export const SaveVAVEReportDialog = ({
           part_number: partNumber,
           job_number: jobNumber,
           po_number: poNumber
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
 
@@ -44,6 +48,11 @@ export const SaveVAVEReportDialog = ({
         title: "Report Saved",
         description: "The VAVE analysis report has been saved successfully.",
       });
+      
+      if (onSaveSuccess && data) {
+        onSaveSuccess(data.id);
+      }
+      
       onOpenChange(false);
     } catch (error) {
       console.error('Error saving report:', error);
