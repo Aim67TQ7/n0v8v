@@ -18,6 +18,7 @@ import DMRDocumentation from "./pages/quality/DMRDocumentation";
 import FiveWhys from "./pages/quality/FiveWhys";
 import TrainingMatrix from "./pages/training/TrainingMatrix";
 import CompanyGPT from "./pages/CompanyGPT";
+import VAVEAnalysis from "./pages/operations/VAVEAnalysis";
 
 const queryClient = new QueryClient();
 
@@ -71,6 +72,15 @@ const App = () => (
                 <div className="min-h-screen flex flex-col">
                   <Header />
                   <FiveSVision />
+                </div>
+              }
+            />
+            <Route
+              path="/operations/lean/vave-analysis"
+              element={
+                <div className="min-h-screen flex flex-col">
+                  <Header />
+                  <VAVEAnalysis />
                 </div>
               }
             />
