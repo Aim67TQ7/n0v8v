@@ -20,6 +20,7 @@ const ProcessImprovement = () => {
   } | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedArea, setSelectedArea] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
+  const [processImprovementId, setProcessImprovementId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleImageUpload = (file: File) => {
@@ -27,6 +28,7 @@ const ProcessImprovement = () => {
     setImagePreview(URL.createObjectURL(file));
     setAnalysis(null);
     setSelectedArea(null);
+    setProcessImprovementId(null);
   };
 
   const handleAnalyze = async () => {
@@ -61,7 +63,22 @@ const ProcessImprovement = () => {
 
       if (error) throw error;
 
+      // Save the process improvement record
+      const { data: processImprovement, error: dbError } = await supabase
+        .from('process_improvements')
+        .insert({
+          workcenter_id: selectedWorkcenter,
+          image_url: data.imageUrl,
+          analysis: data.analysis.details
+        })
+        .select()
+        .single();
+
+      if (dbError) throw dbError;
+
+      setProcessImprovementId(processImprovement.id);
       setAnalysis(data.analysis);
+      
       toast({
         title: "Analysis Complete",
         description: "Process analysis has been completed successfully.",
@@ -84,10 +101,11 @@ const ProcessImprovement = () => {
     setImagePreview("");
     setAnalysis(null);
     setSelectedArea(null);
+    setProcessImprovementId(null);
     setIsAnalyzing(false);
     toast({
       title: "Reset Complete",
-      description: "You can now start a new part analysis.",
+      description: "You can now start a new process analysis.",
     });
   };
 
@@ -153,7 +171,10 @@ const ProcessImprovement = () => {
           </div>
         </Card>
 
-        <ProcessAnalysisResults analysis={analysis} />
+        <ProcessAnalysisResults 
+          analysis={analysis} 
+          processImprovementId={processImprovementId || undefined}
+        />
       </div>
     </div>
   );
