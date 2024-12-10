@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, Package, Mail, Settings } from "lucide-react";
+import { useSessionContext } from "@supabase/auth-helpers-react";
 
 export const Header = () => {
   const navigate = useNavigate();
+  const { session } = useSessionContext();
 
   return (
     <header className="bg-white border-b border-gray-200">
@@ -29,10 +31,10 @@ export const Header = () => {
             </Button>
           </nav>
 
-          {/* Demo Company Info */}
+          {/* User Info */}
           <div className="flex items-center space-x-4">
             <div className="text-sm text-gray-600">
-              <span className="font-medium">Demo User</span>
+              <span className="font-medium">{session?.user?.email}</span>
               <span className="ml-2 px-2 py-1 bg-gray-100 rounded-full text-xs">
                 DEMO Company
               </span>
