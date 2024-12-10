@@ -8,37 +8,65 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+type ApiProvider = 'groq' | 'openai' | 'anthropic' | 'perplexity';
+type ApiStatus = 'checking' | 'up' | 'down';
+
 export const ApiStatus = () => {
-  const [groqStatus, setGroqStatus] = useState<'checking' | 'up' | 'down'>('checking');
-  const [openaiStatus, setOpenaiStatus] = useState<'checking' | 'up' | 'down'>('checking');
+  const [statuses, setStatuses] = useState<Record<ApiProvider, ApiStatus>>({
+    groq: 'checking',
+    openai: 'checking',
+    anthropic: 'checking',
+    perplexity: 'checking'
+  });
 
   useEffect(() => {
     const checkApiStatus = async () => {
       try {
-        // Check GROQ API
-        const groqResponse = await supabase.functions.invoke('chat-with-groq', {
-          body: { messages: [{ role: 'system', content: 'test' }] },
-        });
-        setGroqStatus(groqResponse.error ? 'down' : 'up');
+        // Check all APIs
+        const providers: ApiProvider[] = ['groq', 'openai', 'anthropic', 'perplexity'];
+        
+        const results = await Promise.all(
+          providers.map(async (provider) => {
+            try {
+              const response = await supabase.functions.invoke('check-ai-status', {
+                body: { provider }
+              });
+              return { provider, status: response.error ? 'down' : 'up' };
+            } catch (error) {
+              console.error(`Error checking ${provider} API:`, error);
+              return { provider, status: 'down' };
+            }
+          })
+        );
 
-        // Check OpenAI API
-        const openaiResponse = await supabase.functions.invoke('chat-with-groq', {
-          body: { messages: [{ role: 'system', content: 'test' }] },
+        setStatuses(prev => {
+          const newStatuses = { ...prev };
+          results.forEach(({ provider, status }) => {
+            newStatuses[provider] = status;
+          });
+          return newStatuses;
         });
-        setOpenaiStatus(openaiResponse.error ? 'down' : 'up');
       } catch (error) {
-        console.error('Error checking API status:', error);
-        setGroqStatus('down');
-        setOpenaiStatus('down');
+        console.error('Error checking API statuses:', error);
+        setStatuses(prev => ({
+          ...prev,
+          groq: 'down',
+          openai: 'down',
+          anthropic: 'down',
+          perplexity: 'down'
+        }));
       }
     };
 
+    // Initial check
     checkApiStatus();
-    const interval = setInterval(checkApiStatus, 60000); // Check every minute
+
+    // Set up interval for checking every 90 seconds
+    const interval = setInterval(checkApiStatus, 90000);
     return () => clearInterval(interval);
   }, []);
 
-  const getStatusIcon = (status: 'checking' | 'up' | 'down') => {
+  const getStatusIcon = (status: ApiStatus) => {
     switch (status) {
       case 'checking':
         return <Loader className="h-4 w-4 animate-spin text-yellow-500" />;
@@ -50,34 +78,22 @@ export const ApiStatus = () => {
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <div className="flex items-center gap-1">
-              <span className="text-xs text-muted-foreground">GROQ</span>
-              {getStatusIcon(groqStatus)}
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>GROQ API is {groqStatus === 'checking' ? 'being checked' : groqStatus === 'up' ? 'operational' : 'down'}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <div className="flex items-center gap-1">
-              <span className="text-xs text-muted-foreground">OpenAI</span>
-              {getStatusIcon(openaiStatus)}
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>OpenAI API is {openaiStatus === 'checking' ? 'being checked' : openaiStatus === 'up' ? 'operational' : 'down'}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+    <div className="flex items-center gap-3">
+      {(Object.entries(statuses) as [ApiProvider, ApiStatus][]).map(([provider, status]) => (
+        <TooltipProvider key={provider}>
+          <Tooltip>
+            <TooltipTrigger>
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-muted-foreground capitalize">{provider}</span>
+                {getStatusIcon(status)}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{provider.toUpperCase()} API is {status === 'checking' ? 'being checked' : status === 'up' ? 'operational' : 'down'}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ))}
     </div>
   );
 };
