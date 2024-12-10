@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, Package, Mail, Settings } from "lucide-react";
 import { useSessionContext } from "@supabase/auth-helpers-react";
+import { ApiStatus } from "@/components/gpt/ApiStatus";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -31,8 +32,9 @@ export const Header = () => {
             </Button>
           </nav>
 
-          {/* User Info */}
-          <div className="flex items-center space-x-4">
+          {/* API Status Indicators and User Info */}
+          <div className="flex items-center space-x-6">
+            <ApiStatus />
             <div className="text-sm text-gray-600">
               <span className="font-medium">{session?.user?.email}</span>
               <span className="ml-2 px-2 py-1 bg-gray-100 rounded-full text-xs">

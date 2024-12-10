@@ -22,7 +22,6 @@ export const ApiStatus = () => {
   useEffect(() => {
     const checkApiStatus = async () => {
       try {
-        // Check all APIs
         const providers: ApiProvider[] = ['groq', 'openai', 'anthropic', 'perplexity'];
         
         const results = await Promise.all(
@@ -77,6 +76,13 @@ export const ApiStatus = () => {
     }
   };
 
+  const providerLabels: Record<ApiProvider, string> = {
+    perplexity: 'P',
+    openai: 'O',
+    groq: 'G',
+    anthropic: 'A'
+  };
+
   return (
     <div className="flex items-center gap-3">
       {(Object.entries(statuses) as [ApiProvider, ApiStatus][]).map(([provider, status]) => (
@@ -84,7 +90,7 @@ export const ApiStatus = () => {
           <Tooltip>
             <TooltipTrigger>
               <div className="flex items-center gap-1">
-                <span className="text-xs text-muted-foreground capitalize">{provider}</span>
+                <span className="text-xs font-medium text-gray-600">{providerLabels[provider]}</span>
                 {getStatusIcon(status)}
               </div>
             </TooltipTrigger>
