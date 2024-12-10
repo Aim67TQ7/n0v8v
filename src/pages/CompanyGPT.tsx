@@ -137,16 +137,23 @@ const CompanyGPT = () => {
             </Sidebar>
 
             <div className="flex-1 flex">
-              <div className="flex-1 flex flex-col h-full">
+              <div className="flex-1 flex flex-col">
                 {!selectedSession && !chatSessions.length ? (
-                  <Card className="flex-1 m-4 flex items-center justify-center">
-                    <ConversationStarters onSelect={(prompt) => {
-                      const chatInterface = document.querySelector('textarea');
-                      if (chatInterface) {
-                        (chatInterface as HTMLTextAreaElement).value = prompt;
-                      }
-                    }} />
-                  </Card>
+                  <div className="flex-1 flex flex-col">
+                    <Card className="flex-1 m-4 flex items-center justify-center">
+                      <ConversationStarters onSelect={(prompt) => {
+                        const chatInterface = document.querySelector('textarea');
+                        if (chatInterface) {
+                          (chatInterface as HTMLTextAreaElement).value = prompt;
+                        }
+                      }} />
+                    </Card>
+                    <div className="p-4">
+                      <ChatInterface 
+                        onHistoryUpdate={fetchChatHistory}
+                      />
+                    </div>
+                  </div>
                 ) : (
                   <div className="flex-1 flex flex-col">
                     <ChatInterface 
