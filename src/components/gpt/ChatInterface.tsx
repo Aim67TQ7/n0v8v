@@ -132,7 +132,7 @@ export const ChatInterface = ({
               }`}
             >
               <div
-                className={`max-w-[80%] rounded-lg p-3 ${
+                className={`max-w-[80%] rounded-lg p-3 text-sm ${
                   message.role === "user"
                     ? "bg-primary text-primary-foreground"
                     : "bg-accent"
@@ -152,7 +152,7 @@ export const ChatInterface = ({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1 min-h-[60px] resize-none"
+            className="flex-1 min-h-[60px] resize-none text-sm"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();

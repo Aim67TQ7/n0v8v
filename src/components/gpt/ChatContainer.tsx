@@ -15,11 +15,11 @@ export const ChatContainer = ({
   onHistoryUpdate 
 }: ChatContainerProps) => {
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-64px)]">
+    <div className="flex-1 flex flex-col h-[calc(100vh-64px)] overflow-hidden">
       {!selectedSession && !chatSessions.length ? (
         <div className="flex-1 flex flex-col">
           <ScrollArea className="flex-1">
-            <Card className="m-4 flex items-center justify-center">
+            <Card className="m-4">
               <ConversationStarters onSelect={(prompt) => {
                 const chatInterface = document.querySelector('textarea');
                 if (chatInterface) {

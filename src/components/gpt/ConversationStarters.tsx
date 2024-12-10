@@ -28,7 +28,7 @@ interface ConversationStartersProps {
 export const ConversationStarters = ({ onSelect }: ConversationStartersProps) => {
   return (
     <div className="w-full max-w-3xl p-6">
-      <h2 className="text-xl font-semibold mb-4 text-center">How can I help you today?</h2>
+      <h2 className="text-lg font-semibold mb-4 text-center">How can I help you today?</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {starters.map((starter) => {
           const Icon = starter.icon;
@@ -39,8 +39,8 @@ export const ConversationStarters = ({ onSelect }: ConversationStartersProps) =>
               onClick={() => onSelect(starter.text)}
             >
               <div className="flex flex-col items-center gap-3">
-                <Icon className="h-6 w-6" />
-                <span className="text-sm text-center">{starter.text}</span>
+                <Icon className="h-5 w-5" />
+                <span className="text-xs text-center">{starter.text}</span>
               </div>
             </Card>
           );
