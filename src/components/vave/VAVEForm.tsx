@@ -165,8 +165,10 @@ export const VAVEForm = ({ onAnalyze }: VAVEFormProps) => {
           selectedArea={selectedArea}
         />
         {imagePreview && !selectedArea && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-white text-center p-4 rounded-lg">
-            Click and drag to select the area to analyze
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="bg-black/50 text-white px-4 py-2 rounded-lg text-sm">
+              Click and drag to select area
+            </div>
           </div>
         )}
       </div>
