@@ -619,6 +619,57 @@ export type Database = {
           },
         ]
       }
+      vave_analysis_reports: {
+        Row: {
+          analysis_data: Json
+          created_at: string
+          created_by: string | null
+          id: string
+          image_url: string
+          job_number: string | null
+          part_number: string | null
+          po_number: string | null
+          workcenter_id: string | null
+        }
+        Insert: {
+          analysis_data: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_url: string
+          job_number?: string | null
+          part_number?: string | null
+          po_number?: string | null
+          workcenter_id?: string | null
+        }
+        Update: {
+          analysis_data?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_url?: string
+          job_number?: string | null
+          part_number?: string | null
+          po_number?: string | null
+          workcenter_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vave_analysis_reports_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vave_analysis_reports_workcenter_id_fkey"
+            columns: ["workcenter_id"]
+            isOneToOne: false
+            referencedRelation: "workcenters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workcenters: {
         Row: {
           company_id: string | null
