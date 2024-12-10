@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,15 +13,12 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Processing request for VAVE analysis');
     const formData = await req.formData();
-    
     const imageFile = formData.get('image');
-    const workcenter = formData.get('workcenter');
-    const selectedAreaStr = formData.get('selectedArea');
     const valueChecksStr = formData.get('valueChecks');
+    const selectedAreaStr = formData.get('selectedArea');
 
-    if (!imageFile || !workcenter || !valueChecksStr) {
+    if (!imageFile || !valueChecksStr) {
       throw new Error('Missing required fields');
     }
 
@@ -34,28 +32,23 @@ serve(async (req) => {
         .reduce((data, byte) => data + String.fromCharCode(byte), '')
     );
 
-    // Construct the analysis prompt based on selected value checks
-    let analysisPrompt = `Analyze this image for Value Analysis and Value Engineering (VAVE) opportunities. ${
-      selectedArea ? 'Focus specifically on the highlighted area.' : ''
-    }\n\nProvide analysis for the following selected categories:\n`;
-
+    // Build analysis categories based on selected value checks
+    const analysisCategories = [];
     if (valueChecks.functionalImprovements) {
-      analysisPrompt += "- Functional Improvements: Evaluate potential improvements to the part's functionality\n";
+      analysisCategories.push("Functional Improvements: Analyze potential improvements to part functionality and performance");
     }
     if (valueChecks.manufacturingOptimization) {
-      analysisPrompt += "- Manufacturing Process Optimization: Identify opportunities to optimize manufacturing processes\n";
+      analysisCategories.push("Manufacturing Process: Evaluate opportunities to optimize manufacturing processes and reduce costs");
     }
     if (valueChecks.assemblyErgonomics) {
-      analysisPrompt += "- Assembly and Ergonomics: Assess assembly process and ergonomic considerations\n";
+      analysisCategories.push("Assembly & Ergonomics: Assess assembly efficiency and ergonomic considerations");
     }
     if (valueChecks.designOptimization) {
-      analysisPrompt += "- Design Optimization and Standardization: Evaluate design for potential standardization and optimization\n";
+      analysisCategories.push("Design Optimization: Review potential design simplifications and standardization opportunities");
     }
     if (valueChecks.materialOptimization) {
-      analysisPrompt += "- Material and Thickness Optimization: Analyze material selection and thickness optimization opportunities\n";
+      analysisCategories.push("Material Analysis: Evaluate material selection and thickness optimization possibilities");
     }
-
-    analysisPrompt += "\nFor each category, provide specific recommendations and potential cost savings. If no improvements are identified for a category, explicitly state 'none identified'.\n\nFormat your response with clear headings for each category and bullet points for specific recommendations.";
 
     console.log('Preparing Anthropic request');
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -74,7 +67,19 @@ serve(async (req) => {
             content: [
               {
                 type: 'text',
-                text: analysisPrompt
+                text: `You are a manufacturing process expert conducting a Value Analysis and Value Engineering (VAVE) review. 
+                Analyze the provided image ${selectedArea ? 'focusing on the highlighted area' : ''} and provide detailed insights for the following categories:
+
+                ${analysisCategories.join('\n')}
+
+                For each applicable category:
+                1. Current State: Describe the current design/process
+                2. Opportunities: Identify specific improvement opportunities
+                3. Benefits: List potential benefits (cost savings, quality, efficiency)
+                4. Implementation: Suggest practical implementation steps
+
+                Format your response as a structured analysis with clear sections and bullet points.
+                Be specific and practical in your recommendations.`
               },
               {
                 type: 'image',
@@ -106,22 +111,14 @@ serve(async (req) => {
 
     const analysisText = data.content[0].text;
 
-    // Process the analysis text to ensure "none identified" is used when appropriate
-    const processedAnalysis = Object.keys(valueChecks).reduce((acc, category) => {
-      if (valueChecks[category]) {
-        const categoryText = analysisText.match(new RegExp(`${category}:.*?(?=\\n\\n|$)`, 's'));
-        acc[category] = categoryText ? categoryText[0].trim() : 'None identified';
-      }
-      return acc;
-    }, {});
+    const analysis = {
+      status: 'success',
+      message: '✅ VAVE Analysis completed successfully',
+      details: analysisText
+    };
 
     return new Response(
-      JSON.stringify({ 
-        data: { 
-          analysis: processedAnalysis,
-          rawAnalysis: analysisText
-        } 
-      }),
+      JSON.stringify({ data: { analysis } }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
