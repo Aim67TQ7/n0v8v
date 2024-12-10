@@ -196,7 +196,6 @@ const CompanyGPT = () => {
                 <Card className="m-4 p-4">
                   <ModelSelector
                     selectedModel={selectedModel}
-                    allowedModels={allowedModels}
                     onModelChange={setSelectedModel}
                   />
                 </Card>

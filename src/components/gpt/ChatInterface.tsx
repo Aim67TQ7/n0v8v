@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useToast } from "@/components/ui/use-toast";
+import { Json } from "@/integrations/supabase/types";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -48,11 +49,17 @@ export const ChatInterface = ({
 
       if (!profile?.company_id) return;
 
+      // Convert messages to a format that matches the Json type
+      const jsonMessages = messages.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      })) as Json;
+
       await supabase.from('chat_logs').insert({
         company_id: profile.company_id,
         user_id: session.user.id,
         model: 'groq',
-        messages: messages
+        messages: jsonMessages
       });
 
       onHistoryUpdate?.();
