@@ -48,17 +48,11 @@ export const ChatInterface = ({
 
       if (!profile?.company_id) return;
 
-      // Convert messages array to a format that matches the Json type
-      const jsonMessages = messages.map(msg => ({
-        role: msg.role,
-        content: msg.content
-      }));
-
       await supabase.from('chat_logs').insert({
         company_id: profile.company_id,
         user_id: session.user.id,
         model: 'groq',
-        messages: jsonMessages
+        messages: messages
       });
 
       onHistoryUpdate?.();
@@ -104,9 +98,8 @@ export const ChatInterface = ({
       
       const updatedMessages = [...messages, userMessage, assistantMessage];
       setMessages(updatedMessages);
-
-      // Save chat log after completion
       await saveChatLog(updatedMessages);
+
     } catch (error) {
       console.error('Error:', error);
       toast({

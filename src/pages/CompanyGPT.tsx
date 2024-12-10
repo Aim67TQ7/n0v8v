@@ -146,6 +146,7 @@ const CompanyGPT = () => {
                     </Card>
                     <div className="p-4">
                       <ChatInterface 
+                        systemPrompt={`You are ${gptName}, an AI assistant.`}
                         onHistoryUpdate={fetchChatHistory}
                       />
                     </div>
@@ -153,13 +154,14 @@ const CompanyGPT = () => {
                 ) : (
                   <div className="flex-1 flex flex-col">
                     <ChatInterface 
+                      systemPrompt={`You are ${gptName}, an AI assistant.`}
                       onHistoryUpdate={fetchChatHistory}
                     />
                   </div>
                 )}
               </div>
               
-              <div className="w-64 border-l p-4 overflow-y-auto hidden lg:block">
+              <div className="w-64 border-l bg-white overflow-y-auto hidden lg:block">
                 <ResourceSidebar />
               </div>
             </div>
