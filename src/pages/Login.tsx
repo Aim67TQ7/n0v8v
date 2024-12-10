@@ -1,30 +1,47 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DemoAccessForm } from "@/components/auth/DemoAccessForm";
-import { SignInForm } from "@/components/auth/SignInForm";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSessionContext } from "@supabase/auth-helpers-react";
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { supabase } from "@/integrations/supabase/client";
+import { Card } from "@/components/ui/card";
 
 const Login = () => {
+  const { session } = useSessionContext();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (session) {
+      navigate("/company-gpt");
+    }
+  }, [session, navigate]);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-lg">
-        <div className="text-center">
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">Welcome</h2>
+      <Card className="w-full max-w-md p-8">
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-bold">Welcome to Company GPT</h1>
+          <p className="text-sm text-gray-600 mt-2">
+            Sign in to access your AI assistant
+          </p>
         </div>
-
-        <Tabs defaultValue="demo" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="demo">Get Demo Access</TabsTrigger>
-            <TabsTrigger value="signin">Sign In</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="demo">
-            <DemoAccessForm />
-          </TabsContent>
-
-          <TabsContent value="signin">
-            <SignInForm />
-          </TabsContent>
-        </Tabs>
-      </div>
+        <Auth
+          supabaseClient={supabase}
+          appearance={{
+            theme: ThemeSupa,
+            variables: {
+              default: {
+                colors: {
+                  brand: '#0284c7',
+                  brandAccent: '#0369a1',
+                }
+              }
+            }
+          }}
+          providers={[]}
+          redirectTo={`${window.location.origin}/company-gpt`}
+        />
+      </Card>
     </div>
   );
 };

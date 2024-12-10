@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Package, Mail, Users, Settings } from "lucide-react";
+import { Home, Package, Mail, Users, Settings, LogOut } from "lucide-react";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { ApiStatus } from "@/components/gpt/ApiStatus";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -14,6 +15,11 @@ export const Header = () => {
 
   const openTeams = () => {
     window.location.href = "msteams:/";
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/login");
   };
 
   return (
@@ -47,13 +53,20 @@ export const Header = () => {
           {/* API Status Indicators and User Info */}
           <div className="flex items-center gap-6">
             <ApiStatus />
-            <div className="flex flex-col items-end">
-              <span className="text-sm font-medium text-gray-900">
-                {session?.user?.email}
-              </span>
-              <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
-                DEMO Company
-              </span>
+            <div className="flex items-center gap-4">
+              <div className="flex flex-col items-end">
+                <span className="text-sm font-medium text-gray-900">
+                  {session?.user?.email}
+                </span>
+                <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
+                  DEMO Company
+                </span>
+              </div>
+              {session && (
+                <Button variant="ghost" onClick={handleSignOut} size="icon">
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              )}
             </div>
           </div>
         </div>

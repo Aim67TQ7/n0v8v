@@ -2,11 +2,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SessionContextProvider } from "@supabase/auth-helpers-react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { SessionContextProvider, useSessionContext } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import Index from "./pages/Index";
+import Login from "./pages/Login";
 import Modules from "./pages/Modules";
 import LeanManufacturing from "./pages/LeanManufacturing";
 import FiveSVision from "./pages/FiveSVision";
@@ -22,6 +23,17 @@ import VAVEAnalysis from "./pages/operations/VAVEAnalysis";
 
 const queryClient = new QueryClient();
 
+// Protected Route Component
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { session } = useSessionContext();
+  
+  if (!session) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <SessionContextProvider supabaseClient={supabase}>
@@ -30,6 +42,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <Routes>
+            <Route path="/login" element={<Login />} />
             <Route
               path="/"
               element={
@@ -140,7 +153,11 @@ const App = () => (
             />
             <Route
               path="/company-gpt"
-              element={<CompanyGPT />}
+              element={
+                <ProtectedRoute>
+                  <CompanyGPT />
+                </ProtectedRoute>
+              }
             />
           </Routes>
         </TooltipProvider>
