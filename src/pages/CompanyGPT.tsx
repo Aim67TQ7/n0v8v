@@ -10,6 +10,7 @@ import { ChatHistory } from "@/components/gpt/ChatHistory";
 import { ApiStatus } from "@/components/gpt/ApiStatus";
 import { ResourceSidebar } from "@/components/gpt/ResourceSidebar";
 import { ConversationStarters } from "@/components/gpt/ConversationStarters";
+import { Card } from "@/components/ui/card";
 import {
   SidebarProvider,
   Sidebar,
@@ -80,7 +81,7 @@ const CompanyGPT = () => {
     fetchChatHistory();
   }, [profile?.company_id]);
 
-  const gptName = "DemoGPT";
+  const gptName = profile?.company?.settings?.[0]?.gpt_name || "AI Assistant";
   const allowedModels = profile?.allowed_models || ["groq"];
 
   const handleNewChat = () => {
@@ -92,7 +93,7 @@ const CompanyGPT = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col">
+    <div className="h-screen flex flex-col">
       <div className="w-full border-b bg-white">
         <div className="container mx-auto px-4 py-3">
           <ModelSelector
@@ -108,7 +109,7 @@ const CompanyGPT = () => {
           <div className="flex w-full h-full">
             <Sidebar className="border-r w-64 flex flex-col">
               <SidebarHeader className="border-b p-4 shrink-0">
-                <div className="mt-4 flex items-center justify-between">
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <ApiStatus />
                     <h2 className="text-lg font-semibold">{gptName}</h2>
@@ -138,18 +139,20 @@ const CompanyGPT = () => {
             <div className="flex-1 flex">
               <div className="flex-1 flex flex-col h-full">
                 {!selectedSession && !chatSessions.length ? (
-                  <div className="flex-1 flex items-center justify-center">
+                  <Card className="flex-1 m-4 flex items-center justify-center">
                     <ConversationStarters onSelect={(prompt) => {
                       const chatInterface = document.querySelector('textarea');
                       if (chatInterface) {
                         (chatInterface as HTMLTextAreaElement).value = prompt;
                       }
                     }} />
-                  </div>
+                  </Card>
                 ) : (
-                  <ChatInterface 
-                    onHistoryUpdate={fetchChatHistory}
-                  />
+                  <div className="flex-1 flex flex-col">
+                    <ChatInterface 
+                      onHistoryUpdate={fetchChatHistory}
+                    />
+                  </div>
                 )}
               </div>
               
