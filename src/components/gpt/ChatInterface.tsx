@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useToast } from "@/components/ui/use-toast";
@@ -121,9 +122,9 @@ export const ChatInterface = ({
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <ScrollArea className="flex-1">
-        <div className="p-4 space-y-4">
+    <Card className="flex flex-col h-full bg-white shadow-lg">
+      <ScrollArea className="flex-1 p-4">
+        <div className="space-y-4">
           {messages.slice(1).map((message, index) => (
             <div
               key={index}
@@ -135,7 +136,7 @@ export const ChatInterface = ({
                 className={`max-w-[80%] rounded-lg p-3 ${
                   message.role === "user"
                     ? "bg-primary text-primary-foreground"
-                    : "bg-muted"
+                    : "bg-accent"
                 }`}
               >
                 <p className="whitespace-pre-wrap">{message.content}</p>
@@ -146,13 +147,13 @@ export const ChatInterface = ({
         </div>
       </ScrollArea>
 
-      <form onSubmit={handleSubmit} className="p-4 border-t">
+      <form onSubmit={handleSubmit} className="p-4 border-t bg-white">
         <div className="flex gap-2">
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1"
+            className="flex-1 min-h-[60px] resize-none"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -165,6 +166,6 @@ export const ChatInterface = ({
           </Button>
         </div>
       </form>
-    </div>
+    </Card>
   );
 };
