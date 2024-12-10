@@ -14,6 +14,7 @@ import FiveWhys from "@/pages/quality/FiveWhys";
 import TrainingMatrix from "@/pages/training/TrainingMatrix";
 import CompanyGPT from "@/pages/CompanyGPT";
 import VAVEAnalysis from "@/pages/operations/VAVEAnalysis";
+import DataManagement from "@/pages/DataManagement";
 import { Header } from "@/components/Header";
 
 // Protected Route Component
@@ -92,5 +93,9 @@ export const routes = [
   {
     path: "/company-gpt",
     element: <ProtectedRoute><CompanyGPT /></ProtectedRoute>
+  },
+  {
+    path: "/data",
+    element: <WithHeader><DataManagement /></WithHeader>
   }
 ];

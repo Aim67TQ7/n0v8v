@@ -709,6 +709,10 @@ export type Database = {
         }
         Returns: string
       }
+      generate_license_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

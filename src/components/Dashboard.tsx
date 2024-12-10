@@ -33,17 +33,17 @@ const modules = [
     status: "ready" as const
   },
   {
-    title: "Analytics",
-    description: "Performance metrics and insights",
-    icon: ChartBar,
-    href: "/analytics",
-    status: "coming-soon" as const
-  },
-  {
     title: "Data Management",
     description: "Manage and organize your data",
     icon: Database,
     href: "/data",
+    status: "ready" as const
+  },
+  {
+    title: "Analytics",
+    description: "Performance metrics and insights",
+    icon: ChartBar,
+    href: "/analytics",
     status: "coming-soon" as const
   },
   {
