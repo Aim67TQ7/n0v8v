@@ -91,59 +91,65 @@ const CompanyGPT = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)]">
-      <SidebarProvider>
-        <div className="flex min-h-[calc(100vh-4rem)] w-full">
-          <Sidebar>
-            <SidebarHeader className="border-b p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <ApiStatus />
-                  <h2 className="text-lg font-semibold">{gptName}</h2>
+    <div className="h-[calc(100vh-4rem)] flex flex-col">
+      <div className="w-full border-b bg-white">
+        <div className="container mx-auto px-4 py-3">
+          <ModelSelector
+            selectedModel={selectedModel}
+            allowedModels={allowedModels}
+            onModelChange={setSelectedModel}
+          />
+        </div>
+      </div>
+
+      <div className="flex-1 flex overflow-hidden">
+        <SidebarProvider>
+          <div className="flex w-full h-full">
+            <Sidebar className="border-r w-64 flex flex-col">
+              <SidebarHeader className="border-b p-4 shrink-0">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <ApiStatus />
+                    <h2 className="text-lg font-semibold">{gptName}</h2>
+                  </div>
+                  <SidebarTrigger />
                 </div>
-                <SidebarTrigger />
-              </div>
-              <Button
-                variant="outline"
-                className="w-full mt-2 gap-2"
-                onClick={handleNewChat}
-              >
-                <Plus className="h-4 w-4" />
-                New Chat
-              </Button>
-            </SidebarHeader>
-            <SidebarContent>
-              <ChatHistory
-                sessions={chatSessions}
-                onSelect={handleSessionSelect}
-                selectedId={selectedSession}
-              />
-            </SidebarContent>
-          </Sidebar>
-
-          <div className="flex-1 flex">
-            <div className="flex-1 flex flex-col">
-              <div className="p-4 border-b">
-                <ModelSelector
-                  selectedModel={selectedModel}
-                  allowedModels={allowedModels}
-                  onModelChange={setSelectedModel}
-                />
-              </div>
-
+                <Button
+                  variant="outline"
+                  className="w-full mt-2 gap-2"
+                  onClick={handleNewChat}
+                >
+                  <Plus className="h-4 w-4" />
+                  New Chat
+                </Button>
+              </SidebarHeader>
               <div className="flex-1 overflow-hidden">
-                <ChatInterface 
-                  onHistoryUpdate={fetchChatHistory}
-                />
+                <SidebarContent>
+                  <ChatHistory
+                    sessions={chatSessions}
+                    onSelect={handleSessionSelect}
+                    selectedId={selectedSession}
+                  />
+                </SidebarContent>
               </div>
-            </div>
-            
-            <div className="border-l p-4 hidden lg:block">
-              <ResourceSidebar />
+            </Sidebar>
+
+            <div className="flex-1 flex">
+              <div className="flex-1 relative">
+                <div className="absolute inset-0">
+                  <ChatInterface 
+                    onHistoryUpdate={fetchChatHistory}
+                  />
+                </div>
+              </div>
+              
+              <div className="w-64 border-l p-4 overflow-y-auto hidden lg:block">
+                <ResourceSidebar />
+              </div>
             </div>
           </div>
-        </div>
-      </SidebarProvider>
+        </SidebarProvider>
+      </div>
     </div>
   );
 };
