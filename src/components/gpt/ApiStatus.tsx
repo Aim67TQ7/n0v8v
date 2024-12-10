@@ -8,20 +8,21 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-type ApiProvider = 'openai' | 'anthropic' | 'perplexity';
+type ApiProvider = 'openai' | 'anthropic' | 'perplexity' | 'groq';
 type ApiStatus = 'checking' | 'up' | 'down';
 
 export const ApiStatus = () => {
   const [statuses, setStatuses] = useState<Record<ApiProvider, ApiStatus>>({
     openai: 'checking',
     anthropic: 'checking',
-    perplexity: 'checking'
+    perplexity: 'checking',
+    groq: 'checking'
   });
 
   useEffect(() => {
     const checkApiStatus = async () => {
       try {
-        const providers: ApiProvider[] = ['openai', 'anthropic', 'perplexity'];
+        const providers: ApiProvider[] = ['openai', 'anthropic', 'perplexity', 'groq'];
         
         const results = await Promise.all(
           providers.map(async (provider) => {
@@ -50,7 +51,8 @@ export const ApiStatus = () => {
           ...prev,
           openai: 'down',
           anthropic: 'down',
-          perplexity: 'down'
+          perplexity: 'down',
+          groq: 'down'
         }));
       }
     };
@@ -77,7 +79,8 @@ export const ApiStatus = () => {
   const providerLabels: Record<ApiProvider, string> = {
     perplexity: 'P',
     openai: 'O',
-    anthropic: 'A'
+    anthropic: 'A',
+    groq: 'G'
   };
 
   return (
