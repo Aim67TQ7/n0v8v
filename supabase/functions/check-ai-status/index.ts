@@ -36,7 +36,7 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         };
         body = {
-          model: 'gpt-4o-mini',
+          model: 'gpt-4o',
           messages: [{ role: 'system', content: 'test' }],
         };
         break;
