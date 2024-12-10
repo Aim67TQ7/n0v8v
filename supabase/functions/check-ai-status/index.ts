@@ -36,7 +36,7 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         };
         body = {
-          model: 'gpt-4o',
+          model: 'gpt-4',
           messages: [{ role: 'system', content: 'test' }],
         };
         break;
@@ -67,12 +67,14 @@ serve(async (req) => {
         throw new Error('Invalid provider');
     }
 
+    console.log(`Checking status for ${provider} API...`);
     const response = await fetch(endpoint, {
       method: 'POST',
       headers,
       body: JSON.stringify(body),
     });
 
+    console.log(`${provider} API response status:`, response.status);
     return new Response(
       JSON.stringify({ status: response.ok ? 'up' : 'down' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
