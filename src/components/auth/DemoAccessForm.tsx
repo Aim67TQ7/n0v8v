@@ -19,11 +19,9 @@ export const DemoAccessForm = () => {
         .from("companies")
         .select("id")
         .eq("name", "DEMO")
-        .single();
+        .maybeSingle();
 
-      if (companyError && companyError.code !== 'PGRST116') {
-        throw companyError;
-      }
+      if (companyError) throw companyError;
 
       let demoCompanyId;
 
@@ -46,9 +44,10 @@ export const DemoAccessForm = () => {
               .from("companies")
               .select("id")
               .eq("name", "DEMO")
-              .single();
+              .maybeSingle();
             
             if (fetchError) throw fetchError;
+            if (!existingCompany) throw new Error("Failed to find or create DEMO company");
             demoCompanyId = existingCompany.id;
           } else {
             throw createError;
