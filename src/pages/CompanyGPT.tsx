@@ -143,6 +143,16 @@ const CompanyGPT = () => {
             
             {/* Right Sidebar - Fixed */}
             <div className="w-64 border-l bg-white flex flex-col">
+              <div className="p-4 border-b">
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-medium">
+                    {profile?.first_name} {profile?.last_name}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {profile?.company?.name || 'Loading...'}
+                  </span>
+                </div>
+              </div>
               <div className="flex-1 overflow-y-auto">
                 <ResourceSidebar />
               </div>
