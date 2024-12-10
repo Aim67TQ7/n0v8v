@@ -34,132 +34,138 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+const AppRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route
+        path="/"
+        element={
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <Index />
+          </div>
+        }
+      />
+      <Route
+        path="/modules"
+        element={
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <Modules />
+          </div>
+        }
+      />
+      <Route
+        path="/team"
+        element={
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <TeamManagement />
+          </div>
+        }
+      />
+      <Route
+        path="/operations/lean"
+        element={
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <LeanManufacturing />
+          </div>
+        }
+      />
+      <Route
+        path="/operations/lean/5s-vision"
+        element={
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <FiveSVision />
+          </div>
+        }
+      />
+      <Route
+        path="/operations/lean/vave-analysis"
+        element={
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <VAVEAnalysis />
+          </div>
+        }
+      />
+      <Route
+        path="/operations/quality"
+        element={
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <QualityAssurance />
+          </div>
+        }
+      />
+      <Route
+        path="/operations/quality/process-improvement"
+        element={
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <PartAnalysis />
+          </div>
+        }
+      />
+      <Route
+        path="/operations/quality/product-inspection"
+        element={
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <ProductInspection />
+          </div>
+        }
+      />
+      <Route
+        path="/operations/quality/dmr"
+        element={
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <DMRDocumentation />
+          </div>
+        }
+      />
+      <Route
+        path="/operations/quality/five-whys"
+        element={
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <FiveWhys />
+          </div>
+        }
+      />
+      <Route
+        path="/training/matrix"
+        element={
+          <div className="min-h-screen flex flex-col">
+            <Header />
+            <TrainingMatrix />
+          </div>
+        }
+      />
+      <Route
+        path="/company-gpt"
+        element={
+          <ProtectedRoute>
+            <CompanyGPT />
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <SessionContextProvider supabaseClient={supabase}>
       <BrowserRouter>
         <TooltipProvider>
+          <AppRoutes />
           <Toaster />
           <Sonner />
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/"
-              element={
-                <div className="min-h-screen flex flex-col">
-                  <Header />
-                  <Index />
-                </div>
-              }
-            />
-            <Route
-              path="/modules"
-              element={
-                <div className="min-h-screen flex flex-col">
-                  <Header />
-                  <Modules />
-                </div>
-              }
-            />
-            <Route
-              path="/team"
-              element={
-                <div className="min-h-screen flex flex-col">
-                  <Header />
-                  <TeamManagement />
-                </div>
-              }
-            />
-            <Route
-              path="/operations/lean"
-              element={
-                <div className="min-h-screen flex flex-col">
-                  <Header />
-                  <LeanManufacturing />
-                </div>
-              }
-            />
-            <Route
-              path="/operations/lean/5s-vision"
-              element={
-                <div className="min-h-screen flex flex-col">
-                  <Header />
-                  <FiveSVision />
-                </div>
-              }
-            />
-            <Route
-              path="/operations/lean/vave-analysis"
-              element={
-                <div className="min-h-screen flex flex-col">
-                  <Header />
-                  <VAVEAnalysis />
-                </div>
-              }
-            />
-            <Route
-              path="/operations/quality"
-              element={
-                <div className="min-h-screen flex flex-col">
-                  <Header />
-                  <QualityAssurance />
-                </div>
-              }
-            />
-            <Route
-              path="/operations/quality/process-improvement"
-              element={
-                <div className="min-h-screen flex flex-col">
-                  <Header />
-                  <PartAnalysis />
-                </div>
-              }
-            />
-            <Route
-              path="/operations/quality/product-inspection"
-              element={
-                <div className="min-h-screen flex flex-col">
-                  <Header />
-                  <ProductInspection />
-                </div>
-              }
-            />
-            <Route
-              path="/operations/quality/dmr"
-              element={
-                <div className="min-h-screen flex flex-col">
-                  <Header />
-                  <DMRDocumentation />
-                </div>
-              }
-            />
-            <Route
-              path="/operations/quality/five-whys"
-              element={
-                <div className="min-h-screen flex flex-col">
-                  <Header />
-                  <FiveWhys />
-                </div>
-              }
-            />
-            <Route
-              path="/training/matrix"
-              element={
-                <div className="min-h-screen flex flex-col">
-                  <Header />
-                  <TrainingMatrix />
-                </div>
-              }
-            />
-            <Route
-              path="/company-gpt"
-              element={
-                <ProtectedRoute>
-                  <CompanyGPT />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
         </TooltipProvider>
       </BrowserRouter>
     </SessionContextProvider>
