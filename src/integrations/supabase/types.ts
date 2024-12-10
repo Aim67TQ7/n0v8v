@@ -488,7 +488,6 @@ export type Database = {
       }
       profiles: {
         Row: {
-          allowed_models: string[] | null
           company_id: string | null
           created_at: string
           demo_access_expires: string | null
@@ -500,7 +499,6 @@ export type Database = {
           role: string
         }
         Insert: {
-          allowed_models?: string[] | null
           company_id?: string | null
           created_at?: string
           demo_access_expires?: string | null
@@ -512,7 +510,6 @@ export type Database = {
           role?: string
         }
         Update: {
-          allowed_models?: string[] | null
           company_id?: string | null
           created_at?: string
           demo_access_expires?: string | null
