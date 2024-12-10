@@ -108,9 +108,6 @@ const CompanyGPT = () => {
     fetchChatHistory();
   }, [profile?.company_id]);
 
-  const gptName = profile?.company?.settings?.[0]?.gpt_name || "AI Assistant";
-  const allowedModels = profile?.allowed_models || ["groq"];
-
   const handleNewChat = () => {
     setSelectedSession(undefined);
   };
@@ -124,7 +121,7 @@ const CompanyGPT = () => {
       <div className="h-screen flex items-center justify-center">
         <Card className="p-6">
           <h2 className="text-lg font-semibold mb-2">Please Sign In</h2>
-          <p className="text-muted-foreground">You need to be signed in to use CompanyGPT.</p>
+          <p className="text-muted-foreground">You need to be signed in to use BuntingGPT.</p>
         </Card>
       </div>
     );
@@ -139,7 +136,14 @@ const CompanyGPT = () => {
             <Sidebar className="border-r w-64 flex flex-col">
               <SidebarHeader className="border-b p-4 shrink-0">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold">{gptName}</h2>
+                  <div className="flex items-center gap-2">
+                    <img 
+                      src="/lovable-uploads/2c6383aa-9d2d-43af-9b0e-bd66dea3a1de.png" 
+                      alt="Bunting Logo" 
+                      className="h-6 w-auto"
+                    />
+                    <h2 className="text-lg font-semibold">BuntingGPT</h2>
+                  </div>
                   <SidebarTrigger />
                 </div>
                 <Button
@@ -179,7 +183,7 @@ const CompanyGPT = () => {
                     </ScrollArea>
                     <div className="p-4 border-t">
                       <ChatInterface 
-                        systemPrompt={`You are ${gptName}, an AI assistant.`}
+                        systemPrompt={`You are BuntingGPT, an AI assistant specialized in magnetic separation and metal detection solutions.`}
                         onHistoryUpdate={fetchChatHistory}
                       />
                     </div>
@@ -187,7 +191,7 @@ const CompanyGPT = () => {
                 ) : (
                   <div className="flex-1 flex flex-col">
                     <ChatInterface 
-                      systemPrompt={`You are ${gptName}, an AI assistant.`}
+                      systemPrompt={`You are BuntingGPT, an AI assistant specialized in magnetic separation and metal detection solutions.`}
                       onHistoryUpdate={fetchChatHistory}
                     />
                   </div>
