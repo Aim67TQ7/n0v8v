@@ -15,7 +15,7 @@ export const ChatContainer = ({
   onHistoryUpdate 
 }: ChatContainerProps) => {
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col h-[calc(100vh-64px)]">
       {!selectedSession && !chatSessions.length ? (
         <div className="flex-1 flex flex-col">
           <ScrollArea className="flex-1">
@@ -37,10 +37,12 @@ export const ChatContainer = ({
         </div>
       ) : (
         <div className="flex-1 flex flex-col">
-          <ChatInterface 
-            systemPrompt={`You are BuntingGPT, an AI assistant specialized in magnetic separation and metal detection solutions.`}
-            onHistoryUpdate={onHistoryUpdate}
-          />
+          <ScrollArea className="flex-1">
+            <ChatInterface 
+              systemPrompt={`You are BuntingGPT, an AI assistant specialized in magnetic separation and metal detection solutions.`}
+              onHistoryUpdate={onHistoryUpdate}
+            />
+          </ScrollArea>
         </div>
       )}
     </div>

@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from "@supabase/auth-helpers-react";
@@ -122,8 +121,8 @@ export const ChatInterface = ({
   };
 
   return (
-    <Card className="flex flex-col h-full bg-white shadow-lg">
-      <ScrollArea className="flex-1 p-4">
+    <Card className="flex flex-col h-full bg-white shadow-lg mx-4">
+      <div className="flex-1 overflow-y-auto p-4">
         <div className="space-y-4">
           {messages.slice(1).map((message, index) => (
             <div
@@ -145,7 +144,7 @@ export const ChatInterface = ({
           ))}
           <div ref={messagesEndRef} />
         </div>
-      </ScrollArea>
+      </div>
 
       <form onSubmit={handleSubmit} className="p-4 border-t bg-white">
         <div className="flex gap-2">
