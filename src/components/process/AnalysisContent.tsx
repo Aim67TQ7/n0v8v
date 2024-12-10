@@ -12,6 +12,8 @@ interface AnalysisContentProps {
 export const AnalysisContent = ({ analysis }: AnalysisContentProps) => {
   if (!analysis) return null;
 
+  const detailLines = analysis.details ? analysis.details.split('\n') : [];
+
   return (
     <Card className="p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -23,7 +25,7 @@ export const AnalysisContent = ({ analysis }: AnalysisContentProps) => {
         <h2 className="text-xl font-semibold">{analysis.message}</h2>
       </div>
       <div className="prose prose-sm">
-        {analysis.details.split('\n').map((line, index) => (
+        {detailLines.map((line, index) => (
           <p key={index} className="mb-2">{line}</p>
         ))}
       </div>
