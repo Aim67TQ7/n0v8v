@@ -30,7 +30,6 @@ export const SignInForm = () => {
           description: "Check your email for a link to reset your password.",
         });
         
-        // Reset form state
         setShowPasswordReset(false);
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -87,17 +86,25 @@ export const SignInForm = () => {
             className="appearance-none rounded-md relative block w-full"
           />
         )}
-        <div className="flex justify-end">
+        <div className="flex justify-between">
           <Button
             type="button"
             variant="link"
             className="text-sm"
             onClick={() => {
               setShowPasswordReset(!showPasswordReset);
-              setPassword(""); // Clear password when switching modes
+              setPassword("");
             }}
           >
             {showPasswordReset ? "Back to sign in" : "Forgot password?"}
+          </Button>
+          <Button
+            type="button"
+            variant="link"
+            className="text-sm"
+            onClick={() => navigate("/change-password")}
+          >
+            Change Password
           </Button>
         </div>
         <Button

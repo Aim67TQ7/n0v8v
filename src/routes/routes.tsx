@@ -1,84 +1,51 @@
-import { Navigate } from "react-router-dom";
-import Index from "@/pages/Index";
+import { lazy } from "react";
+import { AuthWrapper } from "@/components/AuthWrapper";
 import Login from "@/pages/Login";
-import Modules from "@/pages/Modules";
-import TeamManagement from "@/pages/TeamManagement";
-import DataManagement from "@/pages/DataManagement";
-import RAGUpload from "@/pages/data/RAGUpload";
-import Settings from "@/pages/Settings";
-import CompanyGPT from "@/pages/CompanyGPT";
-import TrainingMatrix from "@/pages/TrainingMatrix";
-import Operations from "@/pages/Operations";
-import Analytics from "@/pages/Analytics";
-import { useAuth } from "@/hooks/use-auth";
-
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
-
-  return <>{children}</>;
-};
-
-const WithHeader = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <ProtectedRoute>
-      <div className="min-h-screen">
-        {children}
-      </div>
-    </ProtectedRoute>
-  );
-};
+import { ChangePasswordForm } from "@/components/auth/ChangePasswordForm";
+import { CompanyGPT } from "@/pages/CompanyGPT";
+import { Settings } from "@/pages/Settings";
+import { Modules } from "@/pages/Modules";
+import { Index } from "@/pages/Index";
 
 export const routes = [
   {
     path: "/",
-    element: <WithHeader><Index /></WithHeader>
+    element: (
+      <AuthWrapper>
+        <Index />
+      </AuthWrapper>
+    ),
   },
   {
     path: "/login",
-    element: <Login />
+    element: <Login />,
   },
   {
-    path: "/modules",
-    element: <WithHeader><Modules /></WithHeader>
-  },
-  {
-    path: "/team",
-    element: <WithHeader><TeamManagement /></WithHeader>
-  },
-  {
-    path: "/data",
-    element: <WithHeader><DataManagement /></WithHeader>
-  },
-  {
-    path: "/data/rag-upload",
-    element: <WithHeader><RAGUpload /></WithHeader>
-  },
-  {
-    path: "/settings",
-    element: <WithHeader><Settings /></WithHeader>
+    path: "/change-password",
+    element: <ChangePasswordForm />,
   },
   {
     path: "/company-gpt",
-    element: <WithHeader><CompanyGPT /></WithHeader>
+    element: (
+      <AuthWrapper>
+        <CompanyGPT />
+      </AuthWrapper>
+    ),
   },
   {
-    path: "/training/matrix",
-    element: <WithHeader><TrainingMatrix /></WithHeader>
+    path: "/settings",
+    element: (
+      <AuthWrapper>
+        <Settings />
+      </AuthWrapper>
+    ),
   },
   {
-    path: "/operations",
-    element: <WithHeader><Operations /></WithHeader>
+    path: "/modules",
+    element: (
+      <AuthWrapper>
+        <Modules />
+      </AuthWrapper>
+    ),
   },
-  {
-    path: "/analytics",
-    element: <WithHeader><Analytics /></WithHeader>
-  }
 ];
