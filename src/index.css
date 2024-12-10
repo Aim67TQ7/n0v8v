@@ -8,6 +8,29 @@
   body {
     @apply bg-white text-primary antialiased;
   }
+
+  /* Improve input field legibility */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="date"],
+  input[type="search"],
+  textarea {
+    @apply bg-white border-gray-300 text-gray-900 placeholder:text-gray-500;
+  }
+
+  /* Improve input field focus states */
+  input:focus,
+  textarea:focus {
+    @apply border-[#9b87f5] ring-1 ring-[#9b87f5] ring-opacity-50;
+  }
+
+  /* Improve disabled state contrast */
+  input:disabled,
+  textarea:disabled {
+    @apply bg-gray-100 text-gray-700 cursor-not-allowed;
+  }
 }
 
 .gradient-bg {
