@@ -15,18 +15,21 @@ interface Message {
 interface ChatInterfaceProps {
   systemPrompt?: string;
   onHistoryUpdate?: () => void;
+  inputValue: string;
+  setInputValue: (value: string) => void;
 }
 
 export const ChatInterface = ({ 
   systemPrompt = "You are a helpful AI assistant.",
-  onHistoryUpdate 
+  onHistoryUpdate,
+  inputValue,
+  setInputValue
 }: ChatInterfaceProps) => {
   const { session } = useSessionContext();
   const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([
     { role: "system", content: systemPrompt }
   ]);
-  const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -58,7 +61,6 @@ export const ChatInterface = ({
         return;
       }
 
-      // Convert messages to a format that matches the Json type
       const jsonMessages = messages.map(msg => ({
         role: msg.role,
         content: msg.content
@@ -84,11 +86,11 @@ export const ChatInterface = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if (!inputValue.trim() || isLoading) return;
 
-    const userMessage = { role: "user" as const, content: input };
+    const userMessage = { role: "user" as const, content: inputValue };
     setMessages(prev => [...prev, userMessage]);
-    setInput("");
+    setInputValue("");
     setIsLoading(true);
 
     try {
@@ -162,8 +164,8 @@ export const ChatInterface = ({
       <form onSubmit={handleSubmit} className="p-4 border-t bg-white">
         <div className="flex gap-2">
           <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
             placeholder="Type your message..."
             className="flex-1 min-h-[60px] resize-none text-sm"
             onKeyDown={(e) => {

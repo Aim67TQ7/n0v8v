@@ -27,25 +27,23 @@ interface ConversationStartersProps {
 
 export const ConversationStarters = ({ onSelect }: ConversationStartersProps) => {
   return (
-    <div className="w-full max-w-3xl p-6">
-      <h2 className="text-lg font-semibold mb-4 text-center">How can I help you today?</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {starters.map((starter) => {
-          const Icon = starter.icon;
-          return (
-            <Card
-              key={starter.text}
-              className="p-4 hover:bg-accent cursor-pointer transition-colors"
-              onClick={() => onSelect(starter.text)}
-            >
-              <div className="flex flex-col items-center gap-3">
-                <Icon className="h-5 w-5" />
-                <span className="text-xs text-center">{starter.text}</span>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
+    <div className="space-y-2">
+      <h3 className="text-sm font-medium mb-2">Quick Prompts</h3>
+      {starters.map((starter) => {
+        const Icon = starter.icon;
+        return (
+          <Card
+            key={starter.text}
+            className="p-2 hover:bg-accent cursor-pointer transition-colors"
+            onClick={() => onSelect(starter.text)}
+          >
+            <div className="flex items-center gap-2">
+              <Icon className="h-4 w-4 shrink-0" />
+              <span className="text-xs">{starter.text}</span>
+            </div>
+          </Card>
+        );
+      })}
     </div>
   );
 };

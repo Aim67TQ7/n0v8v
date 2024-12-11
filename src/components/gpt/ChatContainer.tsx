@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ChatInterface } from "./ChatInterface";
 import { ConversationStarters } from "./ConversationStarters";
 import { Card } from "@/components/ui/card";
@@ -14,37 +15,33 @@ export const ChatContainer = ({
   chatSessions,
   onHistoryUpdate 
 }: ChatContainerProps) => {
+  const [inputValue, setInputValue] = useState("");
+
+  const handleStarterSelect = (prompt: string) => {
+    setInputValue(prompt);
+  };
+
   return (
     <div className="flex-1 flex flex-col h-[calc(100vh-64px)] overflow-hidden">
-      {!selectedSession && !chatSessions.length ? (
+      <div className="flex flex-1">
         <div className="flex-1 flex flex-col">
           <ScrollArea className="flex-1">
-            <Card className="m-4">
-              <ConversationStarters onSelect={(prompt) => {
-                const chatInterface = document.querySelector('textarea');
-                if (chatInterface) {
-                  (chatInterface as HTMLTextAreaElement).value = prompt;
-                }
-              }} />
-            </Card>
-          </ScrollArea>
-          <div className="p-4 border-t">
             <ChatInterface 
               systemPrompt={`You are BuntingGPT, an AI assistant specialized in magnetic separation and metal detection solutions.`}
               onHistoryUpdate={onHistoryUpdate}
+              inputValue={inputValue}
+              setInputValue={setInputValue}
             />
+          </ScrollArea>
+        </div>
+        
+        {/* Conversation Starters - Fixed position at bottom left */}
+        <div className="w-64 border-l">
+          <div className="sticky bottom-0 p-4 bg-white border-t">
+            <ConversationStarters onSelect={handleStarterSelect} />
           </div>
         </div>
-      ) : (
-        <div className="flex-1 flex flex-col">
-          <ScrollArea className="flex-1">
-            <ChatInterface 
-              systemPrompt={`You are BuntingGPT, an AI assistant specialized in magnetic separation and metal detection solutions.`}
-              onHistoryUpdate={onHistoryUpdate}
-            />
-          </ScrollArea>
-        </div>
-      )}
+      </div>
     </div>
   );
 };
