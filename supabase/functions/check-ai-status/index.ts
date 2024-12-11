@@ -18,6 +18,8 @@ serve(async (req) => {
     let headers = {};
     let body = {};
 
+    console.log(`Checking status for ${provider} API...`);
+
     switch (provider) {
       case 'anthropic':
         endpoint = 'https://api.anthropic.com/v1/messages';
@@ -38,7 +40,7 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         };
         body = {
-          model: 'gpt-4o-mini',
+          model: 'gpt-4',
           messages: [{ role: 'user', content: 'test' }],
         };
         break;
@@ -68,9 +70,8 @@ serve(async (req) => {
         throw new Error('Invalid provider');
     }
 
-    console.log(`Checking status for ${provider} API...`);
-    
     try {
+      console.log(`Making request to ${endpoint}`);
       const response = await fetch(endpoint, {
         method: 'POST',
         headers,
