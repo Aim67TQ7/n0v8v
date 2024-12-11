@@ -18,12 +18,13 @@ serve(async (req) => {
     
     console.log('Attempting to use Anthropic API with Haiku model...');
     
-    const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'x-api-key': ANTHROPIC_API_KEY,
         'anthropic-version': '2023-06-01',
         'content-type': 'application/json',
+        'anthropic-stream': 'true'
       },
       body: JSON.stringify({
         model: 'claude-3-haiku-20240307',
@@ -32,27 +33,58 @@ serve(async (req) => {
           content: msg.content
         })),
         max_tokens: 1024,
+        stream: true
       }),
     });
 
-    if (!anthropicResponse.ok) {
-      throw new Error(`Anthropic API error: ${anthropicResponse.status}`);
+    if (!response.ok) {
+      throw new Error(`Anthropic API error: ${response.status}`);
     }
 
-    const anthropicData = await anthropicResponse.json();
-    
-    // Transform Anthropic response to match OpenAI format
-    const transformedResponse = {
-      choices: [{
-        message: {
-          role: 'assistant',
-          content: anthropicData.content[0].text
+    // Create a TransformStream to process the response
+    const stream = new TransformStream({
+      async transform(chunk, controller) {
+        try {
+          const text = new TextDecoder().decode(chunk);
+          const lines = text.split('\n').filter(line => line.trim() !== '');
+          
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6);
+              if (data === '[DONE]') return;
+              
+              try {
+                const parsed = JSON.parse(data);
+                if (parsed.type === 'message_stop') continue;
+                
+                if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+                  const chunk = {
+                    choices: [{
+                      delta: {
+                        content: parsed.delta.text
+                      }
+                    }]
+                  };
+                  controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(chunk)}\n\n`));
+                }
+              } catch (e) {
+                console.error('Error parsing JSON:', e);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error in transform:', error);
         }
-      }]
-    };
+      }
+    });
 
-    return new Response(JSON.stringify(transformedResponse), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    return new Response(response.body?.pipeThrough(stream), {
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive'
+      }
     });
   } catch (error) {
     console.error('Error in chat-with-groq function:', error);

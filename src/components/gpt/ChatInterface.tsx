@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Json } from "@/integrations/supabase/types";
 import { ChatMessages } from "./ChatMessages";
 import { ChatInput } from "./ChatInput";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -39,6 +41,7 @@ How can I assist you today?`,
     { role: "system", content: systemPrompt }
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleEmailOpen = (emailContent: string) => {
     const mailtoLink = `mailto:?subject=Invitation to Test Our Platform&body=${encodeURIComponent(emailContent)}`;
@@ -59,6 +62,14 @@ How can I assist you today?`,
     });
   };
 
+  const stopGeneration = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+      setIsLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || isLoading) return;
@@ -69,21 +80,46 @@ How can I assist you today?`,
     setIsLoading(true);
 
     try {
-      const response = await supabase.functions.invoke('chat-with-groq', {
+      abortControllerRef.current = new AbortController();
+      const { data: { stream }, error } = await supabase.functions.invoke('chat-with-groq', {
         body: {
           messages: [...messages, userMessage]
         },
+        abortSignal: abortControllerRef.current.signal
       });
 
-      if (response.error) {
-        throw new Error(response.error.message);
+      if (error) throw error;
+
+      const reader = stream.getReader();
+      const decoder = new TextDecoder();
+      let assistantMessage = { role: "assistant" as const, content: "" };
+      setMessages(prev => [...prev, assistantMessage]);
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(5));
+              if (data.choices[0].delta?.content) {
+                assistantMessage.content += data.choices[0].delta.content;
+                setMessages(prev => [
+                  ...prev.slice(0, -1),
+                  { ...assistantMessage }
+                ]);
+              }
+            } catch (e) {
+              console.error('Error parsing chunk:', e);
+            }
+          }
+        }
       }
 
-      const assistantMessage = { 
-        role: "assistant" as const, 
-        content: response.data.choices[0].message.content 
-      };
-      
       const lastMessages = [...messages, userMessage, assistantMessage];
       
       const isEmailConfirmation = lastMessages.some(msg => 
@@ -123,17 +159,18 @@ How can I assist you today?`,
         handleFiveWhysRedirect(problemDescription);
       }
 
-      setMessages([...messages, userMessage, assistantMessage]);
-
     } catch (error) {
       console.error('Error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to get response from AI. Please try again.",
-        variant: "destructive"
-      });
+      if (error.name !== 'AbortError') {
+        toast({
+          title: "Error",
+          description: "Failed to get response from AI. Please try again.",
+          variant: "destructive"
+        });
+      }
     } finally {
       setIsLoading(false);
+      abortControllerRef.current = null;
     }
   };
 
@@ -141,6 +178,19 @@ How can I assist you today?`,
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-hidden relative">
         <ChatMessages messages={messages} />
+        {isLoading && (
+          <div className="absolute bottom-4 right-4">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={stopGeneration}
+              className="flex items-center gap-2"
+            >
+              <X className="h-4 w-4" />
+              Stop generating
+            </Button>
+          </div>
+        )}
       </div>
       <ChatInput
         inputValue={inputValue}
