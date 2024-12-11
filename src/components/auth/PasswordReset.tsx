@@ -9,6 +9,7 @@ export const PasswordReset = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [cooldown, setCooldown] = useState(false);
+  const [cooldownTime, setCooldownTime] = useState(0);
   const { toast } = useToast();
 
   const handleReset = async (e: React.FormEvent) => {
@@ -17,7 +18,7 @@ export const PasswordReset = () => {
       toast({
         variant: "destructive",
         title: "Please wait",
-        description: "Please wait a few minutes before requesting another reset link.",
+        description: `Please wait ${Math.ceil(cooldownTime / 60)} minutes before requesting another reset link.`,
       });
       return;
     }
@@ -30,24 +31,28 @@ export const PasswordReset = () => {
       });
 
       if (error) {
-        // Parse the error body if it's a string
-        let errorBody;
-        try {
-          errorBody = error.message.includes('{') ? JSON.parse(error.message) : null;
-        } catch {
-          errorBody = null;
-        }
-
-        // Check for rate limit in various places
         const isRateLimit = 
-          error.status === 429 ||
-          errorBody?.code === 'over_email_send_rate_limit' ||
-          error.message.includes('rate limit') ||
-          error.message.includes('exceeded');
+          error.status === 429 || 
+          error.message.toLowerCase().includes('rate limit') ||
+          error.message.toLowerCase().includes('exceeded');
 
         if (isRateLimit) {
+          const cooldownPeriod = 5 * 60; // 5 minutes in seconds
           setCooldown(true);
-          setTimeout(() => setCooldown(false), 5 * 60 * 1000); // 5 minutes cooldown
+          setCooldownTime(cooldownPeriod);
+
+          // Start countdown timer
+          const timer = setInterval(() => {
+            setCooldownTime((prev) => {
+              if (prev <= 1) {
+                clearInterval(timer);
+                setCooldown(false);
+                return 0;
+              }
+              return prev - 1;
+            });
+          }, 1000);
+
           throw new Error("Too many reset attempts. Please wait 5 minutes before trying again.");
         }
         throw error;
@@ -82,7 +87,7 @@ export const PasswordReset = () => {
           </p>
           {cooldown && (
             <p className="mt-2 text-center text-sm text-red-600">
-              Please wait 5 minutes before requesting another reset link
+              Please wait {Math.ceil(cooldownTime / 60)} minutes and {cooldownTime % 60} seconds before requesting another reset link
             </p>
           )}
         </div>
@@ -100,7 +105,7 @@ export const PasswordReset = () => {
             className="w-full"
             disabled={loading || cooldown}
           >
-            {loading ? "Sending..." : cooldown ? "Please wait..." : "Send Reset Link"}
+            {loading ? "Sending..." : cooldown ? `Wait ${Math.ceil(cooldownTime / 60)}m ${cooldownTime % 60}s` : "Send Reset Link"}
           </Button>
         </form>
       </Card>
