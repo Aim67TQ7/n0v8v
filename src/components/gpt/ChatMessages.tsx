@@ -30,15 +30,21 @@ export const ChatMessages = ({ messages }: ChatMessagesProps) => {
               message.role === "user" ? "justify-end" : "justify-start"
             }`}
           >
+            {message.role === "assistant" && (
+              <div className="text-xs text-muted-foreground mr-2 mt-2">AI</div>
+            )}
             <div
               className={`max-w-[80%] rounded-lg p-3 text-sm ${
                 message.role === "user"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-accent"
+                  ? "bg-secondary text-secondary-foreground"
+                  : "bg-accent text-accent-foreground"
               }`}
             >
               <p className="whitespace-pre-wrap text-sm">{message.content}</p>
             </div>
+            {message.role === "user" && (
+              <div className="text-xs text-muted-foreground ml-2 mt-2">You</div>
+            )}
           </div>
         ))}
         <div ref={messagesEndRef} />
