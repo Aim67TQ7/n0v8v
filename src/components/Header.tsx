@@ -18,6 +18,11 @@ export const Header = () => {
           <div className="flex items-center gap-6">
             {!isGPTRoute && <ApiStatus />}
             <div className="flex items-center gap-4">
+              {isBypassEnabled && (
+                <div className="px-3 py-1.5 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium border border-yellow-200">
+                  Maintenance Mode
+                </div>
+              )}
               {!isBypassEnabled && <UserMenu />}
             </div>
           </div>
