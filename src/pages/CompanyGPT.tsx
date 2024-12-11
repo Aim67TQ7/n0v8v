@@ -63,7 +63,7 @@ const CompanyGPT = () => {
               />
             </div>
             
-            <div className="w-64 border-l bg-white flex flex-col shrink-0">
+            <div className="w-64 border-l bg-white flex flex-col shrink-0 fixed right-0 h-[calc(100vh-64px)]">
               <div className="p-4 border-b">
                 <div className="flex flex-col gap-1">
                   <span className="text-sm font-medium">Demo User</span>
