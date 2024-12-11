@@ -19,7 +19,7 @@ export const ProfileDebug = () => {
           company:companies(*)
         `)
         .eq("id", session.user.id)
-        .single();
+        .maybeSingle(); // Changed from single() to maybeSingle()
       
       if (profileError) {
         console.error("Profile fetch error:", profileError);
@@ -37,6 +37,17 @@ export const ProfileDebug = () => {
       <div className="p-4 bg-red-50 text-red-700 rounded-md">
         <h3 className="font-bold">Error fetching profile:</h3>
         <pre className="mt-2 text-sm">{JSON.stringify(error, null, 2)}</pre>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="p-4 bg-yellow-50 text-yellow-700 rounded-md">
+        <h3 className="font-bold">No Profile Found</h3>
+        <p className="mt-2">
+          No profile exists for the current user ID: {session?.user?.id}
+        </p>
       </div>
     );
   }
