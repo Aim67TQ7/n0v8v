@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { FiveSEvaluation } from "@/types/fiveS";
 
 export const uploadImages = async (files: File[]) => {
   const uploadedUrls = [];
@@ -11,7 +12,10 @@ export const uploadImages = async (files: File[]) => {
       .from('five-s-images')
       .upload(fileName, file);
       
-    if (error) throw error;
+    if (error) {
+      console.error('Error uploading image:', error);
+      throw new Error('Failed to upload image');
+    }
     
     const { data: { publicUrl } } = supabase.storage
       .from('five-s-images')
@@ -24,27 +28,29 @@ export const uploadImages = async (files: File[]) => {
 };
 
 export const analyzeImages = async (imageUrls: string[]) => {
-  const response = await supabase.functions.invoke('analyze-5s-images', {
+  const { data, error } = await supabase.functions.invoke('analyze-5s-images', {
     body: { imageUrls }
   });
 
-  if (response.error) {
+  if (error) {
+    console.error('Error analyzing images:', error);
     throw new Error('Failed to analyze images');
   }
 
-  return response.data;
+  return data;
 };
 
-export const createEvaluation = async (workcenter_id: string, analysis: any) => {
-  // First verify that the user has a valid session and profile
+export const createEvaluation = async (workcenter_id: string, analysis: any): Promise<FiveSEvaluation> => {
   const { data: { user }, error: sessionError } = await supabase.auth.getUser();
-  if (sessionError) throw sessionError;
+  if (sessionError) {
+    console.error('Session error:', sessionError);
+    throw new Error('Authentication required');
+  }
   
   if (!user?.id) {
     throw new Error('No authenticated user found');
   }
 
-  // Verify the user has a profile
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('id')
@@ -52,7 +58,8 @@ export const createEvaluation = async (workcenter_id: string, analysis: any) => 
     .single();
 
   if (profileError || !profile) {
-    throw new Error('User profile not found. Please ensure you are properly logged in.');
+    console.error('Profile error:', profileError);
+    throw new Error('User profile not found');
   }
 
   const { data: evaluation, error: evalError } = await supabase
@@ -71,10 +78,17 @@ export const createEvaluation = async (workcenter_id: string, analysis: any) => 
       threats: analysis.threats,
       safety_deduction: analysis.safety_deduction || 0
     })
-    .select()
+    .select(`
+      *,
+      workcenter:workcenters(name)
+    `)
     .single();
     
-  if (evalError) throw evalError;
+  if (evalError) {
+    console.error('Evaluation error:', evalError);
+    throw new Error('Failed to create evaluation');
+  }
+
   return evaluation;
 };
 
@@ -89,5 +103,10 @@ export const saveImageReferences = async (evaluation_id: string, imageUrls: stri
       })
   );
   
-  await Promise.all(imagePromises);
+  try {
+    await Promise.all(imagePromises);
+  } catch (error) {
+    console.error('Error saving image references:', error);
+    throw new Error('Failed to save image references');
+  }
 };
