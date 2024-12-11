@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { GitFork } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
@@ -7,6 +7,7 @@ import { useSessionContext } from "@supabase/auth-helpers-react";
 import { FiveWhysForm } from "@/components/five-whys/FiveWhysForm";
 import { CausesList } from "@/components/five-whys/CausesList";
 import { FishboneResult } from "@/components/five-whys/FishboneResult";
+import { useLocation } from "react-router-dom";
 
 interface Cause {
   id: string;
@@ -15,6 +16,7 @@ interface Cause {
 }
 
 const FiveWhys = () => {
+  const location = useLocation();
   const { session } = useSessionContext();
   const { toast } = useToast();
   const [problemStatement, setProblemStatement] = useState("");
@@ -23,6 +25,14 @@ const FiveWhys = () => {
   const [selectedCauses, setSelectedCauses] = useState<string[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
+
+  // Handle incoming problem statement from navigation
+  useEffect(() => {
+    const state = location.state as { problemStatement?: string };
+    if (state?.problemStatement) {
+      startAnalysis(state.problemStatement);
+    }
+  }, [location.state]);
 
   const startAnalysis = async (statement: string) => {
     if (!statement.trim()) {
