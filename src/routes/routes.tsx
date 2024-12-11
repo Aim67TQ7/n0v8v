@@ -15,6 +15,7 @@ import { UpdatePassword } from "@/components/auth/UpdatePassword";
 import { VerifyOTP } from "@/components/auth/VerifyOTP";
 import { ConfirmEmail } from "@/components/auth/ConfirmEmail";
 import Login from "@/pages/Login";
+import AdminPanel from "@/pages/AdminPanel";
 
 export const routes = [
   {
@@ -52,6 +53,10 @@ export const routes = [
   {
     path: "/modules",
     element: <Modules />
+  },
+  {
+    path: "/admin",
+    element: <AdminPanel />
   },
   {
     path: "/operations/lean",
