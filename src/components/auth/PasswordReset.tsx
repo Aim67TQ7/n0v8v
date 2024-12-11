@@ -8,10 +8,20 @@ import { supabase } from "@/integrations/supabase/client";
 export const PasswordReset = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [cooldown, setCooldown] = useState(false);
   const { toast } = useToast();
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (cooldown) {
+      toast({
+        variant: "destructive",
+        title: "Please wait",
+        description: "Please wait a few minutes before requesting another reset link.",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -20,7 +30,12 @@ export const PasswordReset = () => {
       });
 
       if (error) {
-        console.error("Reset password error:", error);
+        if (error.message.includes('rate limit') || error.status === 429) {
+          setCooldown(true);
+          // Reset cooldown after 5 minutes
+          setTimeout(() => setCooldown(false), 5 * 60 * 1000);
+          throw new Error("Too many reset attempts. Please wait 5 minutes before trying again.");
+        }
         throw error;
       }
 
@@ -50,6 +65,11 @@ export const PasswordReset = () => {
           <p className="mt-2 text-center text-sm text-gray-600">
             Enter your email and we'll send you a link to reset your password
           </p>
+          {cooldown && (
+            <p className="mt-2 text-center text-sm text-red-600">
+              Please wait 5 minutes before requesting another reset link
+            </p>
+          )}
         </div>
         <form onSubmit={handleReset} className="mt-8 space-y-6">
           <Input
@@ -63,9 +83,9 @@ export const PasswordReset = () => {
           <Button
             type="submit"
             className="w-full"
-            disabled={loading}
+            disabled={loading || cooldown}
           >
-            {loading ? "Sending..." : "Send Reset Link"}
+            {loading ? "Sending..." : cooldown ? "Please wait..." : "Send Reset Link"}
           </Button>
         </form>
       </Card>
