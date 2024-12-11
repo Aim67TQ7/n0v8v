@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Json } from "@/integrations/supabase/types";
@@ -25,7 +24,6 @@ export const ChatInterface = ({
   inputValue,
   setInputValue
 }: ChatInterfaceProps) => {
-  const { session } = useSessionContext();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([
@@ -50,55 +48,6 @@ export const ChatInterface = ({
       title: "Analysis Started",
       description: "Redirecting you to the Five Whys module to begin your analysis.",
     });
-  };
-
-  const saveChatLog = async (messages: Message[]) => {
-    try {
-      if (!session?.user?.id) return;
-
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('company_id')
-        .eq('id', session.user.id)
-        .maybeSingle();
-
-      if (profileError) {
-        console.error('Error fetching profile:', profileError);
-        return;
-      }
-
-      if (!profile?.company_id) {
-        console.error('No company ID found for user');
-        return;
-      }
-
-      const jsonMessages = messages.map(msg => ({
-        role: msg.role,
-        content: msg.content
-      })) as Json;
-
-      const firstUserMessage = messages.find(msg => msg.role === 'user');
-      const title = firstUserMessage 
-        ? firstUserMessage.content.slice(0, 50) + (firstUserMessage.content.length > 50 ? '...' : '')
-        : 'New Chat';
-
-      const { error: insertError } = await supabase.from('chat_logs').insert({
-        company_id: profile.company_id,
-        user_id: session.user.id,
-        model: 'groq',
-        messages: jsonMessages,
-        title: title
-      });
-
-      if (insertError) {
-        console.error('Error saving chat log:', insertError);
-        return;
-      }
-
-      onHistoryUpdate?.();
-    } catch (error) {
-      console.error('Error in saveChatLog:', error);
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -165,9 +114,7 @@ export const ChatInterface = ({
         handleFiveWhysRedirect(problemDescription);
       }
 
-      const updatedMessages = [...messages, userMessage, assistantMessage];
-      setMessages(updatedMessages);
-      await saveChatLog(updatedMessages);
+      setMessages([...messages, userMessage, assistantMessage]);
 
     } catch (error) {
       console.error('Error:', error);
