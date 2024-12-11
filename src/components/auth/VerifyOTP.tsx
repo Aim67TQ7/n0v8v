@@ -58,6 +58,29 @@ export const VerifyOTP = () => {
     }
   };
 
+  if (!email) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+        <Card className="w-full max-w-md space-y-8 p-8">
+          <div>
+            <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+              Invalid Access
+            </h2>
+            <p className="mt-2 text-center text-sm text-gray-600">
+              Please start the password reset process from the beginning.
+            </p>
+          </div>
+          <Button
+            onClick={() => navigate("/reset-password")}
+            className="w-full"
+          >
+            Go to Password Reset
+          </Button>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md space-y-8 p-8">
@@ -77,8 +100,8 @@ export const VerifyOTP = () => {
               onChange={(value) => setOtp(value)}
               render={({ slots }) => (
                 <InputOTPGroup className="gap-2">
-                  {slots.map((slot, index) => (
-                    <InputOTPSlot key={index} {...slot} />
+                  {slots.map((slot, idx) => (
+                    <InputOTPSlot key={idx} {...slot} index={idx} />
                   ))}
                 </InputOTPGroup>
               )}
