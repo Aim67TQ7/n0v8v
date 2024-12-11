@@ -80,7 +80,8 @@ export const createEvaluation = async (workcenter_id: string, analysis: any): Pr
     })
     .select(`
       *,
-      workcenter:workcenters(name)
+      workcenter:workcenters(name),
+      evaluation_images(image_url)
     `)
     .single();
     
@@ -89,7 +90,7 @@ export const createEvaluation = async (workcenter_id: string, analysis: any): Pr
     throw new Error('Failed to create evaluation');
   }
 
-  return evaluation;
+  return evaluation as FiveSEvaluation;
 };
 
 export const saveImageReferences = async (evaluation_id: string, imageUrls: string[]) => {
