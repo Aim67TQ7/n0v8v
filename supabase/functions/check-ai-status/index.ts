@@ -86,7 +86,7 @@ serve(async (req) => {
     } catch (error) {
       console.error(`Error checking ${provider} API:`, error);
       return new Response(
-        JSON.stringify({ status: 'down' }),
+        JSON.stringify({ status: 'down', error: error.message }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
