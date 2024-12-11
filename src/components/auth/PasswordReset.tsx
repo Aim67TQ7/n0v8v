@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 export const PasswordReset = () => {
   const [email, setEmail] = useState("");
@@ -11,6 +12,7 @@ export const PasswordReset = () => {
   const [cooldown, setCooldown] = useState(false);
   const [cooldownTime, setCooldownTime] = useState(0);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,7 +20,7 @@ export const PasswordReset = () => {
       toast({
         variant: "destructive",
         title: "Please wait",
-        description: `Please wait ${Math.ceil(cooldownTime / 60)} minutes before requesting another reset link.`,
+        description: `Please wait ${Math.ceil(cooldownTime / 60)} minutes before requesting another code.`,
       });
       return;
     }
@@ -27,7 +29,7 @@ export const PasswordReset = () => {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/update-password`,
+        redirectTo: `${window.location.origin}/verify-otp`,
       });
 
       if (error) {
@@ -41,7 +43,6 @@ export const PasswordReset = () => {
           setCooldown(true);
           setCooldownTime(cooldownPeriod);
 
-          // Start countdown timer
           const timer = setInterval(() => {
             setCooldownTime((prev) => {
               if (prev <= 1) {
@@ -60,15 +61,17 @@ export const PasswordReset = () => {
 
       toast({
         title: "Check your email",
-        description: "We've sent you a magic link to reset your password.",
+        description: "We've sent you a verification code.",
       });
+      
+      navigate("/verify-otp", { state: { email } });
       
     } catch (error: any) {
       console.error("Reset password error:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "Failed to send reset password email",
+        description: error.message || "Failed to send verification code",
       });
     } finally {
       setLoading(false);
@@ -83,11 +86,11 @@ export const PasswordReset = () => {
             Reset your password
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Enter your email and we'll send you a link to reset your password
+            Enter your email and we'll send you a verification code
           </p>
           {cooldown && (
             <p className="mt-2 text-center text-sm text-red-600">
-              Please wait {Math.ceil(cooldownTime / 60)} minutes and {cooldownTime % 60} seconds before requesting another reset link
+              Please wait {Math.ceil(cooldownTime / 60)} minutes and {cooldownTime % 60} seconds before requesting another code
             </p>
           )}
         </div>
@@ -105,7 +108,7 @@ export const PasswordReset = () => {
             className="w-full"
             disabled={loading || cooldown}
           >
-            {loading ? "Sending..." : cooldown ? `Wait ${Math.ceil(cooldownTime / 60)}m ${cooldownTime % 60}s` : "Send Reset Link"}
+            {loading ? "Sending..." : cooldown ? `Wait ${Math.ceil(cooldownTime / 60)}m ${cooldownTime % 60}s` : "Send Code"}
           </Button>
         </form>
       </Card>

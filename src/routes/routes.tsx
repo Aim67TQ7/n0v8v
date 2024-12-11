@@ -12,6 +12,7 @@ import DMRDocumentation from "@/pages/quality/DMRDocumentation";
 import FiveWhys from "@/pages/quality/FiveWhys";
 import { PasswordReset } from "@/components/auth/PasswordReset";
 import { UpdatePassword } from "@/components/auth/UpdatePassword";
+import { VerifyOTP } from "@/components/auth/VerifyOTP";
 import Login from "@/pages/Login";
 
 export const routes = [
@@ -26,6 +27,10 @@ export const routes = [
   {
     path: "/reset-password",
     element: <PasswordReset />
+  },
+  {
+    path: "/verify-otp",
+    element: <VerifyOTP />
   },
   {
     path: "/update-password",
