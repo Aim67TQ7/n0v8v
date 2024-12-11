@@ -1,10 +1,9 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { OpenAIEmbeddings } from "https://esm.sh/langchain/embeddings/openai";
-import { SupabaseVectorStore } from "https://esm.sh/langchain/vectorstores/supabase";
 
 const GROQ_API_KEY = Deno.env.get('GROQ_API_KEY');
+const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -17,70 +16,83 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, companyId } = await req.json();
-    const userMessage = messages[messages.length - 1].content;
+    const { messages } = await req.json();
+    
+    // First try GROQ
+    try {
+      console.log('Attempting to use GROQ API...');
+      const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${GROQ_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'mixtral-8x7b-32768',
+          messages: messages,
+          temperature: 0.7,
+        }),
+      });
 
-    // Initialize Supabase client
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+      if (groqResponse.ok) {
+        const data = await groqResponse.json();
+        console.log('GROQ API request successful');
+        return new Response(JSON.stringify(data), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
 
-    // Get relevant documents
-    const embeddings = new OpenAIEmbeddings({
-      openAIApiKey: Deno.env.get('OPENAI_API_KEY'),
-    });
+      // If GROQ fails with 429, throw error to trigger fallback
+      if (groqResponse.status === 429) {
+        throw new Error('GROQ rate limit exceeded');
+      }
+    } catch (groqError) {
+      console.log('GROQ API failed, falling back to Anthropic:', groqError);
+      
+      // Fallback to Anthropic
+      const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'claude-3-opus-20240229',
+          messages: messages.map(msg => ({
+            role: msg.role === 'assistant' ? 'assistant' : 'user',
+            content: msg.content
+          })),
+          max_tokens: 1024,
+        }),
+      });
 
-    const vectorStore = new SupabaseVectorStore(embeddings, {
-      client: supabase,
-      tableName: 'document_embeddings',
-      queryName: 'match_documents',
-    });
+      if (!anthropicResponse.ok) {
+        throw new Error(`Anthropic API error: ${anthropicResponse.status}`);
+      }
 
-    const relevantDocs = await vectorStore.similaritySearch(userMessage, 3, {
-      company_id: companyId,
-    });
+      const anthropicData = await anthropicResponse.json();
+      
+      // Transform Anthropic response to match OpenAI format
+      const transformedResponse = {
+        choices: [{
+          message: {
+            role: 'assistant',
+            content: anthropicData.content[0].text
+          }
+        }]
+      };
 
-    // Add context from documents to the messages
-    const contextMessage = {
-      role: "system",
-      content: `Here is some relevant context from the company's documents:\n\n${
-        relevantDocs.map(doc => doc.pageContent).join('\n\n')
-      }\n\nUse this information to help answer the user's question if relevant.`
-    };
-
-    const augmentedMessages = [messages[0], contextMessage, ...messages.slice(1)];
-
-    console.log('Sending request to GROQ API with messages:', augmentedMessages);
-
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${GROQ_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'mixtral-8x7b-32768',
-        messages: augmentedMessages,
-        temperature: 0.7,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.text();
-      console.error('GROQ API error:', errorData);
-      throw new Error(`GROQ API error: ${response.status}`);
+      return new Response(JSON.stringify(transformedResponse), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
-
-    const data = await response.json();
-    console.log('Received response from GROQ API:', data);
-
-    return new Response(JSON.stringify(data), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
   } catch (error) {
     console.error('Error in chat-with-groq function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      message: "Failed to process request. Please try again in a moment."
+    }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
