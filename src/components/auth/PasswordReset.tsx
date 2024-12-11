@@ -5,32 +5,39 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export const PasswordReset = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/update-password`,
       });
 
-      if (error) throw error;
+      if (resetError) {
+        console.error("Reset password error:", resetError);
+        throw resetError;
+      }
 
       toast({
         title: "Check your email",
         description: "We've sent you a password reset link.",
       });
       
-      // Don't navigate away - let user check their email
     } catch (error: any) {
       console.error("Reset password error:", error);
+      setError(error.message || "Failed to send reset link");
       toast({
         variant: "destructive",
         title: "Error",
@@ -52,6 +59,14 @@ export const PasswordReset = () => {
             Enter your email and we'll send you a reset link
           </p>
         </div>
+
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
         <form onSubmit={handleReset} className="mt-8 space-y-6">
           <Input
             type="email"
