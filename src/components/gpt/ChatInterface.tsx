@@ -1,12 +1,12 @@
 import { useState, useRef } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
-import { Json } from "@/integrations/supabase/types";
 import { ChatMessages } from "./ChatMessages";
 import { ChatInput } from "./ChatInput";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { ChatStreamHandler } from "./ChatStreamHandler";
+import { ChatActions } from "./ChatActions";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -21,16 +21,7 @@ interface ChatInterfaceProps {
 }
 
 export const ChatInterface = ({ 
-  systemPrompt = `I am an AI assistant specialized in manufacturing and operations. My key characteristics are:
-
-1. Methodical Approach: I break down complex problems into manageable steps
-2. Safety-First Mindset: I always consider safety implications in my recommendations
-3. Data-Driven: I ask for specific metrics and data to support decisions
-4. Practical Solutions: I focus on implementable solutions considering real-world constraints
-5. Clear Communication: I use simple, direct language and avoid jargon unless necessary
-6. Continuous Improvement: I encourage iterative improvements and learning from outcomes
-
-How can I assist you today?`,
+  systemPrompt = `I am an AI assistant specialized in manufacturing and operations...`,
   onHistoryUpdate,
   inputValue,
   setInputValue
@@ -79,99 +70,13 @@ How can I assist you today?`,
     setInputValue("");
     setIsLoading(true);
 
-    try {
-      abortControllerRef.current = new AbortController();
-      const { data: { stream }, error } = await supabase.functions.invoke('chat-with-groq', {
-        body: {
-          messages: [...messages, userMessage]
-        },
-        abortSignal: abortControllerRef.current.signal
-      });
-
-      if (error) throw error;
-
-      const reader = stream.getReader();
-      const decoder = new TextDecoder();
-      let assistantMessage = { role: "assistant" as const, content: "" };
-      setMessages(prev => [...prev, assistantMessage]);
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n');
-        
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            try {
-              const data = JSON.parse(line.slice(5));
-              if (data.choices[0].delta?.content) {
-                assistantMessage.content += data.choices[0].delta.content;
-                setMessages(prev => [
-                  ...prev.slice(0, -1),
-                  { ...assistantMessage }
-                ]);
-              }
-            } catch (e) {
-              console.error('Error parsing chunk:', e);
-            }
-          }
-        }
-      }
-
-      const lastMessages = [...messages, userMessage, assistantMessage];
-      
-      const isEmailConfirmation = lastMessages.some(msg => 
-        msg.role === "user" && 
-        /^(yes|yeah|sure|okay|ok|proceed|open email)$/i.test(msg.content.trim())
-      );
-      
-      const hasEmailPrompt = lastMessages.some(msg => 
-        msg.role === "system" && 
-        msg.content.includes("invitation emails")
-      );
-
-      if (isEmailConfirmation && hasEmailPrompt) {
-        const emailContent = lastMessages
-          .filter(msg => msg.role === "assistant")
-          .slice(-2)[0]?.content || "";
-        
-        handleEmailOpen(emailContent);
-      }
-
-      const isFiveWhysConfirmation = lastMessages.some(msg => 
-        msg.role === "user" && 
-        /^(yes|yeah|sure|okay|ok|proceed|let's do it|start)$/i.test(msg.content.trim())
-      );
-      
-      const hasFiveWhysPrompt = lastMessages.some(msg => 
-        msg.role === "system" && 
-        msg.content.includes("root cause analysis")
-      );
-
-      if (isFiveWhysConfirmation && hasFiveWhysPrompt) {
-        const problemDescription = lastMessages
-          .filter(msg => msg.role === "user")
-          .map(msg => msg.content)
-          .join(" ");
-        
-        handleFiveWhysRedirect(problemDescription);
-      }
-
-    } catch (error) {
-      console.error('Error:', error);
-      if (error.name !== 'AbortError') {
-        toast({
-          title: "Error",
-          description: "Failed to get response from AI. Please try again.",
-          variant: "destructive"
-        });
-      }
-    } finally {
-      setIsLoading(false);
-      abortControllerRef.current = null;
-    }
+    // Use ChatStreamHandler for stream processing
+    await ChatStreamHandler({ 
+      messages: [...messages, userMessage],
+      setMessages,
+      setIsLoading,
+      abortControllerRef
+    });
   };
 
   return (
@@ -197,6 +102,11 @@ How can I assist you today?`,
         setInputValue={setInputValue}
         onSubmit={handleSubmit}
         isLoading={isLoading}
+      />
+      <ChatActions 
+        messages={messages}
+        handleEmailOpen={handleEmailOpen}
+        handleFiveWhysRedirect={handleFiveWhysRedirect}
       />
     </div>
   );
