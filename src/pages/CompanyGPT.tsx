@@ -34,20 +34,36 @@ const CompanyGPT = () => {
   const [inputValue, setInputValue] = useState("");
   const isBypassEnabled = localStorage.getItem('bypass_auth') === 'true';
 
-  const { data: profile } = useQuery({
+  const { data: profile, error: profileError } = useQuery({
     queryKey: ["user-profile", session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return null;
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", session.user.id)
-        .single();
       
-      if (error) throw error;
-      return data;
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*, company:companies(*)")
+          .eq("id", session.user.id)
+          .maybeSingle();
+        
+        if (error) {
+          console.error("Profile fetch error:", error);
+          toast({
+            title: "Error",
+            description: "Failed to fetch user profile",
+            variant: "destructive",
+          });
+          return null;
+        }
+        
+        return data;
+      } catch (error) {
+        console.error("Profile fetch error:", error);
+        return null;
+      }
     },
     enabled: !!session?.user?.id && !isBypassEnabled,
+    retry: 1,
   });
 
   useEffect(() => {
