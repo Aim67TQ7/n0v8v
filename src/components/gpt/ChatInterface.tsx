@@ -136,8 +136,8 @@ export const ChatInterface = ({
   };
 
   return (
-    <Card className="flex flex-col h-full bg-white shadow-lg mx-4">
-      <div className="flex-1 overflow-y-auto p-4">
+    <div className="relative flex flex-col min-h-full">
+      <div className="flex-1 p-4">
         <div className="space-y-4">
           {messages.slice(1).map((message, index) => (
             <div
@@ -161,25 +161,27 @@ export const ChatInterface = ({
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 border-t bg-white">
-        <div className="flex gap-2">
-          <Textarea
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Type your message..."
-            className="flex-1 min-h-[60px] resize-none text-sm"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit(e);
-              }
-            }}
-          />
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Sending..." : "Send"}
-          </Button>
-        </div>
-      </form>
-    </Card>
+      <Card className="fixed bottom-0 left-64 right-64 mx-auto bg-white border-t shadow-lg">
+        <form onSubmit={handleSubmit} className="p-4">
+          <div className="flex gap-2">
+            <Textarea
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Type your message..."
+              className="flex-1 min-h-[60px] resize-none text-sm"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmit(e);
+                }
+              }}
+            />
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Sending..." : "Send"}
+            </Button>
+          </div>
+        </form>
+      </Card>
+    </div>
   );
 };
