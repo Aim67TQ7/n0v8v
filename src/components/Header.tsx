@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Package, Mail, Users, Settings, LogOut, User, Key, UserPlus } from "lucide-react";
+import { Home, Package, Mail, Users, Settings, LogOut, User, Key, UserPlus, ChevronDown } from "lucide-react";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { ApiStatus } from "@/components/gpt/ApiStatus";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,14 +62,17 @@ export const Header = () => {
             <div className="flex items-center gap-4">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <div className="flex flex-col items-end cursor-pointer">
-                    <span className="text-sm font-medium text-gray-900">
-                      {session?.user?.email}
-                    </span>
-                    <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
-                      DEMO Company
-                    </span>
-                  </div>
+                  <Button variant="ghost" className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-md">
+                    <div className="flex flex-col items-end">
+                      <span className="text-sm font-medium text-gray-900">
+                        {session?.user?.email}
+                      </span>
+                      <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
+                        DEMO Company
+                      </span>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-gray-500" />
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
                   {!session ? (
