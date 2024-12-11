@@ -7,14 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { SignUpFormFields } from "./SignUpFormFields";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle, Loader2 } from "lucide-react";
 
@@ -55,6 +48,28 @@ export const SignUpForm = () => {
     },
   });
 
+  const sendWelcomeEmail = async (email: string, firstName: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-email', {
+        body: {
+          to: [email],
+          subject: "Welcome to the Platform",
+          html: `
+            <h1>Welcome ${firstName}!</h1>
+            <p>Thank you for signing up. We're excited to have you on board!</p>
+            <p>If you have any questions, feel free to reach out to our support team.</p>
+          `
+        }
+      });
+
+      if (error) {
+        console.error("Error sending welcome email:", error);
+      }
+    } catch (err) {
+      console.error("Failed to send welcome email:", err);
+    }
+  };
+
   const onSubmit = async (data: SignUpForm) => {
     try {
       setIsLoading(true);
@@ -74,9 +89,12 @@ export const SignUpForm = () => {
 
       if (signUpError) throw signUpError;
 
+      // Send welcome email
+      await sendWelcomeEmail(data.email, data.firstName);
+
       toast({
         title: "Account created successfully",
-        description: "Welcome to the platform!",
+        description: "Welcome to the platform! Please check your email for verification.",
       });
 
       navigate("/");
@@ -97,106 +115,7 @@ export const SignUpForm = () => {
         </Alert>
       )}
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="firstName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>First Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="lastName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Last Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input type="email" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input type="password" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
-                <FormControl>
-                  <Input type="password" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="licenseNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Company License (Optional)</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="Enter company license or leave blank for demo" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating account...
-              </>
-            ) : (
-              "Sign Up"
-            )}
-          </Button>
-        </form>
-      </Form>
+      <SignUpFormFields form={form} isLoading={isLoading} onSubmit={onSubmit} />
     </div>
   );
 };
