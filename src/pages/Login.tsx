@@ -2,16 +2,38 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Login = () => {
   const navigate = useNavigate();
   const isBypassEnabled = localStorage.getItem('bypass_auth') === 'true';
 
   useEffect(() => {
-    // If bypass is enabled, redirect to home immediately
-    if (isBypassEnabled) {
-      navigate('/');
-    }
+    // If bypass is enabled, set up demo company and redirect
+    const setupDemoAccess = async () => {
+      if (isBypassEnabled) {
+        try {
+          // Get or create DEMO company
+          const { data: demoCompany } = await supabase
+            .from('companies')
+            .select('id')
+            .eq('name', 'DEMO')
+            .eq('license_type', 'demo')
+            .single();
+
+          if (demoCompany) {
+            // Store the demo company ID in localStorage for components to use
+            localStorage.setItem('demo_company_id', demoCompany.id);
+            console.log('Demo company access configured:', demoCompany.id);
+          }
+        } catch (error) {
+          console.error('Error setting up demo access:', error);
+        }
+        navigate('/');
+      }
+    };
+
+    setupDemoAccess();
   }, [isBypassEnabled, navigate]);
 
   const handleBypass = () => {
@@ -21,6 +43,7 @@ const Login = () => {
 
   const handleNormalAccess = () => {
     localStorage.removeItem('bypass_auth');
+    localStorage.removeItem('demo_company_id');
     navigate('/');
   };
 
