@@ -389,6 +389,51 @@ export type Database = {
           },
         ]
       }
+      five_whys_analysis: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          created_by: string | null
+          fishbone_data: Json | null
+          id: string
+          problem_statement: string
+          selected_causes: string[]
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          fishbone_data?: Json | null
+          id?: string
+          problem_statement: string
+          selected_causes?: string[]
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          fishbone_data?: Json | null
+          id?: string
+          problem_statement?: string
+          selected_causes?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "five_whys_analysis_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "five_whys_analysis_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inspection_types: {
         Row: {
           created_at: string
