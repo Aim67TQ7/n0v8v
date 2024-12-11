@@ -10,21 +10,11 @@ import PartAnalysis from "@/pages/quality/PartAnalysis";
 import ProductInspection from "@/pages/quality/ProductInspection";
 import DMRDocumentation from "@/pages/quality/DMRDocumentation";
 import FiveWhys from "@/pages/quality/FiveWhys";
-import Login from "@/pages/Login";
-import ResetPassword from "@/pages/ResetPassword";
 
 export const routes = [
   {
     path: "/",
     element: <Index />
-  },
-  {
-    path: "/login",
-    element: <Login />
-  },
-  {
-    path: "/reset-password",
-    element: <ResetPassword />
   },
   {
     path: "/company-gpt",
