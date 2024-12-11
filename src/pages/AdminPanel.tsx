@@ -30,10 +30,11 @@ const AdminPanel = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch existing companies with error handling
+  // Fetch existing companies with enhanced debugging
   const { data: companies, isLoading, error: fetchError } = useQuery({
     queryKey: ["companies"],
     queryFn: async () => {
+      console.log("Fetching companies...");
       const { data, error } = await supabase
         .from("companies")
         .select("*")
@@ -43,6 +44,8 @@ const AdminPanel = () => {
         console.error("Error fetching companies:", error);
         throw error;
       }
+      
+      console.log("Companies fetched:", data);
       return data;
     },
   });
@@ -61,6 +64,7 @@ const AdminPanel = () => {
         console.error("Error creating company:", error);
         throw error;
       }
+      console.log("Company created:", data);
       return data;
     },
     onSuccess: () => {
@@ -99,6 +103,7 @@ const AdminPanel = () => {
 
   // Show error state if fetch failed
   if (fetchError) {
+    console.error("Fetch error details:", fetchError);
     return (
       <div className="container mx-auto py-8">
         <div className="text-red-500">
