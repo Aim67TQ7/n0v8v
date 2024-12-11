@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 
 export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
-  const { isLoading, session, error } = useSessionContext();
+  const { isLoading, session } = useSessionContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -13,11 +13,15 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   }, [isLoading, session, navigate]);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
   }
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
+  if (!session) {
+    return null;
   }
 
   return <>{children}</>;
