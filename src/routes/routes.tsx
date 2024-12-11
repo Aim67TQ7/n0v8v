@@ -13,6 +13,7 @@ import FiveWhys from "@/pages/quality/FiveWhys";
 import { PasswordReset } from "@/components/auth/PasswordReset";
 import { UpdatePassword } from "@/components/auth/UpdatePassword";
 import { VerifyOTP } from "@/components/auth/VerifyOTP";
+import { ConfirmEmail } from "@/components/auth/ConfirmEmail";
 import Login from "@/pages/Login";
 
 export const routes = [
@@ -35,6 +36,10 @@ export const routes = [
   {
     path: "/update-password",
     element: <UpdatePassword />
+  },
+  {
+    path: "/confirm-email",
+    element: <ConfirmEmail />
   },
   {
     path: "/company-gpt",
