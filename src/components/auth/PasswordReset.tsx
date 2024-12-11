@@ -30,7 +30,12 @@ export const PasswordReset = () => {
       });
 
       if (error) {
-        if (error.message.includes('rate limit') || error.status === 429) {
+        // Check for rate limit using the error code
+        if (error.message.includes('rate limit') || 
+            error.message.includes('exceeded') ||
+            (typeof error === 'object' && 
+             'code' in error && 
+             error.code === 'over_email_send_rate_limit')) {
           setCooldown(true);
           // Reset cooldown after 5 minutes
           setTimeout(() => setCooldown(false), 5 * 60 * 1000);
@@ -45,6 +50,7 @@ export const PasswordReset = () => {
       });
       
     } catch (error: any) {
+      console.error("Reset password error:", error);
       toast({
         variant: "destructive",
         title: "Error",
