@@ -28,25 +28,31 @@ export type Database = {
         Row: {
           company_id: string | null
           created_at: string
+          expires_at: string
           id: string
           messages: Json
           model: string
+          title: string
           user_id: string | null
         }
         Insert: {
           company_id?: string | null
           created_at?: string
+          expires_at?: string
           id?: string
           messages: Json
           model: string
+          title?: string
           user_id?: string | null
         }
         Update: {
           company_id?: string | null
           created_at?: string
+          expires_at?: string
           id?: string
           messages?: Json
           model?: string
+          title?: string
           user_id?: string | null
         }
         Relationships: [
@@ -783,6 +789,10 @@ export type Database = {
             }
             Returns: unknown
           }
+      cleanup_expired_chats: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       create_licensed_company: {
         Args: {
           company_name: string

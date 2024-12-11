@@ -66,11 +66,18 @@ export const ChatInterface = ({
         content: msg.content
       })) as Json;
 
+      // Generate a title from the first user message
+      const firstUserMessage = messages.find(msg => msg.role === 'user');
+      const title = firstUserMessage 
+        ? firstUserMessage.content.slice(0, 50) + (firstUserMessage.content.length > 50 ? '...' : '')
+        : 'New Chat';
+
       const { error: insertError } = await supabase.from('chat_logs').insert({
         company_id: profile.company_id,
         user_id: session.user.id,
         model: 'groq',
-        messages: jsonMessages
+        messages: jsonMessages,
+        title: title
       });
 
       if (insertError) {
