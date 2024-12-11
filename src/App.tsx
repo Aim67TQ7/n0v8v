@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 
-const App = () => {
+const AppWithAuth = () => {
   const { session, isLoading } = useSessionContext();
   const navigate = useNavigate();
 
@@ -16,9 +16,13 @@ const App = () => {
     }
   }, [session, isLoading, navigate]);
 
+  return <AppContent />;
+};
+
+const App = () => {
   return (
     <AppProviders>
-      <AppContent />
+      <AppWithAuth />
       <Toaster />
       <Sonner />
     </AppProviders>
