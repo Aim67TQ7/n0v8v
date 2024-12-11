@@ -12,7 +12,7 @@ const modules = [
     title: "Part Analysis",
     description: "AI-powered quality analysis and process optimization",
     icon: Microscope,
-    href: "/operations/quality/process-improvement",
+    href: "/operations/quality/part-analysis",
     status: "ready"
   },
   {
