@@ -8,6 +8,7 @@ import { SidebarProvider, Sidebar, SidebarContent } from "@/components/ui/sideba
 import { ChatContainer } from "@/components/gpt/ChatContainer";
 import { SidebarHeader } from "@/components/gpt/SidebarHeader";
 import { ConversationStarters } from "@/components/gpt/ConversationStarters";
+import { SidebarExpandButton } from "@/components/gpt/SidebarExpandButton";
 
 interface ChatSession {
   id: string;
@@ -34,7 +35,6 @@ const CompanyGPT = () => {
       <div className="flex-1 flex overflow-hidden">
         <SidebarProvider>
           <div className="flex w-full h-full">
-            {/* Left Sidebar - Fixed */}
             <Sidebar className="border-r w-64 flex flex-col">
               <SidebarHeader onNewChat={handleNewChat} />
               <ScrollArea className="flex-1">
@@ -51,7 +51,8 @@ const CompanyGPT = () => {
               </div>
             </Sidebar>
 
-            {/* Main Content - Scrollable */}
+            <SidebarExpandButton />
+
             <ChatContainer 
               selectedSession={selectedSession}
               chatSessions={chatSessions}
@@ -60,7 +61,6 @@ const CompanyGPT = () => {
               setInputValue={setInputValue}
             />
             
-            {/* Right Sidebar - Fixed */}
             <div className="w-64 border-l bg-white flex flex-col">
               <div className="p-4 border-b">
                 <div className="flex flex-col gap-1">
