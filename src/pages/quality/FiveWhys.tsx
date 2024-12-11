@@ -22,7 +22,7 @@ const FiveWhys = () => {
   const [causes, setCauses] = useState<Cause[]>([]);
   const [selectedCauses, setSelectedCauses] = useState<string[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [fishboneData, setFishboneData] = useState<any>(null);
+  const [analysis, setAnalysis] = useState<any>(null);
 
   const startAnalysis = async (statement: string) => {
     if (!statement.trim()) {
@@ -135,8 +135,7 @@ const FiveWhys = () => {
 
       if (error) throw error;
 
-      const fishboneData = data.result;
-      setFishboneData(fishboneData);
+      setAnalysis(data.result);
 
       // Save the analysis
       await supabase.from('five_whys_analysis').insert({
@@ -144,7 +143,7 @@ const FiveWhys = () => {
         created_by: session.user.id,
         problem_statement: problemStatement,
         selected_causes: allSelectedCauses,
-        fishbone_data: fishboneData,
+        fishbone_data: data.result,
       });
 
       toast({
@@ -168,7 +167,7 @@ const FiveWhys = () => {
     setCurrentIteration(0);
     setCauses([]);
     setSelectedCauses([]);
-    setFishboneData(null);
+    setAnalysis(null);
   };
 
   return (
@@ -181,7 +180,7 @@ const FiveWhys = () => {
       <Card className="p-6">
         {currentIteration === 0 ? (
           <FiveWhysForm onSubmit={startAnalysis} />
-        ) : !fishboneData ? (
+        ) : !analysis ? (
           <CausesList
             causes={causes}
             onCauseToggle={handleCauseToggle}
@@ -192,7 +191,7 @@ const FiveWhys = () => {
           />
         ) : (
           <FishboneResult
-            fishboneData={fishboneData}
+            analysis={analysis}
             onReset={resetAnalysis}
           />
         )}
