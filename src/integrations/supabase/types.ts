@@ -115,28 +115,37 @@ export type Database = {
       }
       companies: {
         Row: {
+          contact_email: string | null
+          contact_name: string | null
           created_at: string
           id: string
           license_number: string
           license_type: string
           max_users: number
           name: string
+          status: string | null
         }
         Insert: {
+          contact_email?: string | null
+          contact_name?: string | null
           created_at?: string
           id?: string
           license_number?: string
           license_type?: string
           max_users?: number
           name: string
+          status?: string | null
         }
         Update: {
+          contact_email?: string | null
+          contact_name?: string | null
           created_at?: string
           id?: string
           license_number?: string
           license_type?: string
           max_users?: number
           name?: string
+          status?: string | null
         }
         Relationships: []
       }
@@ -147,9 +156,6 @@ export type Database = {
           billing_country: string | null
           billing_state: string | null
           billing_zip: string | null
-          contact_email: string | null
-          contact_first_name: string | null
-          contact_last_name: string | null
           contact_phone: string | null
           created_at: string | null
           demo_ends_at: string | null
@@ -157,7 +163,6 @@ export type Database = {
           gpt_name: string | null
           id: string
           name: string
-          registration_status: string | null
           updated_at: string | null
         }
         Insert: {
@@ -166,9 +171,6 @@ export type Database = {
           billing_country?: string | null
           billing_state?: string | null
           billing_zip?: string | null
-          contact_email?: string | null
-          contact_first_name?: string | null
-          contact_last_name?: string | null
           contact_phone?: string | null
           created_at?: string | null
           demo_ends_at?: string | null
@@ -176,7 +178,6 @@ export type Database = {
           gpt_name?: string | null
           id: string
           name: string
-          registration_status?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -185,9 +186,6 @@ export type Database = {
           billing_country?: string | null
           billing_state?: string | null
           billing_zip?: string | null
-          contact_email?: string | null
-          contact_first_name?: string | null
-          contact_last_name?: string | null
           contact_phone?: string | null
           created_at?: string | null
           demo_ends_at?: string | null
@@ -195,7 +193,6 @@ export type Database = {
           gpt_name?: string | null
           id?: string
           name?: string
-          registration_status?: string | null
           updated_at?: string | null
         }
         Relationships: [

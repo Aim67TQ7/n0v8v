@@ -8,9 +8,7 @@ import {
 } from "@/components/ui/table";
 import { Database } from "@/integrations/supabase/types";
 
-type Company = Database["public"]["Tables"]["companies"]["Row"] & {
-  details?: Database["public"]["Tables"]["company_details"]["Row"];
-};
+type Company = Database["public"]["Tables"]["companies"]["Row"];
 
 interface CompaniesTableProps {
   companies: Company[] | undefined;
@@ -50,15 +48,13 @@ export const CompaniesTable = ({ companies, isLoading }: CompaniesTableProps) =>
                 <TableCell>{company.name}</TableCell>
                 <TableCell className="capitalize">{company.license_type}</TableCell>
                 <TableCell>{company.max_users}</TableCell>
+                <TableCell>{company.status || 'active'}</TableCell>
                 <TableCell>
-                  {company.details?.registration_status || 'active'}
-                </TableCell>
-                <TableCell>
-                  {company.details?.contact_email ? (
+                  {company.contact_email ? (
                     <div className="text-sm">
-                      <div>{company.details.contact_email}</div>
+                      <div>{company.contact_email}</div>
                       <div className="text-muted-foreground">
-                        {company.details.contact_first_name} {company.details.contact_last_name}
+                        {company.contact_name}
                       </div>
                     </div>
                   ) : (
