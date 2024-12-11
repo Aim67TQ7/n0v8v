@@ -29,6 +29,7 @@ const CompanyGPT = () => {
   const [selectedSession, setSelectedSession] = useState<string>();
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
   const [inputValue, setInputValue] = useState("");
+  const isBypassEnabled = localStorage.getItem('bypass_auth') === 'true';
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["user-profile"],
@@ -43,29 +44,32 @@ const CompanyGPT = () => {
       if (error) throw error;
       return data;
     },
-    enabled: !!session?.user?.id,
+    enabled: !!session?.user?.id && !isBypassEnabled,
   });
 
   useEffect(() => {
-    if (!session) {
-      navigate("/login");
-      return;
-    }
+    // Only check auth if not in maintenance mode
+    if (!isBypassEnabled) {
+      if (!session) {
+        navigate("/login");
+        return;
+      }
 
-    if (!isLoading && profile) {
-      const isAdmin = profile.role === "admin";
-      const hasValidDemoAccess = profile.demo_access_expires && new Date(profile.demo_access_expires) > new Date();
-      
-      if (!isAdmin && !hasValidDemoAccess) {
-        toast({
-          variant: "destructive",
-          title: "Access Denied",
-          description: "Your demo access has expired. Please contact support for full access.",
-        });
-        navigate("/");
+      if (!isLoading && profile) {
+        const isAdmin = profile.role === "admin";
+        const hasValidDemoAccess = profile.demo_access_expires && new Date(profile.demo_access_expires) > new Date();
+        
+        if (!isAdmin && !hasValidDemoAccess) {
+          toast({
+            variant: "destructive",
+            title: "Access Denied",
+            description: "Your demo access has expired. Please contact support for full access.",
+          });
+          navigate("/");
+        }
       }
     }
-  }, [session, profile, isLoading, navigate, toast]);
+  }, [session, profile, isLoading, navigate, toast, isBypassEnabled]);
 
   const handleNewChat = () => {
     setSelectedSession(undefined);
@@ -75,7 +79,7 @@ const CompanyGPT = () => {
     setInputValue(prompt);
   };
 
-  if (isLoading) {
+  if (isLoading && !isBypassEnabled) {
     return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
 
@@ -115,10 +119,16 @@ const CompanyGPT = () => {
             <div className="w-64 border-l bg-white flex flex-col shrink-0 fixed right-0 h-[calc(100vh-64px)]">
               <div className="p-4 border-b">
                 <div className="flex flex-col gap-1">
-                  <span className="text-sm font-medium">{profile?.first_name} {profile?.last_name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {profile?.role === "admin" ? "Admin Access" : "Demo Access"}
-                  </span>
+                  {isBypassEnabled ? (
+                    <span className="text-sm font-medium">Maintenance Mode</span>
+                  ) : (
+                    <>
+                      <span className="text-sm font-medium">{profile?.first_name} {profile?.last_name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {profile?.role === "admin" ? "Admin Access" : "Demo Access"}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto">
