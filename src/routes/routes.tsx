@@ -1,51 +1,24 @@
 import { lazy } from "react";
-import { AuthWrapper } from "@/components/AuthWrapper";
-import Login from "@/pages/Login";
-import { ChangePasswordForm } from "@/components/auth/ChangePasswordForm";
-import { CompanyGPT } from "@/pages/CompanyGPT";
-import { Settings } from "@/pages/Settings";
-import { Modules } from "@/pages/Modules";
-import { Index } from "@/pages/Index";
+import CompanyGPT from "@/pages/CompanyGPT";
+import Settings from "@/pages/Settings";
+import Modules from "@/pages/Modules";
+import Index from "@/pages/Index";
 
 export const routes = [
   {
     path: "/",
-    element: (
-      <AuthWrapper>
-        <Index />
-      </AuthWrapper>
-    ),
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/change-password",
-    element: <ChangePasswordForm />,
+    element: <Index />
   },
   {
     path: "/company-gpt",
-    element: (
-      <AuthWrapper>
-        <CompanyGPT />
-      </AuthWrapper>
-    ),
+    element: <CompanyGPT />
   },
   {
     path: "/settings",
-    element: (
-      <AuthWrapper>
-        <Settings />
-      </AuthWrapper>
-    ),
+    element: <Settings />
   },
   {
     path: "/modules",
-    element: (
-      <AuthWrapper>
-        <Modules />
-      </AuthWrapper>
-    ),
-  },
+    element: <Modules />
+  }
 ];
