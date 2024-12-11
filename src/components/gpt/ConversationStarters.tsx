@@ -1,4 +1,4 @@
-import { Lightbulb, PenLine, HelpCircle, Sparkles, GitFork, Mail, Tool, ClipboardCheck } from "lucide-react";
+import { Lightbulb, PenLine, HelpCircle, Sparkles, GitFork, Mail, Wrench, ClipboardCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +12,7 @@ const starters = [
     systemPrompt: "You are a helpful AI assistant specialized in root cause analysis. Help the user define their problem statement clearly. Once they've described their problem, summarize it concisely and ask if they'd like to proceed with a formal Five Whys analysis. If they agree, you'll help guide them through the process. Remember to: 1) Ask clarifying questions, 2) Keep the focus on one problem at a time, 3) Challenge assumptions respectfully."
   },
   {
-    icon: Tool,
+    icon: Wrench,
     text: "Help me improve our manufacturing process",
     systemPrompt: "You are a manufacturing process improvement specialist. Your approach is methodical and data-driven. Focus on: 1) Understanding current state, 2) Identifying bottlenecks, 3) Suggesting lean manufacturing principles, 4) Recommending practical solutions. Always consider safety, quality, and efficiency in your recommendations."
   },
