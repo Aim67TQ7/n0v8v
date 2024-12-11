@@ -18,8 +18,8 @@ import Login from "@/pages/Login";
 import AdminPanel from "@/pages/AdminPanel";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 
-const protectedRoute = (element: JSX.Element, role?: "superadmin" | "admin" | "employee") => (
-  <AuthGuard requiredRole={role}>{element}</AuthGuard>
+const protectedRoute = (element: JSX.Element) => (
+  <AuthGuard>{element}</AuthGuard>
 );
 
 export const routes = [
@@ -53,7 +53,7 @@ export const routes = [
   },
   {
     path: "/settings",
-    element: protectedRoute(<Settings />, "admin")
+    element: protectedRoute(<Settings />)
   },
   {
     path: "/modules",
@@ -61,7 +61,7 @@ export const routes = [
   },
   {
     path: "/admin",
-    element: protectedRoute(<AdminPanel />, "superadmin")
+    element: protectedRoute(<AdminPanel />)
   },
   {
     path: "/operations/lean",

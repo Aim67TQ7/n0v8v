@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,7 +22,7 @@ serve(async (req) => {
       case 'anthropic':
         endpoint = 'https://api.anthropic.com/v1/messages';
         headers = {
-          'x-api-key': Deno.env.get('ANTHROPIC_API_KEY'),
+          'x-api-key': Deno.env.get('ANTHROPIC_API_KEY') || '',
           'anthropic-version': '2023-06-01',
           'Content-Type': 'application/json',
         };
@@ -68,18 +69,27 @@ serve(async (req) => {
     }
 
     console.log(`Checking status for ${provider} API...`);
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
-
-    console.log(`${provider} API response status:`, response.status);
     
-    return new Response(
-      JSON.stringify({ status: response.ok ? 'up' : 'down' }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      console.log(`${provider} API response status:`, response.status);
+      
+      return new Response(
+        JSON.stringify({ status: response.ok ? 'up' : 'down' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } catch (error) {
+      console.error(`Error checking ${provider} API:`, error);
+      return new Response(
+        JSON.stringify({ status: 'down' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
   } catch (error) {
     console.error('Error in check-ai-status function:', error);
     return new Response(
