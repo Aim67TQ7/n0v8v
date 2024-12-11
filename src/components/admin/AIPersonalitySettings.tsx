@@ -1,39 +1,63 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Loader2 } from "lucide-react";
+import { AIPersonalityForm } from "./AIPersonalityForm";
+import { AIPersonalitiesTable } from "./AIPersonalitiesTable";
+import { AIPersonality } from "./types";
 
-interface AIPersonality {
-  id: string;
-  name: string;
-  description: string | null;
-  provider: string;
-  system_prompt: string;
-}
+const defaultPersonalities = [
+  {
+    name: "Polaris",
+    description: "Smart and fast, but blurts answers",
+    provider: "anthropic",
+    system_prompt: `I am Polaris, a direct and efficient AI assistant. I specialize in:
+1. Quick, concise responses
+2. Getting straight to the point
+3. Practical, actionable advice
+4. Clear step-by-step instructions
+5. No unnecessary pleasantries`
+  },
+  {
+    name: "Faraday",
+    description: "Takes time to pull answers together",
+    provider: "perplexity",
+    system_prompt: `I am Faraday, a thoughtful and analytical AI assistant. My approach is:
+1. Thorough analysis before responding
+2. Consideration of multiple perspectives
+3. Evidence-based reasoning
+4. Detailed explanations
+5. Methodical problem-solving`
+  },
+  {
+    name: "Maggie",
+    description: "Efficient and gets work done quick",
+    provider: "groq",
+    system_prompt: `I am Maggie, a results-oriented AI assistant. I focus on:
+1. Practical solutions
+2. Efficiency in execution
+3. Clear action items
+4. Time-saving strategies
+5. Getting things done`
+  },
+  {
+    name: "Magnes",
+    description: "The artistic one",
+    provider: "openai",
+    system_prompt: `I am Magnes, a creative and imaginative AI assistant. I excel at:
+1. Creative problem-solving
+2. Visual and artistic thinking
+3. Innovative approaches
+4. Design-oriented solutions
+5. Thinking outside the box`
+  }
+];
 
 export const AIPersonalitySettings = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    provider: "",
-    system_prompt: "",
-  });
 
   const { data: personalities, refetch } = useQuery({
     queryKey: ["ai-personalities"],
@@ -44,14 +68,30 @@ export const AIPersonalitySettings = () => {
         .order("created_at", { ascending: true });
 
       if (error) throw error;
+      
+      // If no personalities exist, create the default ones
+      if (!data || data.length === 0) {
+        const { error: insertError } = await supabase
+          .from("ai_personalities")
+          .insert(defaultPersonalities);
+
+        if (insertError) throw insertError;
+        
+        const { data: newData, error: refetchError } = await supabase
+          .from("ai_personalities")
+          .select("*")
+          .order("created_at", { ascending: true });
+          
+        if (refetchError) throw refetchError;
+        return newData as AIPersonality[];
+      }
+      
       return data as AIPersonality[];
     },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (formData: Omit<AIPersonality, "id">) => {
     setIsSubmitting(true);
-
     try {
       if (editingId) {
         const { error } = await supabase
@@ -63,32 +103,22 @@ export const AIPersonalitySettings = () => {
           .eq("id", editingId);
 
         if (error) throw error;
-
         toast({
           title: "Success",
           description: "AI personality updated successfully",
         });
       } else {
-        const { error } = await supabase.from("ai_personalities").insert([
-          {
-            ...formData,
-          },
-        ]);
+        const { error } = await supabase
+          .from("ai_personalities")
+          .insert([formData]);
 
         if (error) throw error;
-
         toast({
           title: "Success",
           description: "AI personality created successfully",
         });
       }
 
-      setFormData({
-        name: "",
-        description: "",
-        provider: "",
-        system_prompt: "",
-      });
       setEditingId(null);
       refetch();
     } catch (error) {
@@ -101,16 +131,6 @@ export const AIPersonalitySettings = () => {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleEdit = (personality: AIPersonality) => {
-    setEditingId(personality.id);
-    setFormData({
-      name: personality.name,
-      description: personality.description || "",
-      provider: personality.provider,
-      system_prompt: personality.system_prompt,
-    });
   };
 
   const handleDelete = async (id: string) => {
@@ -139,116 +159,20 @@ export const AIPersonalitySettings = () => {
 
   return (
     <div className="space-y-6">
-      <Card className="p-6">
-        <h3 className="text-lg font-medium mb-4">
-          {editingId ? "Edit AI Personality" : "Create New AI Personality"}
-        </h3>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Name</label>
-            <Input
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Description</label>
-            <Input
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Provider</label>
-            <Input
-              value={formData.provider}
-              onChange={(e) =>
-                setFormData({ ...formData, provider: e.target.value })
-              }
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              System Prompt
-            </label>
-            <Textarea
-              value={formData.system_prompt}
-              onChange={(e) =>
-                setFormData({ ...formData, system_prompt: e.target.value })
-              }
-              required
-              rows={5}
-            />
-          </div>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {editingId ? "Update" : "Create"} Personality
-          </Button>
-          {editingId && (
-            <Button
-              type="button"
-              variant="outline"
-              className="ml-2"
-              onClick={() => {
-                setEditingId(null);
-                setFormData({
-                  name: "",
-                  description: "",
-                  provider: "",
-                  system_prompt: "",
-                });
-              }}
-            >
-              Cancel
-            </Button>
-          )}
-        </form>
-      </Card>
+      <AIPersonalityForm
+        initialData={editingId ? personalities?.find(p => p.id === editingId) : undefined}
+        onSubmit={handleSubmit}
+        onCancel={editingId ? () => setEditingId(null) : undefined}
+        isSubmitting={isSubmitting}
+      />
 
       <Card className="p-6">
         <h3 className="text-lg font-medium mb-4">AI Personalities</h3>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Provider</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {personalities?.map((personality) => (
-              <TableRow key={personality.id}>
-                <TableCell>{personality.name}</TableCell>
-                <TableCell>{personality.description}</TableCell>
-                <TableCell>{personality.provider}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEdit(personality)}
-                    className="mr-2"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(personality.id)}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <AIPersonalitiesTable
+          personalities={personalities || []}
+          onEdit={(personality) => setEditingId(personality.id)}
+          onDelete={handleDelete}
+        />
       </Card>
     </div>
   );
