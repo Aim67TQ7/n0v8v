@@ -33,6 +33,7 @@ export const PasswordReset = () => {
       });
 
       if (error) {
+        console.error("Reset password error details:", error);
         const isRateLimit = 
           error.status === 429 || 
           error.message.toLowerCase().includes('rate limit') ||
