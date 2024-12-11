@@ -3,18 +3,18 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useSessionContext } from "@supabase/auth-helpers-react";
+import { useAuth } from "@/contexts/AuthContext";
 import { Card } from "@/components/ui/card";
 
 const Login = () => {
-  const { session } = useSessionContext();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (session) {
+    if (user) {
       navigate("/company-gpt");
     }
-  }, [session, navigate]);
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

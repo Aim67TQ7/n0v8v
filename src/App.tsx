@@ -4,17 +4,17 @@ import { AppProviders } from "@/components/AppProviders";
 import { AppContent } from "@/components/AppContent";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSessionContext } from "@supabase/auth-helpers-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AppWithAuth = () => {
-  const { session, isLoading } = useSessionContext();
+  const { user, isLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isLoading && !session) {
+    if (!isLoading && !user) {
       navigate("/login");
     }
-  }, [session, isLoading, navigate]);
+  }, [user, isLoading, navigate]);
 
   return <AppContent />;
 };
