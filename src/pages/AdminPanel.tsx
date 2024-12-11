@@ -30,8 +30,8 @@ const AdminPanel = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch existing companies
-  const { data: companies, isLoading } = useQuery({
+  // Fetch existing companies with error handling
+  const { data: companies, isLoading, error: fetchError } = useQuery({
     queryKey: ["companies"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -39,21 +39,28 @@ const AdminPanel = () => {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching companies:", error);
+        throw error;
+      }
       return data;
     },
   });
 
-  // Create company mutation
+  // Create company mutation with improved error handling
   const createCompany = useMutation({
     mutationFn: async () => {
+      console.log("Creating company with:", { companyName, licenseType, maxUsers });
       const { data, error } = await supabase.rpc("create_licensed_company", {
         company_name: companyName,
         license_type: licenseType,
         max_users: parseInt(maxUsers),
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error creating company:", error);
+        throw error;
+      }
       return data;
     },
     onSuccess: () => {
@@ -68,18 +75,38 @@ const AdminPanel = () => {
       setMaxUsers("5");
     },
     onError: (error: any) => {
+      console.error("Mutation error:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to create company",
       });
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!companyName.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Company name is required",
+      });
+      return;
+    }
     createCompany.mutate();
   };
+
+  // Show error state if fetch failed
+  if (fetchError) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="text-red-500">
+          Error loading companies: {fetchError.message}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-8 space-y-8">
@@ -125,9 +152,13 @@ const AdminPanel = () => {
           />
         </div>
 
-        <Button type="submit" className="w-full gap-2">
+        <Button 
+          type="submit" 
+          className="w-full gap-2"
+          disabled={createCompany.isPending}
+        >
           <Plus className="h-4 w-4" />
-          Create Company
+          {createCompany.isPending ? "Creating..." : "Create Company"}
         </Button>
       </form>
 
@@ -141,19 +172,35 @@ const AdminPanel = () => {
                 <TableHead>License Type</TableHead>
                 <TableHead>Max Users</TableHead>
                 <TableHead>Created At</TableHead>
+                <TableHead>License Number</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {companies?.map((company) => (
-                <TableRow key={company.id}>
-                  <TableCell>{company.name}</TableCell>
-                  <TableCell className="capitalize">{company.license_type}</TableCell>
-                  <TableCell>{company.max_users}</TableCell>
-                  <TableCell>
-                    {new Date(company.created_at).toLocaleDateString()}
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-4">
+                    Loading companies...
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : companies?.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-4">
+                    No companies found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                companies?.map((company) => (
+                  <TableRow key={company.id}>
+                    <TableCell>{company.name}</TableCell>
+                    <TableCell className="capitalize">{company.license_type}</TableCell>
+                    <TableCell>{company.max_users}</TableCell>
+                    <TableCell>
+                      {new Date(company.created_at).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>{company.license_number}</TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>
