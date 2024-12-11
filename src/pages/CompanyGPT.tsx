@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useQuery } from "@tanstack/react-query";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { ModelSelector } from "@/components/gpt/ModelSelector";
 import { ChatHistory } from "@/components/gpt/ChatHistory";
@@ -52,25 +50,11 @@ const CompanyGPT = () => {
     enabled: !!session?.user?.id && !isBypassEnabled,
   });
 
-  if (!session && !isBypassEnabled) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-        <Card className="w-full max-w-md space-y-8 p-8">
-          <div className="text-center">
-            <h2 className="mt-6 text-2xl font-bold tracking-tight text-gray-900">
-              Sign in to your account
-            </h2>
-          </div>
-          <Auth
-            supabaseClient={supabase}
-            appearance={{ theme: ThemeSupa }}
-            theme="light"
-            providers={[]}
-          />
-        </Card>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!session && !isBypassEnabled) {
+      navigate("/login");
+    }
+  }, [session, navigate, isBypassEnabled]);
 
   const handleModelChange = (modelId: string, newSystemPrompt: string) => {
     setSelectedModel(modelId);
