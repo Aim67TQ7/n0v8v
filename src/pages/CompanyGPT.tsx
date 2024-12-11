@@ -14,6 +14,8 @@ import { SidebarHeader } from "@/components/gpt/SidebarHeader";
 import { ConversationStarters } from "@/components/gpt/ConversationStarters";
 import { SidebarExpandButton } from "@/components/gpt/SidebarExpandButton";
 import { useToast } from "@/components/ui/use-toast";
+import { Badge } from "@/components/ui/badge";
+import { Shield, User } from "lucide-react";
 
 interface ChatSession {
   id: string;
@@ -48,6 +50,12 @@ const CompanyGPT = () => {
     enabled: !!session?.user?.id && !isBypassEnabled,
   });
 
+  useEffect(() => {
+    if (!session && !isBypassEnabled) {
+      navigate("/login");
+    }
+  }, [session, navigate, isBypassEnabled]);
+
   const handleModelChange = (modelId: string, newSystemPrompt: string) => {
     setSelectedModel(modelId);
     setSystemPrompt(newSystemPrompt);
@@ -59,6 +67,17 @@ const CompanyGPT = () => {
 
   const handleStarterSelect = (prompt: string) => {
     setInputValue(prompt);
+  };
+
+  const getRoleBadgeColor = (role: string) => {
+    switch (role) {
+      case 'superadmin':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'admin':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      default:
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+    }
   };
 
   return (
@@ -96,18 +115,26 @@ const CompanyGPT = () => {
           
           <div className="w-64 border-l bg-white flex flex-col shrink-0">
             <div className="p-4 border-b">
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-2">
                 {isBypassEnabled ? (
-                  <span className="text-sm font-medium">Maintenance Mode</span>
-                ) : (
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-yellow-600" />
+                    <span className="text-sm font-medium text-yellow-600">Maintenance Mode</span>
+                  </div>
+                ) : profile ? (
                   <>
-                    <span className="text-sm font-medium">{profile?.first_name} {profile?.last_name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {profile?.role === "superadmin" ? "Super Admin" : 
-                       profile?.role === "admin" ? "Admin" : "User"}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-gray-600" />
+                      <span className="text-sm font-medium">
+                        {profile.first_name} {profile.last_name}
+                      </span>
+                    </div>
+                    <Badge className={`${getRoleBadgeColor(profile.role)} w-fit`}>
+                      {profile.role === 'superadmin' ? 'Super Admin' : 
+                       profile.role === 'admin' ? 'Admin' : 'User'}
+                    </Badge>
                   </>
-                )}
+                ) : null}
               </div>
             </div>
             <div className="flex-1 overflow-y-auto">
