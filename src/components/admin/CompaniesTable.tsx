@@ -25,20 +25,19 @@ export const CompaniesTable = ({ companies, isLoading }: CompaniesTableProps) =>
             <TableHead>License Type</TableHead>
             <TableHead>Max Users</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Contact</TableHead>
             <TableHead>Created At</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-4">
+              <TableCell colSpan={5} className="text-center py-4">
                 Loading companies...
               </TableCell>
             </TableRow>
           ) : companies?.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-4">
+              <TableCell colSpan={5} className="text-center py-4">
                 No companies found
               </TableCell>
             </TableRow>
@@ -49,18 +48,6 @@ export const CompaniesTable = ({ companies, isLoading }: CompaniesTableProps) =>
                 <TableCell className="capitalize">{company.license_type}</TableCell>
                 <TableCell>{company.max_users}</TableCell>
                 <TableCell>{company.status || 'active'}</TableCell>
-                <TableCell>
-                  {company.contact_email ? (
-                    <div className="text-sm">
-                      <div>{company.contact_email}</div>
-                      <div className="text-muted-foreground">
-                        {company.contact_name}
-                      </div>
-                    </div>
-                  ) : (
-                    <span className="text-muted-foreground">No contact info</span>
-                  )}
-                </TableCell>
                 <TableCell>
                   {new Date(company.created_at).toLocaleDateString()}
                 </TableCell>
