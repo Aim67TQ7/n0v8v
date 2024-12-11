@@ -140,6 +140,63 @@ export type Database = {
         }
         Relationships: []
       }
+      company_registrations: {
+        Row: {
+          billing_address: string
+          billing_city: string
+          billing_country: string
+          billing_state: string
+          billing_zip: string
+          company_name: string
+          contact_email: string
+          contact_first_name: string
+          contact_last_name: string
+          contact_phone: string
+          created_at: string
+          demo_ends_at: string | null
+          demo_starts_at: string | null
+          id: string
+          registration_status: string
+          updated_at: string
+        }
+        Insert: {
+          billing_address: string
+          billing_city: string
+          billing_country: string
+          billing_state: string
+          billing_zip: string
+          company_name: string
+          contact_email: string
+          contact_first_name: string
+          contact_last_name: string
+          contact_phone: string
+          created_at?: string
+          demo_ends_at?: string | null
+          demo_starts_at?: string | null
+          id?: string
+          registration_status?: string
+          updated_at?: string
+        }
+        Update: {
+          billing_address?: string
+          billing_city?: string
+          billing_country?: string
+          billing_state?: string
+          billing_zip?: string
+          company_name?: string
+          contact_email?: string
+          contact_first_name?: string
+          contact_last_name?: string
+          contact_phone?: string
+          created_at?: string
+          demo_ends_at?: string | null
+          demo_starts_at?: string | null
+          id?: string
+          registration_status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       company_settings: {
         Row: {
           company_id: string | null
@@ -610,9 +667,12 @@ export type Database = {
           email: string
           first_name: string | null
           id: string
+          invite_code: string | null
           last_name: string | null
+          phone_number: string | null
           photo_url: string | null
           role: string
+          verified_phone: boolean | null
         }
         Insert: {
           company_id?: string | null
@@ -621,9 +681,12 @@ export type Database = {
           email: string
           first_name?: string | null
           id: string
+          invite_code?: string | null
           last_name?: string | null
+          phone_number?: string | null
           photo_url?: string | null
           role?: string
+          verified_phone?: boolean | null
         }
         Update: {
           company_id?: string | null
@@ -632,9 +695,12 @@ export type Database = {
           email?: string
           first_name?: string | null
           id?: string
+          invite_code?: string | null
           last_name?: string | null
+          phone_number?: string | null
           photo_url?: string | null
           role?: string
+          verified_phone?: boolean | null
         }
         Relationships: [
           {

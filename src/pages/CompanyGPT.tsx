@@ -32,8 +32,8 @@ const CompanyGPT = () => {
   const [inputValue, setInputValue] = useState("");
   const isBypassEnabled = localStorage.getItem('bypass_auth') === 'true';
 
-  const { data: profile, isLoading } = useQuery({
-    queryKey: ["user-profile"],
+  const { data: profile } = useQuery({
+    queryKey: ["user-profile", session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return null;
       const { data, error } = await supabase
@@ -48,30 +48,6 @@ const CompanyGPT = () => {
     enabled: !!session?.user?.id && !isBypassEnabled,
   });
 
-  useEffect(() => {
-    // Only check auth if not in maintenance mode
-    if (!isBypassEnabled) {
-      if (!session) {
-        navigate("/login");
-        return;
-      }
-
-      if (!isLoading && profile) {
-        const isAdmin = profile.role === "admin";
-        const hasValidDemoAccess = profile.demo_access_expires && new Date(profile.demo_access_expires) > new Date();
-        
-        if (!isAdmin && !hasValidDemoAccess) {
-          toast({
-            variant: "destructive",
-            title: "Access Denied",
-            description: "Your demo access has expired. Please contact support for full access.",
-          });
-          navigate("/");
-        }
-      }
-    }
-  }, [session, profile, isLoading, navigate, toast, isBypassEnabled]);
-
   const handleModelChange = (modelId: string, newSystemPrompt: string) => {
     setSelectedModel(modelId);
     setSystemPrompt(newSystemPrompt);
@@ -84,10 +60,6 @@ const CompanyGPT = () => {
   const handleStarterSelect = (prompt: string) => {
     setInputValue(prompt);
   };
-
-  if (isLoading && !isBypassEnabled) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
-  }
 
   return (
     <div className="h-[calc(100vh-64px)] flex">
@@ -131,7 +103,8 @@ const CompanyGPT = () => {
                   <>
                     <span className="text-sm font-medium">{profile?.first_name} {profile?.last_name}</span>
                     <span className="text-xs text-muted-foreground">
-                      {profile?.role === "admin" ? "Admin Access" : "Demo Access"}
+                      {profile?.role === "superadmin" ? "Super Admin" : 
+                       profile?.role === "admin" ? "Admin" : "User"}
                     </span>
                   </>
                 )}

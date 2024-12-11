@@ -16,11 +16,16 @@ import { VerifyOTP } from "@/components/auth/VerifyOTP";
 import { ConfirmEmail } from "@/components/auth/ConfirmEmail";
 import Login from "@/pages/Login";
 import AdminPanel from "@/pages/AdminPanel";
+import { AuthGuard } from "@/components/auth/AuthGuard";
+
+const protectedRoute = (element: JSX.Element, role?: "superadmin" | "admin" | "employee") => (
+  <AuthGuard requiredRole={role}>{element}</AuthGuard>
+);
 
 export const routes = [
   {
     path: "/",
-    element: <Index />
+    element: protectedRoute(<Index />)
   },
   {
     path: "/login",
@@ -44,46 +49,46 @@ export const routes = [
   },
   {
     path: "/company-gpt",
-    element: <CompanyGPT />
+    element: protectedRoute(<CompanyGPT />)
   },
   {
     path: "/settings",
-    element: <Settings />
+    element: protectedRoute(<Settings />, "admin")
   },
   {
     path: "/modules",
-    element: <Modules />
+    element: protectedRoute(<Modules />)
   },
   {
     path: "/admin",
-    element: <AdminPanel />
+    element: protectedRoute(<AdminPanel />, "superadmin")
   },
   {
     path: "/operations/lean",
-    element: <LeanManufacturing />
+    element: protectedRoute(<LeanManufacturing />)
   },
   {
     path: "/operations/lean/5s-vision",
-    element: <FiveSVision />
+    element: protectedRoute(<FiveSVision />)
   },
   {
     path: "/operations/quality",
-    element: <QualityAssurance />
+    element: protectedRoute(<QualityAssurance />)
   },
   {
     path: "/operations/quality/part-analysis",
-    element: <PartAnalysis />
+    element: protectedRoute(<PartAnalysis />)
   },
   {
     path: "/operations/quality/product-inspection",
-    element: <ProductInspection />
+    element: protectedRoute(<ProductInspection />)
   },
   {
     path: "/operations/quality/dmr",
-    element: <DMRDocumentation />
+    element: protectedRoute(<DMRDocumentation />)
   },
   {
     path: "/operations/quality/five-whys",
-    element: <FiveWhys />
+    element: protectedRoute(<FiveWhys />)
   }
 ];
