@@ -8,10 +8,9 @@ import { useToast } from "@/hooks/use-toast";
 
 interface AuthGuardProps {
   children: React.ReactNode;
-  requiredRole?: "superadmin" | "admin" | "employee";
 }
 
-export const AuthGuard = ({ children, requiredRole }: AuthGuardProps) => {
+export const AuthGuard = ({ children }: AuthGuardProps) => {
   const { session, isLoading: sessionLoading } = useSessionContext();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -63,18 +62,7 @@ export const AuthGuard = ({ children, requiredRole }: AuthGuardProps) => {
       navigate("/login");
       return;
     }
-
-    if (!profileLoading && profile && requiredRole) {
-      const hasAccess = 
-        requiredRole === "superadmin" ? profile.role === "superadmin" :
-        requiredRole === "admin" ? ["admin", "superadmin"].includes(profile.role) :
-        ["employee", "admin", "superadmin"].includes(profile.role);
-
-      if (!hasAccess) {
-        navigate("/");
-      }
-    }
-  }, [session, profile, sessionLoading, profileLoading, navigate, requiredRole]);
+  }, [session, profile, sessionLoading, profileLoading, navigate]);
 
   if (sessionLoading || profileLoading) {
     return (
