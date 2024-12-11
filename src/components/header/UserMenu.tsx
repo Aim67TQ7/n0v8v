@@ -22,16 +22,19 @@ export const UserMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-md">
+        <Button 
+          variant="ghost" 
+          className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded-md"
+        >
           <div className="flex flex-col items-end">
             <span className="text-sm font-medium text-gray-900">
               {session?.user?.email}
             </span>
-            <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
+            <span className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full">
               DEMO Company
             </span>
           </div>
-          <ChevronDown className="h-4 w-4 text-gray-500" />
+          <ChevronDown className="h-4 w-4 text-gray-600 ml-1" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
