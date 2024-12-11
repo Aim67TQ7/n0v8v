@@ -30,15 +30,24 @@ export const PasswordReset = () => {
       });
 
       if (error) {
-        // Check for rate limit using the error code
-        if (error.message.includes('rate limit') || 
-            error.message.includes('exceeded') ||
-            (typeof error === 'object' && 
-             'code' in error && 
-             error.code === 'over_email_send_rate_limit')) {
+        // Parse the error body if it's a string
+        let errorBody;
+        try {
+          errorBody = error.message.includes('{') ? JSON.parse(error.message) : null;
+        } catch {
+          errorBody = null;
+        }
+
+        // Check for rate limit in various places
+        const isRateLimit = 
+          error.status === 429 ||
+          errorBody?.code === 'over_email_send_rate_limit' ||
+          error.message.includes('rate limit') ||
+          error.message.includes('exceeded');
+
+        if (isRateLimit) {
           setCooldown(true);
-          // Reset cooldown after 5 minutes
-          setTimeout(() => setCooldown(false), 5 * 60 * 1000);
+          setTimeout(() => setCooldown(false), 5 * 60 * 1000); // 5 minutes cooldown
           throw new Error("Too many reset attempts. Please wait 5 minutes before trying again.");
         }
         throw error;
