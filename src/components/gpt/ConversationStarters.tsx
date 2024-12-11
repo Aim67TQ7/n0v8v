@@ -9,8 +9,7 @@ const starters = [
   {
     icon: GitFork,
     text: "Help me walk through a 5-why analysis",
-    moduleRedirect: "/operations/quality/five-whys",
-    requiresAnalysis: true
+    systemPrompt: "You are a helpful AI assistant specialized in root cause analysis. Help the user define their problem statement clearly. Once they've described their problem, summarize it concisely and ask if they'd like to proceed with a formal Five Whys analysis. If they agree, you'll help guide them through the process."
   },
   {
     icon: Lightbulb,
@@ -27,55 +26,15 @@ const starters = [
 ];
 
 interface ConversationStartersProps {
-  onSelect: (prompt: string) => void;
+  onSelect: (prompt: string, systemPrompt?: string) => void;
 }
 
 export const ConversationStarters = ({ onSelect }: ConversationStartersProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleStarterClick = async (starter: typeof starters[0]) => {
-    onSelect(starter.text);
-
-    if (starter.requiresAnalysis) {
-      try {
-        const response = await supabase.functions.invoke('chat-with-groq', {
-          body: {
-            messages: [
-              { role: "system", content: "You are a helpful AI assistant specialized in process improvement and root cause analysis." },
-              { role: "user", content: starter.text }
-            ]
-          },
-        });
-
-        if (response.error) throw response.error;
-
-        const aiResponse = response.data.choices[0].message.content;
-        
-        // If this is a 5-why analysis prompt, navigate to the module
-        if (starter.moduleRedirect === "/operations/quality/five-whys") {
-          // Extract the core problem statement from the AI response
-          const problemStatement = aiResponse.split('\n')[0]; // Take first line as summary
-          
-          // Navigate to Five Whys module with the problem statement
-          navigate(starter.moduleRedirect, { 
-            state: { problemStatement }
-          });
-
-          toast({
-            title: "Analysis Started",
-            description: "Redirecting you to the Five Whys module to begin your analysis.",
-          });
-        }
-      } catch (error) {
-        console.error('Error processing starter:', error);
-        toast({
-          title: "Error",
-          description: "Failed to process your request. Please try again.",
-          variant: "destructive"
-        });
-      }
-    }
+  const handleStarterClick = (starter: typeof starters[0]) => {
+    onSelect(starter.text, starter.systemPrompt);
   };
 
   return (

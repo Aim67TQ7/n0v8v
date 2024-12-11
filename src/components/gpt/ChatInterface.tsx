@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 import { Json } from "@/integrations/supabase/types";
 
 interface Message {
@@ -27,6 +28,7 @@ export const ChatInterface = ({
 }: ChatInterfaceProps) => {
   const { session } = useSessionContext();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([
     { role: "system", content: systemPrompt }
   ]);
@@ -40,6 +42,16 @@ export const ChatInterface = ({
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const handleFiveWhysRedirect = (problemStatement: string) => {
+    navigate("/operations/quality/five-whys", {
+      state: { problemStatement }
+    });
+    toast({
+      title: "Analysis Started",
+      description: "Redirecting you to the Five Whys module to begin your analysis.",
+    });
+  };
 
   const saveChatLog = async (messages: Message[]) => {
     try {
@@ -126,6 +138,28 @@ export const ChatInterface = ({
         content: response.data.choices[0].message.content 
       };
       
+      // Check if this is a confirmation to start Five Whys analysis
+      const lastMessages = [...messages, userMessage, assistantMessage];
+      const isConfirmation = lastMessages.some(msg => 
+        msg.role === "user" && 
+        /^(yes|yeah|sure|okay|ok|proceed|let's do it|start)$/i.test(msg.content.trim())
+      );
+      
+      const hasFiveWhysPrompt = lastMessages.some(msg => 
+        msg.role === "system" && 
+        msg.content.includes("root cause analysis")
+      );
+
+      if (isConfirmation && hasFiveWhysPrompt) {
+        // Extract the problem statement from the conversation
+        const problemDescription = lastMessages
+          .filter(msg => msg.role === "user")
+          .map(msg => msg.content)
+          .join(" ");
+        
+        handleFiveWhysRedirect(problemDescription);
+      }
+
       const updatedMessages = [...messages, userMessage, assistantMessage];
       setMessages(updatedMessages);
       await saveChatLog(updatedMessages);
