@@ -57,6 +57,17 @@ export const DemoAccessForm = () => {
         demoCompanyId = demoCompany.id;
       }
 
+      // Create verification token
+      const verificationToken = crypto.randomUUID();
+      const { error: verificationError } = await supabase
+        .from("email_verifications")
+        .insert({
+          email,
+          token: verificationToken
+        });
+
+      if (verificationError) throw verificationError;
+
       // Send magic link for passwordless sign in
       const { error: signInError } = await supabase.auth.signInWithOtp({
         email,
@@ -67,6 +78,7 @@ export const DemoAccessForm = () => {
             company_id: demoCompanyId,
             role: "admin",
             demo_access_expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+            verification_token: verificationToken
           }
         }
       });

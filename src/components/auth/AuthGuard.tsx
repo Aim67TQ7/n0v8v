@@ -20,6 +20,20 @@ export const AuthGuard = ({ children, requiredRole }: AuthGuardProps) => {
     queryFn: async () => {
       if (!session?.user?.id) return null;
       
+      // Check if email verification is needed
+      if (session.user.user_metadata.verification_token) {
+        const { data: verification, error: verificationError } = await supabase
+          .from("email_verifications")
+          .select("verified_at")
+          .eq("token", session.user.user_metadata.verification_token)
+          .single();
+
+        if (verificationError || !verification.verified_at) {
+          navigate("/confirm-email");
+          return null;
+        }
+      }
+      
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
