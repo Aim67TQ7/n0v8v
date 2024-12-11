@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -19,7 +19,10 @@ export const PasswordReset = () => {
         redirectTo: `${window.location.origin}/update-password`,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Reset password error:", error);
+        throw error;
+      }
 
       toast({
         title: "Check your email",
@@ -27,11 +30,10 @@ export const PasswordReset = () => {
       });
       
     } catch (error: any) {
-      console.error("Reset password error:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to send reset password email",
       });
     } finally {
       setLoading(false);
