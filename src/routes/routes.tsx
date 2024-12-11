@@ -10,11 +10,21 @@ import PartAnalysis from "@/pages/quality/PartAnalysis";
 import ProductInspection from "@/pages/quality/ProductInspection";
 import DMRDocumentation from "@/pages/quality/DMRDocumentation";
 import FiveWhys from "@/pages/quality/FiveWhys";
+import { PasswordReset } from "@/components/auth/PasswordReset";
+import { UpdatePassword } from "@/components/auth/UpdatePassword";
 
 export const routes = [
   {
     path: "/",
     element: <Index />
+  },
+  {
+    path: "/reset-password",
+    element: <PasswordReset />
+  },
+  {
+    path: "/update-password",
+    element: <UpdatePassword />
   },
   {
     path: "/company-gpt",
