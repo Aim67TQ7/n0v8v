@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -21,7 +22,7 @@ export const ChatMessages = ({ messages }: ChatMessagesProps) => {
   }, [messages]);
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-4">
+    <ScrollArea className="h-[calc(100vh-200px)] px-4 py-4">
       <div className="flex flex-col space-y-4">
         {messages.slice(1).map((message, index) => (
           <div
@@ -49,6 +50,6 @@ export const ChatMessages = ({ messages }: ChatMessagesProps) => {
         ))}
         <div ref={messagesEndRef} />
       </div>
-    </div>
+    </ScrollArea>
   );
 };
