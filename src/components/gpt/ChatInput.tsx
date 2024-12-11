@@ -16,7 +16,7 @@ export const ChatInput = ({
   isLoading 
 }: ChatInputProps) => {
   return (
-    <Card className="fixed bottom-0 left-64 right-64 mx-auto bg-white border-t shadow-lg">
+    <Card className="sticky bottom-0 w-full bg-white border-t shadow-lg">
       <form onSubmit={onSubmit} className="p-4">
         <div className="flex gap-2">
           <Textarea

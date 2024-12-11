@@ -19,10 +19,10 @@ export const ChatContainer = ({
   systemPrompt
 }: ChatContainerProps) => {
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-64px)] overflow-hidden">
+    <div className="flex-1 flex flex-col h-[calc(100vh-64px)] overflow-hidden relative">
       <div className="flex flex-1">
         <div className="flex-1 flex flex-col">
-          <ScrollArea className="flex-1 pb-[200px]">
+          <ScrollArea className="flex-1">
             <ChatInterface 
               systemPrompt={systemPrompt}
               onHistoryUpdate={onHistoryUpdate}

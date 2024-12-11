@@ -21,7 +21,7 @@ export const ChatMessages = ({ messages }: ChatMessagesProps) => {
   }, [messages]);
 
   return (
-    <div className="space-y-4 p-4">
+    <div className="flex flex-col space-y-4 p-4 pb-24">
       {messages.slice(1).map((message, index) => (
         <div
           key={index}
