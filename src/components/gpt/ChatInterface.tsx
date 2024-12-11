@@ -43,6 +43,15 @@ export const ChatInterface = ({
     scrollToBottom();
   }, [messages]);
 
+  const handleEmailOpen = (emailContent: string) => {
+    const mailtoLink = `mailto:?subject=Invitation to Test Our Platform&body=${encodeURIComponent(emailContent)}`;
+    window.location.href = mailtoLink;
+    toast({
+      title: "Email Client Opened",
+      description: "Your default email client has been opened with the invitation draft.",
+    });
+  };
+
   const handleFiveWhysRedirect = (problemStatement: string) => {
     navigate("/operations/quality/five-whys", {
       state: { problemStatement }
@@ -138,9 +147,30 @@ export const ChatInterface = ({
         content: response.data.choices[0].message.content 
       };
       
-      // Check if this is a confirmation to start Five Whys analysis
       const lastMessages = [...messages, userMessage, assistantMessage];
-      const isConfirmation = lastMessages.some(msg => 
+      
+      // Check for email confirmation
+      const isEmailConfirmation = lastMessages.some(msg => 
+        msg.role === "user" && 
+        /^(yes|yeah|sure|okay|ok|proceed|open email)$/i.test(msg.content.trim())
+      );
+      
+      const hasEmailPrompt = lastMessages.some(msg => 
+        msg.role === "system" && 
+        msg.content.includes("invitation emails")
+      );
+
+      if (isEmailConfirmation && hasEmailPrompt) {
+        // Extract the email content from the assistant's last message before confirmation
+        const emailContent = lastMessages
+          .filter(msg => msg.role === "assistant")
+          .slice(-2)[0]?.content || "";
+        
+        handleEmailOpen(emailContent);
+      }
+
+      // Check for Five Whys confirmation
+      const isFiveWhysConfirmation = lastMessages.some(msg => 
         msg.role === "user" && 
         /^(yes|yeah|sure|okay|ok|proceed|let's do it|start)$/i.test(msg.content.trim())
       );
@@ -150,8 +180,7 @@ export const ChatInterface = ({
         msg.content.includes("root cause analysis")
       );
 
-      if (isConfirmation && hasFiveWhysPrompt) {
-        // Extract the problem statement from the conversation
+      if (isFiveWhysConfirmation && hasFiveWhysPrompt) {
         const problemDescription = lastMessages
           .filter(msg => msg.role === "user")
           .map(msg => msg.content)

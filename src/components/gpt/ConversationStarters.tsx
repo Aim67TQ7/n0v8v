@@ -1,4 +1,4 @@
-import { Lightbulb, PenLine, HelpCircle, Sparkles, GitFork } from "lucide-react";
+import { Lightbulb, PenLine, HelpCircle, Sparkles, GitFork, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,11 @@ const starters = [
     icon: GitFork,
     text: "Help me walk through a 5-why analysis",
     systemPrompt: "You are a helpful AI assistant specialized in root cause analysis. Help the user define their problem statement clearly. Once they've described their problem, summarize it concisely and ask if they'd like to proceed with a formal Five Whys analysis. If they agree, you'll help guide them through the process."
+  },
+  {
+    icon: Mail,
+    text: "Help me write an invitation email for platform testing",
+    systemPrompt: "You are a helpful AI assistant that helps write invitation emails. First, ask the user for any specific details they'd like to include in the invitation. Then, draft a friendly and professional email inviting people to test the platform. After showing the draft, ask if they would like to open this in their email client. If they agree, provide instructions to click a button that will open their default email client with the drafted content."
   },
   {
     icon: Lightbulb,
