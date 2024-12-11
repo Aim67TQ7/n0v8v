@@ -30,6 +30,39 @@ serve(async (req) => {
           messages: [{ role: 'user', content: 'test' }],
         };
         break;
+      case 'openai':
+        endpoint = 'https://api.openai.com/v1/chat/completions';
+        headers = {
+          'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+          'Content-Type': 'application/json',
+        };
+        body = {
+          model: 'gpt-4o-mini',
+          messages: [{ role: 'user', content: 'test' }],
+        };
+        break;
+      case 'groq':
+        endpoint = 'https://api.groq.com/v1/chat/completions';
+        headers = {
+          'Authorization': `Bearer ${Deno.env.get('GROQ_API_KEY')}`,
+          'Content-Type': 'application/json',
+        };
+        body = {
+          model: 'mixtral-8x7b-32768',
+          messages: [{ role: 'user', content: 'test' }],
+        };
+        break;
+      case 'perplexity':
+        endpoint = 'https://api.perplexity.ai/chat/completions';
+        headers = {
+          'Authorization': `Bearer ${Deno.env.get('PERPLEXITY_API_KEY')}`,
+          'Content-Type': 'application/json',
+        };
+        body = {
+          model: 'pplx-7b-online',
+          messages: [{ role: 'user', content: 'test' }],
+        };
+        break;
       default:
         throw new Error('Invalid provider');
     }
@@ -45,26 +78,15 @@ serve(async (req) => {
     
     return new Response(
       JSON.stringify({ status: response.ok ? 'up' : 'down' }),
-      { 
-        headers: { 
-          ...corsHeaders, 
-          'Content-Type': 'application/json' 
-        } 
-      }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
     console.error('Error in check-ai-status function:', error);
     return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        status: 'down'
-      }),
+      JSON.stringify({ error: error.message, status: 'down' }),
       { 
         status: 500,
-        headers: { 
-          ...corsHeaders, 
-          'Content-Type': 'application/json' 
-        }
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     );
   }

@@ -9,7 +9,7 @@ interface Message {
 
 interface ChatStreamHandlerProps {
   messages: Message[];
-  setMessages: (messages: Message[]) => void;
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   setIsLoading: (isLoading: boolean) => void;
   abortControllerRef: React.MutableRefObject<AbortController | null>;
 }
@@ -26,8 +26,7 @@ export const ChatStreamHandler = ({
     try {
       abortControllerRef.current = new AbortController();
       const { data: { stream }, error } = await supabase.functions.invoke('chat-with-groq', {
-        body: { messages },
-        signal: abortControllerRef.current.signal
+        body: { messages }
       });
 
       if (error) throw error;
@@ -75,6 +74,8 @@ export const ChatStreamHandler = ({
       abortControllerRef.current = null;
     }
   };
+
+  handleStream();
 
   return null; // This is a logic-only component
 };
