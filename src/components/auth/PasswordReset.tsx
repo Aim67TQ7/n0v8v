@@ -1,78 +1,40 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 
 export const PasswordReset = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [cooldown, setCooldown] = useState(false);
-  const [cooldownTime, setCooldownTime] = useState(0);
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (cooldown) {
-      toast({
-        variant: "destructive",
-        title: "Please wait",
-        description: `Please wait ${Math.ceil(cooldownTime / 60)} minutes before requesting another code.`,
-      });
-      return;
-    }
-
     setLoading(true);
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/verify-otp`,
+        redirectTo: `${window.location.origin}/update-password`,
       });
 
-      if (error) {
-        console.error("Reset password error details:", error);
-        const isRateLimit = 
-          error.status === 429 || 
-          error.message.toLowerCase().includes('rate limit') ||
-          error.message.toLowerCase().includes('exceeded');
-
-        if (isRateLimit) {
-          const cooldownPeriod = 5 * 60; // 5 minutes in seconds
-          setCooldown(true);
-          setCooldownTime(cooldownPeriod);
-
-          const timer = setInterval(() => {
-            setCooldownTime((prev) => {
-              if (prev <= 1) {
-                clearInterval(timer);
-                setCooldown(false);
-                return 0;
-              }
-              return prev - 1;
-            });
-          }, 1000);
-
-          throw new Error("Too many reset attempts. Please wait 5 minutes before trying again.");
-        }
-        throw error;
-      }
+      if (error) throw error;
 
       toast({
         title: "Check your email",
-        description: "We've sent you a verification code.",
+        description: "We've sent you a password reset link.",
       });
       
-      navigate("/verify-otp", { state: { email } });
-      
+      // Don't navigate away - let user check their email
     } catch (error: any) {
       console.error("Reset password error:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "Failed to send verification code",
+        description: error.message || "Failed to send reset link",
       });
     } finally {
       setLoading(false);
@@ -87,13 +49,8 @@ export const PasswordReset = () => {
             Reset your password
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Enter your email and we'll send you a verification code
+            Enter your email and we'll send you a reset link
           </p>
-          {cooldown && (
-            <p className="mt-2 text-center text-sm text-red-600">
-              Please wait {Math.ceil(cooldownTime / 60)} minutes and {cooldownTime % 60} seconds before requesting another code
-            </p>
-          )}
         </div>
         <form onSubmit={handleReset} className="mt-8 space-y-6">
           <Input
@@ -107,10 +64,19 @@ export const PasswordReset = () => {
           <Button
             type="submit"
             className="w-full"
-            disabled={loading || cooldown}
+            disabled={loading}
           >
-            {loading ? "Sending..." : cooldown ? `Wait ${Math.ceil(cooldownTime / 60)}m ${cooldownTime % 60}s` : "Send Code"}
+            {loading ? "Sending..." : "Send Reset Link"}
           </Button>
+          <div className="text-center">
+            <Button
+              variant="link"
+              className="text-sm text-blue-600 hover:text-blue-800"
+              onClick={() => navigate("/login")}
+            >
+              Back to login
+            </Button>
+          </div>
         </form>
       </Card>
     </div>
