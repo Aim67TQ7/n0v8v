@@ -1,9 +1,11 @@
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
 interface Cause {
   id: string;
   text: string;
   checked: boolean;
+  parentId?: string;
 }
 
 interface CausesListProps {
@@ -41,7 +43,9 @@ export const CausesList = ({
             />
             <label
               htmlFor={cause.id}
-              className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              className={`text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${
+                cause.parentId ? 'ml-4' : ''
+              }`}
             >
               {cause.text}
             </label>
@@ -53,7 +57,7 @@ export const CausesList = ({
         disabled={isAnalyzing}
         className="w-full"
       >
-        {isAnalyzing ? "Processing..." : currentIteration === 5 ? "Generate Fishbone" : "Next"}
+        {isAnalyzing ? "Processing..." : currentIteration === 5 ? "Generate Analysis" : "Next"}
       </Button>
     </div>
   );
