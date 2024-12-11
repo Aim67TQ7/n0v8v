@@ -21,15 +21,15 @@ export const ChatContainer = ({
   return (
     <div className="flex-1 flex flex-col h-[calc(100vh-64px)] overflow-hidden relative">
       <div className="flex flex-1">
-        <div className="flex-1 flex flex-col">
-          <ScrollArea className="flex-1">
+        <div className="flex-1 flex flex-col relative">
+          <div className="flex-1 overflow-hidden">
             <ChatInterface 
               systemPrompt={systemPrompt}
               onHistoryUpdate={onHistoryUpdate}
               inputValue={inputValue}
               setInputValue={setInputValue}
             />
-          </ScrollArea>
+          </div>
         </div>
       </div>
     </div>

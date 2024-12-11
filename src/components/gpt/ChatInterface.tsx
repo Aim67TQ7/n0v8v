@@ -138,8 +138,10 @@ How can I assist you today?`,
   };
 
   return (
-    <div className="relative flex flex-col min-h-full">
-      <ChatMessages messages={messages} />
+    <div className="flex flex-col h-full">
+      <div className="flex-1 overflow-hidden relative">
+        <ChatMessages messages={messages} />
+      </div>
       <ChatInput
         inputValue={inputValue}
         setInputValue={setInputValue}

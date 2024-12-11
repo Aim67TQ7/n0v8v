@@ -16,14 +16,14 @@ export const ChatInput = ({
   isLoading 
 }: ChatInputProps) => {
   return (
-    <Card className="sticky bottom-0 w-full bg-white border-t shadow-lg">
+    <Card className="sticky bottom-0 w-full bg-white border-t shadow-lg z-10">
       <form onSubmit={onSubmit} className="p-4">
         <div className="flex gap-2">
           <Textarea
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1 min-h-[60px] resize-none text-sm"
+            className="flex-1 min-h-[60px] max-h-[120px] resize-none text-sm"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
