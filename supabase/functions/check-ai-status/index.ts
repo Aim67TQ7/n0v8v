@@ -1,5 +1,5 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -7,7 +7,6 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -18,19 +17,16 @@ serve(async (req) => {
     let headers = {};
     let body = {};
 
-    console.log(`Checking status for ${provider} API...`);
-
     switch (provider) {
-      case 'anthropic':
-        endpoint = 'https://api.anthropic.com/v1/messages';
+      case 'groq':
+        endpoint = 'https://api.groq.com/openai/v1/chat/completions';
         headers = {
-          'x-api-key': Deno.env.get('ANTHROPIC_API_KEY') || '',
-          'anthropic-version': '2023-06-01',
+          'Authorization': `Bearer ${Deno.env.get('GROQ_API_KEY')}`,
           'Content-Type': 'application/json',
         };
         body = {
-          model: 'claude-3-haiku-20240307',
-          messages: [{ role: 'user', content: 'test' }],
+          model: 'mixtral-8x7b-32768',
+          messages: [{ role: 'system', content: 'test' }],
         };
         break;
       case 'openai':
@@ -41,17 +37,18 @@ serve(async (req) => {
         };
         body = {
           model: 'gpt-4',
-          messages: [{ role: 'user', content: 'test' }],
+          messages: [{ role: 'system', content: 'test' }],
         };
         break;
-      case 'groq':
-        endpoint = 'https://api.groq.com/v1/chat/completions';
+      case 'anthropic':
+        endpoint = 'https://api.anthropic.com/v1/messages';
         headers = {
-          'Authorization': `Bearer ${Deno.env.get('GROQ_API_KEY')}`,
+          'x-api-key': Deno.env.get('ANTHROPIC_API_KEY'),
+          'anthropic-version': '2023-06-01',
           'Content-Type': 'application/json',
         };
         body = {
-          model: 'mixtral-8x7b-32768',
+          model: 'claude-3-sonnet-20240229',
           messages: [{ role: 'user', content: 'test' }],
         };
         break;
@@ -62,39 +59,30 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         };
         body = {
-          model: 'pplx-7b-online',
-          messages: [{ role: 'user', content: 'test' }],
+          model: 'sonar-medium-online',
+          messages: [{ role: 'system', content: 'test' }],
         };
         break;
       default:
         throw new Error('Invalid provider');
     }
 
-    try {
-      console.log(`Making request to ${endpoint}`);
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(body),
-      });
+    console.log(`Checking status for ${provider} API...`);
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+    });
 
-      console.log(`${provider} API response status:`, response.status);
-      
-      return new Response(
-        JSON.stringify({ status: response.ok ? 'up' : 'down' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    } catch (error) {
-      console.error(`Error checking ${provider} API:`, error);
-      return new Response(
-        JSON.stringify({ status: 'down', error: error.message }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    console.log(`${provider} API response status:`, response.status);
+    return new Response(
+      JSON.stringify({ status: response.ok ? 'up' : 'down' }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
   } catch (error) {
     console.error('Error in check-ai-status function:', error);
     return new Response(
-      JSON.stringify({ error: error.message, status: 'down' }),
+      JSON.stringify({ error: error.message }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }

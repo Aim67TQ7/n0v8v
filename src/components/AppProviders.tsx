@@ -1,28 +1,20 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { BrowserRouter } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { createClient } from '@supabase/supabase-js';
-import { SessionContextProvider } from '@supabase/auth-helpers-react';
-import { AuthProvider } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const queryClient = new QueryClient();
-
-const supabaseClient = createClient(
-  "https://bjxbwygfelodmhrfswzi.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqeGJ3eWdmZWxvZG1ocmZzd3ppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM2MTEzMzYsImV4cCI6MjA0OTE4NzMzNn0.eSnys2ExcBmEeOJKHnt3DXBlpZLDhWN0kRUiOr34SvQ"
-);
 
 export const AppProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <SessionContextProvider supabaseClient={supabaseClient}>
-        <AuthProvider>
-          <BrowserRouter>
-            <TooltipProvider>
-              {children}
-            </TooltipProvider>
-          </BrowserRouter>
-        </AuthProvider>
+      <SessionContextProvider supabaseClient={supabase}>
+        <BrowserRouter>
+          <TooltipProvider>
+            {children}
+          </TooltipProvider>
+        </BrowserRouter>
       </SessionContextProvider>
     </QueryClientProvider>
   );

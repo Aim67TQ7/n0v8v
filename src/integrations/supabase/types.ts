@@ -9,47 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      ai_personalities: {
-        Row: {
-          company_id: string | null
-          created_at: string
-          description: string | null
-          id: string
-          name: string
-          provider: string
-          system_prompt: string
-          updated_at: string
-        }
-        Insert: {
-          company_id?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          name: string
-          provider: string
-          system_prompt: string
-          updated_at?: string
-        }
-        Update: {
-          company_id?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          name?: string
-          provider?: string
-          system_prompt?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ai_personalities_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       Auth: {
         Row: {
           created_at: string
@@ -69,31 +28,25 @@ export type Database = {
         Row: {
           company_id: string | null
           created_at: string
-          expires_at: string
           id: string
           messages: Json
           model: string
-          title: string
           user_id: string | null
         }
         Insert: {
           company_id?: string | null
           created_at?: string
-          expires_at?: string
           id?: string
           messages: Json
           model: string
-          title?: string
           user_id?: string | null
         }
         Update: {
           company_id?: string | null
           created_at?: string
-          expires_at?: string
           id?: string
           messages?: Json
           model?: string
-          title?: string
           user_id?: string | null
         }
         Relationships: [
@@ -115,92 +68,98 @@ export type Database = {
       }
       companies: {
         Row: {
-          contact_email: string | null
-          contact_name: string | null
           created_at: string
           id: string
           license_number: string
           license_type: string
           max_users: number
           name: string
-          status: string | null
         }
         Insert: {
-          contact_email?: string | null
-          contact_name?: string | null
           created_at?: string
           id?: string
           license_number?: string
           license_type?: string
           max_users?: number
           name: string
-          status?: string | null
         }
         Update: {
-          contact_email?: string | null
-          contact_name?: string | null
           created_at?: string
           id?: string
           license_number?: string
           license_type?: string
           max_users?: number
           name?: string
-          status?: string | null
         }
         Relationships: []
       }
-      company_details: {
+      company_settings: {
         Row: {
-          billing_address: string | null
-          billing_city: string | null
-          billing_country: string | null
-          billing_state: string | null
-          billing_zip: string | null
-          contact_phone: string | null
+          company_id: string | null
           created_at: string | null
-          demo_ends_at: string | null
-          demo_starts_at: string | null
-          gpt_name: string | null
+          gpt_name: string
           id: string
-          name: string
           updated_at: string | null
         }
         Insert: {
-          billing_address?: string | null
-          billing_city?: string | null
-          billing_country?: string | null
-          billing_state?: string | null
-          billing_zip?: string | null
-          contact_phone?: string | null
+          company_id?: string | null
           created_at?: string | null
-          demo_ends_at?: string | null
-          demo_starts_at?: string | null
-          gpt_name?: string | null
-          id: string
-          name: string
+          gpt_name: string
+          id?: string
           updated_at?: string | null
         }
         Update: {
-          billing_address?: string | null
-          billing_city?: string | null
-          billing_country?: string | null
-          billing_state?: string | null
-          billing_zip?: string | null
-          contact_phone?: string | null
+          company_id?: string | null
           created_at?: string | null
-          demo_ends_at?: string | null
-          demo_starts_at?: string | null
-          gpt_name?: string | null
+          gpt_name?: string
           id?: string
-          name?: string
           updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "company_details_id_fkey"
-            columns: ["id"]
+            foreignKeyName: "company_settings_company_id_fkey"
+            columns: ["company_id"]
             isOneToOne: true
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      department_members: {
+        Row: {
+          created_at: string
+          department_id: string | null
+          id: string
+          photo_url: string | null
+          profile_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          department_id?: string | null
+          id?: string
+          photo_url?: string | null
+          profile_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          department_id?: string | null
+          id?: string
+          photo_url?: string | null
+          profile_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "department_members_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "department_members_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -277,33 +236,6 @@ export type Database = {
           embedding?: string | null
           id?: never
           metadata?: Json | null
-        }
-        Relationships: []
-      }
-      email_verifications: {
-        Row: {
-          created_at: string
-          email: string
-          expires_at: string
-          id: string
-          token: string
-          verified_at: string | null
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          expires_at?: string
-          id?: string
-          token: string
-          verified_at?: string | null
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          expires_at?: string
-          id?: string
-          token?: string
-          verified_at?: string | null
         }
         Relationships: []
       }
@@ -631,12 +563,9 @@ export type Database = {
           email: string
           first_name: string | null
           id: string
-          invite_code: string | null
           last_name: string | null
-          phone_number: string | null
           photo_url: string | null
           role: string
-          verified_phone: boolean | null
         }
         Insert: {
           company_id?: string | null
@@ -645,12 +574,9 @@ export type Database = {
           email: string
           first_name?: string | null
           id: string
-          invite_code?: string | null
           last_name?: string | null
-          phone_number?: string | null
           photo_url?: string | null
           role?: string
-          verified_phone?: boolean | null
         }
         Update: {
           company_id?: string | null
@@ -659,12 +585,9 @@ export type Database = {
           email?: string
           first_name?: string | null
           id?: string
-          invite_code?: string | null
           last_name?: string | null
-          phone_number?: string | null
           photo_url?: string | null
           role?: string
-          verified_phone?: boolean | null
         }
         Relationships: [
           {
@@ -860,10 +783,6 @@ export type Database = {
             }
             Returns: unknown
           }
-      cleanup_expired_chats: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
       create_licensed_company: {
         Args: {
           company_name: string
