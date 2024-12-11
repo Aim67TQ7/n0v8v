@@ -32,7 +32,6 @@ const CompanyGPT = () => {
   const [selectedSession, setSelectedSession] = useState<string>();
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const isBypassEnabled = localStorage.getItem('bypass_auth') === 'true';
 
   const { data: profile, error: profileError } = useQuery({
     queryKey: ["user-profile", session?.user?.id],
@@ -62,15 +61,15 @@ const CompanyGPT = () => {
         return null;
       }
     },
-    enabled: !!session?.user?.id && !isBypassEnabled,
+    enabled: !!session?.user?.id,
     retry: 1,
   });
 
   useEffect(() => {
-    if (!session && !isBypassEnabled) {
+    if (!session) {
       navigate("/login");
     }
-  }, [session, navigate, isBypassEnabled]);
+  }, [session, navigate]);
 
   const handleModelChange = (modelId: string, newSystemPrompt: string) => {
     setSelectedModel(modelId);
@@ -91,6 +90,8 @@ const CompanyGPT = () => {
         return 'bg-red-100 text-red-800 border-red-200';
       case 'admin':
         return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'developer':
+        return 'bg-green-100 text-green-800 border-green-200';
       default:
         return 'bg-blue-100 text-blue-800 border-blue-200';
     }
@@ -132,12 +133,7 @@ const CompanyGPT = () => {
           <div className="w-64 border-l bg-white flex flex-col shrink-0">
             <div className="p-4 border-b">
               <div className="flex flex-col gap-2">
-                {isBypassEnabled ? (
-                  <div className="flex items-center gap-2">
-                    <Shield className="h-4 w-4 text-yellow-600" />
-                    <span className="text-sm font-medium text-yellow-600">Maintenance Mode</span>
-                  </div>
-                ) : profile ? (
+                {profile && (
                   <>
                     <div className="flex items-center gap-2">
                       <User className="h-4 w-4 text-gray-600" />
@@ -146,11 +142,10 @@ const CompanyGPT = () => {
                       </span>
                     </div>
                     <Badge className={`${getRoleBadgeColor(profile.role)} w-fit`}>
-                      {profile.role === 'superadmin' ? 'Super Admin' : 
-                       profile.role === 'admin' ? 'Admin' : 'User'}
+                      {profile.role.charAt(0).toUpperCase() + profile.role.slice(1)}
                     </Badge>
                   </>
-                ) : null}
+                )}
               </div>
             </div>
             <div className="flex-1 overflow-y-auto">
