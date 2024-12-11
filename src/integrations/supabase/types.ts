@@ -205,45 +205,6 @@ export type Database = {
           },
         ]
       }
-      department_members: {
-        Row: {
-          created_at: string
-          department_id: string | null
-          id: string
-          photo_url: string | null
-          profile_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          department_id?: string | null
-          id?: string
-          photo_url?: string | null
-          profile_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          department_id?: string | null
-          id?: string
-          photo_url?: string | null
-          profile_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "department_members_department_id_fkey"
-            columns: ["department_id"]
-            isOneToOne: false
-            referencedRelation: "departments"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "department_members_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       departments: {
         Row: {
           burden_rate: number | null
