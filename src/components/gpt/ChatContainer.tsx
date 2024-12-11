@@ -34,13 +34,6 @@ export const ChatContainer = ({
             />
           </ScrollArea>
         </div>
-        
-        {/* Conversation Starters - Fixed position at bottom left */}
-        <div className="w-64 border-l">
-          <div className="sticky bottom-0 p-4 bg-white border-t">
-            <ConversationStarters onSelect={handleStarterSelect} />
-          </div>
-        </div>
       </div>
     </div>
   );

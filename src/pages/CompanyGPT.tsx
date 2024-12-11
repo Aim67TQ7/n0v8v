@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarProvider, Sidebar, SidebarContent } from "@/components/ui/sidebar";
 import { ChatContainer } from "@/components/gpt/ChatContainer";
 import { SidebarHeader } from "@/components/gpt/SidebarHeader";
+import { ConversationStarters } from "@/components/gpt/ConversationStarters";
 
 interface ChatSession {
   id: string;
@@ -18,9 +19,14 @@ const CompanyGPT = () => {
   const [selectedModel, setSelectedModel] = useState("groq");
   const [selectedSession, setSelectedSession] = useState<string>();
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
+  const [inputValue, setInputValue] = useState("");
 
   const handleNewChat = () => {
     setSelectedSession(undefined);
+  };
+
+  const handleStarterSelect = (prompt: string) => {
+    setInputValue(prompt);
   };
 
   return (
@@ -40,6 +46,9 @@ const CompanyGPT = () => {
                   />
                 </SidebarContent>
               </ScrollArea>
+              <div className="border-t p-4">
+                <ConversationStarters onSelect={handleStarterSelect} />
+              </div>
             </Sidebar>
 
             {/* Main Content - Scrollable */}
@@ -47,6 +56,8 @@ const CompanyGPT = () => {
               selectedSession={selectedSession}
               chatSessions={chatSessions}
               onHistoryUpdate={() => {}}
+              inputValue={inputValue}
+              setInputValue={setInputValue}
             />
             
             {/* Right Sidebar - Fixed */}
