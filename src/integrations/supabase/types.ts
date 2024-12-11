@@ -140,89 +140,68 @@ export type Database = {
         }
         Relationships: []
       }
-      company_registrations: {
+      company_details: {
         Row: {
-          billing_address: string
-          billing_city: string
-          billing_country: string
-          billing_state: string
-          billing_zip: string
-          company_name: string
-          contact_email: string
-          contact_first_name: string
-          contact_last_name: string
-          contact_phone: string
-          created_at: string
+          billing_address: string | null
+          billing_city: string | null
+          billing_country: string | null
+          billing_state: string | null
+          billing_zip: string | null
+          contact_email: string | null
+          contact_first_name: string | null
+          contact_last_name: string | null
+          contact_phone: string | null
+          created_at: string | null
           demo_ends_at: string | null
           demo_starts_at: string | null
+          gpt_name: string | null
           id: string
-          registration_status: string
-          updated_at: string
-        }
-        Insert: {
-          billing_address: string
-          billing_city: string
-          billing_country: string
-          billing_state: string
-          billing_zip: string
-          company_name: string
-          contact_email: string
-          contact_first_name: string
-          contact_last_name: string
-          contact_phone: string
-          created_at?: string
-          demo_ends_at?: string | null
-          demo_starts_at?: string | null
-          id?: string
-          registration_status?: string
-          updated_at?: string
-        }
-        Update: {
-          billing_address?: string
-          billing_city?: string
-          billing_country?: string
-          billing_state?: string
-          billing_zip?: string
-          company_name?: string
-          contact_email?: string
-          contact_first_name?: string
-          contact_last_name?: string
-          contact_phone?: string
-          created_at?: string
-          demo_ends_at?: string | null
-          demo_starts_at?: string | null
-          id?: string
-          registration_status?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      company_settings: {
-        Row: {
-          company_id: string | null
-          created_at: string | null
-          gpt_name: string
-          id: string
+          name: string
+          registration_status: string | null
           updated_at: string | null
         }
         Insert: {
-          company_id?: string | null
+          billing_address?: string | null
+          billing_city?: string | null
+          billing_country?: string | null
+          billing_state?: string | null
+          billing_zip?: string | null
+          contact_email?: string | null
+          contact_first_name?: string | null
+          contact_last_name?: string | null
+          contact_phone?: string | null
           created_at?: string | null
-          gpt_name: string
-          id?: string
+          demo_ends_at?: string | null
+          demo_starts_at?: string | null
+          gpt_name?: string | null
+          id: string
+          name: string
+          registration_status?: string | null
           updated_at?: string | null
         }
         Update: {
-          company_id?: string | null
+          billing_address?: string | null
+          billing_city?: string | null
+          billing_country?: string | null
+          billing_state?: string | null
+          billing_zip?: string | null
+          contact_email?: string | null
+          contact_first_name?: string | null
+          contact_last_name?: string | null
+          contact_phone?: string | null
           created_at?: string | null
-          gpt_name?: string
+          demo_ends_at?: string | null
+          demo_starts_at?: string | null
+          gpt_name?: string | null
           id?: string
+          name?: string
+          registration_status?: string | null
           updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "company_settings_company_id_fkey"
-            columns: ["company_id"]
+            foreignKeyName: "company_details_id_fkey"
+            columns: ["id"]
             isOneToOne: true
             referencedRelation: "companies"
             referencedColumns: ["id"]

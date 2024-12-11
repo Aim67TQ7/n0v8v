@@ -8,7 +8,9 @@ import {
 } from "@/components/ui/table";
 import { Database } from "@/integrations/supabase/types";
 
-type Company = Database["public"]["Tables"]["companies"]["Row"];
+type Company = Database["public"]["Tables"]["companies"]["Row"] & {
+  details?: Database["public"]["Tables"]["company_details"]["Row"];
+};
 
 interface CompaniesTableProps {
   companies: Company[] | undefined;
@@ -24,20 +26,21 @@ export const CompaniesTable = ({ companies, isLoading }: CompaniesTableProps) =>
             <TableHead>Company Name</TableHead>
             <TableHead>License Type</TableHead>
             <TableHead>Max Users</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Contact</TableHead>
             <TableHead>Created At</TableHead>
-            <TableHead>License Number</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-center py-4">
+              <TableCell colSpan={6} className="text-center py-4">
                 Loading companies...
               </TableCell>
             </TableRow>
           ) : companies?.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-center py-4">
+              <TableCell colSpan={6} className="text-center py-4">
                 No companies found
               </TableCell>
             </TableRow>
@@ -48,9 +51,23 @@ export const CompaniesTable = ({ companies, isLoading }: CompaniesTableProps) =>
                 <TableCell className="capitalize">{company.license_type}</TableCell>
                 <TableCell>{company.max_users}</TableCell>
                 <TableCell>
+                  {company.details?.registration_status || 'active'}
+                </TableCell>
+                <TableCell>
+                  {company.details?.contact_email ? (
+                    <div className="text-sm">
+                      <div>{company.details.contact_email}</div>
+                      <div className="text-muted-foreground">
+                        {company.details.contact_first_name} {company.details.contact_last_name}
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-muted-foreground">No contact info</span>
+                  )}
+                </TableCell>
+                <TableCell>
                   {new Date(company.created_at).toLocaleDateString()}
                 </TableCell>
-                <TableCell>{company.license_number}</TableCell>
               </TableRow>
             ))
           )}

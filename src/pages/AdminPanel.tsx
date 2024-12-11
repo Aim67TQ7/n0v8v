@@ -13,7 +13,10 @@ const AdminPanel = () => {
       console.log("Fetching companies...");
       const { data, error } = await supabase
         .from("companies")
-        .select("*")
+        .select(`
+          *,
+          details:company_details(*)
+        `)
         .order("created_at", { ascending: false });
 
       if (error) {
