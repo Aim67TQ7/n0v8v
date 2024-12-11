@@ -12,11 +12,16 @@ import DMRDocumentation from "@/pages/quality/DMRDocumentation";
 import FiveWhys from "@/pages/quality/FiveWhys";
 import { PasswordReset } from "@/components/auth/PasswordReset";
 import { UpdatePassword } from "@/components/auth/UpdatePassword";
+import Login from "@/pages/Login";
 
 export const routes = [
   {
     path: "/",
     element: <Index />
+  },
+  {
+    path: "/login",
+    element: <Login />
   },
   {
     path: "/reset-password",
