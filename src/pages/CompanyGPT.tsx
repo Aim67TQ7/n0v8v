@@ -53,15 +53,17 @@ const CompanyGPT = () => {
 
             <SidebarExpandButton />
 
-            <ChatContainer 
-              selectedSession={selectedSession}
-              chatSessions={chatSessions}
-              onHistoryUpdate={() => {}}
-              inputValue={inputValue}
-              setInputValue={setInputValue}
-            />
+            <div className="flex-1">
+              <ChatContainer 
+                selectedSession={selectedSession}
+                chatSessions={chatSessions}
+                onHistoryUpdate={() => {}}
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+              />
+            </div>
             
-            <div className="w-64 border-l bg-white flex flex-col">
+            <div className="w-64 border-l bg-white flex flex-col shrink-0">
               <div className="p-4 border-b">
                 <div className="flex flex-col gap-1">
                   <span className="text-sm font-medium">Demo User</span>
