@@ -4,6 +4,7 @@ import Settings from "@/pages/Settings";
 import Modules from "@/pages/Modules";
 import Index from "@/pages/Index";
 import LeanManufacturing from "@/pages/LeanManufacturing";
+import FiveSVision from "@/pages/FiveSVision";
 
 export const routes = [
   {
@@ -25,5 +26,9 @@ export const routes = [
   {
     path: "/operations/lean",
     element: <LeanManufacturing />
+  },
+  {
+    path: "/operations/lean/5s-vision",
+    element: <FiveSVision />
   }
 ];
