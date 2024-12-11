@@ -13,7 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface ModelSelectorProps {
   selectedModel: string;
-  onModelChange: (value: string) => void;
+  onModelChange: (value: string, systemPrompt: string) => void;
 }
 
 type ApiStatus = 'checking' | 'up' | 'down';
@@ -23,6 +23,7 @@ interface AiPersonality {
   name: string;
   description: string;
   provider: string;
+  systemPrompt: string;
 }
 
 const aiPersonalities: AiPersonality[] = [
@@ -30,25 +31,57 @@ const aiPersonalities: AiPersonality[] = [
     id: "anthropic",
     name: "Polaris",
     description: "Smart and fast, but blurts answers",
-    provider: "anthropic"
+    provider: "anthropic",
+    systemPrompt: `I am Polaris, a direct and efficient AI assistant. I specialize in:
+1. Quick, concise responses
+2. Getting straight to the point
+3. Practical, actionable advice
+4. Clear step-by-step instructions
+5. No unnecessary pleasantries
+
+I prioritize speed and clarity over elaborate explanations. How can I help you today?`
   },
   {
     id: "perplexity",
     name: "Faraday",
     description: "Takes time to pull answers together",
-    provider: "perplexity"
+    provider: "perplexity",
+    systemPrompt: `I am Faraday, a thoughtful and analytical AI assistant. My approach is:
+1. Thorough analysis before responding
+2. Consideration of multiple perspectives
+3. Evidence-based reasoning
+4. Detailed explanations
+5. Methodical problem-solving
+
+I take time to provide comprehensive, well-researched answers. What would you like to explore?`
   },
   {
     id: "groq",
     name: "Maggie",
     description: "Efficient and gets work done quick",
-    provider: "groq"
+    provider: "groq",
+    systemPrompt: `I am Maggie, a results-oriented AI assistant. I focus on:
+1. Practical solutions
+2. Efficiency in execution
+3. Clear action items
+4. Time-saving strategies
+5. Getting things done
+
+I help you achieve your goals quickly and effectively. What task can I help you with?`
   },
   {
     id: "openai",
     name: "Magnes",
     description: "The artistic one",
-    provider: "openai"
+    provider: "openai",
+    systemPrompt: `I am Magnes, a creative and imaginative AI assistant. I excel at:
+1. Creative problem-solving
+2. Visual and artistic thinking
+3. Innovative approaches
+4. Design-oriented solutions
+5. Thinking outside the box
+
+I bring an artistic perspective to every challenge. How can I inspire you today?`
   }
 ];
 
@@ -91,10 +124,7 @@ export const ModelSelector = ({ selectedModel, onModelChange }: ModelSelectorPro
       }
     };
 
-    // Initial check
     checkApiStatus();
-
-    // Set up interval for checking every 90 seconds
     const interval = setInterval(checkApiStatus, 90000);
     return () => clearInterval(interval);
   }, []);
@@ -110,12 +140,19 @@ export const ModelSelector = ({ selectedModel, onModelChange }: ModelSelectorPro
     }
   };
 
+  const handleModelChange = (modelId: string) => {
+    const personality = aiPersonalities.find(p => p.id === modelId);
+    if (personality) {
+      onModelChange(modelId, personality.systemPrompt);
+    }
+  };
+
   return (
     <Card className="p-4">
       <h3 className="font-medium mb-3 text-sm">Select AI Personality</h3>
       <RadioGroup
         value={selectedModel}
-        onValueChange={onModelChange}
+        onValueChange={handleModelChange}
         className="flex flex-col gap-3"
       >
         {aiPersonalities.map((ai) => (

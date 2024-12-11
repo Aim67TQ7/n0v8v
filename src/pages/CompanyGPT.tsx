@@ -26,6 +26,7 @@ const CompanyGPT = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedModel, setSelectedModel] = useState("groq");
+  const [systemPrompt, setSystemPrompt] = useState("");
   const [selectedSession, setSelectedSession] = useState<string>();
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -71,6 +72,11 @@ const CompanyGPT = () => {
     }
   }, [session, profile, isLoading, navigate, toast, isBypassEnabled]);
 
+  const handleModelChange = (modelId: string, newSystemPrompt: string) => {
+    setSelectedModel(modelId);
+    setSystemPrompt(newSystemPrompt);
+  };
+
   const handleNewChat = () => {
     setSelectedSession(undefined);
   };
@@ -112,6 +118,7 @@ const CompanyGPT = () => {
               onHistoryUpdate={() => {}}
               inputValue={inputValue}
               setInputValue={setInputValue}
+              systemPrompt={systemPrompt}
             />
           </div>
           
@@ -136,7 +143,7 @@ const CompanyGPT = () => {
             <Card className="m-4 p-4">
               <ModelSelector
                 selectedModel={selectedModel}
-                onModelChange={setSelectedModel}
+                onModelChange={handleModelChange}
               />
             </Card>
           </div>
