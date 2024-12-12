@@ -81,7 +81,7 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
 
       if (error) throw error;
 
-      // Save the process improvement record
+      // Save the process improvement record without specifying an ID
       const { data: processImprovement, error: dbError } = await supabase
         .from('process_improvements')
         .insert({
