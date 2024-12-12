@@ -120,15 +120,20 @@ const FiveWhys = () => {
 
       setAnalysis(data.result);
 
-      // Save the analysis
-      await supabase.from('five_whys_analysis').insert({
+      // Save the analysis with the correct type for learning_feedback
+      const analysisData = {
         company_id: profile.company_id,
         created_by: session.user.id,
         problem_statement: problemStatement,
         selected_causes: allAnswers,
         fishbone_data: data.result,
-        learning_feedback: learningFeedback,
-      });
+        learning_feedback: learningFeedback.map(item => ({
+          iteration: item.iteration,
+          feedback: item.feedback
+        }))
+      };
+
+      await supabase.from('five_whys_analysis').insert(analysisData);
 
       toast({
         title: "Analysis Complete",
@@ -169,9 +174,9 @@ const FiveWhys = () => {
             problemStatement={problemStatement}
             currentIteration={currentIteration}
             suggestedQuestions={[
-              "Why did this happen?",
-              "What caused this situation?",
-              "What were the underlying factors?"
+              `Why ${currentIteration === 1 ? 'is' : 'did'} ${currentIteration === 1 ? problemStatement.toLowerCase() : answers[answers.length - 1].toLowerCase()}?`,
+              `What caused ${currentIteration === 1 ? problemStatement.toLowerCase() : answers[answers.length - 1].toLowerCase()}?`,
+              `What were the underlying factors that led to ${currentIteration === 1 ? problemStatement.toLowerCase() : answers[answers.length - 1].toLowerCase()}?`
             ]}
             onAnswer={handleAnswer}
           />

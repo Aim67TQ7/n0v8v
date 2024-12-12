@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { problemStatement, selectedCauses, iteration, generateFishbone } = await req.json();
+    const { problemStatement, answers, iteration, generateFishbone } = await req.json();
 
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -21,23 +21,32 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4',
         messages: [
           {
             role: 'system',
             content: generateFishbone
-              ? 'You are an expert in root cause analysis. Generate a detailed analysis including a fishbone diagram, root cause identification, and recommended actions.'
-              : `You are an expert in root cause analysis. For iteration ${iteration}/5, generate 5 potential deeper causes based on the previously selected causes. Each cause should be more specific than the last iteration.`
+              ? `You are an expert in root cause analysis. Based on the problem statement and the series of "why" answers provided, generate:
+                 1. A clear root cause statement
+                 2. Immediate corrective actions that should be taken
+                 3. Long-term preventive measures to avoid similar issues
+                 Format your response in clear sections.`
+              : `You are an expert in root cause analysis conducting a Five Whys investigation. 
+                 For iteration ${iteration}/5, analyze the previous response and generate follow-up "why" questions 
+                 that dig deeper into the root cause. Each question should be more specific than the last iteration.`
           },
           {
             role: 'user',
             content: generateFishbone
-              ? `Analyze this problem: "${problemStatement}" with these selected causes: ${JSON.stringify(selectedCauses)}. 
-                 Provide: 1) A text-based fishbone diagram, 2) The identified root cause, 3) Recommended corrective actions, 
-                 4) Preventive actions to avoid similar issues in the future.`
+              ? `Problem: "${problemStatement}"
+                 Five Whys Answers: ${JSON.stringify(answers)}
+                 Please provide:
+                 1. Root Cause Analysis
+                 2. Corrective Actions
+                 3. Preventive Measures`
               : `Problem: "${problemStatement}"
-                 Previous selections: ${JSON.stringify(selectedCauses)}
-                 Generate 5 more specific potential causes for iteration ${iteration}.`
+                 Previous answers: ${JSON.stringify(answers)}
+                 Generate 3 probing "why" questions for iteration ${iteration}.`
           }
         ],
       }),
@@ -47,23 +56,26 @@ serve(async (req) => {
     const result = data.choices[0].message.content;
 
     if (generateFishbone) {
-      // Parse the structured response into sections
+      // Parse the structured response
       const sections = result.split('\n\n');
       const analysis = {
-        fishboneDiagram: sections[0],
-        rootCause: sections[1].replace('Root Cause: ', ''),
-        correctiveActions: sections[2].replace('Corrective Actions:\n', '').split('\n'),
-        preventiveActions: sections[3].replace('Preventive Actions:\n', '').split('\n')
+        rootCause: sections[0].replace('Root Cause: ', ''),
+        correctiveActions: sections[1].replace('Corrective Actions:\n', '').split('\n'),
+        preventiveActions: sections[2].replace('Preventive Measures:\n', '').split('\n'),
+        fishboneDiagram: `Problem: ${problemStatement}\n\nRoot Causes:\n${answers.map((a, i) => `${i + 1}. ${a}`).join('\n')}`
       };
+
       return new Response(JSON.stringify({ result: analysis }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // For regular iterations, return the list of causes
-    return new Response(JSON.stringify({ result }), {
+    // For regular iterations, parse and return the questions
+    const questions = result.split('\n').filter(q => q.trim().length > 0);
+    return new Response(JSON.stringify({ questions }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
+
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
