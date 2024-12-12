@@ -24,28 +24,17 @@ const FiveWhys = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
 
-  const generateQuestions = async (context: string, iteration: number) => {
-    try {
-      const { data, error } = await supabase.functions.invoke('analyze-five-whys', {
-        body: {
-          problemStatement: context,
-          iteration,
-          generateQuestions: true,
-          previousAnswers: answers,
-        },
-      });
-
-      if (error) throw error;
-      return data.questions;
-    } catch (error) {
-      console.error('Error generating questions:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate questions. Please try again.",
-        variant: "destructive",
-      });
-      return [];
-    }
+  const generateSequentialQuestions = (context: string, iteration: number, previousAnswers: string[]) => {
+    const lastAnswer = previousAnswers[previousAnswers.length - 1] || context;
+    
+    // Generate contextual questions based on the iteration and previous answers
+    const questions = [
+      `${lastAnswer} because proper procedures weren't followed`,
+      `${lastAnswer} because of equipment/tool issues`,
+      `${lastAnswer} because of human error or lack of training`
+    ];
+    
+    return questions;
   };
 
   const startAnalysis = async (statement: string) => {
@@ -176,11 +165,7 @@ const FiveWhys = () => {
           <QuestioningInterface
             problemStatement={problemStatement}
             currentIteration={currentIteration}
-            suggestedQuestions={[
-              `The ${currentIteration === 1 ? problemStatement.toLowerCase() : 'issue'} occurred because of inadequate training`,
-              `The ${currentIteration === 1 ? problemStatement.toLowerCase() : 'issue'} was caused by equipment malfunction`,
-              `The ${currentIteration === 1 ? problemStatement.toLowerCase() : 'issue'} happened due to process deviation`
-            ]}
+            suggestedQuestions={generateSequentialQuestions(problemStatement, currentIteration, answers)}
             onAnswer={handleAnswer}
           />
         ) : (

@@ -46,6 +46,13 @@ export const QuestioningInterface = ({
     setIsLearning(false);
   };
 
+  const getWhyQuestion = () => {
+    if (currentIteration === 1) {
+      return `Why is ${problemStatement.toLowerCase()}?`;
+    }
+    return "Why did this happen?";
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -68,9 +75,7 @@ export const QuestioningInterface = ({
       </Card>
 
       <div className="space-y-2">
-        <p className="font-medium text-lg">
-          Why {currentIteration === 1 ? 'is' : 'did'} {currentIteration === 1 ? problemStatement.toLowerCase() : 'this happen'}?
-        </p>
+        <p className="font-medium text-lg">{getWhyQuestion()}</p>
         
         <div className="space-y-3">
           {suggestedQuestions.map((question, index) => (
