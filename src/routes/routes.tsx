@@ -17,10 +17,10 @@ import TrainingMatrix from "@/pages/training/TrainingMatrix";
 import TeamManagement from "@/pages/TeamManagement";
 import Company from "@/pages/team/Company";
 import PricingPage from "@/pages/Pricing";
-
 import Locations from "@/pages/team/Locations";
 import Departments from "@/pages/team/Departments";
 import WorkCenters from "@/pages/team/WorkCenters";
+import Employees from "@/pages/team/Employees";
 
 export const routes = [
   {
@@ -54,6 +54,10 @@ export const routes = [
   {
     path: "/team/workcenters",
     element: <AuthWrapper><WorkCenters /></AuthWrapper>
+  },
+  {
+    path: "/team/employees",
+    element: <AuthWrapper><Employees /></AuthWrapper>
   },
   {
     path: "/settings",
