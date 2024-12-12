@@ -17,24 +17,51 @@ serve(async (req) => {
     const messages = [
       {
         role: "system",
-        content: `You are a 5S evaluation expert. For each image, analyze the workspace and provide specific feedback for each S category (Sort, Set in Order, Shine, Standardize, Sustain). Score each category from 1-10. Reference specific details from the images in your analysis. Format your response as JSON with the following structure:
-        {
-          "sort_score": number,
-          "set_in_order_score": number,
-          "shine_score": number,
-          "standardize_score": number,
-          "sustain_score": number,
-          "strengths": string[],
-          "weaknesses": string[],
-          "opportunities": string[],
-          "analysis": {
-            "sort": { "observations": string[], "score": number },
-            "set_in_order": { "observations": string[], "score": number },
-            "shine": { "observations": string[], "score": number },
-            "standardize": { "observations": string[], "score": number },
-            "sustain": { "observations": string[], "score": number }
-          }
-        }`
+        content: `You are a 5S workplace organization expert. Analyze each image for 5S compliance and provide SPECIFIC, DETAILED feedback based on what you observe in the images.
+
+For each image:
+1. Look for specific items, tools, equipment, and workspace organization
+2. Note exact locations and conditions
+3. Identify specific safety concerns
+4. Make detailed, actionable recommendations
+
+Format your response as JSON with the following structure:
+{
+  "sort_score": number (1-10),
+  "set_in_order_score": number (1-10),
+  "shine_score": number (1-10),
+  "standardize_score": number (1-10),
+  "sustain_score": number (1-10),
+  "strengths": string[],
+  "weaknesses": string[],
+  "analysis": {
+    "sort": {
+      "observations": string[],
+      "score": number,
+      "specific_improvements": string[]
+    },
+    "set_in_order": {
+      "observations": string[],
+      "score": number,
+      "specific_improvements": string[]
+    },
+    "shine": {
+      "observations": string[],
+      "score": number,
+      "specific_improvements": string[]
+    },
+    "standardize": {
+      "observations": string[],
+      "score": number,
+      "specific_improvements": string[]
+    },
+    "sustain": {
+      "observations": string[],
+      "score": number,
+      "specific_improvements": string[]
+    }
+  }
+}`
       }
     ]
 
@@ -45,7 +72,7 @@ serve(async (req) => {
         content: [
           {
             type: "text",
-            text: `Analyze image ${index + 1} for 5S compliance`
+            text: `Analyze image ${index + 1} in detail for 5S compliance. Look for specific items, tools, equipment, and workspace organization. Note exact locations and conditions.`
           },
           {
             type: "image_url",
@@ -65,6 +92,7 @@ serve(async (req) => {
         model: 'gpt-4o',
         messages,
         temperature: 0.7,
+        max_tokens: 2000
       }),
     })
 
@@ -74,6 +102,22 @@ serve(async (req) => {
 
     const result = await response.json()
     const analysis = JSON.parse(result.choices[0].message.content)
+
+    // Add safety deduction if any safety concerns are found
+    const safetyKeywords = ['hazard', 'unsafe', 'safety', 'risk', 'danger', 'trip', 'fall', 'spill'];
+    const allObservations = [
+      ...analysis.analysis.sort.observations,
+      ...analysis.analysis.set_in_order.observations,
+      ...analysis.analysis.shine.observations,
+      ...analysis.analysis.standardize.observations,
+      ...analysis.analysis.sustain.observations
+    ].join(' ').toLowerCase();
+
+    const safetyIssuesFound = safetyKeywords.some(keyword => allObservations.includes(keyword));
+    if (safetyIssuesFound) {
+      analysis.safety_deduction = 2;
+      analysis.weaknesses.unshift("Safety concerns identified - immediate attention required");
+    }
 
     return new Response(JSON.stringify(analysis), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
