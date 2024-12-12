@@ -7,6 +7,7 @@ import {
   Building2,
   GraduationCap,
   MessageSquare,
+  Tools
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
@@ -24,6 +25,13 @@ export const modulesList: Module[] = [
     description: "Access your licensed applications",
     icon: AppWindow,
     href: "/apps",
+    status: "ready"
+  },
+  {
+    title: "Tools",
+    description: "Access quality and process improvement tools",
+    icon: Tools,
+    href: "/operations/quality",
     status: "ready"
   },
   {
