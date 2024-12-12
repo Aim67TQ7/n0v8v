@@ -42,10 +42,10 @@ const PartAnalysis = () => {
   };
 
   const handleAnalyze = async () => {
-    if (!selectedWorkcenter || !image || !selectedInspectionType) {
+    if (!image || !selectedInspectionType) {
       toast({
         title: "Missing information",
-        description: "Please select a workcenter, inspection type, and upload an image",
+        description: "Please select an inspection type and upload an image",
         variant: "destructive"
       });
       return;
@@ -64,7 +64,9 @@ const PartAnalysis = () => {
       setIsAnalyzing(true);
       const formData = new FormData();
       formData.append('image', image);
-      formData.append('workcenter', selectedWorkcenter);
+      if (selectedWorkcenter) {
+        formData.append('workcenter', selectedWorkcenter);
+      }
       formData.append('inspectionTypeId', selectedInspectionType);
       formData.append('selectedArea', JSON.stringify(selectedArea));
 
@@ -168,7 +170,7 @@ const PartAnalysis = () => {
 
             <Button
               onClick={handleAnalyze}
-              disabled={!selectedWorkcenter || !selectedInspectionType || !image || isAnalyzing || !selectedArea}
+              disabled={!selectedInspectionType || !image || isAnalyzing || !selectedArea}
               className="w-full"
             >
               {isAnalyzing ? (
