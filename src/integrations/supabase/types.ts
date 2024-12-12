@@ -55,6 +55,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          inspection_company: string | null
           name: string
           prompt_template: string
         }
@@ -62,6 +63,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          inspection_company?: string | null
           name: string
           prompt_template: string
         }
@@ -69,6 +71,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          inspection_company?: string | null
           name?: string
           prompt_template?: string
         }
