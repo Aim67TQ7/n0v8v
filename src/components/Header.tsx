@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Package, Mail, Users, Settings, LogOut } from "lucide-react";
+import { Home, Package, Mail, Users, Settings, LogOut, DollarSign } from "lucide-react";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { ApiStatus } from "@/components/gpt/ApiStatus";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,37 +32,49 @@ export const Header = () => {
               <Home className="h-4 w-4" />
               Home
             </Button>
-            <Button variant="ghost" onClick={() => navigate("/modules")} className="gap-2 text-gray-600 hover:text-gray-900">
-              <Package className="h-4 w-4" />
-              Modules
-            </Button>
-            <Button variant="ghost" onClick={openOutlook} className="gap-2 text-gray-600 hover:text-gray-900">
-              <Mail className="h-4 w-4" />
-              Contact
-            </Button>
-            <Button variant="ghost" onClick={openTeams} className="gap-2 text-gray-600 hover:text-gray-900">
-              <Users className="h-4 w-4" />
-              Teams
-            </Button>
-            <Button variant="ghost" onClick={() => navigate("/settings")} className="gap-2 text-gray-600 hover:text-gray-900">
-              <Settings className="h-4 w-4" />
-              Settings
-            </Button>
+            
+            {session ? (
+              // Show these links only for authenticated users
+              <>
+                <Button variant="ghost" onClick={() => navigate("/modules")} className="gap-2 text-gray-600 hover:text-gray-900">
+                  <Package className="h-4 w-4" />
+                  Modules
+                </Button>
+                <Button variant="ghost" onClick={openOutlook} className="gap-2 text-gray-600 hover:text-gray-900">
+                  <Mail className="h-4 w-4" />
+                  Contact
+                </Button>
+                <Button variant="ghost" onClick={openTeams} className="gap-2 text-gray-600 hover:text-gray-900">
+                  <Users className="h-4 w-4" />
+                  Teams
+                </Button>
+                <Button variant="ghost" onClick={() => navigate("/settings")} className="gap-2 text-gray-600 hover:text-gray-900">
+                  <Settings className="h-4 w-4" />
+                  Settings
+                </Button>
+              </>
+            ) : (
+              // Show pricing link for non-authenticated users
+              <Button variant="ghost" onClick={() => navigate("/pricing")} className="gap-2 text-gray-600 hover:text-gray-900">
+                <DollarSign className="h-4 w-4" />
+                Pricing
+              </Button>
+            )}
           </nav>
 
           {/* API Status Indicators and User Info */}
           <div className="flex items-center gap-6">
             <ApiStatus />
-            <div className="flex items-center gap-4">
-              <div className="flex flex-col items-end">
-                <span className="text-sm font-medium text-gray-900">
-                  {session?.user?.email}
-                </span>
-                <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
-                  DEMO Company
-                </span>
-              </div>
-              {session && (
+            {session && (
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col items-end">
+                  <span className="text-sm font-medium text-gray-900">
+                    {session.user.email}
+                  </span>
+                  <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
+                    DEMO Company
+                  </span>
+                </div>
                 <Button 
                   variant="ghost" 
                   onClick={handleSignOut} 
@@ -71,8 +83,8 @@ export const Header = () => {
                   <LogOut className="h-4 w-4" />
                   Sign Out
                 </Button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

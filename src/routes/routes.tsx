@@ -16,6 +16,7 @@ import { AuthWrapper } from "@/components/AuthWrapper";
 import TrainingMatrix from "@/pages/training/TrainingMatrix";
 import TeamManagement from "@/pages/TeamManagement";
 import Company from "@/pages/team/Company";
+import PricingPage from "@/pages/Pricing";
 
 export const routes = [
   {
@@ -25,6 +26,10 @@ export const routes = [
   {
     path: "/login",
     element: <Login />
+  },
+  {
+    path: "/pricing",
+    element: <PricingPage />
   },
   {
     path: "/reset-password",
