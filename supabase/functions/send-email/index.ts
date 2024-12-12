@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { SmtpClient } from "https://deno.land/x/smtp@v0.7.0/mod.ts";
 
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+const SMTP_USERNAME = Deno.env.get("STMP_USER");
+const SMTP_PASSWORD = Deno.env.get("STMP_PASS");
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -22,34 +24,34 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const emailRequest: EmailRequest = await req.json();
     
-    if (!RESEND_API_KEY) {
-      throw new Error("Missing RESEND_API_KEY");
+    if (!SMTP_USERNAME || !SMTP_PASSWORD) {
+      throw new Error("Missing SMTP credentials");
     }
 
     console.log("Sending email to:", emailRequest.to);
     
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${RESEND_API_KEY}`,
-      },
-      body: JSON.stringify({
-        from: "Company GPT <onboarding@resend.dev>",
-        to: emailRequest.to,
-        subject: emailRequest.subject,
-        html: emailRequest.html,
-      }),
+    const client = new SmtpClient();
+
+    await client.connectTLS({
+      hostname: "smtp.gmail.com",
+      port: 465,
+      username: SMTP_USERNAME,
+      password: SMTP_PASSWORD,
     });
 
-    const data = await res.json();
-    console.log("Resend API response:", data);
+    await client.send({
+      from: "Company GPT <" + SMTP_USERNAME + ">",
+      to: emailRequest.to,
+      subject: emailRequest.subject,
+      content: emailRequest.html,
+      html: emailRequest.html,
+    });
 
-    if (!res.ok) {
-      throw new Error(data.message || "Failed to send email");
-    }
+    await client.close();
 
-    return new Response(JSON.stringify(data), {
+    console.log("Email sent successfully");
+
+    return new Response(JSON.stringify({ success: true }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
