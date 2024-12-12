@@ -7,6 +7,7 @@ import { useSessionContext } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
 import { EquipmentList } from "@/components/maintenance/EquipmentList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 
 const MaintenanceSystem = () => {
   const [imagePreview, setImagePreview] = useState("");
@@ -70,6 +71,10 @@ const MaintenanceSystem = () => {
         description: "Equipment has been analyzed and maintenance schedule created"
       });
 
+      // Reset the form
+      setImagePreview("");
+      setSelectedArea(null);
+
     } catch (error) {
       console.error('Analysis error:', error);
       toast({
@@ -99,7 +104,7 @@ const MaintenanceSystem = () => {
               <div className="max-w-2xl">
                 <h2 className="text-lg font-semibold mb-2">Equipment Analysis</h2>
                 <p className="text-muted-foreground mb-4">
-                  Upload a photo of your equipment to automatically generate a maintenance schedule.
+                  Upload a photo of your equipment to generate a suggested maintenance schedule.
                 </p>
                 <ProcessImageUploader
                   imagePreview={imagePreview}
@@ -107,6 +112,13 @@ const MaintenanceSystem = () => {
                   onAreaSelect={handleAreaSelect}
                   selectedArea={selectedArea}
                 />
+                {imagePreview && selectedArea && (
+                  <div className="mt-4">
+                    <Button onClick={handleAnalyze} className="w-full">
+                      Generate Maintenance Schedule
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </Card>
