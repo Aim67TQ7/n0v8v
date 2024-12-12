@@ -18,17 +18,17 @@ serve(async (req) => {
     
     const imageFile = formData.get('image');
     const workcenter = formData.get('workcenter');
-    const inspectionTypeId = formData.get('inspectionTypeId');
+    const analysisTypeId = formData.get('analysisTypeId');
     const selectedAreaStr = formData.get('selectedArea');
 
     console.log('Received parameters:', {
       hasImage: !!imageFile,
       workcenter,
-      inspectionTypeId,
+      analysisTypeId,
       hasSelectedArea: !!selectedAreaStr
     });
 
-    if (!imageFile || !inspectionTypeId) {
+    if (!imageFile || !analysisTypeId) {
       throw new Error('Missing required fields');
     }
 
@@ -43,25 +43,41 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
     console.log('Supabase client initialized');
 
-    // Fetch inspection type details
-    console.log('Fetching inspection type:', inspectionTypeId);
-    const { data: inspectionType, error: inspectionError } = await supabase
-      .from('inspection_types')
+    // Fetch analysis type details
+    console.log('Fetching analysis type:', analysisTypeId);
+    const { data: analysisType, error: analysisError } = await supabase
+      .from('analysis_types')
       .select('prompt_template')
-      .eq('id', inspectionTypeId)
+      .eq('id', analysisTypeId)
       .single();
 
-    if (inspectionError) {
-      console.error('Inspection type fetch error:', inspectionError);
-      throw new Error(`Failed to fetch inspection type: ${inspectionError.message}`);
+    if (analysisError) {
+      console.error('Analysis type fetch error:', analysisError);
+      throw new Error(`Failed to fetch analysis type: ${analysisError.message}`);
     }
 
-    if (!inspectionType) {
-      console.error('No inspection type found for ID:', inspectionTypeId);
-      throw new Error('Inspection type not found');
+    if (!analysisType) {
+      console.error('No analysis type found for ID:', analysisTypeId);
+      throw new Error('Analysis type not found');
     }
 
-    console.log('Successfully fetched inspection type');
+    console.log('Successfully fetched analysis type');
+
+    // Upload image to storage
+    const fileExt = (imageFile as File).name.split('.').pop();
+    const fileName = `${crypto.randomUUID()}.${fileExt}`;
+    
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('process-images')
+      .upload(fileName, imageFile);
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('process-images')
+      .getPublicUrl(fileName);
 
     console.log('Converting image to base64');
     const imageArrayBuffer = await (imageFile as File).arrayBuffer();
@@ -89,19 +105,19 @@ serve(async (req) => {
             content: [
               {
                 type: 'text',
-                text: `First, provide a concise name for the part shown in the image, focusing on its apparent function and key characteristics. Then, ${inspectionType.prompt_template} ${
+                text: `First, provide a concise name for the part shown in the image, focusing on its apparent function and key characteristics. Then, ${analysisType.prompt_template} ${
                   selectedArea ? 'Focus specifically on the highlighted area.' : ''
                 }
                 
                 If you don't see any issues, explicitly state that no problems were identified.
                 
                 Provide your analysis covering:
-                1. Quality Assessment: Document your findings based on the inspection criteria
+                1. Quality Assessment: Document your findings based on the analysis criteria
                 2. Impact Analysis: If issues are found, explain their potential impact
                 3. Recommendations: Suggest specific improvements or actions if needed
                 4. Compliance Status: State whether the part meets quality standards
                 
-                If no issues are found, respond with a clear statement that the part meets all quality criteria for this inspection type.
+                If no issues are found, respond with a clear statement that the part meets all quality criteria for this analysis type.
                 
                 Format your response with the part name on the first line, followed by your analysis in clear, concise bullet points.`
               },
@@ -145,10 +161,11 @@ serve(async (req) => {
     const analysis = {
       status: noIssuesFound ? 'success' : 'concerns',
       message: noIssuesFound ? 
-        '✅ Part meets quality standards for this inspection type.' : 
-        '⚠️ Quality concerns identified during inspection.',
+        '✅ Part meets quality standards for this analysis type.' : 
+        '⚠️ Quality concerns identified during analysis.',
       details: analysisDetails,
-      partName: partName.trim()
+      partName: partName.trim(),
+      imageUrl: publicUrl
     };
 
     return new Response(

@@ -18,7 +18,7 @@ export const PartAnalysisLayout = ({ analysis, onAnalysisComplete }: PartAnalysi
         <ProcessAnalysisResults 
           analysis={analysis} 
           partInspectionId={analysis?.partInspectionId}
-          inspectionTypeId={analysis?.inspectionTypeId}
+          analysisTypeId={analysis?.analysisTypeId}
         />
       </div>
     </div>

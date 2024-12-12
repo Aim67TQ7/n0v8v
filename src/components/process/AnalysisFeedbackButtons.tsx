@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 interface AnalysisFeedbackButtonsProps {
   processImprovementId?: string;
   partInspectionId?: string;
-  inspectionTypeId?: string;
+  analysisTypeId?: string;
   isSubmitting: boolean;
   setIsSubmitting: (value: boolean) => void;
   onTrainingClick: () => void;
@@ -15,7 +15,7 @@ interface AnalysisFeedbackButtonsProps {
 export const AnalysisFeedbackButtons = ({
   processImprovementId,
   partInspectionId,
-  inspectionTypeId,
+  analysisTypeId,
   isSubmitting,
   setIsSubmitting,
   onTrainingClick
@@ -30,7 +30,7 @@ export const AnalysisFeedbackButtons = ({
         .insert({
           process_improvement_id: processImprovementId,
           part_inspection_id: partInspectionId,
-          inspection_type_id: inspectionTypeId,
+          analysis_type_id: analysisTypeId,
           feedback_type: feedbackType,
           created_by: (await supabase.auth.getUser()).data.user?.id
         });
