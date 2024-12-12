@@ -20,10 +20,10 @@ interface Module {
 
 export const modulesList: Module[] = [
   {
-    title: "Tools",
-    description: "Access your licensed tools",
+    title: "Apps",
+    description: "Access your licensed applications",
     icon: AppWindow,
-    href: "/tools",
+    href: "/apps",
     status: "ready"
   },
   {

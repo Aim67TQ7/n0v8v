@@ -6,56 +6,85 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const { provider } = await req.json();
+    let endpoint = '';
+    let headers = {};
+    let body = {};
+
     console.log(`Checking status for ${provider} API...`);
 
-    // Simplified health check - just verify API key exists and basic endpoint availability
-    const endpoints = {
-      'groq': {
-        url: 'https://api.groq.com/v1/health',
-        headers: { 'Authorization': `Bearer ${Deno.env.get('GROQ_API_KEY')}` }
-      },
-      'openai': {
-        url: 'https://api.openai.com/v1/models',
-        headers: { 'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}` }
-      },
-      'anthropic': {
-        url: 'https://api.anthropic.com/v1/messages',
-        headers: {
+    switch (provider) {
+      case 'groq':
+        endpoint = 'https://api.groq.com/v1/chat/completions';
+        headers = {
+          'Authorization': `Bearer ${Deno.env.get('GROQ_API_KEY')}`,
+          'Content-Type': 'application/json',
+        };
+        body = {
+          model: 'mixtral-8x7b-32768',
+          messages: [{ role: 'system', content: 'test' }],
+        };
+        break;
+      case 'openai':
+        endpoint = 'https://api.openai.com/v1/chat/completions';
+        headers = {
+          'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+          'Content-Type': 'application/json',
+        };
+        body = {
+          model: 'gpt-4',
+          messages: [{ role: 'system', content: 'test' }],
+        };
+        break;
+      case 'anthropic':
+        endpoint = 'https://api.anthropic.com/v1/messages';
+        headers = {
           'x-api-key': Deno.env.get('ANTHROPIC_API_KEY'),
-          'anthropic-version': '2023-06-01'
-        }
-      },
-      'perplexity': {
-        url: 'https://api.perplexity.ai/health',
-        headers: { 'Authorization': `Bearer ${Deno.env.get('PERPLEXITY_API_KEY')}` }
-      }
-    };
-
-    if (!endpoints[provider]) {
-      throw new Error('Invalid provider');
+          'anthropic-version': '2023-06-01',
+          'Content-Type': 'application/json',
+        };
+        body = {
+          model: 'claude-3-sonnet-20240229',
+          messages: [{ role: 'user', content: 'test' }],
+        };
+        break;
+      case 'perplexity':
+        endpoint = 'https://api.perplexity.ai/chat/completions';
+        headers = {
+          'Authorization': `Bearer ${Deno.env.get('PERPLEXITY_API_KEY')}`,
+          'Content-Type': 'application/json',
+        };
+        body = {
+          model: 'sonar-medium-online',
+          messages: [{ role: 'system', content: 'test' }],
+        };
+        break;
+      default:
+        throw new Error('Invalid provider');
     }
 
-    const { url, headers } = endpoints[provider];
-    
     try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          ...headers,
-          'Content-Type': 'application/json'
-        }
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
       });
 
       console.log(`${provider} API response status:`, response.status);
       
+      if (!response.ok) {
+        console.error(`Error response from ${provider}:`, await response.text());
+        throw new Error(`API returned status ${response.status}`);
+      }
+
       return new Response(
-        JSON.stringify({ status: response.ok ? 'up' : 'down' }),
+        JSON.stringify({ status: 'up' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     } catch (error) {

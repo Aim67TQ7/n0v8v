@@ -10,6 +10,7 @@ const PricingPage = () => {
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
 
+  // Redirect authenticated users away from pricing
   if (isAuthenticated) {
     navigate('/');
     return null;
@@ -27,11 +28,11 @@ const PricingPage = () => {
     {
       name: "Basic",
       setupPrice: "99",
-      monthlyPrice: "39.95",
+      monthlyPrice: "14.95",
       features: [
         "7-day free trial",
-        "Access to any 3 tools",
-        "Change tool selection each billing cycle",
+        "Access to any 3 apps",
+        "Change app selection each billing cycle",
         "GPT branding features",
         "Customizable assistants",
         "SOC II compliant data storage",
@@ -43,11 +44,11 @@ const PricingPage = () => {
     {
       name: "Professional",
       setupPrice: "99",
-      monthlyPrice: "74.95",
+      monthlyPrice: "39.95",
       features: [
         "7-day free trial",
-        "Access to all tools",
-        "New tools included as released",
+        "Access to all apps",
+        "New apps included as released",
         "Advanced branding features",
         "Vertical agents (coming soon)",
         "Price locked for 1 year",
@@ -58,7 +59,7 @@ const PricingPage = () => {
         "One-time setup fee per user"
       ],
       popular: true,
-      promotion: "Lock in $74.95/mo until Dec 31, 2024 (increases to $149.95/mo in 2025)",
+      promotion: "Lock in $39.95/mo until Dec 31, 2024 (increases to $79.95/mo in 2025)",
       cta: "Start Free Trial"
     },
     {
@@ -66,7 +67,7 @@ const PricingPage = () => {
       price: "Custom",
       features: [
         "Unlimited users",
-        "Access to all tools",
+        "Access to all apps",
         "All current and future features",
         "Advanced branding features",
         "Vertical agents",
@@ -89,7 +90,7 @@ const PricingPage = () => {
         </p>
         <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-600">
           <Info className="h-4 w-4" />
-          <p>Tools can be selected at the organization level and changed each billing cycle</p>
+          <p>Apps can be selected at the organization level and changed each billing cycle</p>
         </div>
       </div>
 
@@ -159,6 +160,9 @@ const PricingPage = () => {
         ))}
       </div>
 
+      <div className="mt-16 text-center text-sm text-gray-500">
+        <p>All prices in USD. Prices subject to change with notice.</p>
+      </div>
     </div>
   );
 };

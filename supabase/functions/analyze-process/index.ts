@@ -18,66 +18,29 @@ serve(async (req) => {
     
     const imageFile = formData.get('image');
     const workcenter = formData.get('workcenter');
-    const analysisTypeId = formData.get('analysisTypeId');
+    const inspectionTypeId = formData.get('inspectionTypeId');
     const selectedAreaStr = formData.get('selectedArea');
 
-    console.log('Received parameters:', {
-      hasImage: !!imageFile,
-      workcenter,
-      analysisTypeId,
-      hasSelectedArea: !!selectedAreaStr
-    });
-
-    if (!imageFile || !analysisTypeId) {
+    if (!imageFile || !workcenter || !inspectionTypeId) {
       throw new Error('Missing required fields');
     }
 
     // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
 
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error('Missing Supabase configuration');
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseKey);
-    console.log('Supabase client initialized');
-
-    // Fetch analysis type details
-    console.log('Fetching analysis type:', analysisTypeId);
-    const { data: analysisType, error: analysisError } = await supabase
-      .from('analysis_types')
+    // Fetch inspection type details
+    const { data: inspectionType, error: inspectionError } = await supabase
+      .from('inspection_types')
       .select('prompt_template')
-      .eq('id', analysisTypeId)
+      .eq('id', inspectionTypeId)
       .single();
 
-    if (analysisError) {
-      console.error('Analysis type fetch error:', analysisError);
-      throw new Error(`Failed to fetch analysis type: ${analysisError.message}`);
+    if (inspectionError || !inspectionType) {
+      throw new Error('Failed to fetch inspection type details');
     }
-
-    if (!analysisType) {
-      console.error('No analysis type found for ID:', analysisTypeId);
-      throw new Error('Analysis type not found');
-    }
-
-    console.log('Successfully fetched analysis type');
-
-    // Upload image to storage
-    const fileExt = (imageFile as File).name.split('.').pop();
-    const fileName = `${crypto.randomUUID()}.${fileExt}`;
-    
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('process-images')
-      .upload(fileName, imageFile);
-
-    if (uploadError) {
-      throw uploadError;
-    }
-
-    const { data: { publicUrl } } = supabase.storage
-      .from('process-images')
-      .getPublicUrl(fileName);
 
     console.log('Converting image to base64');
     const imageArrayBuffer = await (imageFile as File).arrayBuffer();
@@ -105,21 +68,21 @@ serve(async (req) => {
             content: [
               {
                 type: 'text',
-                text: `First, provide a concise name for the part shown in the image, focusing on its apparent function and key characteristics. Then, ${analysisType.prompt_template} ${
+                text: `${inspectionType.prompt_template} ${
                   selectedArea ? 'Focus specifically on the highlighted area.' : ''
                 }
                 
                 If you don't see any issues, explicitly state that no problems were identified.
                 
                 Provide your analysis covering:
-                1. Quality Assessment: Document your findings based on the analysis criteria
+                1. Quality Assessment: Document your findings based on the inspection criteria
                 2. Impact Analysis: If issues are found, explain their potential impact
                 3. Recommendations: Suggest specific improvements or actions if needed
                 4. Compliance Status: State whether the part meets quality standards
                 
-                If no issues are found, respond with a clear statement that the part meets all quality criteria for this analysis type.
+                If no issues are found, respond with a clear statement that the part meets all quality criteria for this inspection type.
                 
-                Format your response with the part name on the first line, followed by your analysis in clear, concise bullet points.`
+                Format your response in clear, concise bullet points.`
               },
               {
                 type: 'image',
@@ -150,22 +113,17 @@ serve(async (req) => {
     }
 
     const analysisText = data.content[0].text;
-    const [partName, ...analysisLines] = analysisText.split('\n').filter(line => line.trim());
-    const analysisDetails = analysisLines.join('\n');
-
-    const noIssuesFound = analysisDetails.toLowerCase().includes('no issues') || 
-                         analysisDetails.toLowerCase().includes('meets all quality criteria') ||
-                         analysisDetails.toLowerCase().includes('no problems') ||
-                         analysisDetails.toLowerCase().includes('no visible quality concerns');
+    const noIssuesFound = analysisText.toLowerCase().includes('no issues') || 
+                         analysisText.toLowerCase().includes('meets all quality criteria') ||
+                         analysisText.toLowerCase().includes('no problems') ||
+                         analysisText.toLowerCase().includes('no visible quality concerns');
 
     const analysis = {
       status: noIssuesFound ? 'success' : 'concerns',
       message: noIssuesFound ? 
-        '✅ Part meets quality standards for this analysis type.' : 
-        '⚠️ Quality concerns identified during analysis.',
-      details: analysisDetails,
-      partName: partName.trim(),
-      imageUrl: publicUrl
+        '✅ Part meets quality standards for this inspection type.' : 
+        '⚠️ Quality concerns identified during inspection.',
+      details: analysisText
     };
 
     return new Response(
@@ -176,10 +134,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in analyze-process function:', error);
     return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        details: error.stack
-      }),
+      JSON.stringify({ error: error.message }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 

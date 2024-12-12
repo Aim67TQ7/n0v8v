@@ -5,6 +5,8 @@ import { WorkcenterSelect } from "@/components/WorkcenterSelect";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ProcessImageUploader } from "@/components/ProcessImageUploader";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
 
 interface PartAnalysisFormProps {
   onAnalysisComplete: (analysis: any) => void;
@@ -12,12 +14,25 @@ interface PartAnalysisFormProps {
 
 export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) => {
   const [selectedWorkcenter, setSelectedWorkcenter] = useState<string>("");
-  const [selectedAnalysisType, setSelectedAnalysisType] = useState<string>("");
+  const [selectedInspectionType, setSelectedInspectionType] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedArea, setSelectedArea] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
   const { toast } = useToast();
+
+  const { data: inspectionTypes } = useQuery({
+    queryKey: ['inspectionTypes'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('inspection_types')
+        .select('*')
+        .order('name');
+      
+      if (error) throw error;
+      return data;
+    }
+  });
 
   const handleImageUpload = (file: File) => {
     setImage(file);
@@ -26,10 +41,10 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
   };
 
   const handleAnalyze = async () => {
-    if (!selectedWorkcenter || !image || !selectedAnalysisType) {
+    if (!image || !selectedInspectionType) {
       toast({
         title: "Missing information",
-        description: "Please select a workcenter, analysis type, and upload an image",
+        description: "Please select an inspection type and upload an image",
         variant: "destructive"
       });
       return;
@@ -46,57 +61,21 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
 
     try {
       setIsAnalyzing(true);
-
-      // First upload the image to Supabase Storage
-      const fileExt = image.name.split('.').pop();
-      const fileName = `${crypto.randomUUID()}.${fileExt}`;
-      
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('process-images')
-        .upload(fileName, image);
-
-      if (uploadError) throw uploadError;
-
-      // Get the public URL for the uploaded image
-      const { data: { publicUrl } } = supabase.storage
-        .from('process-images')
-        .getPublicUrl(fileName);
-
-      // Prepare form data for analysis
       const formData = new FormData();
       formData.append('image', image);
-      formData.append('workcenter', selectedWorkcenter);
-      formData.append('analysisTypeId', selectedAnalysisType);
+      if (selectedWorkcenter) {
+        formData.append('workcenter', selectedWorkcenter);
+      }
+      formData.append('inspectionTypeId', selectedInspectionType);
       formData.append('selectedArea', JSON.stringify(selectedArea));
 
-      // Call the analyze-process function
-      const { data: { data: analysisData }, error: analysisError } = await supabase.functions
-        .invoke('analyze-process', {
-          body: formData
-        });
-
-      if (analysisError) throw analysisError;
-
-      // Create the part inspection record
-      const { data: partInspection, error: dbError } = await supabase
-        .from('part_inspections')
-        .insert({
-          workcenter_id: selectedWorkcenter,
-          analysis_type_id: selectedAnalysisType,
-          image_url: publicUrl,
-          analysis: analysisData.analysis.details
-        })
-        .select()
-        .single();
-
-      if (dbError) throw dbError;
-
-      onAnalysisComplete({
-        ...analysisData.analysis,
-        partInspectionId: partInspection.id,
-        analysisTypeId: selectedAnalysisType
+      const { data: { data, error } } = await supabase.functions.invoke('analyze-process', {
+        body: formData
       });
-      
+
+      if (error) throw error;
+
+      onAnalysisComplete(data.analysis);
       toast({
         title: "Analysis Complete",
         description: "Part analysis has been completed successfully.",
@@ -120,6 +99,22 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
         onChange={setSelectedWorkcenter} 
       />
 
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Select Inspection Type</label>
+        <Select value={selectedInspectionType} onValueChange={setSelectedInspectionType}>
+          <SelectTrigger>
+            <SelectValue placeholder="Choose inspection type" />
+          </SelectTrigger>
+          <SelectContent>
+            {inspectionTypes?.map((type) => (
+              <SelectItem key={type.id} value={type.id}>
+                {type.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       <ProcessImageUploader
         imagePreview={imagePreview}
         onImageUpload={handleImageUpload}
@@ -129,7 +124,7 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
 
       <Button
         onClick={handleAnalyze}
-        disabled={!selectedWorkcenter || !image || isAnalyzing || !selectedArea}
+        disabled={!selectedInspectionType || !image || isAnalyzing || !selectedArea}
         className="w-full"
       >
         {isAnalyzing ? (

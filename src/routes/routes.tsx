@@ -22,7 +22,7 @@ import Locations from "@/pages/team/Locations";
 import Departments from "@/pages/team/Departments";
 import WorkCenters from "@/pages/team/WorkCenters";
 import Employees from "@/pages/team/Employees";
-import Tools from "@/pages/Tools";
+import Apps from "@/pages/Apps";
 
 export const routes = [
   {
@@ -30,8 +30,8 @@ export const routes = [
     element: <Index />
   },
   {
-    path: "/tools",
-    element: <AuthWrapper><Tools /></AuthWrapper>
+    path: "/apps",
+    element: <AuthWrapper><Apps /></AuthWrapper>
   },
   {
     path: "/login",

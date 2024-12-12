@@ -50,33 +50,6 @@ export type Database = {
           },
         ]
       }
-      analysis_types: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          inspection_company: string | null
-          name: string
-          prompt_template: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          inspection_company?: string | null
-          name: string
-          prompt_template: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          inspection_company?: string | null
-          name?: string
-          prompt_template?: string
-        }
-        Relationships: []
-      }
       Auth: {
         Row: {
           created_at: string
@@ -612,6 +585,30 @@ export type Database = {
           },
         ]
       }
+      inspection_types: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          prompt_template: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          prompt_template: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          prompt_template?: string
+        }
+        Relationships: []
+      }
       locations: {
         Row: {
           company_id: string | null
@@ -680,113 +677,6 @@ export type Database = {
             columns: ["primary_contact_id"]
             isOneToOne: false
             referencedRelation: "employees"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      part_analysis_feedback: {
-        Row: {
-          analysis_type_id: string | null
-          comments: string | null
-          created_at: string
-          created_by: string | null
-          feedback_type: string
-          id: string
-          marked_areas: Json | null
-          process_improvement_id: string | null
-        }
-        Insert: {
-          analysis_type_id?: string | null
-          comments?: string | null
-          created_at?: string
-          created_by?: string | null
-          feedback_type: string
-          id?: string
-          marked_areas?: Json | null
-          process_improvement_id?: string | null
-        }
-        Update: {
-          analysis_type_id?: string | null
-          comments?: string | null
-          created_at?: string
-          created_by?: string | null
-          feedback_type?: string
-          id?: string
-          marked_areas?: Json | null
-          process_improvement_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "part_analysis_feedback_analysis_type_id_fkey"
-            columns: ["analysis_type_id"]
-            isOneToOne: false
-            referencedRelation: "analysis_types"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "part_analysis_feedback_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "part_analysis_feedback_process_improvement_id_fkey"
-            columns: ["process_improvement_id"]
-            isOneToOne: false
-            referencedRelation: "process_improvements"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      part_inspections: {
-        Row: {
-          analysis: string
-          analysis_type_id: string
-          created_at: string
-          created_by: string | null
-          id: string
-          image_url: string
-          workcenter_id: string | null
-        }
-        Insert: {
-          analysis: string
-          analysis_type_id: string
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          image_url: string
-          workcenter_id?: string | null
-        }
-        Update: {
-          analysis?: string
-          analysis_type_id?: string
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          image_url?: string
-          workcenter_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "part_inspections_analysis_type_id_fkey"
-            columns: ["analysis_type_id"]
-            isOneToOne: false
-            referencedRelation: "analysis_types"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "part_inspections_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "part_inspections_workcenter_id_fkey"
-            columns: ["workcenter_id"]
-            isOneToOne: false
-            referencedRelation: "workcenters"
             referencedColumns: ["id"]
           },
         ]

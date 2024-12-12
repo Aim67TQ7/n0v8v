@@ -1,44 +1,42 @@
-import { AnalysisContent } from "@/components/process/AnalysisContent";
-import { Card } from "@/components/ui/card";
-import { AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { SaveReportDialog } from "./process/SaveReportDialog";
+import { AnalysisContent } from "./process/AnalysisContent";
 
 interface ProcessAnalysisResultsProps {
   analysis: {
     status: 'success' | 'concerns';
     message: string;
     details: string;
-    partInspectionId?: string;
-    processImprovementId?: string;
-    analysisTypeId?: string;
   } | null;
-  partInspectionId?: string;
   processImprovementId?: string;
-  analysisTypeId?: string;
 }
 
 export const ProcessAnalysisResults = ({ 
-  analysis,
-  partInspectionId,
-  processImprovementId,
-  analysisTypeId
+  analysis, 
+  processImprovementId 
 }: ProcessAnalysisResultsProps) => {
-  if (!analysis) {
-    return (
-      <Card className="p-6">
-        <div className="flex items-center gap-3 text-muted-foreground">
-          <AlertCircle className="h-5 w-5" />
-          <p>Nothing found. Please try adjusting your selection or try a different image.</p>
-        </div>
-      </Card>
-    );
-  }
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+
+  if (!analysis) return null;
 
   return (
-    <AnalysisContent 
-      analysis={analysis}
-      partInspectionId={partInspectionId || analysis.partInspectionId}
-      processImprovementId={processImprovementId || analysis.processImprovementId}
-      analysisTypeId={analysisTypeId || analysis.analysisTypeId}
-    />
+    <>
+      <AnalysisContent analysis={analysis} />
+      <div className="mt-6 flex justify-end space-x-4">
+        <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
+          Skip
+        </Button>
+        <Button onClick={() => setShowSaveDialog(true)}>
+          Save Report
+        </Button>
+      </div>
+
+      <SaveReportDialog
+        open={showSaveDialog}
+        onOpenChange={setShowSaveDialog}
+        processImprovementId={processImprovementId}
+      />
+    </>
   );
 };

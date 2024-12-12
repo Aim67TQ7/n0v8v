@@ -86,14 +86,6 @@ export const ProcessImageUploader = ({
             onAreaSelect={onAreaSelect}
             selectedArea={selectedArea}
           />
-          {!selectedArea && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="bg-white text-black px-6 py-3 rounded-lg shadow-lg text-center">
-                <p className="font-medium">Click and drag to select area for analysis</p>
-                <p className="text-sm text-gray-600 mt-1">Selection required for analysis</p>
-              </div>
-            </div>
-          )}
         </div>
       )}
     </div>

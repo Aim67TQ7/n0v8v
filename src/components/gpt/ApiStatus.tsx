@@ -60,8 +60,8 @@ export const ApiStatus = () => {
     // Initial check
     checkApiStatus();
 
-    // Set up interval for checking every 5 minutes (300000 milliseconds)
-    const interval = setInterval(checkApiStatus, 300000);
+    // Set up interval for checking every 90 seconds
+    const interval = setInterval(checkApiStatus, 90000);
     return () => clearInterval(interval);
   }, []);
 
