@@ -26,7 +26,7 @@ const App = () => {
                 />
               ))}
 
-            {/* CompanyGPT route (requires auth) */}
+            {/* CompanyGPT route (requires auth, no header) */}
             <Route
               path="/company-gpt"
               element={
@@ -48,14 +48,14 @@ const App = () => {
               }
             />
 
-            {/* All other protected routes */}
+            {/* All other protected routes (with header) */}
             <Route
               path="*"
               element={
                 <AuthWrapper>
                   <>
                     <Header />
-                    <main className="flex-1 container mx-auto px-4 py-8">
+                    <main className="flex-1">
                       <Routes>
                         {routes
                           .filter(route => !publicRoutes.includes(route.path) && route.path !== '/company-gpt')
