@@ -21,16 +21,16 @@ const initialFormData = {
   website: "",
   industry: "",
   business_type: "",
-  tax_exempt: false
+  tax_exempt: false,
+  submission_status: "draft"
 };
 
 const Company = () => {
   const { toast } = useToast();
   const { user } = useAuth();
-  const [isEditing, setIsEditing] = useState(!user); // Start in editing mode for visitors
+  const [isEditing, setIsEditing] = useState(!user);
   const [formData, setFormData] = useState(initialFormData);
 
-  // Only fetch existing data if user is logged in
   const { data: profile } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
@@ -59,19 +59,8 @@ const Company = () => {
       
       if (data) {
         setFormData({
-          name: data.name || "",
-          contact_phone: data.contact_phone || "",
-          contact_email: data.contact_email || "",
-          billing_address: data.billing_address || "",
-          billing_city: data.billing_city || "",
-          billing_state: data.billing_state || "",
-          billing_zip: data.billing_zip || "",
-          billing_country: data.billing_country || "",
-          tax_id: data.tax_id || "",
-          website: data.website || "",
-          industry: data.industry || "",
-          business_type: data.business_type || "",
-          tax_exempt: data.tax_exempt || false
+          ...initialFormData,
+          ...data
         });
       }
       
@@ -102,10 +91,10 @@ const Company = () => {
         // For public submissions
         const { error } = await supabase
           .from("company_details")
-          .insert([{ 
+          .insert({
             ...formData,
             submission_status: 'submitted'
-          }]);
+          });
 
         if (error) throw error;
 
@@ -118,7 +107,7 @@ const Company = () => {
         // For logged-in users
         const { error } = await supabase
           .from("company_details")
-          .upsert({ 
+          .upsert({
             id: profile?.company_id,
             ...formData,
             submission_status: 'active'

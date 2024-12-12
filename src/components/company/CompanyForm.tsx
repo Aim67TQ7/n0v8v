@@ -7,6 +7,7 @@ import { Edit2, Save } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
 interface CompanyFormData {
+  id?: string;
   name: string;
   contact_phone: string;
   contact_email: string;
@@ -20,6 +21,7 @@ interface CompanyFormData {
   industry: string;
   business_type: string;
   tax_exempt: boolean;
+  submission_status?: string;
 }
 
 interface CompanyFormProps {
