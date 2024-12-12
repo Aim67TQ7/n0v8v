@@ -1,9 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { Plus, LogOut } from "lucide-react";
+import { Plus, ChevronDown } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from "@supabase/auth-helpers-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface SidebarHeaderProps {
   onNewChat: () => void;
@@ -37,14 +43,18 @@ export const SidebarHeader = ({ onNewChat }: SidebarHeaderProps) => {
           <span className="text-sm font-medium text-gray-700">
             {session?.user?.email}
           </span>
-          <Button 
-            variant="destructive" 
-            onClick={handleSignOut}
-            className="bg-red-600 hover:bg-red-700 text-white font-semibold shadow-sm"
-          >
-            <LogOut className="h-5 w-5 mr-2" />
-            Sign Out
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm">
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
+                Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         
         <Button
