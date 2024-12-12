@@ -10,14 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 const MaintenanceSystem = () => {
   const [imagePreview, setImagePreview] = useState("");
   const [selectedArea, setSelectedArea] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
-  const [equipmentMake, setEquipmentMake] = useState("");
-  const [equipmentModel, setEquipmentModel] = useState("");
-  const [equipmentType, setEquipmentType] = useState("");
-  const [serialNumber, setSerialNumber] = useState("");
+  const [equipmentDetails, setEquipmentDetails] = useState("");
   const { session } = useSessionContext();
   const { toast } = useToast();
 
@@ -67,12 +65,7 @@ const MaintenanceSystem = () => {
           imageUrl: filePath,
           selectedArea,
           companyId: profile.company_id,
-          equipmentDetails: {
-            make: equipmentMake,
-            model: equipmentModel,
-            type: equipmentType,
-            serialNumber: serialNumber
-          }
+          equipmentDetails: equipmentDetails
         }
       });
 
@@ -86,10 +79,7 @@ const MaintenanceSystem = () => {
       // Reset the form
       setImagePreview("");
       setSelectedArea(null);
-      setEquipmentMake("");
-      setEquipmentModel("");
-      setEquipmentType("");
-      setSerialNumber("");
+      setEquipmentDetails("");
 
     } catch (error) {
       console.error('Analysis error:', error);
@@ -120,41 +110,15 @@ const MaintenanceSystem = () => {
               <div className="max-w-2xl">
                 <h2 className="text-lg font-semibold mb-4">Equipment Analysis</h2>
                 
-                <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="space-y-4 mb-6">
                   <div className="space-y-2">
-                    <Label htmlFor="make">Equipment Make</Label>
-                    <Input
-                      id="make"
-                      value={equipmentMake}
-                      onChange={(e) => setEquipmentMake(e.target.value)}
-                      placeholder="e.g., Caterpillar"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="model">Equipment Model</Label>
-                    <Input
-                      id="model"
-                      value={equipmentModel}
-                      onChange={(e) => setEquipmentModel(e.target.value)}
-                      placeholder="e.g., D6"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="type">Equipment Type</Label>
-                    <Input
-                      id="type"
-                      value={equipmentType}
-                      onChange={(e) => setEquipmentType(e.target.value)}
-                      placeholder="e.g., Bulldozer"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="serial">Serial Number</Label>
-                    <Input
-                      id="serial"
-                      value={serialNumber}
-                      onChange={(e) => setSerialNumber(e.target.value)}
-                      placeholder="e.g., ABC123XYZ"
+                    <Label htmlFor="equipment">Equipment Details</Label>
+                    <Textarea
+                      id="equipment"
+                      value={equipmentDetails}
+                      onChange={(e) => setEquipmentDetails(e.target.value)}
+                      placeholder="Enter any known details about the equipment (make, model, type, serial number, etc.)"
+                      className="min-h-[100px]"
                     />
                   </div>
                 </div>
