@@ -11,6 +11,7 @@ import PartAnalysis from "@/pages/quality/PartAnalysis";
 import ProductInspection from "@/pages/quality/ProductInspection";
 import DMRDocumentation from "@/pages/quality/DMRDocumentation";
 import FiveWhys from "@/pages/quality/FiveWhys";
+import { AuthWrapper } from "@/components/AuthWrapper";
 
 export const routes = [
   {
@@ -23,7 +24,7 @@ export const routes = [
   },
   {
     path: "/company-gpt",
-    element: <CompanyGPT />
+    element: <AuthWrapper><CompanyGPT /></AuthWrapper>
   },
   {
     path: "/settings",
