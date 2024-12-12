@@ -739,6 +739,54 @@ export type Database = {
           },
         ]
       }
+      part_inspection_feedback: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          inspection_id: string
+          learning_feedback: string | null
+          material: string | null
+          part_name: string | null
+          results_accurate: boolean | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          inspection_id: string
+          learning_feedback?: string | null
+          material?: string | null
+          part_name?: string | null
+          results_accurate?: boolean | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          inspection_id?: string
+          learning_feedback?: string | null
+          material?: string | null
+          part_name?: string | null
+          results_accurate?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "part_inspection_feedback_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "part_inspection_feedback_inspection_id_fkey"
+            columns: ["inspection_id"]
+            isOneToOne: true
+            referencedRelation: "part_inspections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       part_inspections: {
         Row: {
           analysis: string

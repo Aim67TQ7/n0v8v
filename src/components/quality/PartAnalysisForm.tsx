@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useQuery } from "@tanstack/react-query";
 
 interface PartAnalysisFormProps {
-  onAnalysisComplete: (analysis: any) => void;
+  onAnalysisComplete: (analysis: any, inspectionId: string) => void;
 }
 
 interface InspectionType {
@@ -81,7 +81,21 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
 
       if (error) throw error;
 
-      onAnalysisComplete(data.analysis);
+      // Save the inspection result to the database
+      const { data: inspectionData, error: insertError } = await supabase
+        .from('part_inspections')
+        .insert({
+          workcenter_id: selectedWorkcenter || null,
+          analysis_type_id: selectedInspectionType,
+          image_url: imagePreview,
+          analysis: JSON.stringify(data.analysis)
+        })
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      onAnalysisComplete(data.analysis, inspectionData.id);
       toast({
         title: "Analysis Complete",
         description: "Part analysis has been completed successfully.",

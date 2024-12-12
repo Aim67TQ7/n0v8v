@@ -6,17 +6,25 @@ import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { PartAnalysisForm } from "@/components/quality/PartAnalysisForm";
 import { AnalysisContent } from "@/components/process/AnalysisContent";
+import { PartAnalysisFeedback } from "@/components/quality/PartAnalysisFeedback";
 
 const PartAnalysis = () => {
   const [analysis, setAnalysis] = useState<any>(null);
+  const [inspectionId, setInspectionId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleStartNew = () => {
     setAnalysis(null);
+    setInspectionId(null);
     toast({
       title: "Reset Complete",
       description: "You can now start a new part analysis.",
     });
+  };
+
+  const handleAnalysisComplete = (analysisResult: any, id: string) => {
+    setAnalysis(analysisResult);
+    setInspectionId(id);
   };
 
   return (
@@ -51,11 +59,12 @@ const PartAnalysis = () => {
 
       <div className="grid md:grid-cols-2 gap-6">
         <Card className="p-6">
-          <PartAnalysisForm onAnalysisComplete={setAnalysis} />
+          <PartAnalysisForm onAnalysisComplete={handleAnalysisComplete} />
         </Card>
 
         <div className="space-y-6">
           <AnalysisContent analysis={analysis} />
+          {inspectionId && <PartAnalysisFeedback inspectionId={inspectionId} />}
         </div>
       </div>
     </div>
