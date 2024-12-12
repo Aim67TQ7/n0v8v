@@ -8,6 +8,7 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -16,38 +17,25 @@ serve(async (req) => {
     console.log('Processing request for part analysis');
     const formData = await req.formData();
     
-    const imageFile = formData.get('image');
+    const imageFile = formData.get('image') as File;
     const workcenter = formData.get('workcenter');
     const inspectionTypeId = formData.get('inspectionTypeId');
     const selectedAreaStr = formData.get('selectedArea');
 
-    if (!imageFile || !workcenter || !inspectionTypeId) {
-      throw new Error('Missing required fields');
-    }
-
-    // Initialize Supabase client
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
-
-    // Fetch inspection type details
-    const { data: inspectionType, error: inspectionError } = await supabase
-      .from('analysis_types')
-      .select('prompt_template')
-      .eq('id', inspectionTypeId)
-      .single();
-
-    if (inspectionError || !inspectionType) {
-      throw new Error('Failed to fetch inspection type details');
+    if (!imageFile) {
+      throw new Error('No image file provided');
     }
 
     console.log('Converting image to base64');
-    const imageArrayBuffer = await (imageFile as File).arrayBuffer();
+    const imageArrayBuffer = await imageFile.arrayBuffer();
     const base64Image = btoa(
-      new Uint8Array(imageArrayBuffer)
-        .reduce((data, byte) => data + String.fromCharCode(byte), '')
+      String.fromCharCode(...new Uint8Array(imageArrayBuffer))
     );
+
+    // Get file extension and MIME type
+    const fileName = imageFile.name;
+    const fileExt = fileName.split('.').pop()?.toLowerCase() || 'jpeg';
+    const mimeType = `image/${fileExt === 'jpg' ? 'jpeg' : fileExt}`;
     
     const selectedArea = selectedAreaStr ? JSON.parse(selectedAreaStr as string) : null;
     
@@ -68,8 +56,8 @@ serve(async (req) => {
             content: [
               {
                 type: 'text',
-                text: `${inspectionType.prompt_template} ${
-                  selectedArea ? 'Focus specifically on the highlighted area.' : ''
+                text: `Analyze this part image ${
+                  selectedArea ? 'focusing specifically on the highlighted area.' : ''
                 }
                 
                 If you don't see any issues, explicitly state that no problems were identified.
@@ -80,7 +68,7 @@ serve(async (req) => {
                 3. Recommendations: Suggest specific improvements or actions if needed
                 4. Compliance Status: State whether the part meets quality standards
                 
-                If no issues are found, respond with a clear statement that the part meets all quality criteria for this inspection type.
+                If no issues are found, respond with a clear statement that the part meets all quality criteria.
                 
                 Format your response in clear, concise bullet points.`
               },
@@ -88,7 +76,7 @@ serve(async (req) => {
                 type: 'image',
                 source: {
                   type: 'base64',
-                  media_type: 'image/jpeg',
+                  media_type: mimeType,
                   data: base64Image
                 }
               }
