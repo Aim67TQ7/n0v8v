@@ -31,7 +31,8 @@ const PricingPage = () => {
       monthlyPrice: "14.95",
       features: [
         "7-day free trial",
-        "Access to 3 modules of your choice",
+        "Select any 3 modules for your organization",
+        "Flexible module selection - change modules anytime",
         "GPT branding features",
         "Customizable assistants",
         "SOC II compliant data storage",
@@ -45,8 +46,9 @@ const PricingPage = () => {
       setupPrice: "99",
       monthlyPrice: "39.95",
       features: [
-        "Access to 10 modules",
-        "New modules included",
+        "Access to 10 modules for your organization",
+        "New modules included as released",
+        "Flexible module selection - change modules anytime",
         "Advanced branding features",
         "Vertical agents (coming soon)",
         "Price locked for 1 year",
@@ -83,9 +85,13 @@ const PricingPage = () => {
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold mb-4">Simple, Transparent Pricing</h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Choose the plan that's right for your business. All plans include GPT branding, 
+          Choose the plan that's right for your organization. All plans include GPT branding, 
           customizable assistants, and SOC II compliant data storage.
         </p>
+        <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-600">
+          <Info className="h-4 w-4" />
+          <p>Modules are selected at the organization level and can be changed after billing starts</p>
+        </div>
       </div>
 
       <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
