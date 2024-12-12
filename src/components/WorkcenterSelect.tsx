@@ -29,7 +29,6 @@ export const WorkcenterSelect = ({ value, onChange }: WorkcenterSelectProps) => 
           <SelectValue placeholder="Choose a workcenter" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="default">Workcenter ___________</SelectItem>
           {workcenters?.map((wc) => (
             <SelectItem key={wc.id} value={wc.id}>
               {wc.name} - {wc.department}
