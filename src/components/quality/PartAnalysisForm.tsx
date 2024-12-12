@@ -69,11 +69,11 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
       setIsAnalyzing(true);
       const formData = new FormData();
       formData.append('image', image!);
+      formData.append('inspectionTypeId', selectedInspectionType);
+      formData.append('selectedArea', JSON.stringify(selectedArea));
       if (selectedWorkcenter) {
         formData.append('workcenter', selectedWorkcenter);
       }
-      formData.append('inspectionTypeId', selectedInspectionType);
-      formData.append('selectedArea', JSON.stringify(selectedArea));
 
       const { data: { data, error } } = await supabase.functions.invoke('analyze-process', {
         body: formData
