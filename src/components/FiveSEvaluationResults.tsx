@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import { FiveSEvaluationHeader } from "@/components/FiveSEvaluationHeader";
 import { FiveSEvaluationSummary } from "@/components/FiveSEvaluationSummary";
 import { FiveSEvaluationImages } from "@/components/FiveSEvaluationImages";
@@ -8,6 +11,7 @@ import { FiveSRadarChart } from "@/components/FiveSRadarChart";
 import { SWOTAnalysis } from "@/components/SWOTAnalysis";
 import { FiveSTrend } from "@/components/FiveSTrend";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import html2pdf from 'html2pdf.js';
 
 interface FiveSEvaluationResultsProps {
@@ -22,6 +26,8 @@ export const FiveSEvaluationResults = ({
   isLoading 
 }: FiveSEvaluationResultsProps) => {
   const { toast } = useToast();
+  const [feedback, setFeedback] = useState("");
+  const [needsLearning, setNeedsLearning] = useState(false);
 
   const handleSavePDF = async () => {
     try {
@@ -37,17 +43,8 @@ export const FiveSEvaluationResults = ({
         margin: 5,
         filename: `5S-Evaluation-${evaluation.workcenter?.name}-${new Date().toISOString().split('T')[0]}.pdf`,
         image: { type: 'jpeg', quality: 0.95 },
-        html2canvas: { 
-          scale: 1,
-          useCORS: true,
-          letterRendering: true
-        },
-        jsPDF: { 
-          unit: 'mm', 
-          format: 'letter', 
-          orientation: 'portrait',
-          compress: true
-        }
+        html2canvas: { scale: 1, useCORS: true, letterRendering: true },
+        jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait', compress: true }
       };
 
       await html2pdf().set(opt).from(element).save();
@@ -66,11 +63,35 @@ export const FiveSEvaluationResults = ({
     }
   };
 
-  const handleEmailPDF = () => {
-    toast({
-      title: "Coming Soon",
-      description: "Email PDF functionality will be available soon",
-    });
+  const handleSubmitFeedback = async () => {
+    if (!needsLearning || !feedback.trim()) return;
+
+    try {
+      const { error } = await supabase
+        .from('five_s_learning_feedback')
+        .insert({
+          evaluation_id: evaluation.id,
+          feedback,
+          created_by: (await supabase.auth.getUser()).data.user?.id
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Feedback Submitted",
+        description: "Thank you for helping improve our analysis system.",
+      });
+
+      setFeedback("");
+      setNeedsLearning(false);
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit feedback. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   if (isLoading) {
@@ -87,7 +108,6 @@ export const FiveSEvaluationResults = ({
       <FiveSEvaluationHeader
         workcenterId={evaluation.workcenter_id}
         onSavePDF={handleSavePDF}
-        onEmailPDF={handleEmailPDF}
       />
 
       <div id="evaluation-content" className="scale-[0.85] origin-top">
@@ -117,6 +137,36 @@ export const FiveSEvaluationResults = ({
               setScore={evaluation.set_in_order_score}
               shineScore={evaluation.shine_score}
             />
+          </Card>
+
+          <Card className="p-4 mt-4">
+            <div className="flex items-center space-x-2 mb-4">
+              <Checkbox
+                id="learning"
+                checked={needsLearning}
+                onCheckedChange={(checked) => setNeedsLearning(checked as boolean)}
+              />
+              <label
+                htmlFor="learning"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Provide learning feedback
+              </label>
+            </div>
+
+            {needsLearning && (
+              <div className="space-y-4">
+                <Textarea
+                  placeholder="Please describe what could be improved in this analysis..."
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  className="min-h-[100px]"
+                />
+                <Button onClick={handleSubmitFeedback}>
+                  Submit Feedback
+                </Button>
+              </div>
+            )}
           </Card>
 
           <div className="text-center mt-4">
