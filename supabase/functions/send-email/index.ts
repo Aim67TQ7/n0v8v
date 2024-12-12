@@ -18,24 +18,6 @@ serve(async (req) => {
     console.log("Sending email to:", to);
     console.log("Subject:", subject);
 
-    // In development/test mode, only allow sending to the verified email
-    const VERIFIED_EMAIL = "robert.clausing@gmail.com";
-    const toAddresses = Array.isArray(to) ? to : [to];
-    
-    // Check if we're trying to send to unverified emails
-    if (!toAddresses.every(email => email === VERIFIED_EMAIL)) {
-      console.log("Attempting to send to unverified email. In test mode, can only send to:", VERIFIED_EMAIL);
-      return new Response(
-        JSON.stringify({
-          error: "In test mode, you can only send emails to your verified email address. Please verify your domain at resend.com/domains"
-        }),
-        {
-          status: 403,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -44,7 +26,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         from: "Company GPT <onboarding@resend.dev>",
-        to: toAddresses,
+        to: Array.isArray(to) ? to : [to],
         subject,
         html,
       }),
