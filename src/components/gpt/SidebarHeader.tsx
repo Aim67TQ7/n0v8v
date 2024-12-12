@@ -20,7 +20,7 @@ export const SidebarHeader = ({ onNewChat }: SidebarHeaderProps) => {
 
   return (
     <div className="border-b p-4 shrink-0">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <img 
             src="/lovable-uploads/2c6383aa-9d2d-43af-9b0e-bd66dea3a1de.png" 
@@ -29,30 +29,33 @@ export const SidebarHeader = ({ onNewChat }: SidebarHeaderProps) => {
           />
           <h2 className="text-lg font-semibold">GPT</h2>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-600">
+        <SidebarTrigger />
+      </div>
+      
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between bg-gray-50 p-2 rounded-lg">
+          <span className="text-sm font-medium text-gray-700">
             {session?.user?.email}
           </span>
           <Button 
             variant="destructive" 
-            size="sm"
             onClick={handleSignOut}
-            className="gap-2 bg-red-600 hover:bg-red-700 text-white"
+            className="bg-red-600 hover:bg-red-700 text-white font-semibold shadow-sm"
           >
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-5 w-5 mr-2" />
             Sign Out
           </Button>
-          <SidebarTrigger />
         </div>
+        
+        <Button
+          variant="outline"
+          className="w-full gap-2"
+          onClick={onNewChat}
+        >
+          <Plus className="h-4 w-4" />
+          New Chat
+        </Button>
       </div>
-      <Button
-        variant="outline"
-        className="w-full mt-2 gap-2"
-        onClick={onNewChat}
-      >
-        <Plus className="h-4 w-4" />
-        New Chat
-      </Button>
     </div>
   );
 };
