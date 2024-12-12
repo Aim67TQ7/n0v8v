@@ -28,11 +28,51 @@ const FiveWhys = () => {
     const lastAnswer = previousAnswers[previousAnswers.length - 1] || context;
     
     // Generate contextual questions based on the iteration and previous answers
-    const questions = [
-      `${lastAnswer} because proper procedures weren't followed`,
-      `${lastAnswer} because of equipment/tool issues`,
-      `${lastAnswer} because of human error or lack of training`
-    ];
+    let questions;
+    
+    switch (iteration) {
+      case 1:
+        questions = [
+          `${lastAnswer} because of process/procedure issues`,
+          `${lastAnswer} because of equipment/tool problems`,
+          `${lastAnswer} because of training/knowledge gaps`
+        ];
+        break;
+      case 2:
+        questions = [
+          `${lastAnswer} because standard procedures weren't followed`,
+          `${lastAnswer} because procedures weren't clear`,
+          `${lastAnswer} because procedures weren't available`
+        ];
+        break;
+      case 3:
+        questions = [
+          `${lastAnswer} because of insufficient oversight`,
+          `${lastAnswer} because of communication breakdown`,
+          `${lastAnswer} because of resource constraints`
+        ];
+        break;
+      case 4:
+        questions = [
+          `${lastAnswer} because of systemic issues`,
+          `${lastAnswer} because of organizational barriers`,
+          `${lastAnswer} because of policy limitations`
+        ];
+        break;
+      case 5:
+        questions = [
+          `${lastAnswer} because of missing standardization`,
+          `${lastAnswer} because of inadequate controls`,
+          `${lastAnswer} because of cultural factors`
+        ];
+        break;
+      default:
+        questions = [
+          `${lastAnswer} because of process issues`,
+          `${lastAnswer} because of system issues`,
+          `${lastAnswer} because of human factors`
+        ];
+    }
     
     return questions;
   };
