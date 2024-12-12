@@ -544,6 +544,78 @@ export type Database = {
         }
         Relationships: []
       }
+      locations: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          facility_name: string
+          id: string
+          physical_address: string
+          physical_city: string
+          physical_country: string
+          physical_state: string
+          physical_zip: string
+          primary_contact_id: string | null
+          shipping_address: string | null
+          shipping_city: string | null
+          shipping_country: string | null
+          shipping_state: string | null
+          shipping_zip: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          facility_name: string
+          id?: string
+          physical_address: string
+          physical_city: string
+          physical_country: string
+          physical_state: string
+          physical_zip: string
+          primary_contact_id?: string | null
+          shipping_address?: string | null
+          shipping_city?: string | null
+          shipping_country?: string | null
+          shipping_state?: string | null
+          shipping_zip?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          facility_name?: string
+          id?: string
+          physical_address?: string
+          physical_city?: string
+          physical_country?: string
+          physical_state?: string
+          physical_zip?: string
+          primary_contact_id?: string | null
+          shipping_address?: string | null
+          shipping_city?: string | null
+          shipping_country?: string | null
+          shipping_state?: string | null
+          shipping_zip?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "locations_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "locations_primary_contact_id_fkey"
+            columns: ["primary_contact_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       process_analysis_reports: {
         Row: {
           analysis_date: string | null
