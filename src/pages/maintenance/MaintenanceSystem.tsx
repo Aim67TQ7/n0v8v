@@ -5,6 +5,8 @@ import { ProcessImageUploader } from "@/components/ProcessImageUploader";
 import { useToast } from "@/hooks/use-toast";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
+import { EquipmentList } from "@/components/maintenance/EquipmentList";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const MaintenanceSystem = () => {
   const [imagePreview, setImagePreview] = useState("");
@@ -85,22 +87,35 @@ const MaintenanceSystem = () => {
         <h1 className="text-3xl font-bold">AI Maintenance System</h1>
       </div>
 
-      <Card className="p-6">
-        <div className="space-y-6">
-          <div className="max-w-2xl">
-            <h2 className="text-lg font-semibold mb-2">Equipment Analysis</h2>
-            <p className="text-muted-foreground mb-4">
-              Upload a photo of your equipment to automatically generate a maintenance schedule.
-            </p>
-            <ProcessImageUploader
-              imagePreview={imagePreview}
-              onImageUpload={handleImageUpload}
-              onAreaSelect={handleAreaSelect}
-              selectedArea={selectedArea}
-            />
-          </div>
-        </div>
-      </Card>
+      <Tabs defaultValue="analyze" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="analyze">Analyze Equipment</TabsTrigger>
+          <TabsTrigger value="schedules">Maintenance Schedules</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="analyze">
+          <Card className="p-6">
+            <div className="space-y-6">
+              <div className="max-w-2xl">
+                <h2 className="text-lg font-semibold mb-2">Equipment Analysis</h2>
+                <p className="text-muted-foreground mb-4">
+                  Upload a photo of your equipment to automatically generate a maintenance schedule.
+                </p>
+                <ProcessImageUploader
+                  imagePreview={imagePreview}
+                  onImageUpload={handleImageUpload}
+                  onAreaSelect={handleAreaSelect}
+                  selectedArea={selectedArea}
+                />
+              </div>
+            </div>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="schedules">
+          <EquipmentList />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
