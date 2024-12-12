@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
+import { ResetPasswordForm } from "./ResetPasswordForm";
+import { PasswordInput } from "./PasswordInput";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState("");
@@ -90,119 +92,100 @@ export const SignInForm = () => {
     }
   };
 
+  if (showPasswordReset) {
+    return (
+      <div>
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold">Reset Password</h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Enter your email to receive a password reset link
+          </p>
+        </div>
+        <ResetPasswordForm
+          email={email}
+          setEmail={setEmail}
+          loading={loading}
+          onSubmit={handleSignIn}
+          onBack={() => setShowPasswordReset(false)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold">Welcome to Company GPT</h2>
         <p className="mt-2 text-sm text-gray-600">
-          {showPasswordReset 
-            ? "Enter your email to receive a password reset link" 
-            : "Sign in to your account or create a new one"}
+          Sign in to your account or create a new one
         </p>
       </div>
 
-      {showPasswordReset ? (
-        <form onSubmit={handleSignIn} className="space-y-4">
-          <Input
-            type="email"
-            required
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="appearance-none rounded-md relative block w-full"
-          />
-          <div className="flex justify-between">
+      <Tabs defaultValue="signin" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="signin">Sign In</TabsTrigger>
+          <TabsTrigger value="signup">Sign Up</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="signin">
+          <form onSubmit={handleSignIn} className="space-y-4">
+            <Input
+              type="email"
+              required
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="appearance-none rounded-md relative block w-full"
+            />
+            <PasswordInput
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <div className="flex justify-between">
+              <Button
+                type="button"
+                variant="link"
+                className="text-sm"
+                onClick={() => setShowPasswordReset(true)}
+              >
+                Forgot password?
+              </Button>
+            </div>
             <Button
-              type="button"
-              variant="link"
-              className="text-sm"
-              onClick={() => setShowPasswordReset(false)}
+              type="submit"
+              className="w-full"
+              disabled={loading}
             >
-              Back to sign in
+              {loading ? "Signing in..." : "Sign In"}
             </Button>
-          </div>
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={loading}
-          >
-            {loading ? "Sending..." : "Send Reset Link"}
-          </Button>
-        </form>
-      ) : (
-        <Tabs defaultValue="signin" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="signin">Sign In</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
-          </TabsList>
+          </form>
+        </TabsContent>
 
-          <TabsContent value="signin">
-            <form onSubmit={handleSignIn} className="space-y-4">
-              <Input
-                type="email"
-                required
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none rounded-md relative block w-full"
-              />
-              <Input
-                type="password"
-                required
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none rounded-md relative block w-full"
-              />
-              <div className="flex justify-between">
-                <Button
-                  type="button"
-                  variant="link"
-                  className="text-sm"
-                  onClick={() => setShowPasswordReset(true)}
-                >
-                  Forgot password?
-                </Button>
-              </div>
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={loading}
-              >
-                {loading ? "Signing in..." : "Sign In"}
-              </Button>
-            </form>
-          </TabsContent>
-
-          <TabsContent value="signup">
-            <form onSubmit={handleSignUp} className="space-y-4">
-              <Input
-                type="email"
-                required
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none rounded-md relative block w-full"
-              />
-              <Input
-                type="password"
-                required
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none rounded-md relative block w-full"
-              />
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={loading}
-              >
-                {loading ? "Creating account..." : "Create Account"}
-              </Button>
-            </form>
-          </TabsContent>
-        </Tabs>
-      )}
+        <TabsContent value="signup">
+          <form onSubmit={handleSignUp} className="space-y-4">
+            <Input
+              type="email"
+              required
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="appearance-none rounded-md relative block w-full"
+            />
+            <PasswordInput
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Choose a password"
+            />
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loading}
+            >
+              {loading ? "Creating account..." : "Create Account"}
+            </Button>
+          </form>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
