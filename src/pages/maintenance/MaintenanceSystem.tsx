@@ -8,10 +8,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { EquipmentList } from "@/components/maintenance/EquipmentList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const MaintenanceSystem = () => {
   const [imagePreview, setImagePreview] = useState("");
   const [selectedArea, setSelectedArea] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
+  const [equipmentMake, setEquipmentMake] = useState("");
+  const [equipmentModel, setEquipmentModel] = useState("");
+  const [equipmentType, setEquipmentType] = useState("");
+  const [serialNumber, setSerialNumber] = useState("");
   const { session } = useSessionContext();
   const { toast } = useToast();
 
@@ -60,7 +66,13 @@ const MaintenanceSystem = () => {
         body: { 
           imageUrl: filePath,
           selectedArea,
-          companyId: profile.company_id
+          companyId: profile.company_id,
+          equipmentDetails: {
+            make: equipmentMake,
+            model: equipmentModel,
+            type: equipmentType,
+            serialNumber: serialNumber
+          }
         }
       });
 
@@ -74,6 +86,10 @@ const MaintenanceSystem = () => {
       // Reset the form
       setImagePreview("");
       setSelectedArea(null);
+      setEquipmentMake("");
+      setEquipmentModel("");
+      setEquipmentType("");
+      setSerialNumber("");
 
     } catch (error) {
       console.error('Analysis error:', error);
@@ -102,7 +118,47 @@ const MaintenanceSystem = () => {
           <Card className="p-6">
             <div className="space-y-6">
               <div className="max-w-2xl">
-                <h2 className="text-lg font-semibold mb-2">Equipment Analysis</h2>
+                <h2 className="text-lg font-semibold mb-4">Equipment Analysis</h2>
+                
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="make">Equipment Make</Label>
+                    <Input
+                      id="make"
+                      value={equipmentMake}
+                      onChange={(e) => setEquipmentMake(e.target.value)}
+                      placeholder="e.g., Caterpillar"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="model">Equipment Model</Label>
+                    <Input
+                      id="model"
+                      value={equipmentModel}
+                      onChange={(e) => setEquipmentModel(e.target.value)}
+                      placeholder="e.g., D6"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="type">Equipment Type</Label>
+                    <Input
+                      id="type"
+                      value={equipmentType}
+                      onChange={(e) => setEquipmentType(e.target.value)}
+                      placeholder="e.g., Bulldozer"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="serial">Serial Number</Label>
+                    <Input
+                      id="serial"
+                      value={serialNumber}
+                      onChange={(e) => setSerialNumber(e.target.value)}
+                      placeholder="e.g., ABC123XYZ"
+                    />
+                  </div>
+                </div>
+
                 <p className="text-muted-foreground mb-4">
                   Upload a photo of your equipment to generate a suggested maintenance schedule.
                 </p>

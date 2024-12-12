@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageUrl, selectedArea, companyId } = await req.json();
+    const { imageUrl, selectedArea, companyId, equipmentDetails } = await req.json();
     console.log('Processing request for image:', imageUrl);
 
     const supabase = createClient(
@@ -42,6 +42,13 @@ serve(async (req) => {
 
     console.log('Image processed, sending to OpenAI with MIME type:', mimeType);
 
+    // Create a detailed system prompt using the equipment details
+    const systemPrompt = `You are an expert in industrial equipment maintenance, specializing in ${equipmentDetails.type || 'various types of equipment'}. 
+    ${equipmentDetails.make ? `The equipment is made by ${equipmentDetails.make}` : ''} 
+    ${equipmentDetails.model ? `and is model ${equipmentDetails.model}` : ''} 
+    ${equipmentDetails.serialNumber ? `with serial number ${equipmentDetails.serialNumber}` : ''}.
+    Analyze the equipment image and provide detailed maintenance recommendations based on industry standards and manufacturer guidelines.`;
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -53,7 +60,7 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "You are an expert in industrial equipment maintenance. Analyze the equipment image and extract key information about make, model, manufacturer, and type. Then suggest appropriate maintenance schedules based on industry standards."
+            content: systemPrompt
           },
           {
             role: "user",
@@ -99,10 +106,11 @@ serve(async (req) => {
       .from('equipment')
       .insert({
         company_id: companyId,
-        make: makeMatch?.[1]?.trim() || 'Unknown',
-        model: modelMatch?.[1]?.trim() || 'Unknown',
+        make: equipmentDetails.make || makeMatch?.[1]?.trim() || 'Unknown',
+        model: equipmentDetails.model || modelMatch?.[1]?.trim() || 'Unknown',
         manufacturer: manufacturerMatch?.[1]?.trim() || 'Unknown',
-        equipment_type: typeMatch?.[1]?.trim() || 'Unknown',
+        equipment_type: equipmentDetails.type || typeMatch?.[1]?.trim() || 'Unknown',
+        serial_number: equipmentDetails.serialNumber || null,
         image_url: imageUrl,
         status: 'active',
         last_maintenance_date: new Date().toISOString(),
