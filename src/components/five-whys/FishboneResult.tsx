@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { FishboneDiagram } from "./FishboneDiagram";
 
 interface Analysis {
   fishboneDiagram: string;
@@ -16,6 +15,12 @@ interface FishboneResultProps {
 }
 
 export const FishboneResult = ({ analysis, onReset }: FishboneResultProps) => {
+  // Parse the sequential problems from the fishbone data
+  const problems = analysis.fishboneDiagram
+    .split('\n')
+    .filter(line => line.includes('. '))
+    .map(line => line.split('. ')[1]);
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -26,8 +31,15 @@ export const FishboneResult = ({ analysis, onReset }: FishboneResultProps) => {
       </div>
 
       <Card className="p-4">
-        <h3 className="font-semibold mb-4">Fishbone Analysis</h3>
-        <FishboneDiagram data={analysis.fishboneDiagram} />
+        <h3 className="font-semibold mb-4">Five Whys Sequence</h3>
+        <div className="space-y-4">
+          {problems.map((problem, index) => (
+            <div key={index} className="flex gap-3">
+              <span className="font-medium text-muted-foreground">Why {index + 1}:</span>
+              <p>{problem}</p>
+            </div>
+          ))}
+        </div>
       </Card>
 
       <Card className="p-4">
@@ -37,20 +49,20 @@ export const FishboneResult = ({ analysis, onReset }: FishboneResultProps) => {
 
       <Card className="p-4">
         <h3 className="font-semibold mb-2">Corrective Actions</h3>
-        <ul className="list-disc pl-5 space-y-2">
+        <div className="space-y-2">
           {analysis.correctiveActions.map((action, index) => (
-            <li key={index} className="text-sm">{action}</li>
+            <p key={index} className="text-sm">• {action}</p>
           ))}
-        </ul>
+        </div>
       </Card>
 
       <Card className="p-4">
         <h3 className="font-semibold mb-2">Preventive Actions</h3>
-        <ul className="list-disc pl-5 space-y-2">
+        <div className="space-y-2">
           {analysis.preventiveActions.map((action, index) => (
-            <li key={index} className="text-sm">{action}</li>
+            <p key={index} className="text-sm">• {action}</p>
           ))}
-        </ul>
+        </div>
       </Card>
 
       {analysis.learningFeedback && analysis.learningFeedback.length > 0 && (
