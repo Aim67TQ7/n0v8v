@@ -7,76 +7,42 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { ResetPasswordForm } from "./ResetPasswordForm";
 import { PasswordInput } from "./PasswordInput";
-import { AuthError } from "@supabase/supabase-js";
+import { OTPVerification } from "./OTPVerification";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPasswordReset, setShowPasswordReset] = useState(false);
+  const [showOTPVerification, setShowOTPVerification] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  const handleAuthError = (error: AuthError) => {
-    console.error("Auth error:", error);
-    
-    // Handle specific error cases
-    if (error.message.includes("Email not confirmed")) {
-      toast({
-        variant: "destructive",
-        title: "Email not verified",
-        description: "Please check your email for a verification link. Need a new link? Sign up again.",
-      });
-    } else if (error.message.includes("Invalid login credentials")) {
-      toast({
-        variant: "destructive",
-        title: "Invalid credentials",
-        description: "Please check your email and password and try again.",
-      });
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message,
-      });
-    }
-  };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      if (showPasswordReset) {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${window.location.origin}/reset-password`,
-        });
-        
-        if (error) throw error;
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        toast({
-          title: "Password reset link sent!",
-          description: "Check your email for a link to reset your password.",
-        });
-        
-        setShowPasswordReset(false);
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+      if (error) throw error;
 
-        if (error) throw error;
-
-        toast({
-          title: "Welcome back!",
-          description: "You have successfully signed in.",
-        });
-        
-        navigate("/");
-      }
+      toast({
+        title: "Welcome back!",
+        description: "You have successfully signed in.",
+      });
+      
+      navigate("/");
     } catch (error: any) {
-      handleAuthError(error);
+      console.error("Auth error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      });
     } finally {
       setLoading(false);
     }
@@ -87,48 +53,45 @@ export const SignInForm = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signInWithOtp({
         email,
-        password,
         options: {
-          emailRedirectTo: `${window.location.origin}/company-gpt`,
+          emailRedirectTo: `${window.location.origin}/verify`,
         },
       });
 
       if (error) throw error;
 
+      setShowOTPVerification(true);
       toast({
-        title: "Verification email sent",
-        description: "Please check your email to verify your account before signing in.",
+        title: "Verification code sent",
+        description: "Please check your email for the verification code.",
       });
-      
-      // Clear the form
-      setEmail("");
-      setPassword("");
     } catch (error: any) {
-      handleAuthError(error);
+      console.error("Signup error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      });
     } finally {
       setLoading(false);
     }
   };
 
+  if (showOTPVerification) {
+    return <OTPVerification email={email} />;
+  }
+
   if (showPasswordReset) {
     return (
-      <div>
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold">Reset Password</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Enter your email to receive a password reset link
-          </p>
-        </div>
-        <ResetPasswordForm
-          email={email}
-          setEmail={setEmail}
-          loading={loading}
-          onSubmit={handleSignIn}
-          onBack={() => setShowPasswordReset(false)}
-        />
-      </div>
+      <ResetPasswordForm
+        email={email}
+        setEmail={setEmail}
+        loading={loading}
+        onSubmit={handleSignIn}
+        onBack={() => setShowPasswordReset(false)}
+      />
     );
   }
 
@@ -155,22 +118,19 @@ export const SignInForm = () => {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="appearance-none rounded-md relative block w-full"
             />
             <PasswordInput
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <div className="flex justify-between">
-              <Button
-                type="button"
-                variant="link"
-                className="text-sm"
-                onClick={() => setShowPasswordReset(true)}
-              >
-                Forgot password?
-              </Button>
-            </div>
+            <Button
+              type="button"
+              variant="link"
+              className="text-sm"
+              onClick={() => setShowPasswordReset(true)}
+            >
+              Forgot password?
+            </Button>
             <Button
               type="submit"
               className="w-full"
@@ -189,19 +149,13 @@ export const SignInForm = () => {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="appearance-none rounded-md relative block w-full"
-            />
-            <PasswordInput
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Choose a password"
             />
             <Button
               type="submit"
               className="w-full"
               disabled={loading}
             >
-              {loading ? "Creating account..." : "Create Account"}
+              {loading ? "Sending verification..." : "Create Account"}
             </Button>
           </form>
         </TabsContent>

@@ -5,6 +5,7 @@ import Modules from "@/pages/Modules";
 import Index from "@/pages/Index";
 import Login from "@/pages/Login";
 import ResetPassword from "@/pages/ResetPassword";
+import Register from "@/pages/Register";
 import LeanManufacturing from "@/pages/LeanManufacturing";
 import FiveSVision from "@/pages/FiveSVision";
 import QualityAssurance from "@/pages/QualityAssurance";
@@ -38,6 +39,10 @@ export const routes = [
   {
     path: "/reset-password",
     element: <ResetPassword />
+  },
+  {
+    path: "/register",
+    element: <Register />
   },
   {
     path: "/company-gpt",
