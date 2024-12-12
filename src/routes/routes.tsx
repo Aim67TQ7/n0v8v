@@ -13,6 +13,7 @@ import PartAnalysis from "@/pages/quality/PartAnalysis";
 import ProductInspection from "@/pages/quality/ProductInspection";
 import DMRDocumentation from "@/pages/quality/DMRDocumentation";
 import FiveWhys from "@/pages/quality/FiveWhys";
+import Fishbone from "@/pages/quality/Fishbone";
 import { AuthWrapper } from "@/components/AuthWrapper";
 import TrainingMatrix from "@/pages/training/TrainingMatrix";
 import TeamManagement from "@/pages/TeamManagement";
@@ -121,5 +122,9 @@ export const routes = [
   {
     path: "/operations/quality/five-whys",
     element: <FiveWhys />
+  },
+  {
+    path: "/operations/quality/fishbone",
+    element: <Fishbone />
   }
 ];

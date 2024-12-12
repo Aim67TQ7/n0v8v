@@ -7,7 +7,8 @@ import {
   PackageSearch,
   Scale,
   Microscope,
-  GitFork
+  GitFork,
+  Fish
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
@@ -39,6 +40,13 @@ export const tools: Tool[] = [
     description: "AI-guided root cause analysis tool",
     icon: GitFork,
     href: "/operations/quality/five-whys",
+    status: "ready" as const
+  },
+  {
+    title: "Fishbone Analysis",
+    description: "Structured cause-and-effect analysis tool",
+    icon: Fish,
+    href: "/operations/quality/fishbone",
     status: "ready" as const
   },
   {
