@@ -10,12 +10,14 @@ interface AnalysisContentProps {
     message: string;
     details: string;
   } | null;
+  partInspectionId?: string;
   processImprovementId?: string;
   inspectionTypeId?: string;
 }
 
 export const AnalysisContent = ({ 
   analysis, 
+  partInspectionId,
   processImprovementId,
   inspectionTypeId 
 }: AnalysisContentProps) => {
@@ -44,6 +46,7 @@ export const AnalysisContent = ({
 
       <AnalysisFeedbackButtons
         processImprovementId={processImprovementId}
+        partInspectionId={partInspectionId}
         inspectionTypeId={inspectionTypeId}
         isSubmitting={isSubmitting}
         setIsSubmitting={setIsSubmitting}
@@ -53,6 +56,7 @@ export const AnalysisContent = ({
       {isTraining && (
         <TrainingFeedbackForm
           processImprovementId={processImprovementId}
+          partInspectionId={partInspectionId}
           inspectionTypeId={inspectionTypeId}
           onCancel={() => setIsTraining(false)}
           onSuccess={() => setIsTraining(false)}

@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { ThumbsUp, BookOpen } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { ThumbsUp, ThumbsDown, GraduationCap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface AnalysisFeedbackButtonsProps {
   processImprovementId?: string;
+  partInspectionId?: string;
   inspectionTypeId?: string;
   isSubmitting: boolean;
   setIsSubmitting: (value: boolean) => void;
@@ -13,6 +14,7 @@ interface AnalysisFeedbackButtonsProps {
 
 export const AnalysisFeedbackButtons = ({
   processImprovementId,
+  partInspectionId,
   inspectionTypeId,
   isSubmitting,
   setIsSubmitting,
@@ -20,29 +22,30 @@ export const AnalysisFeedbackButtons = ({
 }: AnalysisFeedbackButtonsProps) => {
   const { toast } = useToast();
 
-  const handleAgree = async () => {
+  const handleFeedback = async (feedbackType: string) => {
     try {
       setIsSubmitting(true);
       const { error } = await supabase
         .from('part_analysis_feedback')
         .insert({
           process_improvement_id: processImprovementId,
-          feedback_type: 'agreement',
+          part_inspection_id: partInspectionId,
           inspection_type_id: inspectionTypeId,
+          feedback_type: feedbackType,
           created_by: (await supabase.auth.getUser()).data.user?.id
         });
 
       if (error) throw error;
 
       toast({
-        title: "Success",
-        description: "Analysis agreement recorded",
+        title: "Feedback Submitted",
+        description: "Thank you for your feedback!",
       });
     } catch (error) {
-      console.error('Error recording agreement:', error);
+      console.error('Feedback error:', error);
       toast({
         title: "Error",
-        description: "Failed to record agreement",
+        description: "Failed to submit feedback",
         variant: "destructive"
       });
     } finally {
@@ -51,23 +54,30 @@ export const AnalysisFeedbackButtons = ({
   };
 
   return (
-    <div className="flex gap-4 mt-6">
+    <div className="flex flex-wrap gap-4">
       <Button
-        onClick={handleAgree}
-        disabled={isSubmitting || !processImprovementId}
-        className="flex items-center gap-2"
+        variant="outline"
+        onClick={() => handleFeedback('helpful')}
+        disabled={isSubmitting}
       >
-        <ThumbsUp className="h-4 w-4" />
-        Agree with Analysis
+        <ThumbsUp className="w-4 h-4 mr-2" />
+        Helpful
       </Button>
       <Button
-        onClick={onTrainingClick}
-        disabled={isSubmitting || !processImprovementId}
         variant="outline"
-        className="flex items-center gap-2"
+        onClick={() => handleFeedback('not_helpful')}
+        disabled={isSubmitting}
       >
-        <BookOpen className="h-4 w-4" />
-        Add Training Notes
+        <ThumbsDown className="w-4 h-4 mr-2" />
+        Not Helpful
+      </Button>
+      <Button
+        variant="outline"
+        onClick={onTrainingClick}
+        disabled={isSubmitting}
+      >
+        <GraduationCap className="w-4 h-4 mr-2" />
+        Needs Training
       </Button>
     </div>
   );

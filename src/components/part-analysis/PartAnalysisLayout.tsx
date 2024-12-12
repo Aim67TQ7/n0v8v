@@ -17,7 +17,7 @@ export const PartAnalysisLayout = ({ analysis, onAnalysisComplete }: PartAnalysi
       <div className="space-y-6">
         <ProcessAnalysisResults 
           analysis={analysis} 
-          processImprovementId={analysis?.processImprovementId}
+          partInspectionId={analysis?.partInspectionId}
           inspectionTypeId={analysis?.inspectionTypeId}
         />
       </div>
