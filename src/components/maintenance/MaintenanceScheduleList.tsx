@@ -5,7 +5,7 @@ interface MaintenanceSchedule {
   id: string;
   frequency: string;
   task_description: string;
-  estimated_time: string | null;
+  estimated_time: string | null | unknown;  // Updated type
   is_critical: boolean;
   skill_level: string;
 }
@@ -34,7 +34,7 @@ export const MaintenanceScheduleList = ({ schedules }: MaintenanceScheduleListPr
               </Badge>
               {schedule.estimated_time && (
                 <Badge variant="secondary" className="text-xs">
-                  {schedule.estimated_time}
+                  {String(schedule.estimated_time)}
                 </Badge>
               )}
               <Badge variant="secondary" className="text-xs">
