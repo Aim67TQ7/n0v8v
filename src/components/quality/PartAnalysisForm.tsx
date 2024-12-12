@@ -47,7 +47,7 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
   };
 
   const handleAnalyze = async () => {
-    if (!selectedInspectionType) {
+    if (!selectedInspectionType || !image) {
       toast({
         title: "Missing information",
         description: "Please select an inspection type and upload an image",
@@ -75,11 +75,13 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
         formData.append('workcenter', selectedWorkcenter);
       }
 
-      const { data: { data, error } } = await supabase.functions.invoke('analyze-process', {
+      const response = await supabase.functions.invoke('analyze-process', {
         body: formData
       });
 
-      if (error) throw error;
+      if (response.error) throw response.error;
+
+      const { data } = response.data;
 
       const { data: partInspection, error: dbError } = await supabase
         .from('part_inspections')
@@ -88,15 +90,12 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
           inspection_type_id: selectedInspectionType,
           image_url: data.imageUrl,
           analysis: data.analysis.details,
-          created_by: (await supabase.auth.getUser()).data.user?.id || null
+          created_by: (await supabase.auth.getUser()).data.user?.id
         })
         .select()
         .single();
 
-      if (dbError) {
-        console.error('Database error:', dbError);
-        throw dbError;
-      }
+      if (dbError) throw dbError;
 
       onAnalysisComplete({
         ...data.analysis,

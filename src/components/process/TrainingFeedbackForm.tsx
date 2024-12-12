@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface TrainingFeedbackFormProps {
   processImprovementId?: string;
+  partInspectionId?: string;
   inspectionTypeId?: string;
   onCancel: () => void;
   onSuccess: () => void;
@@ -15,6 +16,7 @@ interface TrainingFeedbackFormProps {
 
 export const TrainingFeedbackForm = ({
   processImprovementId,
+  partInspectionId,
   inspectionTypeId,
   onCancel,
   onSuccess,
@@ -40,9 +42,10 @@ export const TrainingFeedbackForm = ({
         .from('part_analysis_feedback')
         .insert({
           process_improvement_id: processImprovementId,
+          part_inspection_id: partInspectionId,
+          inspection_type_id: inspectionTypeId,
           feedback_type: 'training',
           comments: trainingComment,
-          inspection_type_id: inspectionTypeId,
           created_by: (await supabase.auth.getUser()).data.user?.id
         });
 
