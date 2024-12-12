@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   const { isLoading, isAuthenticated, error } = useAuth();
@@ -8,13 +9,27 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   const isDevelopment = process.env.NODE_ENV === 'development';
 
   useEffect(() => {
-    // In development, allow access without authentication
-    if (isDevelopment) return;
+    const checkSuperUser = async () => {
+      if (!isAuthenticated) return;
 
-    // In production, redirect to login if not authenticated
-    if (!isLoading && !isAuthenticated) {
-      navigate("/login");
-    }
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', (await supabase.auth.getUser()).data.user?.id)
+        .single();
+
+      const isSuperUser = profile?.role === 'superuser';
+
+      // In development, allow access without authentication
+      if (isDevelopment) return;
+
+      // In production, redirect to login if not authenticated or not superuser
+      if (!isLoading && (!isAuthenticated || !isSuperUser)) {
+        navigate("/login");
+      }
+    };
+
+    checkSuperUser();
   }, [isLoading, isAuthenticated, navigate, isDevelopment]);
 
   if (isLoading) {
