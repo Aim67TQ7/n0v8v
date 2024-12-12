@@ -6,16 +6,19 @@ import { Link } from "react-router-dom";
 interface AppCardProps {
   title: string;
   description: string;
-  icon: React.ComponentType;
+  icon: React.ComponentType<any>;
   href: string;
   isWorking: boolean;
 }
 
 const AppCard = ({ title, description, icon: Icon, href, isWorking }: AppCardProps) => (
-  <Link to={href} className={cn(
-    "block transition-transform duration-200 hover:scale-105",
-    !isWorking && "pointer-events-none opacity-60"
-  )}>
+  <Link 
+    to={href}
+    className={cn(
+      "block transition-transform duration-200 hover:scale-105",
+      !isWorking && "pointer-events-none opacity-60"
+    )}
+  >
     <Card className="p-6 h-full">
       <div className="flex items-start gap-4">
         <Icon className="h-6 w-6 text-primary shrink-0 mt-1" />
@@ -42,8 +45,8 @@ const apps: AppCardProps[] = [
     isWorking: true,
   },
   {
-    title: "Quality Control",
-    description: "Track and manage quality control processes and inspections",
+    title: "Quality Assurance",
+    description: "Visual inspections, 5S evaluations, and part analysis tools",
     icon: Scale,
     href: "/operations/quality",
     isWorking: true,
