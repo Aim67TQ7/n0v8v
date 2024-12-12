@@ -46,6 +46,7 @@ const PricingPage = () => {
       setupPrice: "99",
       monthlyPrice: "39.95",
       features: [
+        "7-day free trial",
         "Access to 10 modules for your organization",
         "New modules included as released",
         "Change module selection each billing cycle",
@@ -60,7 +61,7 @@ const PricingPage = () => {
       ],
       popular: true,
       promotion: "Lock in $39.95/mo until Dec 31, 2024 (increases to $79.95/mo in 2025)",
-      cta: "Get Started"
+      cta: "Start Free Trial"
     },
     {
       name: "Enterprise",
