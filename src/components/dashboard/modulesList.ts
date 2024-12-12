@@ -23,7 +23,7 @@ export const modulesList: Module[] = [
     title: "Tools",
     description: "Access your licensed tools",
     icon: AppWindow,
-    href: "/apps",
+    href: "/tools",
     status: "ready"
   },
   {
