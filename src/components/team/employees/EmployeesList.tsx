@@ -11,7 +11,6 @@ import { Edit, Trash2 } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { EditEmployeeDialog } from "./EditEmployeeDialog";
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -36,7 +35,6 @@ interface EmployeesListProps {
 }
 
 export const EmployeesList = ({ employees }: EmployeesListProps) => {
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -92,13 +90,6 @@ export const EmployeesList = ({ employees }: EmployeesListProps) => {
               <TableCell>
                 {canEdit && (
                   <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setSelectedEmployee(employee)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="ghost" size="icon">
@@ -127,12 +118,6 @@ export const EmployeesList = ({ employees }: EmployeesListProps) => {
           ))}
         </TableBody>
       </Table>
-      {selectedEmployee && (
-        <EditEmployeeDialog
-          employee={selectedEmployee}
-          onClose={() => setSelectedEmployee(null)}
-        />
-      )}
     </div>
   );
 };
