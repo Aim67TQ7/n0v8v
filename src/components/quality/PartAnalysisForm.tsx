@@ -6,15 +6,12 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ProcessImageUploader } from "@/components/ProcessImageUploader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
 
-const INSPECTION_TYPES = [
-  { id: 'visual', name: 'Visual' },
-  { id: 'pre-emptive', name: 'Pre-emptive' },
-  { id: 'in-process', name: 'In-Process' },
-  { id: 'dimensional', name: 'Dimensional' },
-  { id: 'pre-set', name: 'Pre-set' },
-  { id: 'final', name: 'Final' }
-];
+interface InspectionType {
+  id: string;
+  name: string;
+}
 
 interface PartAnalysisFormProps {
   onAnalysisComplete: (analysis: any) => void;
@@ -28,6 +25,19 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedArea, setSelectedArea] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
   const { toast } = useToast();
+
+  const { data: inspectionTypes, isLoading: isLoadingTypes } = useQuery({
+    queryKey: ['inspectionTypes'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('inspection_types')
+        .select('id, name')
+        .order('name');
+      
+      if (error) throw error;
+      return data as InspectionType[];
+    }
+  });
 
   const handleImageUpload = (file: File) => {
     setImage(file);
@@ -101,7 +111,7 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
             <SelectValue placeholder="Choose inspection type" />
           </SelectTrigger>
           <SelectContent>
-            {INSPECTION_TYPES.map((type) => (
+            {inspectionTypes?.map((type) => (
               <SelectItem key={type.id} value={type.id}>
                 {type.name}
               </SelectItem>
