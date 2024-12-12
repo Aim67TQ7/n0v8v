@@ -12,35 +12,13 @@ serve(async (req) => {
   }
 
   try {
-    const { imageUrl, selectedArea, companyId, equipmentDetails } = await req.json();
-    console.log('Processing request for image:', imageUrl);
+    const { imageData, selectedArea, companyId, equipmentDetails } = await req.json();
+    console.log('Processing request for equipment analysis');
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
-
-    // Get the image data from storage
-    const { data: imageData, error: storageError } = await supabase.storage
-      .from('process-images')
-      .download(imageUrl);
-
-    if (storageError) {
-      console.error('Storage error:', storageError);
-      throw new Error('Failed to download image from storage');
-    }
-
-    // Get the file extension and determine MIME type
-    const fileExt = imageUrl.split('.').pop()?.toLowerCase() || 'jpeg';
-    const mimeType = fileExt === 'jpg' ? 'jpeg' : fileExt;
-
-    // Convert the image to base64
-    const imageArrayBuffer = await imageData.arrayBuffer();
-    const base64Image = btoa(
-      String.fromCharCode(...new Uint8Array(imageArrayBuffer))
-    );
-
-    console.log('Image processed, sending to OpenAI');
 
     // Create a detailed system prompt using the equipment details
     const systemPrompt = `You are an expert in industrial equipment maintenance, specializing in analyzing equipment images. 
@@ -55,6 +33,8 @@ serve(async (req) => {
     5. Safety precautions
     6. Estimated maintenance intervals`;
 
+    console.log('Sending request to OpenAI');
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -62,7 +42,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "gpt-4o",
+        model: "gpt-4-vision-preview",
         messages: [
           {
             role: "system",
@@ -78,7 +58,7 @@ serve(async (req) => {
               {
                 type: "image_url",
                 image_url: {
-                  url: `data:image/${mimeType};base64,${base64Image}`
+                  url: `data:image/jpeg;base64,${imageData}`
                 }
               }
             ]
@@ -108,6 +88,10 @@ serve(async (req) => {
     const manufacturerMatch = aiResponse.match(/manufacturer:?\s*([^\n]+)/i);
     const typeMatch = aiResponse.match(/type:?\s*([^\n]+)/i);
 
+    // Generate a unique filename for the image
+    const fileName = `${crypto.randomUUID()}.jpg`;
+
+    // Store equipment in database
     const { data: equipment, error: equipmentError } = await supabase
       .from('equipment')
       .insert({
@@ -116,7 +100,7 @@ serve(async (req) => {
         model: modelMatch?.[1]?.trim() || 'Unknown',
         manufacturer: manufacturerMatch?.[1]?.trim() || 'Unknown',
         equipment_type: typeMatch?.[1]?.trim() || 'Unknown',
-        image_url: imageUrl,
+        image_url: fileName,
         status: 'active',
         last_maintenance_date: new Date().toISOString(),
         next_maintenance_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
@@ -125,6 +109,15 @@ serve(async (req) => {
       .single();
 
     if (equipmentError) throw equipmentError;
+
+    // Upload the base64 image to storage
+    const { error: storageError } = await supabase.storage
+      .from('process-images')
+      .upload(fileName, Buffer.from(imageData, 'base64'), {
+        contentType: 'image/jpeg'
+      });
+
+    if (storageError) throw storageError;
 
     const maintenanceTasks = aiResponse
       .split('\n')

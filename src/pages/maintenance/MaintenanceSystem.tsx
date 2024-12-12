@@ -11,11 +11,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
 
 const MaintenanceSystem = () => {
   const [imagePreview, setImagePreview] = useState("");
   const [selectedArea, setSelectedArea] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
   const [equipmentDetails, setEquipmentDetails] = useState("");
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [progress, setProgress] = useState(0);
   const { session } = useSessionContext();
   const { toast } = useToast();
 
@@ -25,6 +28,20 @@ const MaintenanceSystem = () => {
 
   const handleAreaSelect = (area: { x: number; y: number; width: number; height: number } | null) => {
     setSelectedArea(area);
+  };
+
+  const convertImageToBase64 = async (imageUrl: string): Promise<string> => {
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        resolve(base64String.split(',')[1]); // Remove data URL prefix
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
   };
 
   const handleAnalyze = async () => {
@@ -38,6 +55,9 @@ const MaintenanceSystem = () => {
     }
 
     try {
+      setIsAnalyzing(true);
+      setProgress(20);
+
       const { data: profile } = await supabase
         .from('profiles')
         .select('company_id')
@@ -48,29 +68,29 @@ const MaintenanceSystem = () => {
         throw new Error('No company ID found');
       }
 
-      // Upload image to storage
-      const fileExt = imagePreview.split(';')[0].split('/')[1];
-      const fileName = `${crypto.randomUUID()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      setProgress(40);
 
-      const { error: uploadError } = await supabase.storage
-        .from('process-images')
-        .upload(filePath, imagePreview);
-
-      if (uploadError) throw uploadError;
+      // Convert image to base64
+      const base64Image = await convertImageToBase64(imagePreview);
+      
+      setProgress(60);
 
       // Process the image with AI
       const { data, error } = await supabase.functions.invoke('analyze-maintenance', {
         body: { 
-          imageUrl: filePath,
+          imageData: base64Image,
           selectedArea,
           companyId: profile.company_id,
           equipmentDetails: equipmentDetails
         }
       });
 
+      setProgress(80);
+
       if (error) throw error;
 
+      setProgress(100);
+      
       toast({
         title: "Analysis Complete",
         description: "Equipment has been analyzed and maintenance schedule created"
@@ -88,6 +108,9 @@ const MaintenanceSystem = () => {
         description: "There was an error analyzing the equipment",
         variant: "destructive"
       });
+    } finally {
+      setIsAnalyzing(false);
+      setProgress(0);
     }
   };
 
@@ -133,10 +156,17 @@ const MaintenanceSystem = () => {
                   selectedArea={selectedArea}
                 />
                 {imagePreview && selectedArea && (
-                  <div className="mt-4">
-                    <Button onClick={handleAnalyze} className="w-full">
-                      Generate Maintenance Schedule
+                  <div className="mt-4 space-y-4">
+                    <Button 
+                      onClick={handleAnalyze} 
+                      className="w-full relative" 
+                      disabled={isAnalyzing}
+                    >
+                      {isAnalyzing ? "Analyzing Equipment..." : "Generate Maintenance Schedule"}
                     </Button>
+                    {isAnalyzing && (
+                      <Progress value={progress} className="w-full h-2" />
+                    )}
                   </div>
                 )}
               </div>
