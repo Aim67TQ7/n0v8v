@@ -65,6 +65,68 @@ export type Database = {
         }
         Relationships: []
       }
+      categories: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          department_id: string | null
+          description: string | null
+          id: string
+          location_id: string | null
+          manager_id: string | null
+          name: string
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          department_id?: string | null
+          description?: string | null
+          id?: string
+          location_id?: string | null
+          manager_id?: string | null
+          name: string
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          department_id?: string | null
+          description?: string | null
+          id?: string
+          location_id?: string | null
+          manager_id?: string | null
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categories_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "categories_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "categories_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "categories_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_logs: {
         Row: {
           company_id: string | null
