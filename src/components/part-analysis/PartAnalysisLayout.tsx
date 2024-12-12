@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { PartAnalysisForm } from "@/components/quality/PartAnalysisForm";
-import { AnalysisContent } from "@/components/process/AnalysisContent";
+import { ProcessAnalysisResults } from "@/components/ProcessAnalysisResults";
 
 interface PartAnalysisLayoutProps {
   analysis: any;
@@ -15,7 +15,11 @@ export const PartAnalysisLayout = ({ analysis, onAnalysisComplete }: PartAnalysi
       </Card>
 
       <div className="space-y-6">
-        <AnalysisContent analysis={analysis} />
+        <ProcessAnalysisResults 
+          analysis={analysis} 
+          processImprovementId={analysis?.processImprovementId}
+          inspectionTypeId={analysis?.inspectionTypeId}
+        />
       </div>
     </div>
   );

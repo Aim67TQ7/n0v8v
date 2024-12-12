@@ -10,11 +10,13 @@ interface ProcessAnalysisResultsProps {
     details: string;
   } | null;
   processImprovementId?: string;
+  inspectionTypeId?: string;
 }
 
 export const ProcessAnalysisResults = ({ 
   analysis, 
-  processImprovementId 
+  processImprovementId,
+  inspectionTypeId
 }: ProcessAnalysisResultsProps) => {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
 
@@ -22,7 +24,11 @@ export const ProcessAnalysisResults = ({
 
   return (
     <>
-      <AnalysisContent analysis={analysis} />
+      <AnalysisContent 
+        analysis={analysis} 
+        processImprovementId={processImprovementId}
+        inspectionTypeId={inspectionTypeId}
+      />
       <div className="mt-6 flex justify-end space-x-4">
         <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
           Skip

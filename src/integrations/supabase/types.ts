@@ -681,6 +681,61 @@ export type Database = {
           },
         ]
       }
+      part_analysis_feedback: {
+        Row: {
+          comments: string | null
+          created_at: string
+          created_by: string | null
+          feedback_type: string
+          id: string
+          inspection_type_id: string | null
+          marked_areas: Json | null
+          process_improvement_id: string | null
+        }
+        Insert: {
+          comments?: string | null
+          created_at?: string
+          created_by?: string | null
+          feedback_type: string
+          id?: string
+          inspection_type_id?: string | null
+          marked_areas?: Json | null
+          process_improvement_id?: string | null
+        }
+        Update: {
+          comments?: string | null
+          created_at?: string
+          created_by?: string | null
+          feedback_type?: string
+          id?: string
+          inspection_type_id?: string | null
+          marked_areas?: Json | null
+          process_improvement_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "part_analysis_feedback_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "part_analysis_feedback_inspection_type_id_fkey"
+            columns: ["inspection_type_id"]
+            isOneToOne: false
+            referencedRelation: "inspection_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "part_analysis_feedback_process_improvement_id_fkey"
+            columns: ["process_improvement_id"]
+            isOneToOne: false
+            referencedRelation: "process_improvements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       process_analysis_reports: {
         Row: {
           analysis_date: string | null
