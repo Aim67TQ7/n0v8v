@@ -47,7 +47,9 @@ serve(async (req) => {
               },
               {
                 type: "image_url",
-                image_url: publicUrl
+                image_url: {
+                  url: publicUrl
+                }
               }
             ]
           }
@@ -57,7 +59,7 @@ serve(async (req) => {
     })
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`)
+      throw new Error(`OpenAI API error: ${response.status} - ${await response.text()}`)
     }
 
     const analysisResult = await response.json()
@@ -69,13 +71,11 @@ serve(async (req) => {
 
     const aiResponse = analysisResult.choices[0].message.content
     
-    // Parse the AI response to extract structured data
     const makeMatch = aiResponse.match(/make:?\s*([^\n]+)/i)
     const modelMatch = aiResponse.match(/model:?\s*([^\n]+)/i)
     const manufacturerMatch = aiResponse.match(/manufacturer:?\s*([^\n]+)/i)
     const typeMatch = aiResponse.match(/type:?\s*([^\n]+)/i)
 
-    // Create equipment record
     const { data: equipment, error: equipmentError } = await supabase
       .from('equipment')
       .insert({
@@ -94,7 +94,6 @@ serve(async (req) => {
 
     if (equipmentError) throw equipmentError
 
-    // Extract maintenance tasks and create schedule
     const maintenanceTasks = aiResponse
       .split('\n')
       .filter(line => line.includes('maintenance') || line.includes('inspect'))
@@ -110,7 +109,6 @@ serve(async (req) => {
         procedure_steps: ['inspect equipment', 'perform maintenance', 'document results']
       }))
 
-    // Insert maintenance schedules
     const { error: scheduleError } = await supabase
       .from('maintenance_schedules')
       .insert(maintenanceTasks)
