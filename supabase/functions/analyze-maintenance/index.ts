@@ -40,14 +40,20 @@ serve(async (req) => {
       String.fromCharCode(...new Uint8Array(imageArrayBuffer))
     );
 
-    console.log('Image processed, sending to OpenAI with MIME type:', mimeType);
+    console.log('Image processed, sending to OpenAI');
 
     // Create a detailed system prompt using the equipment details
-    const systemPrompt = `You are an expert in industrial equipment maintenance, specializing in ${equipmentDetails.type || 'various types of equipment'}. 
-    ${equipmentDetails.make ? `The equipment is made by ${equipmentDetails.make}` : ''} 
-    ${equipmentDetails.model ? `and is model ${equipmentDetails.model}` : ''} 
-    ${equipmentDetails.serialNumber ? `with serial number ${equipmentDetails.serialNumber}` : ''}.
-    Analyze the equipment image and provide detailed maintenance recommendations based on industry standards and manufacturer guidelines.`;
+    const systemPrompt = `You are an expert in industrial equipment maintenance, specializing in analyzing equipment images. 
+    Analyze the equipment in the image and provide detailed maintenance recommendations.
+    Equipment details provided: ${equipmentDetails}
+    
+    Provide your analysis in the following format:
+    1. Equipment identification (make, model, manufacturer if visible)
+    2. Current condition assessment
+    3. Maintenance recommendations
+    4. Required tools and skills
+    5. Safety precautions
+    6. Estimated maintenance intervals`;
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -67,7 +73,7 @@ serve(async (req) => {
             content: [
               {
                 type: "text",
-                text: "Analyze this equipment image and provide detailed information about:\n1. Equipment identification (make, model, manufacturer)\n2. Equipment type and category\n3. Recommended maintenance schedule\n4. Required tools and skills\n5. Safety precautions"
+                text: "Analyze this equipment image and provide detailed maintenance recommendations."
               },
               {
                 type: "image_url",
@@ -106,11 +112,10 @@ serve(async (req) => {
       .from('equipment')
       .insert({
         company_id: companyId,
-        make: equipmentDetails.make || makeMatch?.[1]?.trim() || 'Unknown',
-        model: equipmentDetails.model || modelMatch?.[1]?.trim() || 'Unknown',
+        make: makeMatch?.[1]?.trim() || 'Unknown',
+        model: modelMatch?.[1]?.trim() || 'Unknown',
         manufacturer: manufacturerMatch?.[1]?.trim() || 'Unknown',
-        equipment_type: equipmentDetails.type || typeMatch?.[1]?.trim() || 'Unknown',
-        serial_number: equipmentDetails.serialNumber || null,
+        equipment_type: typeMatch?.[1]?.trim() || 'Unknown',
         image_url: imageUrl,
         status: 'active',
         last_maintenance_date: new Date().toISOString(),
@@ -146,7 +151,8 @@ serve(async (req) => {
       JSON.stringify({ 
         message: 'Equipment analyzed and maintenance schedule created',
         equipment,
-        maintenanceTasks 
+        maintenanceTasks,
+        analysis: aiResponse
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
