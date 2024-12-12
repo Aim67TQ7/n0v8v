@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 
@@ -76,13 +75,6 @@ export const QuestioningInterface = ({
           <label htmlFor="learning" className="text-sm">Add Learning Note</label>
         </div>
       </div>
-
-      <Card className="p-4">
-        <p className="font-medium mb-2">Previous Statement:</p>
-        <p className="text-sm bg-muted p-2 rounded">
-          {currentIteration === 1 ? problemStatement : "Previous answer goes here"}
-        </p>
-      </Card>
 
       <div className="space-y-2">
         <p className="font-medium text-lg">
