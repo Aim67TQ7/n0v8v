@@ -82,18 +82,16 @@ export const ChatContainer = ({
 
   return (
     <div className="flex-1 flex flex-col h-[calc(100vh-64px)] overflow-hidden">
-      <div className="flex flex-1">
-        <div className="flex-1 flex flex-col">
-          <ScrollArea className="flex-1 pb-[120px] overflow-y-auto">
-            <ChatInterface 
-              systemPrompt={`You are BuntingGPT, an AI assistant specialized in magnetic separation and metal detection solutions.`}
-              onHistoryUpdate={onHistoryUpdate}
-              inputValue={inputValue}
-              setInputValue={setInputValue}
-            />
-          </ScrollArea>
+      <ScrollArea className="flex-1">
+        <div className="flex-1 flex flex-col p-4">
+          <ChatInterface 
+            systemPrompt={`You are BuntingGPT, an AI assistant specialized in magnetic separation and metal detection solutions.`}
+            onHistoryUpdate={onHistoryUpdate}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+          />
         </div>
-      </div>
+      </ScrollArea>
     </div>
   );
 };

@@ -1,9 +1,13 @@
-import { Home, Mail, Wrench } from "lucide-react";
+import { Home, Mail, Wrench, Database, Grid } from "lucide-react";
 import { ResourceCard } from "./ResourceCard";
 
 export const ResourceSidebar = () => {
   const handleEmailClick = () => {
     window.location.href = "mailto:";
+  };
+
+  const handleEpicorClick = () => {
+    window.open('https://erp.bunting.com', '_blank');
   };
 
   return (
@@ -25,6 +29,18 @@ export const ResourceSidebar = () => {
         title="Tools"
         description="Access quality tools"
         href="/tools"
+      />
+      <ResourceCard
+        icon={Database}
+        title="Epicor"
+        description="Open ERP system"
+        onClick={handleEpicorClick}
+      />
+      <ResourceCard
+        icon={Grid}
+        title="Modules"
+        description="View all modules"
+        href="/modules"
       />
     </div>
   );
