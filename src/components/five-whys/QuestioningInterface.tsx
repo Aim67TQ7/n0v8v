@@ -46,17 +46,27 @@ export const QuestioningInterface = ({
     setIsLearning(false);
   };
 
-  const getWhyQuestion = () => {
-    if (currentIteration === 1) {
-      return `Why is ${problemStatement.toLowerCase()}?`;
+  const getIterationHeader = () => {
+    switch (currentIteration) {
+      case 1:
+        return "Initial Cause Identification";
+      case 2:
+        return "Process Analysis";
+      case 3:
+        return "System Evaluation";
+      case 4:
+        return "Organizational Factors";
+      case 5:
+        return "Root Cause Discovery";
+      default:
+        return `Why #${currentIteration}`;
     }
-    return "Why did this happen?";
   };
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Why #{currentIteration}</h2>
+        <h2 className="text-xl font-semibold">{getIterationHeader()}</h2>
         <div className="flex items-center space-x-2">
           <Checkbox
             id="learning"
@@ -75,7 +85,11 @@ export const QuestioningInterface = ({
       </Card>
 
       <div className="space-y-2">
-        <p className="font-medium text-lg">{getWhyQuestion()}</p>
+        <p className="font-medium text-lg">
+          {currentIteration === 1 
+            ? `Why is ${problemStatement.toLowerCase()}?`
+            : "Why did this happen?"}
+        </p>
         
         <div className="space-y-3">
           {suggestedQuestions.map((question, index) => (

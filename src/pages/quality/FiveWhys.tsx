@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { GitFork } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { FiveWhysForm } from "@/components/five-whys/FiveWhysForm";
 import { QuestioningInterface } from "@/components/five-whys/QuestioningInterface";
 import { FishboneResult } from "@/components/five-whys/FishboneResult";
+import { AnalysisHeader } from "@/components/five-whys/AnalysisHeader";
 import { Json } from "@/integrations/supabase/types";
 
 interface LearningFeedback {
@@ -27,54 +27,52 @@ const FiveWhys = () => {
   const generateSequentialQuestions = (context: string, iteration: number, previousAnswers: string[]) => {
     const lastAnswer = previousAnswers[previousAnswers.length - 1] || context;
     
-    // Generate contextual questions based on the iteration and previous answers
-    let questions;
+    const baseQuestions = [
+      "Process/Procedure Issues",
+      "Equipment/Tool Problems",
+      "Training/Knowledge Gaps",
+      "Communication Breakdown",
+      "Resource Constraints"
+    ];
     
     switch (iteration) {
       case 1:
-        questions = [
-          `${lastAnswer} because of process/procedure issues`,
-          `${lastAnswer} because of equipment/tool problems`,
-          `${lastAnswer} because of training/knowledge gaps`
-        ];
-        break;
+        return baseQuestions.map(q => `${lastAnswer} due to ${q.toLowerCase()}`);
       case 2:
-        questions = [
-          `${lastAnswer} because standard procedures weren't followed`,
-          `${lastAnswer} because procedures weren't clear`,
-          `${lastAnswer} because procedures weren't available`
+        return [
+          "Standard procedures weren't followed",
+          "Procedures weren't clear",
+          "Required resources unavailable",
+          "Inadequate training provided",
+          "Communication channels ineffective"
         ];
-        break;
       case 3:
-        questions = [
-          `${lastAnswer} because of insufficient oversight`,
-          `${lastAnswer} because of communication breakdown`,
-          `${lastAnswer} because of resource constraints`
+        return [
+          "Lack of oversight mechanisms",
+          "Insufficient quality controls",
+          "Inadequate process documentation",
+          "Missing standardization",
+          "Incomplete risk assessment"
         ];
-        break;
       case 4:
-        questions = [
-          `${lastAnswer} because of systemic issues`,
-          `${lastAnswer} because of organizational barriers`,
-          `${lastAnswer} because of policy limitations`
+        return [
+          "Organizational barriers present",
+          "Resource allocation issues",
+          "Policy limitations exist",
+          "Cultural factors impact work",
+          "Management support lacking"
         ];
-        break;
       case 5:
-        questions = [
-          `${lastAnswer} because of missing standardization`,
-          `${lastAnswer} because of inadequate controls`,
-          `${lastAnswer} because of cultural factors`
+        return [
+          "Systemic process gaps",
+          "Organizational structure issues",
+          "Policy framework inadequate",
+          "Cultural transformation needed",
+          "Strategic alignment missing"
         ];
-        break;
       default:
-        questions = [
-          `${lastAnswer} because of process issues`,
-          `${lastAnswer} because of system issues`,
-          `${lastAnswer} because of human factors`
-        ];
+        return baseQuestions;
     }
-    
-    return questions;
   };
 
   const startAnalysis = async (statement: string) => {
@@ -150,22 +148,19 @@ const FiveWhys = () => {
 
       setAnalysis(data.result);
 
-      // Transform learning feedback to match Json type
       const transformedFeedback: Json[] = learningFeedback.map(item => ({
         iteration: item.iteration,
         feedback: item.feedback
       }));
 
-      const analysisData = {
+      await supabase.from('five_whys_analysis').insert({
         company_id: profile.company_id,
         created_by: session.user.id,
         problem_statement: problemStatement,
         selected_causes: allAnswers,
         fishbone_data: data.result,
         learning_feedback: transformedFeedback
-      };
-
-      await supabase.from('five_whys_analysis').insert(analysisData);
+      });
 
       toast({
         title: "Analysis Complete",
@@ -193,11 +188,7 @@ const FiveWhys = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center gap-3 mb-8">
-        <GitFork className="h-8 w-8 text-secondary" />
-        <h1 className="text-3xl font-bold">Five Whys Analysis</h1>
-      </div>
-      
+      <AnalysisHeader />
       <Card className="p-6">
         {currentIteration === 0 ? (
           <FiveWhysForm onSubmit={startAnalysis} />
