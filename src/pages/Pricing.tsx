@@ -10,7 +10,6 @@ const PricingPage = () => {
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
 
-  // Redirect authenticated users away from pricing
   if (isAuthenticated) {
     navigate('/');
     return null;
@@ -31,8 +30,8 @@ const PricingPage = () => {
       monthlyPrice: "14.95",
       features: [
         "7-day free trial",
-        "Access to any 3 apps",
-        "Change app selection each billing cycle",
+        "Access to any 3 tools",
+        "Change tool selection each billing cycle",
         "GPT branding features",
         "Customizable assistants",
         "SOC II compliant data storage",
@@ -47,8 +46,8 @@ const PricingPage = () => {
       monthlyPrice: "39.95",
       features: [
         "7-day free trial",
-        "Access to all apps",
-        "New apps included as released",
+        "Access to all tools",
+        "New tools included as released",
         "Advanced branding features",
         "Vertical agents (coming soon)",
         "Price locked for 1 year",
@@ -67,7 +66,7 @@ const PricingPage = () => {
       price: "Custom",
       features: [
         "Unlimited users",
-        "Access to all apps",
+        "Access to all tools",
         "All current and future features",
         "Advanced branding features",
         "Vertical agents",
@@ -90,7 +89,7 @@ const PricingPage = () => {
         </p>
         <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-600">
           <Info className="h-4 w-4" />
-          <p>Apps can be selected at the organization level and changed each billing cycle</p>
+          <p>Tools can be selected at the organization level and changed each billing cycle</p>
         </div>
       </div>
 
@@ -160,9 +159,6 @@ const PricingPage = () => {
         ))}
       </div>
 
-      <div className="mt-16 text-center text-sm text-gray-500">
-        <p>All prices in USD. Prices subject to change with notice.</p>
-      </div>
     </div>
   );
 };
