@@ -12,6 +12,12 @@ interface PartAnalysisFormProps {
   onAnalysisComplete: (analysis: any) => void;
 }
 
+interface InspectionType {
+  id: string;
+  name: string;
+  description: string | null;
+}
+
 export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) => {
   const [selectedWorkcenter, setSelectedWorkcenter] = useState<string>("");
   const [selectedInspectionType, setSelectedInspectionType] = useState<string>("");
@@ -21,11 +27,11 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
   const [selectedArea, setSelectedArea] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
   const { toast } = useToast();
 
-  const { data: inspectionTypes } = useQuery({
+  const { data: inspectionTypes } = useQuery<InspectionType[]>({
     queryKey: ['inspectionTypes'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('inspection_types')
+        .from('analysis_types')
         .select('*')
         .order('name');
       

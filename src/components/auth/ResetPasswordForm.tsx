@@ -1,23 +1,47 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ResetPasswordFormProps {
-  email: string;
-  setEmail: (email: string) => void;
-  loading: boolean;
-  onSubmit: (e: React.FormEvent) => void;
   onBack: () => void;
 }
 
-export const ResetPasswordForm = ({
-  email,
-  setEmail,
-  loading,
-  onSubmit,
-  onBack,
-}: ResetPasswordFormProps) => {
+export const ResetPasswordForm = ({ onBack }: ResetPasswordFormProps) => {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/update-password`,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Password reset email sent",
+        description: "Check your email for the password reset link",
+      });
+    } catch (error: any) {
+      console.error("Reset password error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <Input
         type="email"
         required
