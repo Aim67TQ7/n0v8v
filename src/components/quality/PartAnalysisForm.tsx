@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ProcessImageUploader } from "@/components/ProcessImageUploader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
+import { useSessionContext } from "@supabase/auth-helpers-react";
 
 interface PartAnalysisFormProps {
   onAnalysisComplete: (analysis: any, inspectionId: string) => void;
@@ -19,6 +20,7 @@ interface InspectionType {
 }
 
 export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) => {
+  const { session } = useSessionContext();
   const [selectedWorkcenter, setSelectedWorkcenter] = useState<string>("");
   const [selectedInspectionType, setSelectedInspectionType] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
@@ -47,6 +49,15 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
   };
 
   const handleAnalyze = async () => {
+    if (!session?.user?.id) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to perform analysis.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (!image || !selectedInspectionType) {
       toast({
         title: "Missing information",
@@ -88,7 +99,8 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
           workcenter_id: selectedWorkcenter || null,
           analysis_type_id: selectedInspectionType,
           image_url: imagePreview,
-          analysis: JSON.stringify(data.analysis)
+          analysis: JSON.stringify(data.analysis),
+          created_by: session.user.id
         })
         .select()
         .single();
