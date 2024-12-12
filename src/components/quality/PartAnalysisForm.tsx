@@ -86,7 +86,8 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
         .insert({
           workcenter_id: selectedWorkcenter || null,
           image_url: data.imageUrl,
-          analysis: data.analysis.details
+          analysis: data.analysis.details,
+          created_by: (await supabase.auth.getUser()).data.user?.id || null
         })
         .select()
         .single();
