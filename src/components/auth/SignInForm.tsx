@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { ResetPasswordForm } from "./ResetPasswordForm";
 import { PasswordInput } from "./PasswordInput";
+import { AuthError } from "@supabase/supabase-js";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState("");
@@ -15,6 +16,31 @@ export const SignInForm = () => {
   const [showPasswordReset, setShowPasswordReset] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const handleAuthError = (error: AuthError) => {
+    console.error("Auth error:", error);
+    
+    // Handle specific error cases
+    if (error.message.includes("Email not confirmed")) {
+      toast({
+        variant: "destructive",
+        title: "Email not verified",
+        description: "Please check your email for a verification link. Need a new link? Sign up again.",
+      });
+    } else if (error.message.includes("Invalid login credentials")) {
+      toast({
+        variant: "destructive",
+        title: "Invalid credentials",
+        description: "Please check your email and password and try again.",
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      });
+    }
+  };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,12 +76,7 @@ export const SignInForm = () => {
         navigate("/");
       }
     } catch (error: any) {
-      console.error("Auth error:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message,
-      });
+      handleAuthError(error);
     } finally {
       setLoading(false);
     }
@@ -77,16 +98,15 @@ export const SignInForm = () => {
       if (error) throw error;
 
       toast({
-        title: "Check your email",
-        description: "We've sent you a confirmation link to complete your registration.",
+        title: "Verification email sent",
+        description: "Please check your email to verify your account before signing in.",
       });
+      
+      // Clear the form
+      setEmail("");
+      setPassword("");
     } catch (error: any) {
-      console.error("Signup error:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message,
-      });
+      handleAuthError(error);
     } finally {
       setLoading(false);
     }
