@@ -13,6 +13,7 @@ import ProductInspection from "@/pages/quality/ProductInspection";
 import DMRDocumentation from "@/pages/quality/DMRDocumentation";
 import FiveWhys from "@/pages/quality/FiveWhys";
 import { AuthWrapper } from "@/components/AuthWrapper";
+import TrainingMatrix from "@/pages/training/TrainingMatrix";
 
 export const routes = [
   {
@@ -38,6 +39,10 @@ export const routes = [
   {
     path: "/modules",
     element: <Modules />
+  },
+  {
+    path: "/training/matrix",
+    element: <AuthWrapper><TrainingMatrix /></AuthWrapper>
   },
   {
     path: "/operations/lean",
