@@ -1,0 +1,5 @@
+project_id = "bjxbwygfelodmhrfswzi"
+[api]
+enabled = true
+[functions.analyze-maintenance]
+verify_jwt = true
