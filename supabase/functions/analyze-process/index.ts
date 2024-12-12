@@ -89,7 +89,7 @@ serve(async (req) => {
             content: [
               {
                 type: 'text',
-                text: `${inspectionType.prompt_template} ${
+                text: `First, provide a concise name for the part shown in the image, focusing on its apparent function and key characteristics. Then, ${inspectionType.prompt_template} ${
                   selectedArea ? 'Focus specifically on the highlighted area.' : ''
                 }
                 
@@ -103,7 +103,7 @@ serve(async (req) => {
                 
                 If no issues are found, respond with a clear statement that the part meets all quality criteria for this inspection type.
                 
-                Format your response in clear, concise bullet points.`
+                Format your response with the part name on the first line, followed by your analysis in clear, concise bullet points.`
               },
               {
                 type: 'image',
@@ -134,17 +134,21 @@ serve(async (req) => {
     }
 
     const analysisText = data.content[0].text;
-    const noIssuesFound = analysisText.toLowerCase().includes('no issues') || 
-                         analysisText.toLowerCase().includes('meets all quality criteria') ||
-                         analysisText.toLowerCase().includes('no problems') ||
-                         analysisText.toLowerCase().includes('no visible quality concerns');
+    const [partName, ...analysisLines] = analysisText.split('\n').filter(line => line.trim());
+    const analysisDetails = analysisLines.join('\n');
+
+    const noIssuesFound = analysisDetails.toLowerCase().includes('no issues') || 
+                         analysisDetails.toLowerCase().includes('meets all quality criteria') ||
+                         analysisDetails.toLowerCase().includes('no problems') ||
+                         analysisDetails.toLowerCase().includes('no visible quality concerns');
 
     const analysis = {
       status: noIssuesFound ? 'success' : 'concerns',
       message: noIssuesFound ? 
         '✅ Part meets quality standards for this inspection type.' : 
         '⚠️ Quality concerns identified during inspection.',
-      details: analysisText
+      details: analysisDetails,
+      partName: partName.trim()
     };
 
     return new Response(
