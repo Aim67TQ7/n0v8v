@@ -7,6 +7,7 @@ import { useSessionContext } from "@supabase/auth-helpers-react";
 import { FiveWhysForm } from "@/components/five-whys/FiveWhysForm";
 import { QuestioningInterface } from "@/components/five-whys/QuestioningInterface";
 import { FishboneResult } from "@/components/five-whys/FishboneResult";
+import { Json } from "@/integrations/supabase/types";
 
 interface LearningFeedback {
   iteration: number;
@@ -120,13 +121,19 @@ const FiveWhys = () => {
 
       setAnalysis(data.result);
 
+      // Transform learning feedback to match Json type
+      const transformedFeedback: Json[] = learningFeedback.map(item => ({
+        iteration: item.iteration,
+        feedback: item.feedback
+      }));
+
       const analysisData = {
         company_id: profile.company_id,
         created_by: session.user.id,
         problem_statement: problemStatement,
         selected_causes: allAnswers,
         fishbone_data: data.result,
-        learning_feedback: learningFeedback
+        learning_feedback: transformedFeedback
       };
 
       await supabase.from('five_whys_analysis').insert(analysisData);
