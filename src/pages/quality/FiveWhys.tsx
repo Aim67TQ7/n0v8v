@@ -5,13 +5,12 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { FiveWhysForm } from "@/components/five-whys/FiveWhysForm";
-import { CausesList } from "@/components/five-whys/CausesList";
+import { QuestioningInterface } from "@/components/five-whys/QuestioningInterface";
 import { FishboneResult } from "@/components/five-whys/FishboneResult";
 
-interface Cause {
-  id: string;
-  text: string;
-  checked: boolean;
+interface LearningFeedback {
+  iteration: number;
+  feedback: string;
 }
 
 const FiveWhys = () => {
@@ -19,10 +18,34 @@ const FiveWhys = () => {
   const { toast } = useToast();
   const [problemStatement, setProblemStatement] = useState("");
   const [currentIteration, setCurrentIteration] = useState(0);
-  const [causes, setCauses] = useState<Cause[]>([]);
-  const [selectedCauses, setSelectedCauses] = useState<string[]>([]);
+  const [answers, setAnswers] = useState<string[]>([]);
+  const [learningFeedback, setLearningFeedback] = useState<LearningFeedback[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
+
+  const generateQuestions = async (context: string, iteration: number) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('analyze-five-whys', {
+        body: {
+          problemStatement: context,
+          iteration,
+          generateQuestions: true,
+          previousAnswers: answers,
+        },
+      });
+
+      if (error) throw error;
+      return data.questions;
+    } catch (error) {
+      console.error('Error generating questions:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate questions. Please try again.",
+        variant: "destructive",
+      });
+      return [];
+    }
+  };
 
   const startAnalysis = async (statement: string) => {
     if (!statement.trim()) {
@@ -36,52 +59,9 @@ const FiveWhys = () => {
 
     setProblemStatement(statement);
     setCurrentIteration(1);
-    await generateCauses();
   };
 
-  const generateCauses = async () => {
-    setIsAnalyzing(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('analyze-five-whys', {
-        body: {
-          problemStatement,
-          selectedCauses,
-          iteration: currentIteration,
-          generateFishbone: false,
-        },
-      });
-
-      if (error) throw error;
-
-      const causesArray = data.result
-        .split('\n')
-        .filter(Boolean)
-        .map((cause: string) => ({
-          id: crypto.randomUUID(),
-          text: cause.replace(/^\d+\.\s*/, ''),
-          checked: false,
-        }));
-
-      setCauses(causesArray);
-    } catch (error) {
-      console.error('Error generating causes:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate causes. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
-  const handleCauseToggle = (causeId: string, checked: boolean) => {
-    setCauses(prev => prev.map(cause => 
-      cause.id === causeId ? { ...cause, checked } : cause
-    ));
-  };
-
-  const handleNext = async () => {
+  const handleAnswer = async (answer: string, feedback?: string) => {
     if (!session?.user) {
       toast({
         title: "Error",
@@ -91,21 +71,24 @@ const FiveWhys = () => {
       return;
     }
 
-    const newSelectedCauses = [
-      ...selectedCauses,
-      ...causes.filter(cause => cause.checked).map(cause => cause.text),
-    ];
-    setSelectedCauses(newSelectedCauses);
+    const newAnswers = [...answers, answer];
+    setAnswers(newAnswers);
+
+    if (feedback) {
+      setLearningFeedback([
+        ...learningFeedback,
+        { iteration: currentIteration, feedback }
+      ]);
+    }
 
     if (currentIteration < 5) {
       setCurrentIteration(prev => prev + 1);
-      await generateCauses();
     } else {
-      await generateFishbone(newSelectedCauses);
+      await generateFishbone(newAnswers);
     }
   };
 
-  const generateFishbone = async (allSelectedCauses: string[]) => {
+  const generateFishbone = async (allAnswers: string[]) => {
     if (!session?.user) {
       toast({
         title: "Error",
@@ -128,7 +111,7 @@ const FiveWhys = () => {
       const { data, error } = await supabase.functions.invoke('analyze-five-whys', {
         body: {
           problemStatement,
-          selectedCauses: allSelectedCauses,
+          answers: allAnswers,
           generateFishbone: true,
         },
       });
@@ -142,8 +125,9 @@ const FiveWhys = () => {
         company_id: profile.company_id,
         created_by: session.user.id,
         problem_statement: problemStatement,
-        selected_causes: allSelectedCauses,
+        selected_causes: allAnswers,
         fishbone_data: data.result,
+        learning_feedback: learningFeedback,
       });
 
       toast({
@@ -165,8 +149,8 @@ const FiveWhys = () => {
   const resetAnalysis = () => {
     setProblemStatement("");
     setCurrentIteration(0);
-    setCauses([]);
-    setSelectedCauses([]);
+    setAnswers([]);
+    setLearningFeedback([]);
     setAnalysis(null);
   };
 
@@ -181,13 +165,15 @@ const FiveWhys = () => {
         {currentIteration === 0 ? (
           <FiveWhysForm onSubmit={startAnalysis} />
         ) : !analysis ? (
-          <CausesList
-            causes={causes}
-            onCauseToggle={handleCauseToggle}
+          <QuestioningInterface
+            problemStatement={problemStatement}
             currentIteration={currentIteration}
-            isAnalyzing={isAnalyzing}
-            onNext={handleNext}
-            onReset={resetAnalysis}
+            suggestedQuestions={[
+              "Why did this happen?",
+              "What caused this situation?",
+              "What were the underlying factors?"
+            ]}
+            onAnswer={handleAnswer}
           />
         ) : (
           <FishboneResult

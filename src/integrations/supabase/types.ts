@@ -574,8 +574,10 @@ export type Database = {
           created_by: string | null
           fishbone_data: Json | null
           id: string
+          learning_feedback: Json[] | null
           problem_statement: string
           selected_causes: string[]
+          selected_questions: Json[] | null
         }
         Insert: {
           company_id?: string | null
@@ -583,8 +585,10 @@ export type Database = {
           created_by?: string | null
           fishbone_data?: Json | null
           id?: string
+          learning_feedback?: Json[] | null
           problem_statement: string
           selected_causes?: string[]
+          selected_questions?: Json[] | null
         }
         Update: {
           company_id?: string | null
@@ -592,8 +596,10 @@ export type Database = {
           created_by?: string | null
           fishbone_data?: Json | null
           id?: string
+          learning_feedback?: Json[] | null
           problem_statement?: string
           selected_causes?: string[]
+          selected_questions?: Json[] | null
         }
         Relationships: [
           {

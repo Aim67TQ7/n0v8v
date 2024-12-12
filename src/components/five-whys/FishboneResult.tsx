@@ -6,6 +6,7 @@ interface Analysis {
   rootCause: string;
   correctiveActions: string[];
   preventiveActions: string[];
+  learningFeedback?: { iteration: number; feedback: string; }[];
 }
 
 interface FishboneResultProps {
@@ -52,6 +53,20 @@ export const FishboneResult = ({ analysis, onReset }: FishboneResultProps) => {
           ))}
         </ul>
       </Card>
+
+      {analysis.learningFeedback && analysis.learningFeedback.length > 0 && (
+        <Card className="p-4">
+          <h3 className="font-semibold mb-2">Learning Notes</h3>
+          <div className="space-y-4">
+            {analysis.learningFeedback.map((item, index) => (
+              <div key={index} className="border-l-2 border-primary pl-4">
+                <p className="text-sm font-medium">Iteration {item.iteration}</p>
+                <p className="text-sm mt-1">{item.feedback}</p>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
     </div>
   );
 };
