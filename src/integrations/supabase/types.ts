@@ -165,6 +165,7 @@ export type Database = {
           id: string
           industry: string | null
           name: string
+          submission_status: string | null
           tax_exempt: boolean | null
           tax_id: string | null
           updated_at: string | null
@@ -185,6 +186,7 @@ export type Database = {
           id: string
           industry?: string | null
           name: string
+          submission_status?: string | null
           tax_exempt?: boolean | null
           tax_id?: string | null
           updated_at?: string | null
@@ -205,6 +207,7 @@ export type Database = {
           id?: string
           industry?: string | null
           name?: string
+          submission_status?: string | null
           tax_exempt?: boolean | null
           tax_id?: string | null
           updated_at?: string | null

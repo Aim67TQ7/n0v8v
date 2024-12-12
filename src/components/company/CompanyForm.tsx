@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Edit2, Save } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 interface CompanyFormData {
   name: string;
@@ -38,6 +39,8 @@ export const CompanyForm = ({
   onChange,
   onSwitchChange,
 }: CompanyFormProps) => {
+  const { user } = useAuth();
+  
   return (
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -192,7 +195,9 @@ export const CompanyForm = ({
 
       {isEditing && (
         <div className="flex justify-end">
-          <Button type="submit">Save Changes</Button>
+          <Button type="submit">
+            {user ? "Save Changes" : "Submit Registration"}
+          </Button>
         </div>
       )}
     </form>
