@@ -18,13 +18,39 @@ export const OTPVerification = ({ email }: { email: string }) => {
   const handleVerify = async () => {
     setLoading(true);
     try {
-      const { error } = await supabase.auth.verifyOtp({
+      // Verify the OTP against our email_verifications table
+      const { data: verification, error: verificationError } = await supabase
+        .from('email_verifications')
+        .select()
+        .eq('email', email)
+        .eq('token', otp)
+        .is('verified_at', null)
+        .single();
+
+      if (verificationError || !verification) {
+        throw new Error("Invalid or expired verification code");
+      }
+
+      // Mark the verification as used
+      const { error: updateError } = await supabase
+        .from('email_verifications')
+        .update({ verified_at: new Date().toISOString() })
+        .eq('id', verification.id);
+
+      if (updateError) throw updateError;
+
+      // Create the user account
+      const { error: signUpError } = await supabase.auth.signUp({
         email,
-        token: otp,
-        type: 'signup'
+        password: Math.random().toString(36).substring(2, 15),
+        options: {
+          data: {
+            email_verified: true
+          }
+        }
       });
 
-      if (error) throw error;
+      if (signUpError) throw signUpError;
 
       toast({
         title: "Email verified successfully",

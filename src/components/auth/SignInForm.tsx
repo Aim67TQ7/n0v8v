@@ -53,14 +53,34 @@ export const SignInForm = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/register`,
+      // First, create a verification token
+      const { data: verificationData, error: verificationError } = await supabase
+        .from('email_verifications')
+        .insert([
+          { 
+            email,
+            token: Math.random().toString(36).substring(2, 8).toUpperCase()
+          }
+        ])
+        .select()
+        .single();
+
+      if (verificationError) throw verificationError;
+
+      // Send verification email using the Edge Function
+      const { error: emailError } = await supabase.functions.invoke('send-email', {
+        body: {
+          to: [email],
+          subject: "Verify your email",
+          html: `
+            <h1>Welcome to Company GPT!</h1>
+            <p>Your verification code is: <strong>${verificationData.token}</strong></p>
+            <p>Enter this code to complete your registration.</p>
+          `
         }
       });
 
-      if (error) throw error;
+      if (emailError) throw emailError;
 
       setShowOTPVerification(true);
       toast({
