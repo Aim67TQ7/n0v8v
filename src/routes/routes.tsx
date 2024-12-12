@@ -25,6 +25,7 @@ import WorkCenters from "@/pages/team/WorkCenters";
 import Employees from "@/pages/team/Employees";
 import Apps from "@/pages/Apps";
 import Tools from "@/pages/Tools";
+import MaintenanceSystem from "@/pages/maintenance/MaintenanceSystem";
 
 export const routes = [
   {
@@ -126,5 +127,9 @@ export const routes = [
   {
     path: "/operations/quality/fishbone",
     element: <Fishbone />
+  },
+  {
+    path: "/operations/maintenance",
+    element: <AuthWrapper><MaintenanceSystem /></AuthWrapper>
   }
 ];

@@ -8,7 +8,8 @@ import {
   Scale,
   Microscope,
   GitFork,
-  Fish
+  Fish,
+  Wrench
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
@@ -26,6 +27,13 @@ export const tools: Tool[] = [
     description: "AI-powered visual workplace organization assessment and tracking",
     icon: Eye,
     href: "/operations/lean/5s-vision",
+    status: "ready" as const
+  },
+  {
+    title: "AI Maintenance",
+    description: "AI-powered preventative maintenance system",
+    icon: Wrench,
+    href: "/operations/maintenance",
     status: "ready" as const
   },
   {

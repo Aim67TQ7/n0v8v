@@ -469,6 +469,72 @@ export type Database = {
           },
         ]
       }
+      equipment: {
+        Row: {
+          company_id: string | null
+          created_at: string | null
+          created_by: string | null
+          equipment_type: string | null
+          id: string
+          image_url: string | null
+          last_maintenance_date: string | null
+          make: string | null
+          manual_url: string | null
+          manufacturer: string | null
+          model: string | null
+          next_maintenance_date: string | null
+          serial_number: string | null
+          status: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          equipment_type?: string | null
+          id?: string
+          image_url?: string | null
+          last_maintenance_date?: string | null
+          make?: string | null
+          manual_url?: string | null
+          manufacturer?: string | null
+          model?: string | null
+          next_maintenance_date?: string | null
+          serial_number?: string | null
+          status?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          equipment_type?: string | null
+          id?: string
+          image_url?: string | null
+          last_maintenance_date?: string | null
+          make?: string | null
+          manual_url?: string | null
+          manufacturer?: string | null
+          model?: string | null
+          next_maintenance_date?: string | null
+          serial_number?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipment_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "equipment_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evaluation_images: {
         Row: {
           created_at: string
@@ -686,6 +752,56 @@ export type Database = {
             columns: ["primary_contact_id"]
             isOneToOne: false
             referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      maintenance_schedules: {
+        Row: {
+          created_at: string | null
+          equipment_id: string | null
+          estimated_time: unknown | null
+          frequency: string | null
+          id: string
+          is_critical: boolean | null
+          procedure_steps: string[] | null
+          safety_precautions: string[] | null
+          skill_level: string | null
+          task_description: string | null
+          tools_needed: string[] | null
+        }
+        Insert: {
+          created_at?: string | null
+          equipment_id?: string | null
+          estimated_time?: unknown | null
+          frequency?: string | null
+          id?: string
+          is_critical?: boolean | null
+          procedure_steps?: string[] | null
+          safety_precautions?: string[] | null
+          skill_level?: string | null
+          task_description?: string | null
+          tools_needed?: string[] | null
+        }
+        Update: {
+          created_at?: string | null
+          equipment_id?: string | null
+          estimated_time?: unknown | null
+          frequency?: string | null
+          id?: string
+          is_critical?: boolean | null
+          procedure_steps?: string[] | null
+          safety_precautions?: string[] | null
+          skill_level?: string | null
+          task_description?: string | null
+          tools_needed?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_schedules_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipment"
             referencedColumns: ["id"]
           },
         ]
