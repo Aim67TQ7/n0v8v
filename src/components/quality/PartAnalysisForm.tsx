@@ -5,14 +5,6 @@ import { WorkcenterSelect } from "@/components/WorkcenterSelect";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ProcessImageUploader } from "@/components/ProcessImageUploader";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useQuery } from "@tanstack/react-query";
-
-interface AnalysisType {
-  id: string;
-  name: string;
-  description: string;
-}
 
 interface PartAnalysisFormProps {
   onAnalysisComplete: (analysis: any) => void;
@@ -27,19 +19,6 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
   const [selectedArea, setSelectedArea] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
   const { toast } = useToast();
 
-  const { data: analysisTypes, isLoading: isLoadingTypes } = useQuery({
-    queryKey: ['analysisTypes'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('analysis_types')
-        .select('id, name, description')
-        .order('name');
-      
-      if (error) throw error;
-      return data as AnalysisType[];
-    }
-  });
-
   const handleImageUpload = (file: File) => {
     setImage(file);
     setImagePreview(URL.createObjectURL(file));
@@ -47,10 +26,10 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
   };
 
   const handleAnalyze = async () => {
-    if (!selectedAnalysisType || !image) {
+    if (!selectedWorkcenter || !image || !selectedAnalysisType) {
       toast({
         title: "Missing information",
-        description: "Please select an analysis type and upload an image",
+        description: "Please select a workcenter, analysis type, and upload an image",
         variant: "destructive"
       });
       return;
@@ -67,33 +46,45 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
 
     try {
       setIsAnalyzing(true);
+
+      // First upload the image to Supabase Storage
+      const fileExt = image.name.split('.').pop();
+      const fileName = `${crypto.randomUUID()}.${fileExt}`;
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('process-images')
+        .upload(fileName, image);
+
+      if (uploadError) throw uploadError;
+
+      // Get the public URL for the uploaded image
+      const { data: { publicUrl } } = supabase.storage
+        .from('process-images')
+        .getPublicUrl(fileName);
+
+      // Prepare form data for analysis
       const formData = new FormData();
-      formData.append('image', image!);
+      formData.append('image', image);
+      formData.append('workcenter', selectedWorkcenter);
       formData.append('analysisTypeId', selectedAnalysisType);
       formData.append('selectedArea', JSON.stringify(selectedArea));
-      
-      // Only append workcenter if it's not the placeholder value
-      if (selectedWorkcenter && selectedWorkcenter !== "Workcenter______") {
-        formData.append('workcenter', selectedWorkcenter);
-      }
 
-      const response = await supabase.functions.invoke('analyze-process', {
-        body: formData
-      });
+      // Call the analyze-process function
+      const { data: { data: analysisData }, error: analysisError } = await supabase.functions
+        .invoke('analyze-process', {
+          body: formData
+        });
 
-      if (response.error) throw response.error;
+      if (analysisError) throw analysisError;
 
-      const { data } = response.data;
-
-      // First create the part inspection record
+      // Create the part inspection record
       const { data: partInspection, error: dbError } = await supabase
         .from('part_inspections')
         .insert({
-          workcenter_id: selectedWorkcenter !== "Workcenter______" ? selectedWorkcenter : null,
+          workcenter_id: selectedWorkcenter,
           analysis_type_id: selectedAnalysisType,
-          image_url: data.imageUrl,
-          analysis: data.analysis.details,
-          created_by: (await supabase.auth.getUser()).data.user?.id || null
+          image_url: publicUrl,
+          analysis: analysisData.analysis.details
         })
         .select()
         .single();
@@ -101,11 +92,11 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
       if (dbError) throw dbError;
 
       onAnalysisComplete({
-        ...data.analysis,
+        ...analysisData.analysis,
         partInspectionId: partInspection.id,
         analysisTypeId: selectedAnalysisType
       });
-
+      
       toast({
         title: "Analysis Complete",
         description: "Part analysis has been completed successfully.",
@@ -129,31 +120,6 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
         onChange={setSelectedWorkcenter} 
       />
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Select Analysis Type</label>
-        <Select 
-          value={selectedAnalysisType} 
-          onValueChange={setSelectedAnalysisType}
-          disabled={isLoadingTypes}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Choose analysis type" />
-          </SelectTrigger>
-          <SelectContent>
-            {analysisTypes?.map((type) => (
-              <SelectItem key={type.id} value={type.id}>
-                {type.name}
-                {type.description && (
-                  <span className="text-xs text-muted-foreground ml-2">
-                    - {type.description}
-                  </span>
-                )}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
       <ProcessImageUploader
         imagePreview={imagePreview}
         onImageUpload={handleImageUpload}
@@ -163,7 +129,7 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
 
       <Button
         onClick={handleAnalyze}
-        disabled={!selectedAnalysisType || !image || isAnalyzing || !selectedArea}
+        disabled={!selectedWorkcenter || !image || isAnalyzing || !selectedArea}
         className="w-full"
       >
         {isAnalyzing ? (
