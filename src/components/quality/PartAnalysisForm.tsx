@@ -71,7 +71,9 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
       formData.append('image', image!);
       formData.append('inspectionTypeId', selectedInspectionType);
       formData.append('selectedArea', JSON.stringify(selectedArea));
-      if (selectedWorkcenter) {
+      
+      // Only append workcenter if it's not the placeholder value
+      if (selectedWorkcenter && selectedWorkcenter !== "Workcenter______") {
         formData.append('workcenter', selectedWorkcenter);
       }
 
@@ -87,7 +89,7 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
       const { data: partInspection, error: dbError } = await supabase
         .from('part_inspections')
         .insert({
-          workcenter_id: selectedWorkcenter || null,
+          workcenter_id: selectedWorkcenter !== "Workcenter______" ? selectedWorkcenter : null,
           inspection_type_id: selectedInspectionType,
           image_url: data.imageUrl,
           analysis: data.analysis.details,
