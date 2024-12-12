@@ -73,6 +73,23 @@ export const DemoAccessForm = () => {
 
       if (signInError) throw signInError;
 
+      // Send welcome email using the Edge Function
+      const { error: emailError } = await supabase.functions.invoke('send-email', {
+        body: {
+          to: [email],
+          subject: "Welcome to Company GPT Demo",
+          html: `
+            <h1>Welcome to Company GPT!</h1>
+            <p>Thank you for trying out our demo. You'll have 24 hours of full access to explore all features.</p>
+            <p>Check your email for the magic link to sign in.</p>
+          `
+        }
+      });
+
+      if (emailError) {
+        console.error("Error sending welcome email:", emailError);
+      }
+
       toast({
         title: "Demo Access Link Sent",
         description: "Check your email for a magic link to access the demo. You'll have 24 hours of full access once you sign in.",
