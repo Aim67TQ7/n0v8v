@@ -14,28 +14,7 @@ import { useState } from "react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-
-interface Location {
-  id: string;
-  facility_name: string;
-  physical_address: string;
-  physical_city: string;
-  physical_state: string;
-  physical_zip: string;
-  physical_country: string;
-  shipping_address: string | null;
-  shipping_city: string | null;
-  shipping_state: string | null;
-  shipping_zip: string | null;
-  shipping_country: string | null;
-  primary_contact_id: string | null;
-  primary_contact: {
-    profile: {
-      first_name: string;
-      last_name: string;
-    };
-  } | null;
-}
+import { Location } from "./types";
 
 interface LocationsListProps {
   locations: Location[];
