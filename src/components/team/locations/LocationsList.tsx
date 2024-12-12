@@ -28,6 +28,7 @@ interface Location {
   shipping_state: string | null;
   shipping_zip: string | null;
   shipping_country: string | null;
+  primary_contact_id: string | null;
   primary_contact: {
     profile: {
       first_name: string;

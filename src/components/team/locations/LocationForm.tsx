@@ -16,6 +16,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 
 interface LocationFormData {
+  id?: string;
   facility_name: string;
   physical_address: string;
   physical_city: string;
