@@ -13,9 +13,9 @@ serve(async (req) => {
   try {
     const { messages } = await req.json();
 
-    console.log('Sending request to Groq API...');
+    console.log('Sending request to Groq API with messages:', JSON.stringify(messages));
 
-    const response = await fetch('https://api.groq.com/v1/chat/completions', {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${Deno.env.get('GROQ_API_KEY')}`,
@@ -31,12 +31,16 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Groq API error:', errorText);
-      throw new Error(`Groq API error: ${response.status}`);
+      console.error('Groq API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText
+      });
+      throw new Error(`Groq API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    console.log('Groq API response received');
+    console.log('Groq API response received:', JSON.stringify(data));
 
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -44,7 +48,10 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in chat-with-groq function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        details: error.stack 
+      }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
