@@ -88,15 +88,28 @@ const Company = () => {
     e.preventDefault();
     try {
       if (!user) {
-        // For public submissions
-        const { error } = await supabase
+        // For public submissions, first create a company
+        const { data: companyData, error: companyError } = await supabase
+          .from("companies")
+          .insert({
+            name: formData.name,
+            status: 'pending'
+          })
+          .select()
+          .single();
+
+        if (companyError) throw companyError;
+
+        // Then create company details with the new company ID
+        const { error: detailsError } = await supabase
           .from("company_details")
           .insert({
+            id: companyData.id,
             ...formData,
             submission_status: 'submitted'
           });
 
-        if (error) throw error;
+        if (detailsError) throw detailsError;
 
         toast({
           title: "Success",
