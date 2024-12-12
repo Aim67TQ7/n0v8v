@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { problemStatement, answers, iteration, generateFishbone } = await req.json();
+    const { problemStatement, answers, iteration, generateQuestions, generateFishbone } = await req.json();
 
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -21,7 +21,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -32,8 +32,10 @@ serve(async (req) => {
                  3. Long-term preventive measures to avoid similar issues
                  Format your response in clear sections.`
               : `You are an expert in root cause analysis conducting a Five Whys investigation. 
-                 For iteration ${iteration}/5, analyze the previous response and generate follow-up "why" questions 
-                 that dig deeper into the root cause. Each question should be more specific than the last iteration.`
+                 For iteration ${iteration}/5, analyze the previous responses: ${JSON.stringify(answers)}
+                 and generate three specific, probing "why" questions that dig deeper into potential root causes. 
+                 Each question should be more specific than the last iteration and based on the context of previous answers.
+                 The questions should explore different aspects: human factors, process issues, and system/equipment factors.`
           },
           {
             role: 'user',
@@ -46,7 +48,7 @@ serve(async (req) => {
                  3. Preventive Measures`
               : `Problem: "${problemStatement}"
                  Previous answers: ${JSON.stringify(answers)}
-                 Generate 3 probing "why" questions for iteration ${iteration}.`
+                 Generate 3 probing "why" questions for iteration ${iteration} that explore different potential root causes.`
           }
         ],
       }),
@@ -62,7 +64,7 @@ serve(async (req) => {
         rootCause: sections[0].replace('Root Cause: ', ''),
         correctiveActions: sections[1].replace('Corrective Actions:\n', '').split('\n'),
         preventiveActions: sections[2].replace('Preventive Measures:\n', '').split('\n'),
-        fishboneDiagram: `Problem: ${problemStatement}\n\nRoot Causes:\n${answers.map((a, i) => `${i + 1}. ${a}`).join('\n')}`
+        fishboneDiagram: `Problem: ${problemStatement}\n\nRoot Causes:\n${answers.map((a: string, i: number) => `${i + 1}. ${a}`).join('\n')}`
       };
 
       return new Response(JSON.stringify({ result: analysis }), {

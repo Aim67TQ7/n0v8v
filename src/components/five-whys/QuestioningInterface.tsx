@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
 interface QuestioningInterfaceProps {
   problemStatement: string;
@@ -17,13 +18,30 @@ export const QuestioningInterface = ({
   suggestedQuestions,
   onAnswer,
 }: QuestioningInterfaceProps) => {
-  const [selectedQuestion, setSelectedQuestion] = useState("");
+  const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
+  const [customAnswer, setCustomAnswer] = useState("");
   const [learningFeedback, setLearningFeedback] = useState("");
   const [isLearning, setIsLearning] = useState(false);
 
+  const handleAnswerToggle = (answer: string, checked: boolean) => {
+    if (checked) {
+      setSelectedAnswers(prev => [...prev, answer]);
+    } else {
+      setSelectedAnswers(prev => prev.filter(a => a !== answer));
+    }
+  };
+
   const handleSubmit = () => {
-    onAnswer(selectedQuestion, isLearning ? learningFeedback : undefined);
-    setSelectedQuestion("");
+    const answers = [...selectedAnswers];
+    if (customAnswer.trim()) {
+      answers.push(customAnswer);
+    }
+    
+    const combinedAnswer = answers.join(" AND ");
+    onAnswer(combinedAnswer, isLearning ? learningFeedback : undefined);
+    
+    setSelectedAnswers([]);
+    setCustomAnswer("");
     setLearningFeedback("");
     setIsLearning(false);
   };
@@ -49,24 +67,47 @@ export const QuestioningInterface = ({
         </p>
       </Card>
 
-      <div className="space-y-4">
-        {suggestedQuestions.map((question, index) => (
-          <div key={index} className="flex items-start space-x-2">
-            <Checkbox
-              id={`question-${index}`}
-              checked={selectedQuestion === question}
-              onCheckedChange={(checked) => {
-                if (checked) setSelectedQuestion(question);
-              }}
+      <div className="space-y-2">
+        <p className="font-medium text-lg">
+          Why {currentIteration === 1 ? 'is' : 'did'} {currentIteration === 1 ? problemStatement.toLowerCase() : 'this happen'}?
+        </p>
+        
+        <div className="space-y-3">
+          {suggestedQuestions.map((question, index) => (
+            <div key={index} className="flex items-start space-x-2">
+              <Checkbox
+                id={`answer-${index}`}
+                checked={selectedAnswers.includes(question)}
+                onCheckedChange={(checked) => handleAnswerToggle(question, checked as boolean)}
+              />
+              <label
+                htmlFor={`answer-${index}`}
+                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                {question}
+              </label>
+            </div>
+          ))}
+
+          <div className="space-y-2">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="custom-answer"
+                checked={customAnswer.trim() !== ""}
+                onCheckedChange={(checked) => {
+                  if (!checked) setCustomAnswer("");
+                }}
+              />
+              <label htmlFor="custom-answer" className="text-sm">Custom Answer</label>
+            </div>
+            <Input
+              value={customAnswer}
+              onChange={(e) => setCustomAnswer(e.target.value)}
+              placeholder="Enter your own answer..."
+              className="w-full"
             />
-            <label
-              htmlFor={`question-${index}`}
-              className="text-sm"
-            >
-              {question}
-            </label>
           </div>
-        ))}
+        </div>
       </div>
 
       {isLearning && (
@@ -80,7 +121,7 @@ export const QuestioningInterface = ({
 
       <Button 
         onClick={handleSubmit}
-        disabled={!selectedQuestion || (isLearning && !learningFeedback)}
+        disabled={selectedAnswers.length === 0 && !customAnswer.trim()}
         className="w-full"
       >
         Next

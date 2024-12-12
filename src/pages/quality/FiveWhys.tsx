@@ -120,17 +120,13 @@ const FiveWhys = () => {
 
       setAnalysis(data.result);
 
-      // Save the analysis with the correct type for learning_feedback
       const analysisData = {
         company_id: profile.company_id,
         created_by: session.user.id,
         problem_statement: problemStatement,
         selected_causes: allAnswers,
         fishbone_data: data.result,
-        learning_feedback: learningFeedback.map(item => ({
-          iteration: item.iteration,
-          feedback: item.feedback
-        }))
+        learning_feedback: learningFeedback
       };
 
       await supabase.from('five_whys_analysis').insert(analysisData);
@@ -174,9 +170,9 @@ const FiveWhys = () => {
             problemStatement={problemStatement}
             currentIteration={currentIteration}
             suggestedQuestions={[
-              `Why ${currentIteration === 1 ? 'is' : 'did'} ${currentIteration === 1 ? problemStatement.toLowerCase() : answers[answers.length - 1].toLowerCase()}?`,
-              `What caused ${currentIteration === 1 ? problemStatement.toLowerCase() : answers[answers.length - 1].toLowerCase()}?`,
-              `What were the underlying factors that led to ${currentIteration === 1 ? problemStatement.toLowerCase() : answers[answers.length - 1].toLowerCase()}?`
+              `The ${currentIteration === 1 ? problemStatement.toLowerCase() : 'issue'} occurred because of inadequate training`,
+              `The ${currentIteration === 1 ? problemStatement.toLowerCase() : 'issue'} was caused by equipment malfunction`,
+              `The ${currentIteration === 1 ? problemStatement.toLowerCase() : 'issue'} happened due to process deviation`
             ]}
             onAnswer={handleAnswer}
           />
