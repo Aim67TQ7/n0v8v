@@ -7,7 +7,7 @@ import {
   Building2,
   GraduationCap,
   MessageSquare,
-  Tools
+  Wrench
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
@@ -30,7 +30,7 @@ export const modulesList: Module[] = [
   {
     title: "Tools",
     description: "Access quality and process improvement tools",
-    icon: Tools,
+    icon: Wrench,
     href: "/operations/quality",
     status: "ready"
   },
