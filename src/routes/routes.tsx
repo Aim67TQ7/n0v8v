@@ -23,11 +23,16 @@ import Departments from "@/pages/team/Departments";
 import WorkCenters from "@/pages/team/WorkCenters";
 import Employees from "@/pages/team/Employees";
 import Apps from "@/pages/Apps";
+import Tools from "@/pages/Tools";
 
 export const routes = [
   {
     path: "/",
     element: <Index />
+  },
+  {
+    path: "/tools",
+    element: <AuthWrapper><Tools /></AuthWrapper>
   },
   {
     path: "/apps",

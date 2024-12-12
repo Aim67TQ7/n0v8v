@@ -31,7 +31,7 @@ export const modulesList: Module[] = [
     title: "Tools",
     description: "Access quality and process improvement tools",
     icon: Wrench,
-    href: "/operations/quality",
+    href: "/tools",
     status: "ready"
   },
   {
