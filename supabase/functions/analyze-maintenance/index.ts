@@ -19,11 +19,24 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const { data: { publicUrl } } = supabase.storage
+    // Get the image data from storage
+    const { data: imageData, error: storageError } = await supabase.storage
       .from('process-images')
-      .getPublicUrl(imageUrl)
+      .download(imageUrl)
 
-    console.log('Analyzing image:', publicUrl)
+    if (storageError) {
+      console.error('Storage error:', storageError)
+      throw new Error('Failed to download image from storage')
+    }
+
+    // Convert the image to base64
+    const imageArrayBuffer = await imageData.arrayBuffer()
+    const base64Image = btoa(
+      new Uint8Array(imageArrayBuffer)
+        .reduce((data, byte) => data + String.fromCharCode(byte), '')
+    )
+
+    console.log('Analyzing image:', imageUrl)
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -48,7 +61,7 @@ serve(async (req) => {
               {
                 type: "image_url",
                 image_url: {
-                  url: publicUrl
+                  url: `data:image/jpeg;base64,${base64Image}`
                 }
               }
             ]
@@ -59,7 +72,9 @@ serve(async (req) => {
     })
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status} - ${await response.text()}`)
+      const errorText = await response.text()
+      console.error('OpenAI API error:', errorText)
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
     }
 
     const analysisResult = await response.json()
@@ -84,7 +99,7 @@ serve(async (req) => {
         model: modelMatch?.[1]?.trim() || 'Unknown',
         manufacturer: manufacturerMatch?.[1]?.trim() || 'Unknown',
         equipment_type: typeMatch?.[1]?.trim() || 'Unknown',
-        image_url: publicUrl,
+        image_url: imageUrl,
         status: 'active',
         last_maintenance_date: new Date().toISOString(),
         next_maintenance_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
