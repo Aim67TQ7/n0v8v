@@ -21,26 +21,47 @@ serve(async (req) => {
     const inspectionTypeId = formData.get('inspectionTypeId');
     const selectedAreaStr = formData.get('selectedArea');
 
-    if (!imageFile || !workcenter || !inspectionTypeId) {
+    console.log('Received parameters:', {
+      hasImage: !!imageFile,
+      workcenter,
+      inspectionTypeId,
+      hasSelectedArea: !!selectedAreaStr
+    });
+
+    if (!imageFile || !inspectionTypeId) {
       throw new Error('Missing required fields');
     }
 
     // Initialize Supabase client
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Missing Supabase configuration');
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    console.log('Supabase client initialized');
 
     // Fetch inspection type details
+    console.log('Fetching inspection type:', inspectionTypeId);
     const { data: inspectionType, error: inspectionError } = await supabase
       .from('inspection_types')
       .select('prompt_template')
       .eq('id', inspectionTypeId)
       .single();
 
-    if (inspectionError || !inspectionType) {
-      throw new Error('Failed to fetch inspection type details');
+    if (inspectionError) {
+      console.error('Inspection type fetch error:', inspectionError);
+      throw new Error(`Failed to fetch inspection type: ${inspectionError.message}`);
     }
+
+    if (!inspectionType) {
+      console.error('No inspection type found for ID:', inspectionTypeId);
+      throw new Error('Inspection type not found');
+    }
+
+    console.log('Successfully fetched inspection type');
 
     console.log('Converting image to base64');
     const imageArrayBuffer = await (imageFile as File).arrayBuffer();
@@ -134,7 +155,10 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in analyze-process function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        details: error.stack
+      }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
