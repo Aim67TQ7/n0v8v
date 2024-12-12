@@ -5,12 +5,17 @@ import { useAuth } from "@/contexts/AuthContext";
 export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   const { isLoading, isAuthenticated, error } = useAuth();
   const navigate = useNavigate();
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   useEffect(() => {
+    // In development, allow access without authentication
+    if (isDevelopment) return;
+
+    // In production, redirect to login if not authenticated
     if (!isLoading && !isAuthenticated) {
       navigate("/login");
     }
-  }, [isLoading, isAuthenticated, navigate]);
+  }, [isLoading, isAuthenticated, navigate, isDevelopment]);
 
   if (isLoading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
