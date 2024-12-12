@@ -15,6 +15,7 @@ import FiveWhys from "@/pages/quality/FiveWhys";
 import { AuthWrapper } from "@/components/AuthWrapper";
 import TrainingMatrix from "@/pages/training/TrainingMatrix";
 import TeamManagement from "@/pages/TeamManagement";
+import Company from "@/pages/team/Company";
 
 export const routes = [
   {
@@ -44,6 +45,10 @@ export const routes = [
   {
     path: "/team",
     element: <AuthWrapper><TeamManagement /></AuthWrapper>
+  },
+  {
+    path: "/team/company",
+    element: <AuthWrapper><Company /></AuthWrapper>
   },
   {
     path: "/training/matrix",

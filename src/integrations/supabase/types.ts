@@ -156,14 +156,19 @@ export type Database = {
           billing_country: string | null
           billing_state: string | null
           billing_zip: string | null
+          business_type: string | null
           contact_phone: string | null
           created_at: string | null
           demo_ends_at: string | null
           demo_starts_at: string | null
           gpt_name: string | null
           id: string
+          industry: string | null
           name: string
+          tax_exempt: boolean | null
+          tax_id: string | null
           updated_at: string | null
+          website: string | null
         }
         Insert: {
           billing_address?: string | null
@@ -171,14 +176,19 @@ export type Database = {
           billing_country?: string | null
           billing_state?: string | null
           billing_zip?: string | null
+          business_type?: string | null
           contact_phone?: string | null
           created_at?: string | null
           demo_ends_at?: string | null
           demo_starts_at?: string | null
           gpt_name?: string | null
           id: string
+          industry?: string | null
           name: string
+          tax_exempt?: boolean | null
+          tax_id?: string | null
           updated_at?: string | null
+          website?: string | null
         }
         Update: {
           billing_address?: string | null
@@ -186,14 +196,19 @@ export type Database = {
           billing_country?: string | null
           billing_state?: string | null
           billing_zip?: string | null
+          business_type?: string | null
           contact_phone?: string | null
           created_at?: string | null
           demo_ends_at?: string | null
           demo_starts_at?: string | null
           gpt_name?: string | null
           id?: string
+          industry?: string | null
           name?: string
+          tax_exempt?: boolean | null
+          tax_id?: string | null
           updated_at?: string | null
+          website?: string | null
         }
         Relationships: [
           {
