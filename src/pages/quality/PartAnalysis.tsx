@@ -4,15 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Microscope, RotateCcw, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ProcessAnalysisResults } from "@/components/ProcessAnalysisResults";
 import { PartAnalysisForm } from "@/components/quality/PartAnalysisForm";
+import { AnalysisContent } from "@/components/process/AnalysisContent";
 
 const PartAnalysis = () => {
-  const [analysis, setAnalysis] = useState<any>("");
+  const [analysis, setAnalysis] = useState<any>(null);
   const { toast } = useToast();
 
   const handleStartNew = () => {
-    setAnalysis("");
+    setAnalysis(null);
     toast({
       title: "Reset Complete",
       description: "You can now start a new part analysis.",
@@ -54,7 +54,9 @@ const PartAnalysis = () => {
           <PartAnalysisForm onAnalysisComplete={setAnalysis} />
         </Card>
 
-        <ProcessAnalysisResults analysis={analysis} />
+        <div className="space-y-6">
+          <AnalysisContent analysis={analysis} />
+        </div>
       </div>
     </div>
   );
