@@ -38,17 +38,17 @@ const AppCard = ({ title, description, icon: Icon, href, isWorking }: AppCardPro
 
 const apps: AppCardProps[] = [
   {
-    title: "Team Management",
-    description: "Manage your organization's structure, departments, and employees",
-    icon: Users2,
-    href: "/team",
+    title: "5S Vision Tool",
+    description: "AI-powered visual workplace organization assessment and tracking",
+    icon: Scale,
+    href: "/operations/lean/5s-vision",
     isWorking: true,
   },
   {
-    title: "Quality Assurance",
-    description: "Visual inspections, 5S evaluations, and part analysis tools",
-    icon: Scale,
-    href: "/operations/quality",
+    title: "Part Analysis Tool",
+    description: "Visual inspection and analysis system for part quality",
+    icon: PackageSearch,
+    href: "/operations/quality/part-analysis",
     isWorking: true,
   },
   {
@@ -86,7 +86,7 @@ const Apps = () => {
     <div className="container mx-auto py-8">
       <div className="flex items-center gap-2 mb-6">
         <AppWindow className="h-6 w-6" />
-        <h1 className="text-2xl font-semibold">Applications</h1>
+        <h1 className="text-2xl font-semibold">Manufacturing Tools</h1>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {apps.map((app) => (
