@@ -32,7 +32,7 @@ const PricingPage = () => {
       features: [
         "7-day free trial",
         "Select any 3 modules for your organization",
-        "Flexible module selection - change modules anytime",
+        "Change module selection each billing cycle",
         "GPT branding features",
         "Customizable assistants",
         "SOC II compliant data storage",
@@ -48,7 +48,7 @@ const PricingPage = () => {
       features: [
         "Access to 10 modules for your organization",
         "New modules included as released",
-        "Flexible module selection - change modules anytime",
+        "Change module selection each billing cycle",
         "Advanced branding features",
         "Vertical agents (coming soon)",
         "Price locked for 1 year",
@@ -90,7 +90,7 @@ const PricingPage = () => {
         </p>
         <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-600">
           <Info className="h-4 w-4" />
-          <p>Modules are selected at the organization level and can be changed after billing starts</p>
+          <p>Modules are selected at the organization level and can be changed each billing cycle</p>
         </div>
       </div>
 
