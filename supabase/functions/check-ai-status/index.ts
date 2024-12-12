@@ -70,26 +70,22 @@ serve(async (req) => {
         throw new Error('Invalid provider');
     }
 
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(body),
-      });
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+    });
 
-      console.log(`${provider} API response status:`, response.status);
-      
-      return new Response(
-        JSON.stringify({ status: response.ok ? 'up' : 'down' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    } catch (error) {
-      console.error(`Error checking ${provider} API:`, error);
-      return new Response(
-        JSON.stringify({ status: 'down', error: error.message }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    console.log(`${provider} API response status:`, response.status);
+    
+    if (!response.ok) {
+      console.error(`Error response from ${provider}:`, await response.text());
     }
+
+    return new Response(
+      JSON.stringify({ status: response.ok ? 'up' : 'down' }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
   } catch (error) {
     console.error('Error in check-ai-status function:', error);
     return new Response(
