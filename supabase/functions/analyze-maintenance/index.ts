@@ -7,7 +7,6 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -15,18 +14,17 @@ serve(async (req) => {
   try {
     const { imageUrl, selectedArea, companyId } = await req.json()
 
-    // Initialize Supabase client
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Get the image URL from storage
     const { data: { publicUrl } } = supabase.storage
       .from('process-images')
       .getPublicUrl(imageUrl)
 
-    // Analyze the image with GPT-4 Vision
+    console.log('Analyzing image:', publicUrl)
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -58,14 +56,20 @@ serve(async (req) => {
       })
     })
 
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`)
+    }
+
     const analysisResult = await response.json()
     console.log('Analysis result:', analysisResult)
 
-    // Extract equipment details from AI response
+    if (!analysisResult.choices || !analysisResult.choices[0]) {
+      throw new Error('Invalid response from OpenAI API')
+    }
+
     const aiResponse = analysisResult.choices[0].message.content
     
     // Parse the AI response to extract structured data
-    // This is a simple example - you might want to make this more sophisticated
     const makeMatch = aiResponse.match(/make:?\s*([^\n]+)/i)
     const modelMatch = aiResponse.match(/model:?\s*([^\n]+)/i)
     const manufacturerMatch = aiResponse.match(/manufacturer:?\s*([^\n]+)/i)
@@ -76,14 +80,14 @@ serve(async (req) => {
       .from('equipment')
       .insert({
         company_id: companyId,
-        make: makeMatch?.[1]?.trim(),
-        model: modelMatch?.[1]?.trim(),
-        manufacturer: manufacturerMatch?.[1]?.trim(),
-        equipment_type: typeMatch?.[1]?.trim(),
+        make: makeMatch?.[1]?.trim() || 'Unknown',
+        model: modelMatch?.[1]?.trim() || 'Unknown',
+        manufacturer: manufacturerMatch?.[1]?.trim() || 'Unknown',
+        equipment_type: typeMatch?.[1]?.trim() || 'Unknown',
         image_url: publicUrl,
         status: 'active',
         last_maintenance_date: new Date().toISOString(),
-        next_maintenance_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // Default to 1 week
+        next_maintenance_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
       })
       .select()
       .single()
@@ -97,10 +101,10 @@ serve(async (req) => {
       .map(task => ({
         equipment_id: equipment.id,
         task_description: task.trim(),
-        frequency: 'weekly', // Default frequency
+        frequency: 'weekly',
         skill_level: 'intermediate',
         tools_needed: ['basic hand tools'],
-        estimated_time: '1 hour',
+        estimated_time: null,
         is_critical: false,
         safety_precautions: ['wear appropriate PPE'],
         procedure_steps: ['inspect equipment', 'perform maintenance', 'document results']
