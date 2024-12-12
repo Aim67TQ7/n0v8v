@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
-import { ModelSelector } from "@/components/gpt/ModelSelector";
 import { ChatHistory } from "@/components/gpt/ChatHistory";
 import { ResourceSidebar } from "@/components/gpt/ResourceSidebar";
-import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarProvider, Sidebar, SidebarContent } from "@/components/ui/sidebar";
 import { ChatContainer } from "@/components/gpt/ChatContainer";
@@ -125,12 +123,6 @@ const CompanyGPT = () => {
               <div className="flex-1 overflow-y-auto">
                 <ResourceSidebar />
               </div>
-              <Card className="m-4 p-4">
-                <ModelSelector
-                  selectedModel={selectedModel}
-                  onModelChange={setSelectedModel}
-                />
-              </Card>
             </div>
           </div>
         </SidebarProvider>

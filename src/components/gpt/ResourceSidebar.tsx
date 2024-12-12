@@ -1,26 +1,30 @@
-import { Building, Package, Settings } from "lucide-react";
+import { Home, Mail, Wrench } from "lucide-react";
 import { ResourceCard } from "./ResourceCard";
 
 export const ResourceSidebar = () => {
+  const handleEmailClick = () => {
+    window.location.href = "mailto:";
+  };
+
   return (
-    <div className="w-64 space-y-4">
+    <div className="w-full p-4 space-y-3">
       <ResourceCard
-        icon={Building}
-        title="Open Epicor"
-        description="Access ERP system"
-        onClick={() => window.open('https://epicor.com', '_blank')}
+        icon={Home}
+        title="Home"
+        description="Return to dashboard"
+        href="/"
       />
       <ResourceCard
-        icon={Package}
-        title="Modules"
-        description="Access all modules"
-        href="/modules"
+        icon={Mail}
+        title="Email Client"
+        description="Open email client"
+        onClick={handleEmailClick}
       />
       <ResourceCard
-        icon={Settings}
-        title="Settings"
-        description="Configure system settings"
-        href="/settings"
+        icon={Wrench}
+        title="Tools"
+        description="Access quality tools"
+        href="/tools"
       />
     </div>
   );
