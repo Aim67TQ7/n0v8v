@@ -8,7 +8,7 @@ import { AnalysisTypeSelect } from "./analysis/AnalysisTypeSelect";
 import { AnalyzeButton } from "./analysis/AnalyzeButton";
 
 interface PartAnalysisFormProps {
-  onAnalysisComplete: (analysis: any, inspectionId: string) => void;
+  onAnalysisComplete: (analysis: any, inspectionId: string, partName: string | null, material: string | null) => void;
 }
 
 export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) => {
@@ -78,6 +78,8 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
           analysis_type_id: selectedInspectionType,
           image_url: imagePreview,
           analysis: JSON.stringify(data.analysis),
+          predicted_part_name: data.partName || null,
+          predicted_material: data.material || null,
           created_by: session.user.id
         })
         .select()
@@ -85,7 +87,13 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
 
       if (insertError) throw insertError;
 
-      onAnalysisComplete(data.analysis, inspectionData.id);
+      onAnalysisComplete(
+        data.analysis, 
+        inspectionData.id,
+        data.partName || null,
+        data.material || null
+      );
+      
       toast({
         title: "Analysis Complete",
         description: "Part analysis has been completed successfully.",

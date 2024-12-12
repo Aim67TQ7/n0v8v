@@ -753,7 +753,9 @@ export type Database = {
           inspection_id: string
           learning_feedback: string | null
           material: string | null
+          material_accurate: boolean | null
           part_name: string | null
+          part_name_accurate: boolean | null
           results_accurate: boolean | null
         }
         Insert: {
@@ -763,7 +765,9 @@ export type Database = {
           inspection_id: string
           learning_feedback?: string | null
           material?: string | null
+          material_accurate?: boolean | null
           part_name?: string | null
+          part_name_accurate?: boolean | null
           results_accurate?: boolean | null
         }
         Update: {
@@ -773,7 +777,9 @@ export type Database = {
           inspection_id?: string
           learning_feedback?: string | null
           material?: string | null
+          material_accurate?: boolean | null
           part_name?: string | null
+          part_name_accurate?: boolean | null
           results_accurate?: boolean | null
         }
         Relationships: [
@@ -801,6 +807,8 @@ export type Database = {
           created_by: string | null
           id: string
           image_url: string
+          predicted_material: string | null
+          predicted_part_name: string | null
           workcenter_id: string | null
         }
         Insert: {
@@ -810,6 +818,8 @@ export type Database = {
           created_by?: string | null
           id?: string
           image_url: string
+          predicted_material?: string | null
+          predicted_part_name?: string | null
           workcenter_id?: string | null
         }
         Update: {
@@ -819,6 +829,8 @@ export type Database = {
           created_by?: string | null
           id?: string
           image_url?: string
+          predicted_material?: string | null
+          predicted_part_name?: string | null
           workcenter_id?: string | null
         }
         Relationships: [

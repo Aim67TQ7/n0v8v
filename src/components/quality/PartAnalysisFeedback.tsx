@@ -10,13 +10,21 @@ import { useSessionContext } from "@supabase/auth-helpers-react";
 
 interface PartAnalysisFeedbackProps {
   inspectionId: string;
+  predictedPartName?: string;
+  predictedMaterial?: string;
 }
 
-export const PartAnalysisFeedback = ({ inspectionId }: PartAnalysisFeedbackProps) => {
+export const PartAnalysisFeedback = ({ 
+  inspectionId, 
+  predictedPartName,
+  predictedMaterial 
+}: PartAnalysisFeedbackProps) => {
   const { session } = useSessionContext();
   const { toast } = useToast();
-  const [partName, setPartName] = useState("");
-  const [material, setMaterial] = useState("");
+  const [partName, setPartName] = useState(predictedPartName || "");
+  const [material, setMaterial] = useState(predictedMaterial || "");
+  const [isPartNameAccurate, setIsPartNameAccurate] = useState(true);
+  const [isMaterialAccurate, setIsMaterialAccurate] = useState(true);
   const [isAccurate, setIsAccurate] = useState(true);
   const [needsLearning, setNeedsLearning] = useState(false);
   const [learningFeedback, setLearningFeedback] = useState("");
@@ -27,6 +35,8 @@ export const PartAnalysisFeedback = ({ inspectionId }: PartAnalysisFeedbackProps
         inspection_id: inspectionId,
         part_name: partName,
         material: material,
+        part_name_accurate: isPartNameAccurate,
+        material_accurate: isMaterialAccurate,
         results_accurate: isAccurate,
         learning_feedback: needsLearning ? learningFeedback : null,
         created_by: session?.user?.id
@@ -54,20 +64,44 @@ export const PartAnalysisFeedback = ({ inspectionId }: PartAnalysisFeedbackProps
       
       <div className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium">Part Name</label>
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium">Part Name</label>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="partNameAccurate"
+                checked={isPartNameAccurate}
+                onCheckedChange={(checked) => setIsPartNameAccurate(checked as boolean)}
+              />
+              <label htmlFor="partNameAccurate" className="text-sm">
+                Prediction is accurate
+              </label>
+            </div>
+          </div>
           <Input
             value={partName}
             onChange={(e) => setPartName(e.target.value)}
-            placeholder="Enter part name"
+            placeholder={predictedPartName || "Enter part name"}
           />
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">Material</label>
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium">Material</label>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="materialAccurate"
+                checked={isMaterialAccurate}
+                onCheckedChange={(checked) => setIsMaterialAccurate(checked as boolean)}
+              />
+              <label htmlFor="materialAccurate" className="text-sm">
+                Prediction is accurate
+              </label>
+            </div>
+          </div>
           <Input
             value={material}
             onChange={(e) => setMaterial(e.target.value)}
-            placeholder="Enter material type"
+            placeholder={predictedMaterial || "Enter material type"}
           />
         </div>
 
@@ -78,7 +112,7 @@ export const PartAnalysisFeedback = ({ inspectionId }: PartAnalysisFeedbackProps
             onCheckedChange={(checked) => setIsAccurate(checked as boolean)}
           />
           <label htmlFor="accurate" className="text-sm font-medium">
-            Results are accurate
+            Analysis results are accurate
           </label>
         </div>
 
@@ -95,7 +129,7 @@ export const PartAnalysisFeedback = ({ inspectionId }: PartAnalysisFeedbackProps
 
         {needsLearning && (
           <div className="space-y-2">
-            <label className="text-sm font-medium">Expected Results</label>
+            <label className="text-sm font-medium">Learning Feedback</label>
             <Textarea
               value={learningFeedback}
               onChange={(e) => setLearningFeedback(e.target.value)}

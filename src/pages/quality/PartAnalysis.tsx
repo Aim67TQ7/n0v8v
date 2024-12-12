@@ -11,20 +11,26 @@ import { PartAnalysisFeedback } from "@/components/quality/PartAnalysisFeedback"
 const PartAnalysis = () => {
   const [analysis, setAnalysis] = useState<any>(null);
   const [inspectionId, setInspectionId] = useState<string | null>(null);
+  const [predictedPartName, setPredictedPartName] = useState<string | null>(null);
+  const [predictedMaterial, setPredictedMaterial] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleStartNew = () => {
     setAnalysis(null);
     setInspectionId(null);
+    setPredictedPartName(null);
+    setPredictedMaterial(null);
     toast({
       title: "Reset Complete",
       description: "You can now start a new part analysis.",
     });
   };
 
-  const handleAnalysisComplete = (analysisResult: any, id: string) => {
+  const handleAnalysisComplete = (analysisResult: any, id: string, partName: string | null, material: string | null) => {
     setAnalysis(analysisResult);
     setInspectionId(id);
+    setPredictedPartName(partName);
+    setPredictedMaterial(material);
   };
 
   return (
@@ -64,7 +70,13 @@ const PartAnalysis = () => {
 
         <div className="space-y-6">
           <AnalysisContent analysis={analysis} />
-          {inspectionId && <PartAnalysisFeedback inspectionId={inspectionId} />}
+          {inspectionId && (
+            <PartAnalysisFeedback 
+              inspectionId={inspectionId}
+              predictedPartName={predictedPartName || undefined}
+              predictedMaterial={predictedMaterial || undefined}
+            />
+          )}
         </div>
       </div>
     </div>
