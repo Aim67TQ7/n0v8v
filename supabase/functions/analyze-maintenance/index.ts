@@ -13,6 +13,7 @@ serve(async (req) => {
 
   try {
     const { imageUrl, selectedArea, companyId } = await req.json();
+    console.log('Processing request for image:', imageUrl);
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -29,9 +30,9 @@ serve(async (req) => {
       throw new Error('Failed to download image from storage');
     }
 
-    // Get the file extension to determine MIME type
+    // Get the file extension and determine MIME type
     const fileExt = imageUrl.split('.').pop()?.toLowerCase() || 'jpeg';
-    const mimeType = `image/${fileExt === 'jpg' ? 'jpeg' : fileExt}`;
+    const mimeType = fileExt === 'jpg' ? 'jpeg' : fileExt;
 
     // Convert the image to base64
     const imageArrayBuffer = await imageData.arrayBuffer();
@@ -39,7 +40,7 @@ serve(async (req) => {
       String.fromCharCode(...new Uint8Array(imageArrayBuffer))
     );
 
-    console.log('Analyzing image:', imageUrl, 'with MIME type:', mimeType);
+    console.log('Image processed, sending to OpenAI with MIME type:', mimeType);
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -48,7 +49,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "gpt-4o",  // Updated to use the correct model
+        model: "gpt-4o",
         messages: [
           {
             role: "system",
@@ -64,7 +65,7 @@ serve(async (req) => {
               {
                 type: "image_url",
                 image_url: {
-                  url: `data:${mimeType};base64,${base64Image}`
+                  url: `data:image/${mimeType};base64,${base64Image}`
                 }
               }
             ]
@@ -81,7 +82,7 @@ serve(async (req) => {
     }
 
     const analysisResult = await response.json();
-    console.log('Analysis result:', analysisResult);
+    console.log('Analysis completed successfully');
 
     if (!analysisResult.choices || !analysisResult.choices[0]) {
       throw new Error('Invalid response from OpenAI API');
