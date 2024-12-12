@@ -20,6 +20,7 @@ import PricingPage from "@/pages/Pricing";
 
 import Locations from "@/pages/team/Locations";
 import Departments from "@/pages/team/Departments";
+import WorkCenters from "@/pages/team/WorkCenters";
 
 export const routes = [
   {
@@ -49,6 +50,10 @@ export const routes = [
   {
     path: "/team/departments",
     element: <AuthWrapper><Departments /></AuthWrapper>
+  },
+  {
+    path: "/team/workcenters",
+    element: <AuthWrapper><WorkCenters /></AuthWrapper>
   },
   {
     path: "/settings",
