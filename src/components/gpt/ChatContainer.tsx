@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { ChatInterface } from "./ChatInterface";
-import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -85,7 +84,7 @@ export const ChatContainer = ({
     <div className="flex-1 flex flex-col h-[calc(100vh-64px)] overflow-hidden">
       <div className="flex flex-1">
         <div className="flex-1 flex flex-col">
-          <ScrollArea className="flex-1 pb-[120px]">
+          <ScrollArea className="flex-1 pb-[120px] overflow-y-auto">
             <ChatInterface 
               systemPrompt={`You are BuntingGPT, an AI assistant specialized in magnetic separation and metal detection solutions.`}
               onHistoryUpdate={onHistoryUpdate}

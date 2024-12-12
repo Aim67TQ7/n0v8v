@@ -1,9 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Package, Mail, Users, Settings, LogOut, DollarSign } from "lucide-react";
+import { Home, Package, Mail, Users, Settings, ChevronDown } from "lucide-react";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { ApiStatus } from "@/components/gpt/ApiStatus";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -53,13 +59,7 @@ export const Header = () => {
                   Settings
                 </Button>
               </>
-            ) : (
-              // Show pricing link for non-authenticated users
-              <Button variant="ghost" onClick={() => navigate("/pricing")} className="gap-2 text-gray-600 hover:text-gray-900">
-                <DollarSign className="h-4 w-4" />
-                Pricing
-              </Button>
-            )}
+            ) : null}
           </nav>
 
           {/* API Status Indicators and User Info */}
@@ -75,14 +75,18 @@ export const Header = () => {
                     DEMO Company
                   </span>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  onClick={handleSignOut} 
-                  className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <LogOut className="h-4 w-4" />
-                  Sign Out
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             )}
           </div>
