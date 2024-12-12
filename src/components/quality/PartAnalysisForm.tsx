@@ -83,6 +83,7 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
 
       const { data } = response.data;
 
+      // First create the part inspection record
       const { data: partInspection, error: dbError } = await supabase
         .from('part_inspections')
         .insert({
@@ -90,7 +91,7 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
           inspection_type_id: selectedInspectionType,
           image_url: data.imageUrl,
           analysis: data.analysis.details,
-          created_by: (await supabase.auth.getUser()).data.user?.id
+          created_by: (await supabase.auth.getUser()).data.user?.id || null
         })
         .select()
         .single();
