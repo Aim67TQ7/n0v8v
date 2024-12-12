@@ -13,14 +13,14 @@ interface AnalysisContentProps {
   } | null;
   partInspectionId?: string;
   processImprovementId?: string;
-  inspectionTypeId?: string;
+  analysisTypeId?: string;
 }
 
 export const AnalysisContent = ({ 
   analysis, 
   partInspectionId,
   processImprovementId,
-  inspectionTypeId 
+  analysisTypeId 
 }: AnalysisContentProps) => {
   const [isTraining, setIsTraining] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,7 +56,7 @@ export const AnalysisContent = ({
       <AnalysisFeedbackButtons
         processImprovementId={processImprovementId}
         partInspectionId={partInspectionId}
-        inspectionTypeId={inspectionTypeId}
+        analysisTypeId={analysisTypeId}
         isSubmitting={isSubmitting}
         setIsSubmitting={setIsSubmitting}
         onTrainingClick={() => setIsTraining(true)}
@@ -66,7 +66,7 @@ export const AnalysisContent = ({
         <TrainingFeedbackForm
           processImprovementId={processImprovementId}
           partInspectionId={partInspectionId}
-          inspectionTypeId={inspectionTypeId}
+          analysisTypeId={analysisTypeId}
           onCancel={() => setIsTraining(false)}
           onSuccess={() => setIsTraining(false)}
           isSubmitting={isSubmitting}

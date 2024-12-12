@@ -8,7 +8,7 @@ import { ProcessImageUploader } from "@/components/ProcessImageUploader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 
-interface InspectionType {
+interface AnalysisType {
   id: string;
   name: string;
   description: string;
@@ -20,23 +20,23 @@ interface PartAnalysisFormProps {
 
 export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) => {
   const [selectedWorkcenter, setSelectedWorkcenter] = useState<string>("");
-  const [selectedInspectionType, setSelectedInspectionType] = useState<string>("");
+  const [selectedAnalysisType, setSelectedAnalysisType] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedArea, setSelectedArea] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
   const { toast } = useToast();
 
-  const { data: inspectionTypes, isLoading: isLoadingTypes } = useQuery({
-    queryKey: ['inspectionTypes'],
+  const { data: analysisTypes, isLoading: isLoadingTypes } = useQuery({
+    queryKey: ['analysisTypes'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('inspection_types')
+        .from('analysis_types')
         .select('id, name, description')
         .order('name');
       
       if (error) throw error;
-      return data as InspectionType[];
+      return data as AnalysisType[];
     }
   });
 
@@ -47,10 +47,10 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
   };
 
   const handleAnalyze = async () => {
-    if (!selectedInspectionType || !image) {
+    if (!selectedAnalysisType || !image) {
       toast({
         title: "Missing information",
-        description: "Please select an inspection type and upload an image",
+        description: "Please select an analysis type and upload an image",
         variant: "destructive"
       });
       return;
@@ -69,7 +69,7 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
       setIsAnalyzing(true);
       const formData = new FormData();
       formData.append('image', image!);
-      formData.append('inspectionTypeId', selectedInspectionType);
+      formData.append('analysisTypeId', selectedAnalysisType);
       formData.append('selectedArea', JSON.stringify(selectedArea));
       
       // Only append workcenter if it's not the placeholder value
@@ -90,7 +90,7 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
         .from('part_inspections')
         .insert({
           workcenter_id: selectedWorkcenter !== "Workcenter______" ? selectedWorkcenter : null,
-          inspection_type_id: selectedInspectionType,
+          analysis_type_id: selectedAnalysisType,
           image_url: data.imageUrl,
           analysis: data.analysis.details,
           created_by: (await supabase.auth.getUser()).data.user?.id || null
@@ -103,7 +103,7 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
       onAnalysisComplete({
         ...data.analysis,
         partInspectionId: partInspection.id,
-        inspectionTypeId: selectedInspectionType
+        analysisTypeId: selectedAnalysisType
       });
 
       toast({
@@ -130,17 +130,17 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
       />
 
       <div className="space-y-2">
-        <label className="text-sm font-medium">Select Inspection Type</label>
+        <label className="text-sm font-medium">Select Analysis Type</label>
         <Select 
-          value={selectedInspectionType} 
-          onValueChange={setSelectedInspectionType}
+          value={selectedAnalysisType} 
+          onValueChange={setSelectedAnalysisType}
           disabled={isLoadingTypes}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Choose inspection type" />
+            <SelectValue placeholder="Choose analysis type" />
           </SelectTrigger>
           <SelectContent>
-            {inspectionTypes?.map((type) => (
+            {analysisTypes?.map((type) => (
               <SelectItem key={type.id} value={type.id}>
                 {type.name}
                 {type.description && (
@@ -163,7 +163,7 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
 
       <Button
         onClick={handleAnalyze}
-        disabled={!selectedInspectionType || !image || isAnalyzing || !selectedArea}
+        disabled={!selectedAnalysisType || !image || isAnalyzing || !selectedArea}
         className="w-full"
       >
         {isAnalyzing ? (
