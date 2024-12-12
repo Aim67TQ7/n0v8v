@@ -13,16 +13,16 @@ const App = () => (
         {/* Only show header if not on CompanyGPT route */}
         <Routes>
           <Route
-            path="/company-gpt/*"
+            path="/company-gpt"
             element={
               <main className="flex-1">
                 <Routes>
                   {routes
-                    .filter(route => route.path.startsWith('/company-gpt'))
+                    .filter(route => route.path === '/company-gpt')
                     .map(route => (
                       <Route
                         key={route.path}
-                        path={route.path.replace('/company-gpt/', '')}
+                        path="/"
                         element={route.element}
                       />
                     ))}
@@ -38,7 +38,7 @@ const App = () => (
                 <main className="flex-1 container mx-auto px-4 py-8">
                   <Routes>
                     {routes
-                      .filter(route => !route.path.startsWith('/company-gpt'))
+                      .filter(route => route.path !== '/company-gpt')
                       .map(route => (
                         <Route
                           key={route.path}
