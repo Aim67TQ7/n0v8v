@@ -8,13 +8,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { ResetPasswordForm } from "./ResetPasswordForm";
 import { PasswordInput } from "./PasswordInput";
 import { OTPVerification } from "./OTPVerification";
+import { PhoneVerification } from "./PhoneVerification";
 
 export const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPasswordReset, setShowPasswordReset] = useState(false);
   const [showOTPVerification, setShowOTPVerification] = useState(false);
+  const [showPhoneVerification, setShowPhoneVerification] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -100,6 +103,57 @@ export const SignInForm = () => {
     }
   };
 
+  const handlePhoneSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      // Generate a 6-digit code
+      const verificationCode = Math.random().toString().substring(2, 8);
+      
+      // Store the verification code
+      const { error: dbError } = await supabase
+        .from('phone_verifications')
+        .insert([
+          { 
+            phone_number: phone,
+            verification_code: verificationCode
+          }
+        ]);
+
+      if (dbError) throw dbError;
+
+      // Send verification SMS using Edge Function
+      const { error: smsError } = await supabase.functions.invoke('send-sms', {
+        body: {
+          to: phone,
+          message: `Your verification code is: ${verificationCode}`
+        }
+      });
+
+      if (smsError) throw smsError;
+
+      setShowPhoneVerification(true);
+      toast({
+        title: "Verification code sent",
+        description: "Please check your phone for the verification code.",
+      });
+    } catch (error: any) {
+      console.error("Phone auth error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (showPhoneVerification) {
+    return <PhoneVerification phone={phone} />;
+  }
+
   if (showOTPVerification) {
     return <OTPVerification email={email} />;
   }
@@ -126,9 +180,10 @@ export const SignInForm = () => {
       </div>
 
       <Tabs defaultValue="signin" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="signin">Sign In</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="signin">Email Sign In</TabsTrigger>
           <TabsTrigger value="signup">Sign Up</TabsTrigger>
+          <TabsTrigger value="phone">Phone Sign In</TabsTrigger>
         </TabsList>
 
         <TabsContent value="signin">
@@ -177,6 +232,25 @@ export const SignInForm = () => {
               disabled={loading}
             >
               {loading ? "Sending verification..." : "Create Account"}
+            </Button>
+          </form>
+        </TabsContent>
+
+        <TabsContent value="phone">
+          <form onSubmit={handlePhoneSignIn} className="space-y-4">
+            <Input
+              type="tel"
+              required
+              placeholder="Phone Number (e.g., +1234567890)"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loading}
+            >
+              {loading ? "Sending code..." : "Sign In with Phone"}
             </Button>
           </form>
         </TabsContent>

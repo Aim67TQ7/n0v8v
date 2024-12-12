@@ -791,6 +791,36 @@ export type Database = {
           },
         ]
       }
+      phone_verifications: {
+        Row: {
+          attempts: number | null
+          created_at: string
+          expires_at: string
+          id: string
+          phone_number: string
+          verification_code: string
+          verified_at: string | null
+        }
+        Insert: {
+          attempts?: number | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          phone_number: string
+          verification_code: string
+          verified_at?: string | null
+        }
+        Update: {
+          attempts?: number | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          phone_number?: string
+          verification_code?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       process_analysis_reports: {
         Row: {
           analysis_date: string | null
