@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { compressImage } from "@/utils/imageCompression";
 import { ImageSelector } from "@/components/ImageSelector";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface ProcessImageUploaderProps {
   imagePreview: string;
@@ -79,14 +80,29 @@ export const ProcessImageUploader = ({
         onChange={handleImageUpload}
       />
 
-      {imagePreview && (
+      {imagePreview ? (
         <div className="relative">
-          <ImageSelector
-            imageUrl={imagePreview}
-            onAreaSelect={onAreaSelect}
-            selectedArea={selectedArea}
-          />
+          <AspectRatio ratio={4/3} className="bg-muted">
+            <ImageSelector
+              imageUrl={imagePreview}
+              onAreaSelect={onAreaSelect}
+              selectedArea={selectedArea}
+            />
+            {!selectedArea && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="bg-black/50 text-white px-3 py-1.5 rounded text-xs font-medium">
+                  Click and drag to select inspection area
+                </div>
+              </div>
+            )}
+          </AspectRatio>
         </div>
+      ) : (
+        <AspectRatio ratio={4/3} className="bg-muted rounded-lg flex items-center justify-center">
+          <div className="text-muted-foreground text-sm">
+            Upload a photo to begin analysis
+          </div>
+        </AspectRatio>
       )}
     </div>
   );

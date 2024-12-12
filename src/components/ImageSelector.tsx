@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface ImageSelectorProps {
   imageUrl: string;
@@ -11,15 +12,6 @@ export const ImageSelector = ({ imageUrl, onAreaSelect, selectedArea }: ImageSel
   const [isDragging, setIsDragging] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   const [currentPos, setCurrentPos] = useState({ x: 0, y: 0 });
-  const [aspectRatio, setAspectRatio] = useState(16/9); // Default aspect ratio
-
-  useEffect(() => {
-    const img = new Image();
-    img.onload = () => {
-      setAspectRatio(img.width / img.height);
-    };
-    img.src = imageUrl;
-  }, [imageUrl]);
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
@@ -70,29 +62,26 @@ export const ImageSelector = ({ imageUrl, onAreaSelect, selectedArea }: ImageSel
   return (
     <div 
       ref={containerRef}
-      className="relative w-full cursor-crosshair"
-      style={{ paddingBottom: `${(1 / aspectRatio) * 100}%` }}
+      className="relative w-full h-full cursor-crosshair"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
     >
-      <div className="absolute inset-0">
-        <img
-          src={imageUrl}
-          alt="Process preview"
-          className="w-full h-full object-contain rounded-lg"
+      <img
+        src={imageUrl}
+        alt="Process preview"
+        className="w-full h-full object-contain"
+      />
+      {selectedArea && (
+        <div
+          className="absolute border-2 border-blue-500 bg-blue-500/20"
+          style={{
+            left: `${selectedArea.x * 100}%`,
+            top: `${selectedArea.y * 100}%`,
+            width: `${selectedArea.width * 100}%`,
+            height: `${selectedArea.height * 100}%`,
+          }}
         />
-        {selectedArea && (
-          <div
-            className="absolute border-2 border-blue-500 bg-blue-500/20"
-            style={{
-              left: `${selectedArea.x * 100}%`,
-              top: `${selectedArea.y * 100}%`,
-              width: `${selectedArea.width * 100}%`,
-              height: `${selectedArea.height * 100}%`,
-            }}
-          />
-        )}
-      </div>
+      )}
     </div>
   );
 };
