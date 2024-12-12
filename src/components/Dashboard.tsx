@@ -7,7 +7,8 @@ import {
   Building2,
   GraduationCap,
   MessageSquare,
-  ChevronDown
+  ChevronDown,
+  AppWindow
 } from "lucide-react";
 import { ModuleCard } from "./dashboard/ModuleCard";
 import {
@@ -19,6 +20,13 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 
 const modules = [
+  {
+    title: "Apps",
+    description: "Access your licensed applications",
+    icon: AppWindow,
+    href: "/apps",
+    status: "ready" as const
+  },
   {
     title: "Team Management",
     description: "Manage your team and assignments",
