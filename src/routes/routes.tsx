@@ -14,6 +14,7 @@ import DMRDocumentation from "@/pages/quality/DMRDocumentation";
 import FiveWhys from "@/pages/quality/FiveWhys";
 import { AuthWrapper } from "@/components/AuthWrapper";
 import TrainingMatrix from "@/pages/training/TrainingMatrix";
+import TeamManagement from "@/pages/TeamManagement";
 
 export const routes = [
   {
@@ -39,6 +40,10 @@ export const routes = [
   {
     path: "/modules",
     element: <Modules />
+  },
+  {
+    path: "/team",
+    element: <AuthWrapper><TeamManagement /></AuthWrapper>
   },
   {
     path: "/training/matrix",
