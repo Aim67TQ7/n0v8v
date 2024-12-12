@@ -736,6 +736,58 @@ export type Database = {
           },
         ]
       }
+      part_inspections: {
+        Row: {
+          analysis: string
+          created_at: string
+          created_by: string | null
+          id: string
+          image_url: string
+          inspection_type_id: string
+          workcenter_id: string | null
+        }
+        Insert: {
+          analysis: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_url: string
+          inspection_type_id: string
+          workcenter_id?: string | null
+        }
+        Update: {
+          analysis?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_url?: string
+          inspection_type_id?: string
+          workcenter_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "part_inspections_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "part_inspections_inspection_type_id_fkey"
+            columns: ["inspection_type_id"]
+            isOneToOne: false
+            referencedRelation: "inspection_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "part_inspections_workcenter_id_fkey"
+            columns: ["workcenter_id"]
+            isOneToOne: false
+            referencedRelation: "workcenters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       process_analysis_reports: {
         Row: {
           analysis_date: string | null

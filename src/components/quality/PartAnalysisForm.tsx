@@ -81,10 +81,11 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
 
       if (error) throw error;
 
-      const { data: processImprovement, error: dbError } = await supabase
-        .from('process_improvements')
+      const { data: partInspection, error: dbError } = await supabase
+        .from('part_inspections')
         .insert({
           workcenter_id: selectedWorkcenter || null,
+          inspection_type_id: selectedInspectionType,
           image_url: data.imageUrl,
           analysis: data.analysis.details,
           created_by: (await supabase.auth.getUser()).data.user?.id || null
@@ -99,7 +100,7 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
 
       onAnalysisComplete({
         ...data.analysis,
-        processImprovementId: processImprovement.id,
+        partInspectionId: partInspection.id,
         inspectionTypeId: selectedInspectionType
       });
 
