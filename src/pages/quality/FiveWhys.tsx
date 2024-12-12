@@ -7,7 +7,6 @@ import { FiveWhysForm } from "@/components/five-whys/FiveWhysForm";
 import { QuestioningInterface } from "@/components/five-whys/QuestioningInterface";
 import { FishboneResult } from "@/components/five-whys/FishboneResult";
 import { AnalysisHeader } from "@/components/five-whys/AnalysisHeader";
-import { Json } from "@/integrations/supabase/types";
 
 interface LearningFeedback {
   iteration: number;
@@ -23,57 +22,6 @@ const FiveWhys = () => {
   const [learningFeedback, setLearningFeedback] = useState<LearningFeedback[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
-
-  const generateSequentialQuestions = (context: string, iteration: number, previousAnswers: string[]) => {
-    const lastAnswer = previousAnswers[previousAnswers.length - 1] || context;
-    
-    const baseQuestions = [
-      "Process/Procedure Issues",
-      "Equipment/Tool Problems",
-      "Training/Knowledge Gaps",
-      "Communication Breakdown",
-      "Resource Constraints"
-    ];
-    
-    switch (iteration) {
-      case 1:
-        return baseQuestions.map(q => `${lastAnswer} due to ${q.toLowerCase()}`);
-      case 2:
-        return [
-          "Standard procedures weren't followed",
-          "Procedures weren't clear",
-          "Required resources unavailable",
-          "Inadequate training provided",
-          "Communication channels ineffective"
-        ];
-      case 3:
-        return [
-          "Lack of oversight mechanisms",
-          "Insufficient quality controls",
-          "Inadequate process documentation",
-          "Missing standardization",
-          "Incomplete risk assessment"
-        ];
-      case 4:
-        return [
-          "Organizational barriers present",
-          "Resource allocation issues",
-          "Policy limitations exist",
-          "Cultural factors impact work",
-          "Management support lacking"
-        ];
-      case 5:
-        return [
-          "Systemic process gaps",
-          "Organizational structure issues",
-          "Policy framework inadequate",
-          "Cultural transformation needed",
-          "Strategic alignment missing"
-        ];
-      default:
-        return baseQuestions;
-    }
-  };
 
   const startAnalysis = async (statement: string) => {
     if (!statement.trim()) {
@@ -148,7 +96,7 @@ const FiveWhys = () => {
 
       setAnalysis(data.result);
 
-      const transformedFeedback: Json[] = learningFeedback.map(item => ({
+      const transformedFeedback = learningFeedback.map(item => ({
         iteration: item.iteration,
         feedback: item.feedback
       }));
@@ -170,7 +118,7 @@ const FiveWhys = () => {
       console.error('Error generating fishbone:', error);
       toast({
         title: "Error",
-        description: "Failed to generate fishbone diagram. Please try again.",
+        description: "Failed to generate analysis. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -196,8 +144,9 @@ const FiveWhys = () => {
           <QuestioningInterface
             problemStatement={problemStatement}
             currentIteration={currentIteration}
-            suggestedQuestions={generateSequentialQuestions(problemStatement, currentIteration, answers)}
+            previousAnswers={answers}
             onAnswer={handleAnswer}
+            isAnalyzing={isAnalyzing}
           />
         ) : (
           <FishboneResult
