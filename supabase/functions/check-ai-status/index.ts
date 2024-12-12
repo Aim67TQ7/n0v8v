@@ -7,6 +7,7 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -16,6 +17,8 @@ serve(async (req) => {
     let endpoint = '';
     let headers = {};
     let body = {};
+
+    console.log(`Checking status for ${provider} API...`);
 
     switch (provider) {
       case 'groq':
@@ -67,18 +70,26 @@ serve(async (req) => {
         throw new Error('Invalid provider');
     }
 
-    console.log(`Checking status for ${provider} API...`);
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+      });
 
-    console.log(`${provider} API response status:`, response.status);
-    return new Response(
-      JSON.stringify({ status: response.ok ? 'up' : 'down' }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+      console.log(`${provider} API response status:`, response.status);
+      
+      return new Response(
+        JSON.stringify({ status: response.ok ? 'up' : 'down' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } catch (error) {
+      console.error(`Error checking ${provider} API:`, error);
+      return new Response(
+        JSON.stringify({ status: 'down', error: error.message }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
   } catch (error) {
     console.error('Error in check-ai-status function:', error);
     return new Response(
