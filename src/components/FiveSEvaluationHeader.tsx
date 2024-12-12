@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 interface FiveSEvaluationHeaderProps {
   workcenterId: string;
   onSavePDF: () => void;
-  onEmailPDF: () => void;
+  onEmailPDF?: () => void;  // Made optional since it's not being used yet
 }
 
-export const FiveSEvaluationHeader = ({ workcenterId, onSavePDF, onEmailPDF }: FiveSEvaluationHeaderProps) => {
+export const FiveSEvaluationHeader = ({ workcenterId, onSavePDF }: FiveSEvaluationHeaderProps) => {
   return (
     <div className="flex justify-between items-center mb-6">
       <div className="flex items-center gap-3">
@@ -18,10 +18,6 @@ export const FiveSEvaluationHeader = ({ workcenterId, onSavePDF, onEmailPDF }: F
         <Button variant="outline" onClick={onSavePDF}>
           <Save className="w-4 h-4 mr-2" />
           Save as PDF
-        </Button>
-        <Button variant="outline" onClick={onEmailPDF}>
-          <Mail className="w-4 h-4 mr-2" />
-          Email PDF
         </Button>
       </div>
     </div>

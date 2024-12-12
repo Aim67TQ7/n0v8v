@@ -633,6 +633,45 @@ export type Database = {
           },
         ]
       }
+      five_s_learning_feedback: {
+        Row: {
+          created_at: string
+          created_by: string
+          evaluation_id: string
+          feedback: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          evaluation_id: string
+          feedback: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          evaluation_id?: string
+          feedback?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "five_s_learning_feedback_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "five_s_learning_feedback_evaluation_id_fkey"
+            columns: ["evaluation_id"]
+            isOneToOne: false
+            referencedRelation: "five_s_evaluations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       five_whys_analysis: {
         Row: {
           company_id: string | null
