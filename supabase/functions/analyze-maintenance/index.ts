@@ -29,14 +29,17 @@ serve(async (req) => {
       throw new Error('Failed to download image from storage')
     }
 
+    // Get the file extension to determine MIME type
+    const fileExt = imageUrl.split('.').pop()?.toLowerCase() || 'jpeg'
+    const mimeType = `image/${fileExt === 'jpg' ? 'jpeg' : fileExt}`
+
     // Convert the image to base64
     const imageArrayBuffer = await imageData.arrayBuffer()
     const base64Image = btoa(
-      new Uint8Array(imageArrayBuffer)
-        .reduce((data, byte) => data + String.fromCharCode(byte), '')
+      String.fromCharCode(...new Uint8Array(imageArrayBuffer))
     )
 
-    console.log('Analyzing image:', imageUrl)
+    console.log('Analyzing image:', imageUrl, 'with MIME type:', mimeType)
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -45,7 +48,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "gpt-4o",
+        model: "gpt-4-vision-preview",
         messages: [
           {
             role: "system",
@@ -61,7 +64,7 @@ serve(async (req) => {
               {
                 type: "image_url",
                 image_url: {
-                  url: `data:image/jpeg;base64,${base64Image}`
+                  url: `data:${mimeType};base64,${base64Image}`
                 }
               }
             ]
