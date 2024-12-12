@@ -33,7 +33,7 @@ serve(async (req) => {
 
     // Fetch inspection type details
     const { data: inspectionType, error: inspectionError } = await supabase
-      .from('inspection_types')
+      .from('analysis_types')
       .select('prompt_template')
       .eq('id', inspectionTypeId)
       .single();
