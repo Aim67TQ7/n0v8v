@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DollarSign, Check, Star, Users, Calendar, Info } from "lucide-react";
+import { DollarSign, Check, Info, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
@@ -31,8 +31,8 @@ const PricingPage = () => {
       monthlyPrice: "14.95",
       features: [
         "7-day free trial",
-        "Select any 3 modules for your organization",
-        "Change module selection each billing cycle",
+        "Access to any 3 apps",
+        "Change app selection each billing cycle",
         "GPT branding features",
         "Customizable assistants",
         "SOC II compliant data storage",
@@ -47,9 +47,8 @@ const PricingPage = () => {
       monthlyPrice: "39.95",
       features: [
         "7-day free trial",
-        "Access to 10 modules for your organization",
-        "New modules included as released",
-        "Change module selection each billing cycle",
+        "Access to all apps",
+        "New apps included as released",
         "Advanced branding features",
         "Vertical agents (coming soon)",
         "Price locked for 1 year",
@@ -68,7 +67,7 @@ const PricingPage = () => {
       price: "Custom",
       features: [
         "Unlimited users",
-        "Unlimited module access",
+        "Access to all apps",
         "All current and future features",
         "Advanced branding features",
         "Vertical agents",
@@ -91,7 +90,7 @@ const PricingPage = () => {
         </p>
         <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-600">
           <Info className="h-4 w-4" />
-          <p>Modules are selected at the organization level and can be changed each billing cycle</p>
+          <p>Apps can be selected at the organization level and changed each billing cycle</p>
         </div>
       </div>
 
