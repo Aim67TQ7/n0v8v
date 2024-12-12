@@ -17,51 +17,7 @@ serve(async (req) => {
     const messages = [
       {
         role: "system",
-        content: `You are a 5S workplace organization expert. Analyze each image for 5S compliance and provide SPECIFIC, DETAILED feedback based on what you observe in the images.
-
-For each image:
-1. Look for specific items, tools, equipment, and workspace organization
-2. Note exact locations and conditions
-3. Identify specific safety concerns
-4. Make detailed, actionable recommendations
-
-Format your response as JSON with the following structure:
-{
-  "sort_score": number (1-10),
-  "set_in_order_score": number (1-10),
-  "shine_score": number (1-10),
-  "standardize_score": number (1-10),
-  "sustain_score": number (1-10),
-  "strengths": string[],
-  "weaknesses": string[],
-  "analysis": {
-    "sort": {
-      "observations": string[],
-      "score": number,
-      "specific_improvements": string[]
-    },
-    "set_in_order": {
-      "observations": string[],
-      "score": number,
-      "specific_improvements": string[]
-    },
-    "shine": {
-      "observations": string[],
-      "score": number,
-      "specific_improvements": string[]
-    },
-    "standardize": {
-      "observations": string[],
-      "score": number,
-      "specific_improvements": string[]
-    },
-    "sustain": {
-      "observations": string[],
-      "score": number,
-      "specific_improvements": string[]
-    }
-  }
-}`
+        content: "You are a 5S workplace organization expert. Analyze each image for 5S compliance and provide SPECIFIC, DETAILED feedback based on what you observe in the images. For each image: 1) Look for specific items, tools, equipment, and workspace organization 2) Note exact locations and conditions 3) Identify specific safety concerns 4) Make detailed, actionable recommendations"
       }
     ]
 
@@ -82,6 +38,49 @@ Format your response as JSON with the following structure:
       })
     })
 
+    // Add final message to request specific JSON structure
+    messages.push({
+      role: "user",
+      content: `Provide your analysis in the following JSON structure only, with no additional text or markdown:
+{
+  "sort_score": <number 1-10>,
+  "set_in_order_score": <number 1-10>,
+  "shine_score": <number 1-10>,
+  "standardize_score": <number 1-10>,
+  "sustain_score": <number 1-10>,
+  "strengths": [<string array>],
+  "weaknesses": [<string array>],
+  "analysis": {
+    "sort": {
+      "observations": [<string array>],
+      "score": <number>,
+      "specific_improvements": [<string array>]
+    },
+    "set_in_order": {
+      "observations": [<string array>],
+      "score": <number>,
+      "specific_improvements": [<string array>]
+    },
+    "shine": {
+      "observations": [<string array>],
+      "score": <number>,
+      "specific_improvements": [<string array>]
+    },
+    "standardize": {
+      "observations": [<string array>],
+      "score": <number>,
+      "specific_improvements": [<string array>]
+    },
+    "sustain": {
+      "observations": [<string array>],
+      "score": <number>,
+      "specific_improvements": [<string array>]
+    }
+  }
+}`
+    })
+
+    console.log('Sending request to OpenAI...')
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -92,7 +91,8 @@ Format your response as JSON with the following structure:
         model: 'gpt-4o',
         messages,
         temperature: 0.7,
-        max_tokens: 2000
+        max_tokens: 2000,
+        response_format: { type: "json_object" }  // Force JSON response
       }),
     })
 
@@ -100,28 +100,35 @@ Format your response as JSON with the following structure:
       throw new Error(`OpenAI API error: ${response.status} - ${await response.text()}`)
     }
 
+    console.log('Received response from OpenAI')
     const result = await response.json()
-    const analysis = JSON.parse(result.choices[0].message.content)
+    
+    try {
+      const analysis = JSON.parse(result.choices[0].message.content)
+      
+      // Add safety deduction if any safety concerns are found
+      const safetyKeywords = ['hazard', 'unsafe', 'safety', 'risk', 'danger', 'trip', 'fall', 'spill']
+      const allObservations = [
+        ...analysis.analysis.sort.observations,
+        ...analysis.analysis.set_in_order.observations,
+        ...analysis.analysis.shine.observations,
+        ...analysis.analysis.standardize.observations,
+        ...analysis.analysis.sustain.observations
+      ].join(' ').toLowerCase()
 
-    // Add safety deduction if any safety concerns are found
-    const safetyKeywords = ['hazard', 'unsafe', 'safety', 'risk', 'danger', 'trip', 'fall', 'spill'];
-    const allObservations = [
-      ...analysis.analysis.sort.observations,
-      ...analysis.analysis.set_in_order.observations,
-      ...analysis.analysis.shine.observations,
-      ...analysis.analysis.standardize.observations,
-      ...analysis.analysis.sustain.observations
-    ].join(' ').toLowerCase();
+      const safetyIssuesFound = safetyKeywords.some(keyword => allObservations.includes(keyword))
+      if (safetyIssuesFound) {
+        analysis.safety_deduction = 2
+        analysis.weaknesses.unshift("Safety concerns identified - immediate attention required")
+      }
 
-    const safetyIssuesFound = safetyKeywords.some(keyword => allObservations.includes(keyword));
-    if (safetyIssuesFound) {
-      analysis.safety_deduction = 2;
-      analysis.weaknesses.unshift("Safety concerns identified - immediate attention required");
+      return new Response(JSON.stringify(analysis), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    } catch (parseError) {
+      console.error('Error parsing OpenAI response:', result.choices[0].message.content)
+      throw new Error('Failed to parse OpenAI response as JSON')
     }
-
-    return new Response(JSON.stringify(analysis), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
   } catch (error) {
     console.error('Error:', error)
     return new Response(
