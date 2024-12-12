@@ -47,7 +47,7 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
   };
 
   const handleAnalyze = async () => {
-    if (!image || !selectedInspectionType) {
+    if (!selectedInspectionType) {
       toast({
         title: "Missing information",
         description: "Please select an inspection type and upload an image",
@@ -68,7 +68,7 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
     try {
       setIsAnalyzing(true);
       const formData = new FormData();
-      formData.append('image', image);
+      formData.append('image', image!);
       if (selectedWorkcenter) {
         formData.append('workcenter', selectedWorkcenter);
       }
@@ -81,7 +81,25 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
 
       if (error) throw error;
 
-      onAnalysisComplete(data.analysis);
+      // Save the process improvement record
+      const { data: processImprovement, error: dbError } = await supabase
+        .from('process_improvements')
+        .insert({
+          workcenter_id: selectedWorkcenter || null,
+          image_url: data.imageUrl,
+          analysis: data.analysis.details
+        })
+        .select()
+        .single();
+
+      if (dbError) throw dbError;
+
+      onAnalysisComplete({
+        ...data.analysis,
+        processImprovementId: processImprovement.id,
+        inspectionTypeId: selectedInspectionType
+      });
+
       toast({
         title: "Analysis Complete",
         description: "Part analysis has been completed successfully.",

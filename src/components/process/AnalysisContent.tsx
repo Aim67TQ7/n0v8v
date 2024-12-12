@@ -27,15 +27,6 @@ export const AnalysisContent = ({ analysis, processImprovementId, inspectionType
   const detailLines = analysis.details ? analysis.details.split('\n') : [];
 
   const handleAgree = async () => {
-    if (!processImprovementId) {
-      toast({
-        title: "Error",
-        description: "Process improvement ID is required",
-        variant: "destructive"
-      });
-      return;
-    }
-
     try {
       setIsSubmitting(true);
       const { error } = await supabase
@@ -43,7 +34,8 @@ export const AnalysisContent = ({ analysis, processImprovementId, inspectionType
         .insert({
           process_improvement_id: processImprovementId,
           feedback_type: 'agreement',
-          inspection_type_id: inspectionTypeId
+          inspection_type_id: inspectionTypeId,
+          created_by: (await supabase.auth.getUser()).data.user?.id
         });
 
       if (error) throw error;
@@ -65,10 +57,10 @@ export const AnalysisContent = ({ analysis, processImprovementId, inspectionType
   };
 
   const handleTrainingSubmit = async () => {
-    if (!processImprovementId || !trainingComment.trim()) {
+    if (!trainingComment.trim()) {
       toast({
         title: "Error",
-        description: "Process improvement ID and comment are required",
+        description: "Please enter training notes",
         variant: "destructive"
       });
       return;
@@ -82,7 +74,8 @@ export const AnalysisContent = ({ analysis, processImprovementId, inspectionType
           process_improvement_id: processImprovementId,
           feedback_type: 'training',
           comments: trainingComment,
-          inspection_type_id: inspectionTypeId
+          inspection_type_id: inspectionTypeId,
+          created_by: (await supabase.auth.getUser()).data.user?.id
         });
 
       if (error) throw error;
@@ -124,7 +117,7 @@ export const AnalysisContent = ({ analysis, processImprovementId, inspectionType
       <div className="flex gap-4 mt-6">
         <Button
           onClick={handleAgree}
-          disabled={isSubmitting}
+          disabled={isSubmitting || !processImprovementId}
           className="flex items-center gap-2"
         >
           <ThumbsUp className="h-4 w-4" />
@@ -132,7 +125,7 @@ export const AnalysisContent = ({ analysis, processImprovementId, inspectionType
         </Button>
         <Button
           onClick={() => setIsTraining(true)}
-          disabled={isSubmitting}
+          disabled={isSubmitting || !processImprovementId}
           variant="outline"
           className="flex items-center gap-2"
         >
