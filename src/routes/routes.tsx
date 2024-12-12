@@ -3,6 +3,7 @@ import CompanyGPT from "@/pages/CompanyGPT";
 import Settings from "@/pages/Settings";
 import Modules from "@/pages/Modules";
 import Index from "@/pages/Index";
+import Login from "@/pages/Login";
 import LeanManufacturing from "@/pages/LeanManufacturing";
 import FiveSVision from "@/pages/FiveSVision";
 import QualityAssurance from "@/pages/QualityAssurance";
@@ -15,6 +16,10 @@ export const routes = [
   {
     path: "/",
     element: <Index />
+  },
+  {
+    path: "/login",
+    element: <Login />
   },
   {
     path: "/company-gpt",
