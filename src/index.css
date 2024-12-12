@@ -6,7 +6,7 @@
 
 @layer base {
   body {
-    @apply bg-white text-primary antialiased;
+    @apply bg-white text-gray-900 antialiased;
   }
 
   /* Improve input field legibility */
@@ -17,26 +17,26 @@
   input[type="date"],
   input[type="search"],
   textarea {
-    @apply bg-white border-gray-300 text-gray-900 placeholder:text-gray-500;
+    @apply bg-white border-gray-200 text-gray-900 placeholder:text-gray-400;
   }
 
   /* Improve input field focus states */
   input:focus,
   textarea:focus {
-    @apply border-[#9b87f5] ring-1 ring-[#9b87f5] ring-opacity-50;
+    @apply border-indigo-500 ring-1 ring-indigo-500 ring-opacity-50;
   }
 
   /* Improve disabled state contrast */
   input:disabled,
   textarea:disabled {
-    @apply bg-gray-100 text-gray-700 cursor-not-allowed;
+    @apply bg-gray-50 text-gray-500 cursor-not-allowed;
   }
 }
 
 .gradient-bg {
-  background: linear-gradient(135deg, #1A1F2C 0%, #2A3A5C 100%);
+  background: linear-gradient(135deg, #4F46E5 0%, #0EA5E9 100%);
 }
 
 .feature-card {
-  @apply p-6 rounded-xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300;
+  @apply p-6 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow duration-300;
 }

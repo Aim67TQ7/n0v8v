@@ -23,28 +23,28 @@ export const Header = () => {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200">
+    <header className="bg-white border-b border-gray-100 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Navigation Links */}
           <nav className="flex items-center space-x-4">
-            <Button variant="ghost" onClick={() => navigate("/")} className="gap-2">
+            <Button variant="ghost" onClick={() => navigate("/")} className="gap-2 text-gray-600 hover:text-gray-900">
               <Home className="h-4 w-4" />
               Home
             </Button>
-            <Button variant="ghost" onClick={() => navigate("/modules")} className="gap-2">
+            <Button variant="ghost" onClick={() => navigate("/modules")} className="gap-2 text-gray-600 hover:text-gray-900">
               <Package className="h-4 w-4" />
               Modules
             </Button>
-            <Button variant="ghost" onClick={openOutlook} className="gap-2">
+            <Button variant="ghost" onClick={openOutlook} className="gap-2 text-gray-600 hover:text-gray-900">
               <Mail className="h-4 w-4" />
               Contact
             </Button>
-            <Button variant="ghost" onClick={openTeams} className="gap-2">
+            <Button variant="ghost" onClick={openTeams} className="gap-2 text-gray-600 hover:text-gray-900">
               <Users className="h-4 w-4" />
               Teams
             </Button>
-            <Button variant="ghost" onClick={() => navigate("/settings")} className="gap-2">
+            <Button variant="ghost" onClick={() => navigate("/settings")} className="gap-2 text-gray-600 hover:text-gray-900">
               <Settings className="h-4 w-4" />
               Settings
             </Button>
