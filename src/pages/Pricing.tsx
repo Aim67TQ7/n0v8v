@@ -27,7 +27,7 @@ const PricingPage = () => {
     {
       name: "Basic",
       setupPrice: "99",
-      monthlyPrice: "14.95",
+      monthlyPrice: "39.95",
       features: [
         "7-day free trial",
         "Access to any 3 tools",
@@ -43,7 +43,7 @@ const PricingPage = () => {
     {
       name: "Professional",
       setupPrice: "99",
-      monthlyPrice: "39.95",
+      monthlyPrice: "74.95",
       features: [
         "7-day free trial",
         "Access to all tools",
@@ -58,7 +58,7 @@ const PricingPage = () => {
         "One-time setup fee per user"
       ],
       popular: true,
-      promotion: "Lock in $39.95/mo until Dec 31, 2024 (increases to $79.95/mo in 2025)",
+      promotion: "Lock in $74.95/mo until Dec 31, 2024 (increases to $149.95/mo in 2025)",
       cta: "Start Free Trial"
     },
     {
