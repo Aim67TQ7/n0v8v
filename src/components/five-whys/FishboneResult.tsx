@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { FishboneDiagram } from "./FishboneDiagram";
 
 interface Analysis {
   fishboneDiagram: string;
@@ -23,12 +24,10 @@ export const FishboneResult = ({ analysis, onReset }: FishboneResultProps) => {
           New Analysis
         </Button>
       </div>
-      
+
       <Card className="p-4">
-        <h3 className="font-semibold mb-2">Fishbone Analysis</h3>
-        <pre className="whitespace-pre-wrap text-sm bg-muted p-4 rounded-md">
-          {analysis.fishboneDiagram}
-        </pre>
+        <h3 className="font-semibold mb-4">Fishbone Analysis</h3>
+        <FishboneDiagram data={analysis.fishboneDiagram} />
       </Card>
 
       <Card className="p-4">
