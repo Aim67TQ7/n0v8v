@@ -10,18 +10,48 @@ const App = () => (
   <AppProviders>
     <AuthProvider>
       <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 container mx-auto px-4 py-8">
-          <Routes>
-            {routes.map((route) => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={route.element}
-              />
-            ))}
-          </Routes>
-        </main>
+        {/* Only show header if not on CompanyGPT route */}
+        <Routes>
+          <Route
+            path="/company-gpt/*"
+            element={
+              <main className="flex-1">
+                <Routes>
+                  {routes
+                    .filter(route => route.path.startsWith('/company-gpt'))
+                    .map(route => (
+                      <Route
+                        key={route.path}
+                        path={route.path.replace('/company-gpt/', '')}
+                        element={route.element}
+                      />
+                    ))}
+                </Routes>
+              </main>
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <>
+                <Header />
+                <main className="flex-1 container mx-auto px-4 py-8">
+                  <Routes>
+                    {routes
+                      .filter(route => !route.path.startsWith('/company-gpt'))
+                      .map(route => (
+                        <Route
+                          key={route.path}
+                          path={route.path}
+                          element={route.element}
+                        />
+                      ))}
+                  </Routes>
+                </main>
+              </>
+            }
+          />
+        </Routes>
       </div>
       <Toaster />
       <Sonner />
