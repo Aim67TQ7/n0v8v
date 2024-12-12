@@ -1,22 +1,14 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { useSessionContext } from "@supabase/auth-helpers-react";
 import { WorkcenterSelect } from "@/components/WorkcenterSelect";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ProcessImageUploader } from "@/components/ProcessImageUploader";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useQuery } from "@tanstack/react-query";
-import { useSessionContext } from "@supabase/auth-helpers-react";
+import { AnalysisTypeSelect } from "./analysis/AnalysisTypeSelect";
+import { AnalyzeButton } from "./analysis/AnalyzeButton";
 
 interface PartAnalysisFormProps {
   onAnalysisComplete: (analysis: any, inspectionId: string) => void;
-}
-
-interface InspectionType {
-  id: string;
-  name: string;
-  description: string | null;
 }
 
 export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) => {
@@ -28,19 +20,6 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedArea, setSelectedArea] = useState<{ x: number, y: number, width: number, height: number } | null>(null);
   const { toast } = useToast();
-
-  const { data: inspectionTypes } = useQuery<InspectionType[]>({
-    queryKey: ['inspectionTypes'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('analysis_types')
-        .select('*')
-        .order('name');
-      
-      if (error) throw error;
-      return data;
-    }
-  });
 
   const handleImageUpload = (file: File) => {
     setImage(file);
@@ -92,7 +71,6 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
 
       if (error) throw error;
 
-      // Save the inspection result to the database
       const { data: inspectionData, error: insertError } = await supabase
         .from('part_inspections')
         .insert({
@@ -131,21 +109,10 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
         onChange={setSelectedWorkcenter} 
       />
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Select Inspection Type</label>
-        <Select value={selectedInspectionType} onValueChange={setSelectedInspectionType}>
-          <SelectTrigger>
-            <SelectValue placeholder="Choose inspection type" />
-          </SelectTrigger>
-          <SelectContent>
-            {inspectionTypes?.map((type) => (
-              <SelectItem key={type.id} value={type.id}>
-                {type.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <AnalysisTypeSelect
+        value={selectedInspectionType}
+        onChange={setSelectedInspectionType}
+      />
 
       <ProcessImageUploader
         imagePreview={imagePreview}
@@ -154,20 +121,11 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
         selectedArea={selectedArea}
       />
 
-      <Button
+      <AnalyzeButton
         onClick={handleAnalyze}
         disabled={!selectedInspectionType || !image || isAnalyzing || !selectedArea}
-        className="w-full"
-      >
-        {isAnalyzing ? (
-          <>
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            Analyzing Part...
-          </>
-        ) : (
-          'Analyze Part'
-        )}
-      </Button>
+        isAnalyzing={isAnalyzing}
+      />
     </div>
   );
 };
