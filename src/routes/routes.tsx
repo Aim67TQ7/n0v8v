@@ -21,7 +21,6 @@ import Locations from "@/pages/team/Locations";
 import Departments from "@/pages/team/Departments";
 import WorkCenters from "@/pages/team/WorkCenters";
 import Employees from "@/pages/team/Employees";
-import Categories from "@/pages/team/Categories";
 
 export const routes = [
   {
@@ -59,10 +58,6 @@ export const routes = [
   {
     path: "/team/employees",
     element: <AuthWrapper><Employees /></AuthWrapper>
-  },
-  {
-    path: "/team/categories",
-    element: <AuthWrapper><Categories /></AuthWrapper>
   },
   {
     path: "/settings",

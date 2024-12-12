@@ -6,8 +6,7 @@ import {
   UserCircle,
   Package,
   Database,
-  Building,
-  Folder
+  Building
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -46,13 +45,6 @@ const modulesList = [
     description: "Manage employee information and roles",
     icon: Users,
     href: "/team/employees",
-    status: "ready"
-  },
-  {
-    title: "Categories",
-    description: "Manage product categories and assignments",
-    icon: Folder,
-    href: "/team/categories",
     status: "ready"
   },
   {
