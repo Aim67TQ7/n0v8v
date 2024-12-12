@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useSession } from "@supabase/auth-helpers-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Folder } from "lucide-react";
+import { FolderTree } from "lucide-react";
 import { AuthWrapper } from "@/components/AuthWrapper";
 import { CategoryFilter } from "@/components/team/categories/CategoryFilter";
 import { AddCategoryDialog } from "@/components/team/categories/AddCategoryDialog";
+import { CategoriesList } from "@/components/team/categories/CategoriesList";
 
 const Categories = () => {
   const session = useSession();
@@ -56,7 +57,7 @@ const Categories = () => {
     <AuthWrapper>
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center gap-3 mb-8">
-          <Folder className="h-8 w-8 text-secondary" />
+          <FolderTree className="h-8 w-8 text-secondary" />
           <h1 className="text-3xl font-bold">Categories</h1>
         </div>
 
@@ -74,24 +75,7 @@ const Categories = () => {
           {isLoading ? (
             <div className="text-center py-8">Loading...</div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredCategories?.map((category) => (
-                <div key={category.id} className="bg-white p-4 rounded-lg shadow">
-                  <h3 className="font-semibold text-lg">{category.name}</h3>
-                  {category.description && (
-                    <p className="text-gray-600 mt-2">{category.description}</p>
-                  )}
-                  <div className="mt-4 text-sm text-gray-500">
-                    {category.location?.facility_name && (
-                      <p>Location: {category.location.facility_name}</p>
-                    )}
-                    {category.department?.name && (
-                      <p>Department: {category.department.name}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <CategoriesList categories={filteredCategories || []} />
           )}
         </div>
       </div>
