@@ -56,8 +56,8 @@ export const SignInForm = () => {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/verify`,
-        },
+          emailRedirectTo: `${window.location.origin}/register`,
+        }
       });
 
       if (error) throw error;
