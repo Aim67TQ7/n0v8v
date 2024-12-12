@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { SmtpClient } from "https://deno.land/x/smtp@v0.7.0/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -15,44 +14,39 @@ serve(async (req) => {
   try {
     const { to, subject, html } = await req.json();
 
-    const client = new SmtpClient();
-
-    await client.connectTLS({
-      hostname: "smtp.gmail.com",
-      port: 465,
-      username: Deno.env.get('SMTP_USER'),
-      password: Deno.env.get('SMTP_PASS'),
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Deno.env.get('RESEND_API_KEY')}`,
+      },
+      body: JSON.stringify({
+        from: "Company GPT <onboarding@resend.dev>",
+        to,
+        subject,
+        html,
+      }),
     });
 
-    await client.send({
-      from: Deno.env.get('SMTP_USER') || '',
-      to,
-      subject,
-      content: html,
-      html,
+    if (!res.ok) {
+      const error = await res.text();
+      console.error("Resend API error:", error);
+      throw new Error(`Failed to send email: ${error}`);
+    }
+
+    const data = await res.json();
+    console.log("Email sent successfully:", data);
+
+    return new Response(JSON.stringify({ message: 'Email sent successfully' }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
-
-    await client.close();
-
-    return new Response(
-      JSON.stringify({ message: 'Email sent successfully' }),
-      { 
-        headers: { 
-          'Content-Type': 'application/json',
-          ...corsHeaders
-        } 
-      }
-    );
   } catch (error) {
     console.error('Error sending email:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
         status: 500,
-        headers: { 
-          'Content-Type': 'application/json',
-          ...corsHeaders
-        }
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     );
   }
