@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 interface InspectionType {
   id: string;
   name: string;
+  description: string;
 }
 
 interface PartAnalysisFormProps {
@@ -31,7 +32,7 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
     queryFn: async () => {
       const { data, error } = await supabase
         .from('inspection_types')
-        .select('id, name')
+        .select('id, name, description')
         .order('name');
       
       if (error) throw error;
@@ -106,7 +107,11 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
 
       <div className="space-y-2">
         <label className="text-sm font-medium">Select Inspection Type</label>
-        <Select value={selectedInspectionType} onValueChange={setSelectedInspectionType}>
+        <Select 
+          value={selectedInspectionType} 
+          onValueChange={setSelectedInspectionType}
+          disabled={isLoadingTypes}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Choose inspection type" />
           </SelectTrigger>
@@ -114,6 +119,11 @@ export const PartAnalysisForm = ({ onAnalysisComplete }: PartAnalysisFormProps) 
             {inspectionTypes?.map((type) => (
               <SelectItem key={type.id} value={type.id}>
                 {type.name}
+                {type.description && (
+                  <span className="text-xs text-muted-foreground ml-2">
+                    - {type.description}
+                  </span>
+                )}
               </SelectItem>
             ))}
           </SelectContent>
