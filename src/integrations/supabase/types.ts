@@ -225,6 +225,7 @@ export type Database = {
       }
       departments: {
         Row: {
+          accounting_code: string | null
           burden_rate: number | null
           company_id: string | null
           created_at: string
@@ -236,6 +237,7 @@ export type Database = {
           primary_purpose: string | null
         }
         Insert: {
+          accounting_code?: string | null
           burden_rate?: number | null
           company_id?: string | null
           created_at?: string
@@ -247,6 +249,7 @@ export type Database = {
           primary_purpose?: string | null
         }
         Update: {
+          accounting_code?: string | null
           burden_rate?: number | null
           company_id?: string | null
           created_at?: string
