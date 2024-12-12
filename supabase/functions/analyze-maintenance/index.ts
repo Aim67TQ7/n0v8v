@@ -4,42 +4,42 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+};
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { imageUrl, selectedArea, companyId } = await req.json()
+    const { imageUrl, selectedArea, companyId } = await req.json();
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    );
 
     // Get the image data from storage
     const { data: imageData, error: storageError } = await supabase.storage
       .from('process-images')
-      .download(imageUrl)
+      .download(imageUrl);
 
     if (storageError) {
-      console.error('Storage error:', storageError)
-      throw new Error('Failed to download image from storage')
+      console.error('Storage error:', storageError);
+      throw new Error('Failed to download image from storage');
     }
 
     // Get the file extension to determine MIME type
-    const fileExt = imageUrl.split('.').pop()?.toLowerCase() || 'jpeg'
-    const mimeType = `image/${fileExt === 'jpg' ? 'jpeg' : fileExt}`
+    const fileExt = imageUrl.split('.').pop()?.toLowerCase() || 'jpeg';
+    const mimeType = `image/${fileExt === 'jpg' ? 'jpeg' : fileExt}`;
 
     // Convert the image to base64
-    const imageArrayBuffer = await imageData.arrayBuffer()
+    const imageArrayBuffer = await imageData.arrayBuffer();
     const base64Image = btoa(
       String.fromCharCode(...new Uint8Array(imageArrayBuffer))
-    )
+    );
 
-    console.log('Analyzing image:', imageUrl, 'with MIME type:', mimeType)
+    console.log('Analyzing image:', imageUrl, 'with MIME type:', mimeType);
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -48,7 +48,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "gpt-4-vision-preview",
+        model: "gpt-4o",  // Updated to use the correct model
         messages: [
           {
             role: "system",
@@ -72,27 +72,27 @@ serve(async (req) => {
         ],
         max_tokens: 1000
       })
-    })
+    });
 
     if (!response.ok) {
-      const errorText = await response.text()
-      console.error('OpenAI API error:', errorText)
-      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
+      const errorText = await response.text();
+      console.error('OpenAI API error:', errorText);
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
     }
 
-    const analysisResult = await response.json()
-    console.log('Analysis result:', analysisResult)
+    const analysisResult = await response.json();
+    console.log('Analysis result:', analysisResult);
 
     if (!analysisResult.choices || !analysisResult.choices[0]) {
-      throw new Error('Invalid response from OpenAI API')
+      throw new Error('Invalid response from OpenAI API');
     }
 
-    const aiResponse = analysisResult.choices[0].message.content
+    const aiResponse = analysisResult.choices[0].message.content;
     
-    const makeMatch = aiResponse.match(/make:?\s*([^\n]+)/i)
-    const modelMatch = aiResponse.match(/model:?\s*([^\n]+)/i)
-    const manufacturerMatch = aiResponse.match(/manufacturer:?\s*([^\n]+)/i)
-    const typeMatch = aiResponse.match(/type:?\s*([^\n]+)/i)
+    const makeMatch = aiResponse.match(/make:?\s*([^\n]+)/i);
+    const modelMatch = aiResponse.match(/model:?\s*([^\n]+)/i);
+    const manufacturerMatch = aiResponse.match(/manufacturer:?\s*([^\n]+)/i);
+    const typeMatch = aiResponse.match(/type:?\s*([^\n]+)/i);
 
     const { data: equipment, error: equipmentError } = await supabase
       .from('equipment')
@@ -108,9 +108,9 @@ serve(async (req) => {
         next_maintenance_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
       })
       .select()
-      .single()
+      .single();
 
-    if (equipmentError) throw equipmentError
+    if (equipmentError) throw equipmentError;
 
     const maintenanceTasks = aiResponse
       .split('\n')
@@ -125,13 +125,13 @@ serve(async (req) => {
         is_critical: false,
         safety_precautions: ['wear appropriate PPE'],
         procedure_steps: ['inspect equipment', 'perform maintenance', 'document results']
-      }))
+      }));
 
     const { error: scheduleError } = await supabase
       .from('maintenance_schedules')
-      .insert(maintenanceTasks)
+      .insert(maintenanceTasks);
 
-    if (scheduleError) throw scheduleError
+    if (scheduleError) throw scheduleError;
 
     return new Response(
       JSON.stringify({ 
@@ -140,16 +140,16 @@ serve(async (req) => {
         maintenanceTasks 
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    );
 
   } catch (error) {
-    console.error('Error in analyze-maintenance function:', error)
+    console.error('Error in analyze-maintenance function:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
-    )
+    );
   }
 })
