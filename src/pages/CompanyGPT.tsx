@@ -104,21 +104,32 @@ const CompanyGPT = () => {
                 </div>
               </Sidebar>
               
-              {/* Collapse/Expand Button - Repositioned */}
+              {/* Collapse/Expand Button - Only visible when needed */}
+              {!isLeftColumnCollapsed && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute -right-6 top-3 z-50 bg-white border shadow-sm hover:bg-gray-100"
+                  onClick={toggleLeftColumn}
+                  title="Collapse sidebar"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+
+            {/* Expand button when sidebar is collapsed */}
+            {isLeftColumnCollapsed && (
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute -right-6 top-3 z-50 bg-white border shadow-sm hover:bg-gray-100"
+                className="absolute left-0 top-3 z-50 bg-white border shadow-sm hover:bg-gray-100"
                 onClick={toggleLeftColumn}
-                title={isLeftColumnCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                title="Expand sidebar"
               >
-                {isLeftColumnCollapsed ? (
-                  <ChevronRight className="h-4 w-4" />
-                ) : (
-                  <ChevronLeft className="h-4 w-4" />
-                )}
+                <ChevronRight className="h-4 w-4" />
               </Button>
-            </div>
+            )}
 
             <ChatContainer 
               selectedSession={selectedSession}
