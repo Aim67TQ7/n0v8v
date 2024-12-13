@@ -22,7 +22,6 @@ import PricingPage from "@/pages/Pricing";
 import Locations from "@/pages/team/Locations";
 import Departments from "@/pages/team/Departments";
 import WorkCenters from "@/pages/team/WorkCenters";
-import Employees from "@/pages/team/Employees";
 import Apps from "@/pages/Apps";
 import Tools from "@/pages/Tools";
 import MaintenanceSystem from "@/pages/maintenance/MaintenanceSystem";
@@ -72,10 +71,6 @@ export const routes = [
   {
     path: "/team/workcenters",
     element: <AuthWrapper><WorkCenters /></AuthWrapper>
-  },
-  {
-    path: "/team/employees",
-    element: <AuthWrapper><Employees /></AuthWrapper>
   },
   {
     path: "/settings",
@@ -136,5 +131,9 @@ export const routes = [
   {
     path: "/leads/scraping",
     element: <AuthWrapper><WebScraping /></AuthWrapper>
+  },
+  {
+    path: "/operations/customer-focus",
+    element: <Modules />
   }
 ];

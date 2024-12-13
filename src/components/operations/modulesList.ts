@@ -9,7 +9,8 @@ import {
   Search,
   Building2,
   BookOpen,
-  Globe
+  Globe,
+  Building
 } from "lucide-react";
 import type { ModuleCardProps } from "./ModuleCard";
 
@@ -86,5 +87,12 @@ export const customerFocusTools: ModuleCardProps[] = [
     icon: Globe,
     href: "/leads/scraping",
     status: "ready"
+  },
+  {
+    title: "Vertical Agents",
+    description: "Industry-specific AI agents for customer engagement",
+    icon: Building,
+    href: "/operations/customer-focus/vertical-agents",
+    status: "coming-soon"
   }
 ];
