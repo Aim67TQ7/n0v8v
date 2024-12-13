@@ -71,28 +71,48 @@ Ensure the report is thorough and professional, with clear explanations and acti
   "analysis": {
     "sort": {
       "observations": [<string array>],
+      "positive_impacts": [<string array>],
+      "negative_impacts": [<string array>],
       "score": <number>,
-      "specific_improvements": [<string array>]
+      "score_justification": <string>,
+      "specific_improvements": [<string array>],
+      "recommended_tools": [<string array>]
     },
     "set_in_order": {
       "observations": [<string array>],
+      "positive_impacts": [<string array>],
+      "negative_impacts": [<string array>],
       "score": <number>,
-      "specific_improvements": [<string array>]
+      "score_justification": <string>,
+      "specific_improvements": [<string array>],
+      "recommended_tools": [<string array>]
     },
     "shine": {
       "observations": [<string array>],
+      "positive_impacts": [<string array>],
+      "negative_impacts": [<string array>],
       "score": <number>,
-      "specific_improvements": [<string array>]
+      "score_justification": <string>,
+      "specific_improvements": [<string array>],
+      "recommended_tools": [<string array>]
     },
     "standardize": {
       "observations": [<string array>],
+      "positive_impacts": [<string array>],
+      "negative_impacts": [<string array>],
       "score": <number>,
-      "specific_improvements": [<string array>]
+      "score_justification": <string>,
+      "specific_improvements": [<string array>],
+      "recommended_tools": [<string array>]
     },
     "sustain": {
       "observations": [<string array>],
+      "positive_impacts": [<string array>],
+      "negative_impacts": [<string array>],
       "score": <number>,
-      "specific_improvements": [<string array>]
+      "score_justification": <string>,
+      "specific_improvements": [<string array>],
+      "recommended_tools": [<string array>]
     }
   }
 }`
@@ -110,7 +130,7 @@ Ensure the report is thorough and professional, with clear explanations and acti
         messages,
         temperature: 0.7,
         max_tokens: 2000,
-        response_format: { type: "json_object" }  // Force JSON response
+        response_format: { type: "json_object" }
       }),
     })
 
