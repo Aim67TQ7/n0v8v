@@ -28,7 +28,7 @@ export const ScoreAnalysis = ({
       .replace(/disorganized|messy/gi, "organize")
       .replace(/unclear|confusing/gi, "establish clear");
 
-    return `${cleanWeakness}. This is ${impact}. ${suggestion.toLowerCase()} to enhance workplace organization.`;
+    return `${cleanWeakness}. This is ${impact}. To improve: ${suggestion.toLowerCase()} to enhance workplace organization.`;
   };
 
   return (
