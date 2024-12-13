@@ -14,6 +14,8 @@ import {
   GraduationCap,
   MessageSquare,
   User,
+  Mail,
+  BarChart2
 } from "lucide-react";
 import type { ModuleCardProps } from "./ModuleCard";
 
@@ -103,6 +105,20 @@ export const customerFocusTools: ModuleCardProps[] = [
     description: "Customer service training materials",
     icon: BookOpen,
     href: "/customer-focus/training",
+    status: "ready"
+  },
+  {
+    title: "Generate Newsletter",
+    description: "AI-powered newsletter content generation",
+    icon: Mail,
+    href: "/customer-focus/newsletter",
+    status: "ready"
+  },
+  {
+    title: "Viral Posts",
+    description: "A/B testing for social media content",
+    icon: BarChart2,
+    href: "/customer-focus/viral-posts",
     status: "ready"
   },
   {
