@@ -137,6 +137,15 @@ export const FiveSEvaluationResults = ({
             weaknesses={evaluationData.weaknesses || []}
           />
 
+          <SWOTAnalysis
+            strengths={evaluationData.strengths || []}
+            weaknesses={evaluationData.weaknesses || []}
+            sortScore={evaluationData.sort_score}
+            setScore={evaluationData.set_in_order_score}
+            shineScore={evaluationData.shine_score}
+            evaluationId={evaluationData.id}
+          />
+
           <div className="text-center mt-4">
             <Button
               onClick={onNewEvaluation}
