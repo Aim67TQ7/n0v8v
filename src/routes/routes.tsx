@@ -26,6 +26,7 @@ import Tools from "@/pages/Tools";
 import MaintenanceSystem from "@/pages/maintenance/MaintenanceSystem";
 import WebScraping from "@/pages/leads/WebScraping";
 import VAVEAnalysis from "@/pages/operations/VAVEAnalysis";
+import { AuthWrapper } from "@/components/AuthWrapper";
 
 export const routes = [
   {
