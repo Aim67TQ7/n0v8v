@@ -21,24 +21,38 @@ export const StrengthsWeaknesses = ({
     </ul>
   );
 
+  const formatImprovement = (weakness: string) => {
+    // Convert weakness into an encouraging improvement suggestion
+    const suggestion = weakness
+      .replace(/missing|lack of|no |poor/gi, "opportunity to add")
+      .replace(/disorganized|messy/gi, "could be better organized with")
+      .replace(/unclear|confusing/gi, "could be enhanced with clear");
+    
+    return `Consider implementing ${suggestion.toLowerCase()} to enhance workplace efficiency.`;
+  };
+
   return (
     <div className="space-y-4">
       <Card className="p-4">
-        <h3 className="font-semibold text-green-600 mb-2">Observations & Strengths</h3>
+        <h3 className="font-semibold text-green-600 mb-2">Positive Observations</h3>
         <p className="text-sm text-gray-600 mb-3">
-          Document positive practices: organized workspaces, labeled storage, clean equipment,
-          standardized procedures, and sustained improvements.
+          Notable examples of 5S excellence observed in the workspace:
         </p>
         {renderList(strengths)}
       </Card>
 
       <Card className="p-4">
-        <h3 className="font-semibold text-red-600 mb-2">Areas for Improvement</h3>
+        <h3 className="font-semibold text-blue-600 mb-2">Improvement Opportunities</h3>
         <p className="text-sm text-gray-600 mb-3">
-          Each finding identifies a specific issue, its impact on operations,
-          and provides a practical solution with expected benefits.
+          Specific suggestions to enhance workplace organization and efficiency:
         </p>
-        {renderList(shouldShowAllWeaknesses ? weaknesses : filteredWeaknesses)}
+        <ul className="list-disc pl-5 space-y-4">
+          {(shouldShowAllWeaknesses ? weaknesses : filteredWeaknesses).map((weakness, index) => (
+            <li key={index} className="text-sm text-gray-700">
+              {formatImprovement(weakness)}
+            </li>
+          ))}
+        </ul>
       </Card>
     </div>
   );

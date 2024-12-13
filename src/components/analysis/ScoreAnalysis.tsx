@@ -27,7 +27,7 @@ export const ScoreAnalysis = ({
 
   return (
     <Card className="p-4">
-      <h3 className="font-semibold text-primary mb-2">Detailed 5S Analysis</h3>
+      <h3 className="font-semibold text-primary mb-2">5S Score Analysis</h3>
       
       <div className="space-y-6">
         {['Sort', 'Set in Order', 'Shine'].map((category, index) => {
@@ -37,9 +37,6 @@ export const ScoreAnalysis = ({
           return (
             <div key={category}>
               <h4 className="font-medium text-sm mb-2">{category} ({score}/10)</h4>
-              <p className="text-sm text-gray-700 mb-2">
-                {getScoreImpactSummary(score, category)}
-              </p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
                 {weaknesses
                   .filter(w => w.toLowerCase().includes(categoryLower))
@@ -53,7 +50,7 @@ export const ScoreAnalysis = ({
       </div>
 
       <div className="mt-6 border-t pt-4">
-        <h4 className="font-semibold text-sm mb-3">Recommended Starting Point:</h4>
+        <h4 className="font-semibold text-sm mb-3">Recommended Focus Area:</h4>
         <p className="text-sm text-gray-700">
           {getStartingPoint({ sort: sortScore, set: setScore, shine: shineScore })}
         </p>

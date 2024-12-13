@@ -8,6 +8,7 @@ import { FiveSEvaluationImages } from "@/components/FiveSEvaluationImages";
 import { FiveSRadarChart } from "@/components/FiveSRadarChart";
 import { SWOTAnalysis } from "@/components/SWOTAnalysis";
 import { FiveSTrend } from "@/components/FiveSTrend";
+import { ScoreAnalysis } from "@/components/analysis/ScoreAnalysis";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import html2pdf from 'html2pdf.js';
@@ -120,21 +121,33 @@ export const FiveSEvaluationResults = ({
           <FiveSEvaluationImages images={evaluationImages} />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            <Card className="p-4">
-              <h3 className="text-lg font-semibold mb-2">5S Scores</h3>
-              <FiveSRadarChart scores={evaluationData} />
-            </Card>
-            <FiveSTrend workcenterId={evaluationData.workcenter_id} />
-          </div>
+            <div className="space-y-4">
+              <Card className="p-4">
+                <h3 className="text-lg font-semibold mb-2">5S Scores</h3>
+                <FiveSRadarChart scores={evaluationData} />
+              </Card>
+              
+              <ScoreAnalysis
+                sortScore={evaluationData.sort_score}
+                setScore={evaluationData.set_in_order_score}
+                shineScore={evaluationData.shine_score}
+                weaknesses={evaluationData.weaknesses || []}
+              />
+            </div>
 
-          <SWOTAnalysis
-            strengths={evaluationData.strengths || []}
-            weaknesses={evaluationData.weaknesses || []}
-            sortScore={evaluationData.sort_score}
-            setScore={evaluationData.set_in_order_score}
-            shineScore={evaluationData.shine_score}
-            evaluationId={evaluationData.id}
-          />
+            <div className="space-y-4">
+              <FiveSTrend workcenterId={evaluationData.workcenter_id} />
+              
+              <SWOTAnalysis
+                strengths={evaluationData.strengths || []}
+                weaknesses={evaluationData.weaknesses || []}
+                sortScore={evaluationData.sort_score}
+                setScore={evaluationData.set_in_order_score}
+                shineScore={evaluationData.shine_score}
+                evaluationId={evaluationData.id}
+              />
+            </div>
+          </div>
 
           <div className="text-center mt-4">
             <Button
