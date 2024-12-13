@@ -14,25 +14,20 @@ serve(async (req) => {
   try {
     const { imageUrls } = await req.json();
 
-    const systemPrompt = `You are a 5S workplace organization auditor and expert. Your task is to analyze images for 5S compliance and generate a detailed, structured audit report. Focus on the categories of Sort, Set in Order, and Shine. For each image analyzed, provide the following:
+    const systemPrompt = `You are a 5S workplace organization auditor and expert. Your task is to analyze images for 5S compliance and generate a detailed, structured audit report. Focus on providing SPECIFIC, ACTIONABLE observations for Sort, Set in Order, and Shine categories.
 
-**1. Summary of Observations**:
-   - Note specific positive observations in the workspace. Highlight areas that align with 5S principles and how they contribute to operational efficiency or safety.
-   - Identify specific findings (e.g., misplaced items, disorganization, cleanliness issues). Include detailed descriptions of items, their locations, and their conditions.
+For each category, you must:
+1. Identify exact items, locations, and conditions that need attention
+2. Describe the specific operational impact of each issue
+3. Provide detailed, implementable solutions
+4. Assign numerical scores based on severity and quantity of issues
 
-**2. Operational Impacts**:
-   - Explain how the positive practices are benefiting the organization (e.g., reduced retrieval time, improved safety, enhanced productivity).
-   - Describe the negative operational impacts of the findings (e.g., time wasted locating items, increased risk of accidents, reduced efficiency).
+Example of the detail level required:
+- Instead of "Items are disorganized", say "5 unmarked cardboard boxes blocking access to electrical panel in northeast corner"
+- Instead of "Poor organization", say "Tool cabinet #3 contains mixed fasteners without size labels or dividers"
+- Instead of "Area needs cleaning", say "Oil stains and metal shavings present under drill press station #2"
 
-**3. Recommendations for Improvement**:
-   - Provide actionable, detailed steps to address each finding in the categories of Sort, Set in Order, and Shine.
-   - Suggest tools, techniques, or processes to implement these improvements. For example, labeling systems, dedicated storage areas, or cleaning schedules.
-
-**4. Grading for Each Category**:
-   - Provide a score out of 10 for each category (Sort, Set in Order, and Shine) based on compliance with 5S principles.
-   - Offer a brief justification for each score, citing specific examples from the observations.
-
-Ensure the report is thorough and professional, with clear explanations and actionable insights tailored to the observed workspace conditions.`;
+Your analysis must be thorough and specific enough that someone could walk into the space and immediately identify each issue you've noted.`;
 
     const messages = [];
 
@@ -43,7 +38,7 @@ Ensure the report is thorough and professional, with clear explanations and acti
         content: [
           {
             type: "text",
-            text: `Analyze image ${index + 1} in detail for 5S compliance. Look for specific items, tools, equipment, and workspace organization. Note exact locations and conditions.`
+            text: `Analyze image ${index + 1} in detail for 5S compliance. Look for specific items, tools, equipment, and workspace organization. Note exact locations and conditions. Be extremely specific about what you observe - mention exact items, quantities, and locations.`
           },
           {
             type: "image",
@@ -57,63 +52,63 @@ Ensure the report is thorough and professional, with clear explanations and acti
       });
     });
 
-    // Add final message to request specific JSON structure
+    // Add final message requesting specific JSON structure
     messages.push({
       role: "user",
-      content: `Provide your analysis in the following JSON structure only, with no additional text or markdown:
+      content: `Provide your analysis in the following JSON structure only, with no additional text or markdown. Each observation should be specific and actionable:
 {
   "sort_score": <number 1-10>,
   "set_in_order_score": <number 1-10>,
   "shine_score": <number 1-10>,
   "standardize_score": <number 1-10>,
   "sustain_score": <number 1-10>,
-  "strengths": [<string array>],
-  "weaknesses": [<string array>],
+  "strengths": [<detailed string array of specific positive observations>],
+  "weaknesses": [<detailed string array of specific issues found>],
   "analysis": {
     "sort": {
-      "observations": [<string array>],
-      "positive_impacts": [<string array>],
-      "negative_impacts": [<string array>],
+      "observations": [<specific items and locations observed>],
+      "positive_impacts": [<specific benefits of good practices>],
+      "negative_impacts": [<specific operational problems caused>],
       "score": <number>,
-      "score_justification": <string>,
-      "specific_improvements": [<string array>],
-      "recommended_tools": [<string array>]
+      "score_justification": <detailed explanation>,
+      "specific_improvements": [<actionable steps>],
+      "recommended_tools": [<specific tools/methods>]
     },
     "set_in_order": {
-      "observations": [<string array>],
-      "positive_impacts": [<string array>],
-      "negative_impacts": [<string array>],
+      "observations": [<specific items and locations observed>],
+      "positive_impacts": [<specific benefits of good practices>],
+      "negative_impacts": [<specific operational problems caused>],
       "score": <number>,
-      "score_justification": <string>,
-      "specific_improvements": [<string array>],
-      "recommended_tools": [<string array>]
+      "score_justification": <detailed explanation>,
+      "specific_improvements": [<actionable steps>],
+      "recommended_tools": [<specific tools/methods>]
     },
     "shine": {
-      "observations": [<string array>],
-      "positive_impacts": [<string array>],
-      "negative_impacts": [<string array>],
+      "observations": [<specific items and locations observed>],
+      "positive_impacts": [<specific benefits of good practices>],
+      "negative_impacts": [<specific operational problems caused>],
       "score": <number>,
-      "score_justification": <string>,
-      "specific_improvements": [<string array>],
-      "recommended_tools": [<string array>]
+      "score_justification": <detailed explanation>,
+      "specific_improvements": [<actionable steps>],
+      "recommended_tools": [<specific tools/methods>]
     },
     "standardize": {
-      "observations": [<string array>],
-      "positive_impacts": [<string array>],
-      "negative_impacts": [<string array>],
+      "observations": [<specific items and locations observed>],
+      "positive_impacts": [<specific benefits of good practices>],
+      "negative_impacts": [<specific operational problems caused>],
       "score": <number>,
-      "score_justification": <string>,
-      "specific_improvements": [<string array>],
-      "recommended_tools": [<string array>]
+      "score_justification": <detailed explanation>,
+      "specific_improvements": [<actionable steps>],
+      "recommended_tools": [<specific tools/methods>]
     },
     "sustain": {
-      "observations": [<string array>],
-      "positive_impacts": [<string array>],
-      "negative_impacts": [<string array>],
+      "observations": [<specific items and locations observed>],
+      "positive_impacts": [<specific benefits of good practices>],
+      "negative_impacts": [<specific operational problems caused>],
       "score": <number>,
-      "score_justification": <string>,
-      "specific_improvements": [<string array>],
-      "recommended_tools": [<string array>]
+      "score_justification": <detailed explanation>,
+      "specific_improvements": [<actionable steps>],
+      "recommended_tools": [<specific tools/methods>]
     }
   }
 }`
