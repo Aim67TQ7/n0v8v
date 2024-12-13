@@ -34,7 +34,7 @@ export const SignInForm = () => {
   return (
     <div>
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold">Welcome to Company GPT</h2>
+        <h2 className="text-2xl font-bold">Welcome to n0v8v</h2>
         <p className="mt-2 text-sm text-gray-600">
           Sign in to your account or create a new one
         </p>
