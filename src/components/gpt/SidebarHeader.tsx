@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/components/ui/use-toast";
 
 interface SidebarHeaderProps {
   onNewChat: () => void;
@@ -25,33 +26,64 @@ interface CompanyDetails {
 export const SidebarHeader = ({ onNewChat }: SidebarHeaderProps) => {
   const navigate = useNavigate();
   const { session } = useSessionContext();
+  const { toast } = useToast();
   const [companyDetails, setCompanyDetails] = useState<CompanyDetails | null>(null);
 
   useEffect(() => {
     const fetchCompanyDetails = async () => {
-      if (!session?.user?.id) return;
+      try {
+        if (!session?.user?.id) return;
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('company_id')
-        .eq('id', session.user.id)
-        .single();
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('company_id')
+          .eq('id', session.user.id)
+          .maybeSingle();
 
-      if (profile?.company_id) {
-        const { data: details } = await supabase
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
+          return;
+        }
+
+        if (!profile?.company_id) {
+          console.error('No company ID found for user');
+          return;
+        }
+
+        const { data: details, error: detailsError } = await supabase
           .from('company_details')
           .select('name, gpt_name, logo_url')
           .eq('id', profile.company_id)
-          .single();
+          .maybeSingle();
 
+        if (detailsError) {
+          console.error('Error fetching company details:', detailsError);
+          return;
+        }
+
+        // If we have details, set them. Otherwise, use default values
         if (details) {
           setCompanyDetails(details);
+        } else {
+          // Set default values if no company details found
+          setCompanyDetails({
+            name: 'Company',
+            gpt_name: 'Company Assistant',
+            logo_url: undefined
+          });
         }
+      } catch (error) {
+        console.error('Error in fetchCompanyDetails:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load company details",
+          variant: "destructive"
+        });
       }
     };
 
     fetchCompanyDetails();
-  }, [session?.user?.id]);
+  }, [session?.user?.id, toast]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
