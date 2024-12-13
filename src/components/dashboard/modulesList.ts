@@ -18,7 +18,7 @@ export const modulesList: ModuleCardProps[] = [
   },
   {
     title: "Tools",
-    description: "Access quality and process improvement tools",
+    description: "Access AI-powered tools and automation",
     icon: Wrench,
     href: "/tools",
     status: "ready"
