@@ -1,4 +1,4 @@
-import { Bot, Building2, Building } from "lucide-react";
+import { Bot, Building2, Building, ChartBar } from "lucide-react";
 import { ModuleCardProps } from "./ModuleCard";
 
 export const modulesList: ModuleCardProps[] = [
@@ -15,6 +15,13 @@ export const modulesList: ModuleCardProps[] = [
     icon: Building2,
     href: "/modules",
     status: "ready"
+  },
+  {
+    title: "Company Metrics",
+    description: "View and analyze key performance indicators",
+    icon: ChartBar,
+    href: "/metrics",
+    status: "coming-soon"
   },
   {
     title: "Vertical Agents",
