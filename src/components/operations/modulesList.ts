@@ -8,7 +8,8 @@ import {
   Shield,
   Search,
   Building2,
-  BookOpen
+  BookOpen,
+  Globe
 } from "lucide-react";
 import type { ModuleCardProps } from "./ModuleCard";
 
@@ -82,7 +83,7 @@ export const customerFocusTools: ModuleCardProps[] = [
   {
     title: "Lead Generation",
     description: "Web scraping tools for automated lead generation",
-    icon: Search,
+    icon: Globe,
     href: "/leads/scraping",
     status: "ready"
   }
