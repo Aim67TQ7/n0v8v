@@ -91,42 +91,42 @@ export const customerFocusTools: ModuleCardProps[] = [
     description: "AI-powered chat interactions with customers",
     icon: MessageSquare,
     href: "/customer-focus/bot-conversations",
-    status: "ready"
+    status: "coming-soon"
   },
   {
     title: "Customer Interaction",
     description: "Track and improve customer engagement",
     icon: User,
     href: "/customer-focus/interactions",
-    status: "ready"
+    status: "coming-soon"
   },
   {
     title: "Training Resources",
     description: "Customer service training materials",
     icon: BookOpen,
     href: "/customer-focus/training",
-    status: "ready"
+    status: "coming-soon"
   },
   {
     title: "Generate Newsletter",
     description: "AI-powered newsletter content generation",
     icon: Mail,
     href: "/customer-focus/newsletter",
-    status: "ready"
+    status: "coming-soon"
   },
   {
     title: "Viral Posts",
     description: "A/B testing for social media content",
     icon: BarChart2,
     href: "/customer-focus/viral-posts",
-    status: "ready"
+    status: "coming-soon"
   },
   {
     title: "Lead Generation",
     description: "Web scraping tools for automated lead generation",
     icon: Globe,
     href: "/leads/scraping",
-    status: "ready"
+    status: "coming-soon"
   }
 ];
 
