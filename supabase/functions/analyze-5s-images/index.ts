@@ -37,7 +37,7 @@ Ensure the report is thorough and professional, with clear explanations and acti
     const messages = [];
 
     // Add each image to the messages array
-    imageUrls.forEach((url: string, index: number) => {
+    imageUrls.forEach((base64Data: string, index: number) => {
       messages.push({
         role: "user",
         content: [
@@ -50,7 +50,7 @@ Ensure the report is thorough and professional, with clear explanations and acti
             source: {
               type: "base64",
               media_type: "image/jpeg",
-              data: url
+              data: base64Data
             }
           }
         ]

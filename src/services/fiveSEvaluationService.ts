@@ -24,15 +24,35 @@ export const uploadImages = async (files: File[]) => {
 };
 
 export const analyzeImages = async (imageUrls: string[]) => {
-  const response = await supabase.functions.invoke('analyze-5s-images', {
-    body: { imageUrls }
+  // Convert image URLs to base64
+  const base64Images = await Promise.all(
+    imageUrls.map(async (url) => {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64String = reader.result as string;
+          // Remove the data URL prefix
+          const base64Data = base64String.split(',')[1];
+          resolve(base64Data);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    })
+  );
+
+  const { data, error } = await supabase.functions.invoke('analyze-5s-images', {
+    body: { imageUrls: base64Images }
   });
 
-  if (response.error) {
+  if (error) {
+    console.error('Analysis error:', error);
     throw new Error('Failed to analyze images');
   }
 
-  return response.data;
+  return data;
 };
 
 export const createEvaluation = async (workcenter_id: string, analysis: any) => {
