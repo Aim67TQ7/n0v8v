@@ -9,7 +9,8 @@ import {
   Microscope,
   ClipboardCheck,
   FileWarning,
-  GitFork
+  GitFork,
+  Search
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -20,7 +21,7 @@ const modulesList = [
     description: "Manage customer relationships and service excellence",
     icon: Users,
     href: "/operations/customer-focus",
-    status: "coming-soon"
+    status: "ready"
   },
   {
     title: "Engineering",
@@ -66,33 +67,12 @@ const modulesList = [
   }
 ];
 
-const qaModules = [
+const customerFocusModules = [
   {
-    title: "Part Analysis",
-    description: "AI-powered quality analysis and process optimization",
-    icon: Microscope,
-    href: "/operations/quality/process-improvement",
-    status: "ready"
-  },
-  {
-    title: "Product Inspection",
-    description: "Automated visual inspection and pass/fail analysis",
-    icon: ClipboardCheck,
-    href: "/operations/quality/product-inspection",
-    status: "ready"
-  },
-  {
-    title: "DMR Documentation",
-    description: "Track and analyze discrepancy reports",
-    icon: FileWarning,
-    href: "/operations/quality/dmr",
-    status: "ready"
-  },
-  {
-    title: "Five Whys Analysis",
-    description: "AI-guided root cause analysis",
-    icon: GitFork,
-    href: "/operations/quality/five-whys",
+    title: "Lead Generation",
+    description: "Web scraping tools for automated lead generation",
+    icon: Search,
+    href: "/leads/scraping",
     status: "ready"
   }
 ];
@@ -132,15 +112,15 @@ const Modules = () => {
         ))}
       </div>
 
-      {window.location.pathname === '/operations/quality' && (
+      {window.location.pathname === '/operations/customer-focus' && (
         <>
           <div className="flex items-center gap-3 my-8">
-            <ShieldCheck className="h-8 w-8 text-secondary" />
-            <h2 className="text-2xl font-bold">Quality Assurance Modules</h2>
+            <Users className="h-8 w-8 text-secondary" />
+            <h2 className="text-2xl font-bold">Customer Focus Tools</h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-            {qaModules.map((module) => (
+            {customerFocusModules.map((module) => (
               <Link 
                 key={module.title} 
                 to={module.href}
