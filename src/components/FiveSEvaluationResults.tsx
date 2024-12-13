@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
@@ -28,6 +28,41 @@ export const FiveSEvaluationResults = ({
   const { toast } = useToast();
   const [feedback, setFeedback] = useState("");
   const [needsLearning, setNeedsLearning] = useState(false);
+  const [evaluationData, setEvaluationData] = useState<any>(null);
+  const [evaluationImages, setEvaluationImages] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchEvaluationData = async () => {
+      try {
+        // Fetch the evaluation data
+        const { data: evalData, error: evalError } = await supabase
+          .from('five_s_evaluations')
+          .select(`
+            *,
+            workcenter:workcenters(name),
+            evaluation_images(image_url)
+          `)
+          .eq('id', evaluation)
+          .single();
+
+        if (evalError) throw evalError;
+        
+        setEvaluationData(evalData);
+        setEvaluationImages(evalData.evaluation_images || []);
+      } catch (error) {
+        console.error('Error fetching evaluation:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load evaluation data",
+          variant: "destructive"
+        });
+      }
+    };
+
+    if (evaluation) {
+      fetchEvaluationData();
+    }
+  }, [evaluation, toast]);
 
   const handleSavePDF = async () => {
     try {
@@ -41,7 +76,7 @@ export const FiveSEvaluationResults = ({
 
       const opt = {
         margin: 5,
-        filename: `5S-Evaluation-${evaluation.workcenter?.name}-${new Date().toISOString().split('T')[0]}.pdf`,
+        filename: `5S-Evaluation-${evaluationData?.workcenter?.name}-${new Date().toISOString().split('T')[0]}.pdf`,
         image: { type: 'jpeg', quality: 0.95 },
         html2canvas: { scale: 1, useCORS: true, letterRendering: true },
         jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait', compress: true }
@@ -70,7 +105,7 @@ export const FiveSEvaluationResults = ({
       const { error } = await supabase
         .from('five_s_learning_feedback')
         .insert({
-          evaluation_id: evaluation.id,
+          evaluation_id: evaluation,
           feedback,
           created_by: (await supabase.auth.getUser()).data.user?.id
         });
@@ -94,7 +129,7 @@ export const FiveSEvaluationResults = ({
     }
   };
 
-  if (isLoading) {
+  if (isLoading || !evaluationData) {
     return (
       <div className="text-center py-8">
         <Loader2 className="w-8 h-8 animate-spin mx-auto" />
@@ -106,37 +141,37 @@ export const FiveSEvaluationResults = ({
   return (
     <div className="space-y-8">
       <FiveSEvaluationHeader
-        workcenterId={evaluation.workcenter_id}
+        workcenterId={evaluationData.workcenter_id}
         onSavePDF={handleSavePDF}
       />
 
       <div id="evaluation-content" className="scale-[0.85] origin-top">
         <Card className="p-4">
           <FiveSEvaluationSummary
-            workcenterName={evaluation.workcenter?.name}
-            evaluationDate={new Date(evaluation.created_at).toLocaleDateString()}
-            scores={evaluation}
+            workcenterName={evaluationData.workcenter?.name}
+            evaluationDate={new Date(evaluationData.created_at).toLocaleDateString()}
+            scores={evaluationData}
           />
           
-          <FiveSEvaluationImages images={evaluation.evaluation_images} />
+          <FiveSEvaluationImages images={evaluationImages} />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <Card className="p-4">
               <h3 className="text-lg font-semibold mb-2">5S Scores</h3>
-              <FiveSRadarChart scores={evaluation} />
+              <FiveSRadarChart scores={evaluationData} />
             </Card>
-            <FiveSTrend workcenterId={evaluation.workcenter_id} />
+            <FiveSTrend workcenterId={evaluationData.workcenter_id} />
           </div>
 
           <Card className="p-4 mt-4">
             <h3 className="text-lg font-semibold mb-2">Analysis & Recommendations</h3>
             <SWOTAnalysis
-              strengths={evaluation.strengths || []}
-              weaknesses={evaluation.weaknesses || []}
-              sortScore={evaluation.sort_score}
-              setScore={evaluation.set_in_order_score}
-              shineScore={evaluation.shine_score}
-              evaluationId={evaluation.id}
+              strengths={evaluationData.strengths || []}
+              weaknesses={evaluationData.weaknesses || []}
+              sortScore={evaluationData.sort_score}
+              setScore={evaluationData.set_in_order_score}
+              shineScore={evaluationData.shine_score}
+              evaluationId={evaluationData.id}
             />
           </Card>
 
