@@ -67,7 +67,7 @@ const modulesList = [
   }
 ];
 
-const customerFocusModules = [
+const customerFocusTools = [
   {
     title: "Lead Generation",
     description: "Web scraping tools for automated lead generation",
@@ -120,18 +120,18 @@ const Modules = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-            {customerFocusModules.map((module) => (
+            {customerFocusTools.map((tool) => (
               <Link 
-                key={module.title} 
-                to={module.href}
+                key={tool.title} 
+                to={tool.href}
                 className="transition-transform duration-200 hover:scale-105"
               >
                 <Card className="p-6 h-full">
                   <div className="flex items-start gap-4">
-                    <module.icon className="h-8 w-8 text-secondary shrink-0" />
+                    <tool.icon className="h-8 w-8 text-secondary shrink-0" />
                     <div>
-                      <h3 className="text-xl font-semibold mb-2">{module.title}</h3>
-                      <p className="text-gray-600">{module.description}</p>
+                      <h3 className="text-xl font-semibold mb-2">{tool.title}</h3>
+                      <p className="text-gray-600">{tool.description}</p>
                     </div>
                   </div>
                 </Card>
