@@ -136,6 +136,7 @@ export const FiveSEvaluationResults = ({
               sortScore={evaluation.sort_score}
               setScore={evaluation.set_in_order_score}
               shineScore={evaluation.shine_score}
+              evaluationId={evaluation.id}
             />
           </Card>
 

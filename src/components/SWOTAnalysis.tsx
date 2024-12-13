@@ -1,4 +1,8 @@
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Check, X } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SWOTAnalysisProps {
   strengths: string[];
@@ -6,9 +10,19 @@ interface SWOTAnalysisProps {
   sortScore?: number;
   setScore?: number;
   shineScore?: number;
+  evaluationId?: string;
 }
 
-export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shineScore }: SWOTAnalysisProps) => {
+export const SWOTAnalysis = ({ 
+  strengths, 
+  weaknesses, 
+  sortScore, 
+  setScore, 
+  shineScore,
+  evaluationId 
+}: SWOTAnalysisProps) => {
+  const { toast } = useToast();
+  
   const renderList = (items: string[]) => (
     <ul className="list-disc pl-5 space-y-4">
       {items.map((item, index) => (
@@ -17,7 +31,6 @@ export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shine
     </ul>
   );
 
-  // Filter weaknesses based on scores
   const shouldShowAllWeaknesses = (sortScore === undefined || setScore === undefined || shineScore === undefined) || 
     (sortScore >= 8 && setScore >= 8 && shineScore >= 8);
   
@@ -33,6 +46,34 @@ export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shine
     if (score >= 8) return `Strong ${category} practices with minimal issues.`;
     if (score >= 6) return `Some ${category} challenges affecting efficiency.`;
     return `Significant ${category} issues impacting operations.`;
+  };
+
+  const handleFeedback = async (category: string, isAccurate: boolean) => {
+    if (!evaluationId) return;
+
+    try {
+      const { error } = await supabase
+        .from('five_s_learning_feedback')
+        .insert({
+          evaluation_id: evaluationId,
+          feedback: `AI analysis for ${category} was ${isAccurate ? 'accurate' : 'inaccurate'}`,
+          created_by: (await supabase.auth.getUser()).data.user?.id
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Feedback Submitted",
+        description: "Thank you for helping improve our analysis system.",
+      });
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit feedback. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getStartingPoint = (scores: { sort?: number, set?: number, shine?: number }) => {
@@ -62,8 +103,8 @@ export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shine
         <Card className="p-4">
           <h3 className="font-semibold text-red-600 mb-2">Areas for Improvement</h3>
           <p className="text-sm text-gray-600 mb-3">
-            Each finding below identifies a specific issue across the workcenter,
-            its impact on operations, and provides a clear solution with expected benefits.
+            Each finding identifies a specific issue, its impact on operations,
+            and provides a practical solution with expected benefits.
           </p>
           {renderList(filteredWeaknesses)}
         </Card>
@@ -76,7 +117,27 @@ export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shine
           
           <div className="space-y-6">
             <div>
-              <h4 className="font-medium text-sm mb-2">Sort (Seiri)</h4>
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-medium text-sm">Sort (Seiri)</h4>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-green-100 hover:bg-green-200"
+                    onClick={() => handleFeedback('Sort', true)}
+                  >
+                    <Check className="h-4 w-4 text-green-600" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-red-100 hover:bg-red-200"
+                    onClick={() => handleFeedback('Sort', false)}
+                  >
+                    <X className="h-4 w-4 text-red-600" />
+                  </Button>
+                </div>
+              </div>
               <p className="text-sm text-gray-600 mb-2">Score: {sortScore}/10</p>
               <p className="text-sm text-gray-700 mb-2">{getScoreImpactSummary(sortScore, 'Sort')}</p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
@@ -87,7 +148,27 @@ export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shine
             </div>
 
             <div>
-              <h4 className="font-medium text-sm mb-2">Set in Order (Seiton)</h4>
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-medium text-sm">Set in Order (Seiton)</h4>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-green-100 hover:bg-green-200"
+                    onClick={() => handleFeedback('Set in Order', true)}
+                  >
+                    <Check className="h-4 w-4 text-green-600" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-red-100 hover:bg-red-200"
+                    onClick={() => handleFeedback('Set in Order', false)}
+                  >
+                    <X className="h-4 w-4 text-red-600" />
+                  </Button>
+                </div>
+              </div>
               <p className="text-sm text-gray-600 mb-2">Score: {setScore}/10</p>
               <p className="text-sm text-gray-700 mb-2">{getScoreImpactSummary(setScore, 'Set in Order')}</p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
@@ -98,7 +179,27 @@ export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shine
             </div>
 
             <div>
-              <h4 className="font-medium text-sm mb-2">Shine (Seiso)</h4>
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-medium text-sm">Shine (Seiso)</h4>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-green-100 hover:bg-green-200"
+                    onClick={() => handleFeedback('Shine', true)}
+                  >
+                    <Check className="h-4 w-4 text-green-600" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-red-100 hover:bg-red-200"
+                    onClick={() => handleFeedback('Shine', false)}
+                  >
+                    <X className="h-4 w-4 text-red-600" />
+                  </Button>
+                </div>
+              </div>
               <p className="text-sm text-gray-600 mb-2">Score: {shineScore}/10</p>
               <p className="text-sm text-gray-700 mb-2">{getScoreImpactSummary(shineScore, 'Shine')}</p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
