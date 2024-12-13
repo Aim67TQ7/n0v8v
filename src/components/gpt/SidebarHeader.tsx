@@ -19,6 +19,7 @@ interface SidebarHeaderProps {
 interface CompanyDetails {
   name: string;
   gpt_name?: string;
+  logo_url?: string;
 }
 
 export const SidebarHeader = ({ onNewChat }: SidebarHeaderProps) => {
@@ -39,7 +40,7 @@ export const SidebarHeader = ({ onNewChat }: SidebarHeaderProps) => {
       if (profile?.company_id) {
         const { data: details } = await supabase
           .from('company_details')
-          .select('name, gpt_name')
+          .select('name, gpt_name, logo_url')
           .eq('id', profile.company_id)
           .single();
 
@@ -60,7 +61,14 @@ export const SidebarHeader = ({ onNewChat }: SidebarHeaderProps) => {
   return (
     <div className="border-b p-4 shrink-0">
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          {companyDetails?.logo_url && (
+            <img 
+              src={companyDetails.logo_url} 
+              alt="Company Logo" 
+              className="h-8 w-8 object-contain"
+            />
+          )}
           <h2 className="text-lg font-semibold">
             {companyDetails?.gpt_name || 'Company GPT'}
           </h2>

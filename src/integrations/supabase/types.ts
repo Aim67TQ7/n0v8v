@@ -253,6 +253,7 @@ export type Database = {
           gpt_name: string | null
           id: string
           industry: string | null
+          logo_url: string | null
           name: string
           submission_status: string | null
           tax_exempt: boolean | null
@@ -274,6 +275,7 @@ export type Database = {
           gpt_name?: string | null
           id: string
           industry?: string | null
+          logo_url?: string | null
           name: string
           submission_status?: string | null
           tax_exempt?: boolean | null
@@ -295,6 +297,7 @@ export type Database = {
           gpt_name?: string | null
           id?: string
           industry?: string | null
+          logo_url?: string | null
           name?: string
           submission_status?: string | null
           tax_exempt?: boolean | null
