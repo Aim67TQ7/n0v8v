@@ -1,10 +1,10 @@
 interface FiveSEvaluationImagesProps {
-  images: { image_url: string }[];
+  images?: { image_url: string }[];
 }
 
-export const FiveSEvaluationImages = ({ images }: FiveSEvaluationImagesProps) => {
+export const FiveSEvaluationImages = ({ images = [] }: FiveSEvaluationImagesProps) => {
   // Create an array of 4 elements, filled with actual images or undefined
-  const displayImages = Array(4).fill(undefined).map((_, index) => images[index]);
+  const displayImages = Array(4).fill(undefined).map((_, index) => images[index] || undefined);
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
