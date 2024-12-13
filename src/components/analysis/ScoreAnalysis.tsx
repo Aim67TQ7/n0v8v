@@ -18,17 +18,19 @@ export const ScoreAnalysis = ({
     const cleanWeakness = weakness.replace(new RegExp(`^${category}:\\s*`, 'i'), '');
     
     const impact = category === 'Sort' 
-      ? 'reducing workspace efficiency and increasing search time'
+      ? 'impacting workspace efficiency and material retrieval times'
       : category === 'Set in Order'
-      ? 'causing delays in tool retrieval and workflow disruptions'
-      : 'potentially affecting product quality and workplace safety';
+      ? 'causing workflow disruptions and increased operation time'
+      : 'affecting product quality and workplace safety standards';
 
+    // Transform the weakness into an actionable improvement
     const suggestion = cleanWeakness
+      .replace(/multiple|numerous/gi, "remove")
       .replace(/missing|lack of|no |poor/gi, "implement")
       .replace(/disorganized|messy/gi, "organize")
       .replace(/unclear|confusing/gi, "establish clear");
 
-    return `${cleanWeakness}. This is ${impact}. ${suggestion.toLowerCase()} to enhance workplace organization.`;
+    return `${cleanWeakness}. This is ${impact}. ${suggestion.toLowerCase()} to optimize workplace organization and efficiency.`;
   };
 
   return (
