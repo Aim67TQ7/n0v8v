@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { saveTrainingData } from "@/services/fiveSEvaluationService";
 import { StrengthsWeaknesses } from "./analysis/StrengthsWeaknesses";
 import { ScoreAnalysis } from "./analysis/ScoreAnalysis";
 
@@ -26,30 +26,52 @@ export const SWOTAnalysis = ({
   evaluationId 
 }: SWOTAnalysisProps) => {
   const { toast } = useToast();
-  const [needsLearning, setNeedsLearning] = useState(false);
+  const [isLearning, setIsLearning] = useState(false);
   const [learningFeedback, setLearningFeedback] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmitFeedback = async () => {
-    if (!needsLearning || !learningFeedback.trim()) return;
+    if (!isLearning || !learningFeedback.trim() || !evaluationId) return;
 
     try {
-      const { error } = await supabase
-        .from('five_s_learning_feedback')
-        .insert({
-          evaluation_id: evaluationId,
-          feedback: learningFeedback,
-          created_by: (await supabase.auth.getUser()).data.user?.id
-        });
+      setIsSubmitting(true);
 
-      if (error) throw error;
+      // Get the evaluation data including images
+      const { data: evaluation, error: evalError } = await supabase
+        .from('five_s_evaluations')
+        .select(`
+          *,
+          evaluation_images(image_url)
+        `)
+        .eq('id', evaluationId)
+        .single();
+
+      if (evalError) throw evalError;
+
+      const imageUrls = evaluation.evaluation_images.map((img: any) => img.image_url);
+
+      await saveTrainingData(
+        evaluationId,
+        learningFeedback,
+        imageUrls,
+        {
+          strengths,
+          weaknesses,
+          scores: {
+            sort: sortScore,
+            set: setScore,
+            shine: shineScore
+          }
+        }
+      );
 
       toast({
         title: "Feedback Submitted",
-        description: "Thank you for helping improve our analysis system.",
+        description: "Thank you for helping train the model.",
       });
 
       setLearningFeedback("");
-      setNeedsLearning(false);
+      setIsLearning(false);
     } catch (error) {
       console.error('Error submitting feedback:', error);
       toast({
@@ -57,6 +79,8 @@ export const SWOTAnalysis = ({
         description: "Failed to submit feedback. Please try again.",
         variant: "destructive"
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -91,8 +115,8 @@ export const SWOTAnalysis = ({
           <div className="flex items-center space-x-2 mb-4">
             <Checkbox
               id="learning"
-              checked={needsLearning}
-              onCheckedChange={(checked) => setNeedsLearning(checked as boolean)}
+              checked={isLearning}
+              onCheckedChange={(checked) => setIsLearning(checked as boolean)}
             />
             <label
               htmlFor="learning"
@@ -102,7 +126,7 @@ export const SWOTAnalysis = ({
             </label>
           </div>
 
-          {needsLearning && (
+          {isLearning && (
             <div className="space-y-4">
               <Textarea
                 placeholder="Please provide feedback on the analysis to help train the model..."
@@ -110,8 +134,11 @@ export const SWOTAnalysis = ({
                 onChange={(e) => setLearningFeedback(e.target.value)}
                 className="min-h-[100px]"
               />
-              <Button onClick={handleSubmitFeedback}>
-                Submit to Train Model
+              <Button 
+                onClick={handleSubmitFeedback}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Submitting..." : "Submit to Train Model"}
               </Button>
             </div>
           )}

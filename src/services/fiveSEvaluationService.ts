@@ -111,3 +111,45 @@ export const saveImageReferences = async (evaluation_id: string, imageUrls: stri
   
   await Promise.all(imagePromises);
 };
+
+export const saveTrainingData = async (
+  evaluationId: string,
+  feedback: string,
+  images: string[],
+  analysis: any
+) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('No authenticated user found');
+
+  // First, save to the training_data table
+  const { error: dbError } = await supabase
+    .from('five_s_training_data')
+    .insert({
+      evaluation_id: evaluationId,
+      feedback,
+      images: images,
+      analysis,
+      created_by: user.id
+    });
+
+  if (dbError) throw dbError;
+
+  // Then, save the training data files to the Knowledge bucket
+  const trainingData = {
+    evaluationId,
+    feedback,
+    images,
+    analysis,
+    timestamp: new Date().toISOString(),
+    userId: user.id
+  };
+
+  const blob = new Blob([JSON.stringify(trainingData, null, 2)], { type: 'application/json' });
+  const fileName = `5s-training/${evaluationId}.json`;
+
+  const { error: storageError } = await supabase.storage
+    .from('Knowledge')
+    .upload(fileName, blob);
+
+  if (storageError) throw storageError;
+};
