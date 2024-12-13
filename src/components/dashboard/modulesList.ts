@@ -1,4 +1,4 @@
-import { Bot, Building2, FileSpreadsheet, Settings2, Users2 } from "lucide-react";
+import { Bot, Building2, FileSpreadsheet, Settings2, Users2, Building } from "lucide-react";
 import { ModuleCardProps } from "./ModuleCard";
 
 export const modulesList: ModuleCardProps[] = [
@@ -24,10 +24,10 @@ export const modulesList: ModuleCardProps[] = [
     status: "ready"
   },
   {
-    title: "Training Matrix",
-    description: "Track and manage employee training and certifications",
-    icon: FileSpreadsheet,
-    href: "/training/matrix",
-    status: "ready"
+    title: "Vertical Agents",
+    description: "Industry-specific AI agents for customer engagement",
+    icon: Building,
+    href: "/vertical-agents",
+    status: "coming-soon"
   }
 ];

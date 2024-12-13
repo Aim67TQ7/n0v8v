@@ -9,7 +9,8 @@ import {
   Microscope,
   GitFork,
   Fish,
-  Wrench
+  Wrench,
+  BookOpen
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
