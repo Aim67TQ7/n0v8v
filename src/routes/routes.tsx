@@ -25,6 +25,7 @@ import Apps from "@/pages/Apps";
 import Tools from "@/pages/Tools";
 import MaintenanceSystem from "@/pages/maintenance/MaintenanceSystem";
 import WebScraping from "@/pages/leads/WebScraping";
+import GoogleMapsScraper from "@/pages/leads/GoogleMapsScraper";
 import VAVEAnalysis from "@/pages/operations/VAVEAnalysis";
 import { AuthWrapper } from "@/components/AuthWrapper";
 
@@ -136,6 +137,10 @@ export const routes = [
   {
     path: "/leads/scraping",
     element: <AuthWrapper><WebScraping /></AuthWrapper>
+  },
+  {
+    path: "/leads/scraping/google-maps",
+    element: <AuthWrapper><GoogleMapsScraper /></AuthWrapper>
   },
   {
     path: "/operations/customer-focus",
