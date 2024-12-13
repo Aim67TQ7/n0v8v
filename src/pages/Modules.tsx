@@ -6,10 +6,6 @@ import {
   Package, 
   ChartBar,
   Shield,
-  Microscope,
-  ClipboardCheck,
-  FileWarning,
-  GitFork,
   Search
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
