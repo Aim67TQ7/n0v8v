@@ -31,6 +31,11 @@
   textarea:disabled {
     @apply bg-gray-50 text-gray-500 cursor-not-allowed;
   }
+
+  /* Button loading state styles */
+  button:disabled {
+    @apply opacity-70 cursor-not-allowed;
+  }
 }
 
 .gradient-bg {
@@ -39,4 +44,9 @@
 
 .feature-card {
   @apply p-6 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow duration-300;
+}
+
+/* Progress bar animation */
+.progress-animate {
+  @apply transition-all duration-300 ease-in-out;
 }
