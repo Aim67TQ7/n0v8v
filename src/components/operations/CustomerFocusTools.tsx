@@ -1,6 +1,6 @@
 import { ModuleCard } from "./ModuleCard";
 import { customerFocusTools } from "./modulesList";
-import { Users } from "lucide-react";
+import { Users, Search } from "lucide-react";
 
 export const CustomerFocusTools = () => {
   return (
