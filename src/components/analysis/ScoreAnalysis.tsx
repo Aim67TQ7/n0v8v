@@ -14,19 +14,21 @@ export const ScoreAnalysis = ({
   weaknesses 
 }: ScoreAnalysisProps) => {
   const formatImprovementSuggestion = (weakness: string, category: string) => {
-    // Convert weakness into a more detailed, action-oriented format
+    // Remove category prefix if it exists
+    const cleanWeakness = weakness.replace(new RegExp(`^${category}:\\s*`, 'i'), '');
+    
     const impact = category === 'Sort' 
       ? 'reducing workspace efficiency and increasing search time'
       : category === 'Set in Order'
       ? 'causing delays in tool retrieval and workflow disruptions'
       : 'potentially affecting product quality and workplace safety';
 
-    const suggestion = weakness
+    const suggestion = cleanWeakness
       .replace(/missing|lack of|no |poor/gi, "implement")
       .replace(/disorganized|messy/gi, "organize")
       .replace(/unclear|confusing/gi, "establish clear");
 
-    return `${weakness}. This is ${impact}. To improve: ${suggestion.toLowerCase()} to enhance workplace organization.`;
+    return `${cleanWeakness}. This is ${impact}. To improve: ${suggestion.toLowerCase()} to enhance workplace organization.`;
   };
 
   return (
