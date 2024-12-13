@@ -58,10 +58,19 @@ export const EmailSignIn = () => {
       />
       <Button
         type="submit"
-        className="w-full"
+        className="w-full relative overflow-hidden"
         disabled={loading}
       >
-        {loading ? "Signing in..." : "Sign In"}
+        {loading ? (
+          <>
+            Signing in...
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="loading-bar" />
+            </div>
+          </>
+        ) : (
+          "Sign In"
+        )}
       </Button>
     </form>
   );

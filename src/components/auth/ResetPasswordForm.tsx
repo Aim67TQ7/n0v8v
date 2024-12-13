@@ -62,10 +62,19 @@ export const ResetPasswordForm = ({ onBack }: ResetPasswordFormProps) => {
       </div>
       <Button
         type="submit"
-        className="w-full"
+        className="w-full relative overflow-hidden"
         disabled={loading}
       >
-        {loading ? "Sending..." : "Send Reset Link"}
+        {loading ? (
+          <>
+            Sending...
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="loading-bar" />
+            </div>
+          </>
+        ) : (
+          "Send Reset Link"
+        )}
       </Button>
     </form>
   );

@@ -125,10 +125,19 @@ export const DemoAccessForm = () => {
         />
         <Button
           type="submit"
-          className="w-full"
+          className="w-full relative overflow-hidden"
           disabled={loading}
         >
-          {loading ? "Processing..." : "Get Demo Access"}
+          {loading ? (
+            <>
+              Processing...
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="loading-bar" />
+              </div>
+            </>
+          ) : (
+            "Get Demo Access"
+          )}
         </Button>
       </form>
     </div>

@@ -78,10 +78,19 @@ export const ChangePasswordForm = () => {
         />
         <Button
           type="submit"
-          className="w-full"
+          className="w-full relative overflow-hidden"
           disabled={loading}
         >
-          {loading ? "Updating..." : "Update Password"}
+          {loading ? (
+            <>
+              Updating...
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="loading-bar" />
+              </div>
+            </>
+          ) : (
+            "Update Password"
+          )}
         </Button>
         <Button
           type="button"
