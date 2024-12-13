@@ -6,7 +6,6 @@ import {
   Package, 
   ChartBar,
   Shield,
-  Search,
   Building2,
   BookOpen,
   Globe,
