@@ -32,53 +32,44 @@ export const SignInForm = () => {
   }
 
   return (
-    <div>
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold">Welcome to n0v8v</h2>
-        <p className="mt-2 text-sm text-gray-600">
-          Sign in to your account or create a new one
-        </p>
-      </div>
+    <Tabs defaultValue="signin" className="space-y-4">
+      <TabsList className="grid w-full grid-cols-3">
+        <TabsTrigger value="signin">Email Sign In</TabsTrigger>
+        <TabsTrigger value="signup">Sign Up</TabsTrigger>
+        <TabsTrigger value="phone">Phone Sign In</TabsTrigger>
+      </TabsList>
 
-      <Tabs defaultValue="signin" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="signin">Email Sign In</TabsTrigger>
-          <TabsTrigger value="signup">Sign Up</TabsTrigger>
-          <TabsTrigger value="phone">Phone Sign In</TabsTrigger>
-        </TabsList>
+      <TabsContent value="signin">
+        <div className="space-y-4">
+          <EmailSignIn />
+          <Button
+            type="button"
+            variant="link"
+            className="text-sm"
+            onClick={() => setShowPasswordReset(true)}
+          >
+            Forgot password?
+          </Button>
+        </div>
+      </TabsContent>
 
-        <TabsContent value="signin">
-          <div className="space-y-4">
-            <EmailSignIn />
-            <Button
-              type="button"
-              variant="link"
-              className="text-sm"
-              onClick={() => setShowPasswordReset(true)}
-            >
-              Forgot password?
-            </Button>
-          </div>
-        </TabsContent>
+      <TabsContent value="signup">
+        <EmailSignUp 
+          onVerificationSent={(email) => {
+            setEmail(email);
+            setShowOTPVerification(true);
+          }}
+        />
+      </TabsContent>
 
-        <TabsContent value="signup">
-          <EmailSignUp 
-            onVerificationSent={(email) => {
-              setEmail(email);
-              setShowOTPVerification(true);
-            }}
-          />
-        </TabsContent>
-
-        <TabsContent value="phone">
-          <PhoneSignIn 
-            onVerificationSent={(phone) => {
-              setPhone(phone);
-              setShowPhoneVerification(true);
-            }}
-          />
-        </TabsContent>
-      </Tabs>
-    </div>
+      <TabsContent value="phone">
+        <PhoneSignIn 
+          onVerificationSent={(phone) => {
+            setPhone(phone);
+            setShowPhoneVerification(true);
+          }}
+        />
+      </TabsContent>
+    </Tabs>
   );
 };
