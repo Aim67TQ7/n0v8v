@@ -7,15 +7,17 @@ import { Input } from "@/components/ui/input";
 interface QuestioningInterfaceProps {
   problemStatement: string;
   currentIteration: number;
-  suggestedQuestions: string[];
+  previousAnswers: string[];
   onAnswer: (answer: string, feedback?: string) => void;
+  isAnalyzing: boolean;
 }
 
 export const QuestioningInterface = ({
   problemStatement,
   currentIteration,
-  suggestedQuestions,
+  previousAnswers,
   onAnswer,
+  isAnalyzing,
 }: QuestioningInterfaceProps) => {
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
   const [customAnswer, setCustomAnswer] = useState("");
@@ -61,6 +63,11 @@ export const QuestioningInterface = ({
         return `Why #${currentIteration}`;
     }
   };
+
+  // Generate suggested questions based on previous answers and current iteration
+  const suggestedQuestions = previousAnswers.length > 0 
+    ? [`Why did ${previousAnswers[previousAnswers.length - 1].toLowerCase()}?`]
+    : ["What is the immediate cause?", "What factors contributed to this?"];
 
   return (
     <div className="space-y-4">
@@ -132,10 +139,15 @@ export const QuestioningInterface = ({
 
       <Button 
         onClick={handleSubmit}
-        disabled={selectedAnswers.length === 0 && !customAnswer.trim()}
-        className="w-full"
+        disabled={selectedAnswers.length === 0 && !customAnswer.trim() || isAnalyzing}
+        className="w-full relative overflow-hidden"
       >
-        Next
+        {isAnalyzing ? "Processing..." : "Next"}
+        {isAnalyzing && (
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="loading-bar" />
+          </div>
+        )}
       </Button>
     </div>
   );
