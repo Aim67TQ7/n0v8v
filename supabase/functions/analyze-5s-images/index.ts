@@ -49,8 +49,12 @@ Ensure the report is thorough and professional, with clear explanations and acti
             text: `Analyze image ${index + 1} in detail for 5S compliance. Look for specific items, tools, equipment, and workspace organization. Note exact locations and conditions.`
           },
           {
-            type: "image_url",
-            image_url: { url }
+            type: "image",
+            source: {
+              type: "base64",
+              media_type: "image/jpeg",
+              data: url
+            }
           }
         ]
       })
@@ -118,15 +122,16 @@ Ensure the report is thorough and professional, with clear explanations and acti
 }`
     })
 
-    console.log('Sending request to OpenAI...')
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    console.log('Sending request to Anthropic...')
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-        'Content-Type': 'application/json',
+        'x-api-key': Deno.env.get('ANTHROPIC_API_KEY') || '',
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'claude-3-sonnet-20240229',
         messages,
         temperature: 0.7,
         max_tokens: 2000,
@@ -135,14 +140,14 @@ Ensure the report is thorough and professional, with clear explanations and acti
     })
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status} - ${await response.text()}`)
+      throw new Error(`Anthropic API error: ${response.status} - ${await response.text()}`)
     }
 
-    console.log('Received response from OpenAI')
+    console.log('Received response from Anthropic')
     const result = await response.json()
     
     try {
-      const analysis = JSON.parse(result.choices[0].message.content)
+      const analysis = JSON.parse(result.content[0].text)
       
       // Add safety deduction if any safety concerns are found
       const safetyKeywords = ['hazard', 'unsafe', 'safety', 'risk', 'danger', 'trip', 'fall', 'spill']
@@ -164,8 +169,8 @@ Ensure the report is thorough and professional, with clear explanations and acti
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     } catch (parseError) {
-      console.error('Error parsing OpenAI response:', result.choices[0].message.content)
-      throw new Error('Failed to parse OpenAI response as JSON')
+      console.error('Error parsing Anthropic response:', result.content[0].text)
+      throw new Error('Failed to parse Anthropic response as JSON')
     }
   } catch (error) {
     console.error('Error:', error)
