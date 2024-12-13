@@ -1,86 +1,40 @@
-import { 
-  AppWindow,
-  Users, 
-  Settings, 
-  Database,
-  ChartBar,
-  Building2,
-  GraduationCap,
-  MessageSquare,
-  Wrench
-} from "lucide-react";
-import { LucideIcon } from "lucide-react";
+import { Bot, Building2, FileSpreadsheet, Microscope, Network, Settings2, Users2, Globe } from "lucide-react";
+import { ModuleCardProps } from "./ModuleCard";
 
-interface Module {
-  title: string;
-  description: string;
-  icon: LucideIcon;
-  href: string;
-  status: "ready" | "coming-soon";
-}
-
-export const modulesList: Module[] = [
-  {
-    title: "Apps",
-    description: "Access your licensed applications",
-    icon: AppWindow,
-    href: "/apps",
-    status: "ready"
-  },
-  {
-    title: "Tools",
-    description: "Access quality and process improvement tools",
-    icon: Wrench,
-    href: "/tools",
-    status: "ready"
-  },
-  {
-    title: "Team Management",
-    description: "Manage your team and assignments",
-    icon: Users,
-    href: "/team",
-    status: "ready"
-  },
-  {
-    title: "Training Matrix",
-    description: "Track employee training and certifications",
-    icon: GraduationCap,
-    href: "/training/matrix",
-    status: "ready"
-  },
+export const modulesList: ModuleCardProps[] = [
   {
     title: "Company GPT",
-    description: "Chat with your AI assistant",
-    icon: MessageSquare,
+    description: "Chat with your AI assistant trained on your company data",
+    icon: Bot,
     href: "/company-gpt",
     status: "ready"
   },
   {
-    title: "Data Management",
-    description: "Manage and organize your data",
-    icon: Database,
-    href: "/data",
+    title: "Team Management",
+    description: "Manage your team members, departments and locations",
+    icon: Users2,
+    href: "/team",
     status: "ready"
   },
   {
-    title: "Analytics",
-    description: "Performance metrics and insights",
-    icon: ChartBar,
-    href: "/analytics",
-    status: "coming-soon"
-  },
-  {
-    title: "Settings",
-    description: "Configure your workspace",
-    icon: Settings,
-    href: "/settings",
-    status: "coming-soon"
-  },
-  {
     title: "Operations",
-    description: "Manage and optimize processes",
-    icon: Building2,
-    href: "/operations",
-    status: "coming-soon"
-  }
+    description: "Manage your operations, quality, and maintenance",
+    icon: Settings2,
+    href: "/operations/lean",
+    status: "ready"
+  },
+  {
+    title: "Training Matrix",
+    description: "Track and manage employee training and certifications",
+    icon: FileSpreadsheet,
+    href: "/training/matrix",
+    status: "ready"
+  },
+  {
+    title: "Lead Generation",
+    description: "Web scraping tools for automated lead generation",
+    icon: Globe,
+    href: "/leads/scraping",
+    status: "ready"
+  },
 ];

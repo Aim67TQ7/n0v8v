@@ -26,6 +26,7 @@ import Employees from "@/pages/team/Employees";
 import Apps from "@/pages/Apps";
 import Tools from "@/pages/Tools";
 import MaintenanceSystem from "@/pages/maintenance/MaintenanceSystem";
+import WebScraping from "@/pages/leads/WebScraping";
 
 export const routes = [
   {
@@ -131,5 +132,9 @@ export const routes = [
   {
     path: "/operations/maintenance",
     element: <AuthWrapper><MaintenanceSystem /></AuthWrapper>
+  },
+  {
+    path: "/leads/scraping",
+    element: <AuthWrapper><WebScraping /></AuthWrapper>
   }
 ];
