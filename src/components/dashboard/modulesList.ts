@@ -1,4 +1,4 @@
-import { Bot, Building2, FileSpreadsheet, Microscope, Network, Settings2, Users2, Globe } from "lucide-react";
+import { Bot, Building2, FileSpreadsheet, Settings2, Users2 } from "lucide-react";
 import { ModuleCardProps } from "./ModuleCard";
 
 export const modulesList: ModuleCardProps[] = [
@@ -29,12 +29,5 @@ export const modulesList: ModuleCardProps[] = [
     icon: FileSpreadsheet,
     href: "/training/matrix",
     status: "ready"
-  },
-  {
-    title: "Lead Generation",
-    description: "Web scraping tools for automated lead generation",
-    icon: Globe,
-    href: "/leads/scraping",
-    status: "ready"
-  },
+  }
 ];
