@@ -8,7 +8,6 @@ import { FiveSEvaluationImages } from "@/components/FiveSEvaluationImages";
 import { FiveSRadarChart } from "@/components/FiveSRadarChart";
 import { SWOTAnalysis } from "@/components/SWOTAnalysis";
 import { FiveSTrend } from "@/components/FiveSTrend";
-import { DetailedFiveSAnalysis } from "@/components/analysis/DetailedFiveSAnalysis";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import html2pdf from 'html2pdf.js';
@@ -127,15 +126,6 @@ export const FiveSEvaluationResults = ({
             </Card>
             <FiveSTrend workcenterId={evaluationData.workcenter_id} />
           </div>
-
-          <DetailedFiveSAnalysis
-            sortScore={evaluationData.sort_score}
-            setScore={evaluationData.set_in_order_score}
-            shineScore={evaluationData.shine_score}
-            standardizeScore={evaluationData.standardize_score}
-            sustainScore={evaluationData.sustain_score}
-            weaknesses={evaluationData.weaknesses || []}
-          />
 
           <SWOTAnalysis
             strengths={evaluationData.strengths || []}
