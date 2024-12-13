@@ -27,6 +27,12 @@ export const DetailedFiveSAnalysis = ({
   const renderCategoryAnalysis = (score: number | undefined, category: string) => {
     if (score === undefined) return null;
 
+    // If Shine score is less than 8, don't show Standardize and Sustain
+    if (shineScore !== undefined && shineScore < 8 && 
+        (category === "Standardize" || category === "Sustain")) {
+      return null;
+    }
+
     const categoryWeaknesses = weaknesses.filter(w => 
       w.toLowerCase().includes(category.toLowerCase())
     );
@@ -51,17 +57,6 @@ export const DetailedFiveSAnalysis = ({
                   </li>
                 ))}
               </ul>
-            </div>
-          )}
-
-          {score <= 5 && (
-            <div className="mt-4 bg-orange-50 p-4 rounded-md">
-              <h5 className="font-medium text-sm mb-2 text-orange-800">Impact on Operations:</h5>
-              <p className="text-sm text-orange-700">
-                {score <= 3 
-                  ? "These issues are severely impacting operational efficiency and require immediate corrective action."
-                  : "These findings are causing notable inefficiencies in daily operations and should be addressed promptly."}
-              </p>
             </div>
           )}
         </div>
