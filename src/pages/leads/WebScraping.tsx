@@ -6,26 +6,43 @@ import { Globe, Search } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 const WebScraping = () => {
-  const [url, setUrl] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [userInput, setUserInput] = useState({
+    location: '',
+    searchTerm: '',
+    resultCount: 10
+  });
+  
+  const [apiConfig, setApiConfig] = useState(null);
+  const [results, setResults] = useState(null);
   const { toast } = useToast();
 
-  const handleScrape = async () => {
-    setIsLoading(true);
-    try {
-      toast({
-        title: "Feature Coming Soon",
-        description: "Web scraping functionality will be available in the next update.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "An error occurred while processing your request.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  const generateApiConfig = () => {
+    const config = {
+      endpoint: 'https://api.example.com/scrape/googlemaps',
+      parameters: {
+        query: `${userInput.searchTerm} in ${userInput.location}`,
+        limit: userInput.resultCount,
+        fields: [
+          'name',
+          'address',
+          'rating',
+          'reviews',
+          'phone',
+          'website',
+          'hours'
+        ],
+        format: 'json'
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer YOUR_API_KEY'
+      }
+    };
+    setApiConfig(config);
+    toast({
+      title: "Feature Coming Soon",
+      description: "The scraping functionality will be available in the next update.",
+    });
   };
 
   return (
@@ -38,34 +55,79 @@ const WebScraping = () => {
       <Card className="p-6">
         <div className="space-y-4">
           <div>
-            <h2 className="text-lg font-medium mb-2">Web Scraping</h2>
+            <h2 className="text-lg font-medium mb-2">Google Maps Scraper</h2>
             <p className="text-muted-foreground">
-              Enter a website URL to extract potential lead information such as contact details and company information.
+              Search for businesses by location and category to generate leads.
             </p>
           </div>
 
-          <div className="flex gap-2">
-            <Input
-              placeholder="Enter website URL"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              className="flex-1"
-            />
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium mb-1 block">
+                Location (City, State)
+              </label>
+              <Input
+                placeholder="e.g., Austin, TX"
+                value={userInput.location}
+                onChange={(e) => setUserInput({...userInput, location: e.target.value})}
+              />
+            </div>
+            
+            <div>
+              <label className="text-sm font-medium mb-1 block">
+                Search Term
+              </label>
+              <Input
+                placeholder="e.g., coffee shops"
+                value={userInput.searchTerm}
+                onChange={(e) => setUserInput({...userInput, searchTerm: e.target.value})}
+              />
+            </div>
+            
+            <div>
+              <label className="text-sm font-medium mb-1 block">
+                Number of Results
+              </label>
+              <Input
+                type="number"
+                min="1"
+                max="100"
+                value={userInput.resultCount}
+                onChange={(e) => setUserInput({...userInput, resultCount: parseInt(e.target.value)})}
+              />
+            </div>
+
             <Button 
-              onClick={handleScrape} 
-              disabled={!url || isLoading}
+              onClick={generateApiConfig}
+              className="w-full"
             >
-              <Search className="h-4 w-4 mr-2" />
-              Scrape
+              <Search className="w-4 h-4 mr-2" />
+              Generate Search
             </Button>
           </div>
 
-          <div className="bg-muted p-4 rounded-md">
-            <p className="text-sm text-muted-foreground">
-              Note: This tool respects robots.txt files and website terms of service. 
-              Please ensure you have permission to scrape the target website.
-            </p>
-          </div>
+          {apiConfig && (
+            <div className="mt-6">
+              <h3 className="text-lg font-medium mb-2">Generated API Configuration</h3>
+              <pre className="bg-muted p-4 rounded overflow-auto">
+                {JSON.stringify(apiConfig, null, 2)}
+              </pre>
+            </div>
+          )}
+
+          {results && (
+            <div className="mt-6">
+              <h3 className="text-lg font-medium mb-2">Results</h3>
+              <div className="space-y-2">
+                {results.map((result, index) => (
+                  <div key={index} className="border p-4 rounded">
+                    <h4 className="font-medium">{result.name}</h4>
+                    <p className="text-sm text-muted-foreground">{result.address}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </Card>
     </div>
