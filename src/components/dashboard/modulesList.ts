@@ -1,4 +1,4 @@
-import { Bot, Building2, Building, ChartBar } from "lucide-react";
+import { Bot, Building2, Building, ChartBar, Wrench } from "lucide-react";
 import { ModuleCardProps } from "./ModuleCard";
 
 export const modulesList: ModuleCardProps[] = [
@@ -14,6 +14,13 @@ export const modulesList: ModuleCardProps[] = [
     description: "Access all organizational modules and functions",
     icon: Building2,
     href: "/modules",
+    status: "ready"
+  },
+  {
+    title: "Tools",
+    description: "Access quality and process improvement tools",
+    icon: Wrench,
+    href: "/tools",
     status: "ready"
   },
   {
