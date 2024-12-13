@@ -27,7 +27,7 @@ export const ModulesSection = () => {
         >
           <div className="flex items-center gap-2">
             <LayoutDashboard className="h-5 w-5 text-secondary" />
-            <h2 className="text-lg font-semibold">Available Modules</h2>
+            <h2 className="text-lg font-semibold">Available Apps</h2>
           </div>
           <ChevronDown
             className={`h-4 w-4 transition-transform ${

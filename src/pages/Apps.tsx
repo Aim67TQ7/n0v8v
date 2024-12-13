@@ -1,4 +1,4 @@
-import { AppWindow, Building, FileSpreadsheet, PackageSearch, Scale, ScrollText, Users2 } from "lucide-react";
+import { AppWindow, Building, FileSpreadsheet, PackageSearch, Scale, ScrollText } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
