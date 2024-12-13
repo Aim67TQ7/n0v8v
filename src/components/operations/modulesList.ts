@@ -6,9 +6,10 @@ import {
   Package, 
   ChartBar,
   Shield,
-  Search
+  Search,
+  Building2
 } from "lucide-react";
-import { ModuleCardProps } from "./ModuleCard";
+import type { ModuleCardProps } from "./ModuleCard";
 
 export const modulesList: ModuleCardProps[] = [
   {
@@ -24,6 +25,13 @@ export const modulesList: ModuleCardProps[] = [
     icon: Wrench,
     href: "/operations/engineering",
     status: "coming-soon"
+  },
+  {
+    title: "Facilities",
+    description: "Manage facilities, maintenance, and company maps",
+    icon: Building2,
+    href: "/operations/facilities",
+    status: "ready"
   },
   {
     title: "Quality Assurance",

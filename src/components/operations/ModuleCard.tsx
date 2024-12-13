@@ -2,7 +2,7 @@ import { LucideIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 
-interface ModuleCardProps {
+export interface ModuleCardProps {
   title: string;
   description: string;
   icon: LucideIcon;
