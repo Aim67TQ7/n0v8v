@@ -83,14 +83,14 @@ export const tools: Tool[] = [
     title: "Training Matrix",
     description: "Track employee training and certifications",
     icon: FileSpreadsheet,
-    href: "/training/matrix",
+    href: "/operations/hr/training-matrix",
     status: "ready" as const
   },
   {
     title: "VAVE Analysis",
     description: "Value Analysis and Value Engineering with AI assistance",
     icon: Calculator,
-    href: "/operations/lean/vave-analysis",
+    href: "/operations/engineering/vave-analysis",
     status: "ready" as const
   }
 ].sort((a, b) => a.title.localeCompare(b.title));

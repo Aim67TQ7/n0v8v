@@ -26,6 +26,7 @@ import Apps from "@/pages/Apps";
 import Tools from "@/pages/Tools";
 import MaintenanceSystem from "@/pages/maintenance/MaintenanceSystem";
 import WebScraping from "@/pages/leads/WebScraping";
+import VAVEAnalysis from "@/pages/operations/VAVEAnalysis";
 
 export const routes = [
   {
@@ -89,7 +90,7 @@ export const routes = [
     element: <AuthWrapper><Company /></AuthWrapper>
   },
   {
-    path: "/training/matrix",
+    path: "/operations/hr/training-matrix",
     element: <AuthWrapper><TrainingMatrix /></AuthWrapper>
   },
   {
@@ -135,5 +136,9 @@ export const routes = [
   {
     path: "/operations/customer-focus",
     element: <Modules />
+  },
+  {
+    path: "/operations/engineering/vave-analysis",
+    element: <AuthWrapper><VAVEAnalysis /></AuthWrapper>
   }
 ];

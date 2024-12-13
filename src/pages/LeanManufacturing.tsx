@@ -2,7 +2,6 @@ import {
   Eye, 
   Activity, 
   GraduationCap,
-  Calculator,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -18,19 +17,6 @@ const leanModules = [
       "Automated cleanliness monitoring",
       "Pattern recognition for optimal tool placement",
       "Real-time compliance tracking"
-    ],
-    status: "ready"
-  },
-  {
-    title: "VAVE Analysis",
-    description: "Value Analysis and Value Engineering with AI assistance",
-    icon: Calculator,
-    href: "/operations/lean/vave-analysis",
-    features: [
-      "Automated value stream analysis",
-      "Cost reduction opportunities",
-      "Process optimization suggestions",
-      "Material and design recommendations"
     ],
     status: "ready"
   },
