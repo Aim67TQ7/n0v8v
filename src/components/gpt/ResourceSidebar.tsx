@@ -13,7 +13,6 @@ export const ResourceSidebar = () => {
 
   return (
     <div className="w-full p-4 space-y-3">
-      <KnowledgeCard />
       <ResourceCard
         icon={Home}
         title="Home"
@@ -44,6 +43,7 @@ export const ResourceSidebar = () => {
         description="View all modules"
         href="/modules"
       />
+      <KnowledgeCard />
     </div>
   );
 };
