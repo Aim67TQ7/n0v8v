@@ -104,12 +104,13 @@ const CompanyGPT = () => {
                 </div>
               </Sidebar>
               
-              {/* Collapse/Expand Button */}
+              {/* Collapse/Expand Button - Repositioned */}
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute -right-4 top-1/2 transform -translate-y-1/2 z-50 bg-white border shadow-sm"
+                className="absolute -right-6 top-3 z-50 bg-white border shadow-sm hover:bg-gray-100"
                 onClick={toggleLeftColumn}
+                title={isLeftColumnCollapsed ? "Expand sidebar" : "Collapse sidebar"}
               >
                 {isLeftColumnCollapsed ? (
                   <ChevronRight className="h-4 w-4" />
@@ -119,7 +120,6 @@ const CompanyGPT = () => {
               </Button>
             </div>
 
-            {/* Main Content - Scrollable */}
             <ChatContainer 
               selectedSession={selectedSession}
               chatSessions={chatSessions}
@@ -128,7 +128,6 @@ const CompanyGPT = () => {
               setInputValue={setInputValue}
             />
             
-            {/* Right Sidebar - Fixed */}
             <div className="w-64 border-l bg-white flex flex-col">
               <div className="p-4 border-b">
                 <div className="flex flex-col gap-1">
