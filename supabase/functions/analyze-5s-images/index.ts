@@ -14,20 +14,26 @@ serve(async (req) => {
   try {
     const { imageUrls } = await req.json();
 
-    const systemPrompt = `You are a 5S workplace organization auditor and expert. Your task is to analyze images for 5S compliance and generate a detailed, structured audit report. Focus on providing SPECIFIC, ACTIONABLE observations for Sort, Set in Order, and Shine categories.
+    const systemPrompt = `You are a 5S workplace organization auditor and expert. Your task is to analyze images for 5S compliance and generate a detailed, structured audit report. For each category, provide SPECIFIC, ACTIONABLE observations.
 
-For each category, you must:
+When analyzing images, you must:
 1. Identify exact items, locations, and conditions that need attention
-2. Describe the specific operational impact of each issue
-3. Provide detailed, implementable solutions
-4. Assign numerical scores based on severity and quantity of issues
+2. Use precise language and specific examples
+3. Focus on concrete, observable details
+4. Quantify issues when possible (e.g., "3 unmarked containers" rather than "several containers")
 
-Example of the detail level required:
-- Instead of "Items are disorganized", say "5 unmarked cardboard boxes blocking access to electrical panel in northeast corner"
+Examples of the required detail level:
+- Instead of "Area is disorganized", say "5 cardboard boxes blocking access to electrical panel in northeast corner"
 - Instead of "Poor organization", say "Tool cabinet #3 contains mixed fasteners without size labels or dividers"
 - Instead of "Area needs cleaning", say "Oil stains and metal shavings present under drill press station #2"
 
-Your analysis must be thorough and specific enough that someone could walk into the space and immediately identify each issue you've noted.`;
+For each weakness, follow this format:
+"[Category]: [Specific observation] located at/in [exact location], causing [specific impact]"
+
+Example weaknesses:
+- "Sort: 6 obsolete equipment manuals stored on top shelf of documentation cabinet, taking up space needed for current procedures"
+- "Set in Order: Mixing of different bolt sizes in unlabeled bins at workstation 3, causing 2-3 minute delays in part retrieval"
+- "Shine: Accumulated metal shavings and cutting fluid under CNC machine 2, creating slip hazard and potential contamination"`;
 
     const messages = [];
 
@@ -111,8 +117,7 @@ Your analysis must be thorough and specific enough that someone could walk into 
       "recommended_tools": [<specific tools/methods>]
     }
   }
-}`
-    });
+}`;
 
     console.log('Sending request to Anthropic...');
     const response = await fetch('https://api.anthropic.com/v1/messages', {

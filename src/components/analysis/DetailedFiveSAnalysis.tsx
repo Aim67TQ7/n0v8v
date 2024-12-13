@@ -17,71 +17,77 @@ export const DetailedFiveSAnalysis = ({
   sustainScore,
   weaknesses
 }: DetailedFiveSAnalysisProps) => {
-  const getDetailedAnalysis = (score: number | undefined, category: string) => {
-    if (score === undefined) return "";
-    
+  const getScoreClass = (score: number) => {
+    if (score <= 3) return 'bg-red-100 text-red-800';
+    if (score <= 5) return 'bg-orange-100 text-orange-800';
+    if (score <= 7) return 'bg-yellow-100 text-yellow-800';
+    return 'bg-green-100 text-green-800';
+  };
+
+  const renderCategoryAnalysis = (score: number | undefined, category: string) => {
+    if (score === undefined) return null;
+
     const categoryWeaknesses = weaknesses.filter(w => 
       w.toLowerCase().includes(category.toLowerCase())
     );
 
-    const getScoreDescription = (score: number) => {
-      if (score <= 3) return "Critical issues requiring immediate attention";
-      if (score <= 5) return "Significant issues impacting operations";
-      if (score <= 7) return "Moderate issues affecting efficiency";
-      return "Minor improvements needed";
-    };
-
-    const getImpactLevel = (score: number) => {
-      if (score <= 3) return "high";
-      if (score <= 5) return "significant";
-      if (score <= 7) return "moderate";
-      return "minor";
-    };
-
     return (
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
           <h4 className="font-medium text-lg">{category}</h4>
-          <span className={`px-2 py-1 rounded text-sm ${
-            score <= 3 ? 'bg-red-100 text-red-800' :
-            score <= 5 ? 'bg-orange-100 text-orange-800' :
-            score <= 7 ? 'bg-yellow-100 text-yellow-800' :
-            'bg-green-100 text-green-800'
-          }`}>
-            Score: {score}/10 - {getScoreDescription(score)}
+          <span className={`px-3 py-1 rounded-full text-sm ${getScoreClass(score)}`}>
+            Score: {score}/10
           </span>
         </div>
-        
-        {categoryWeaknesses.length > 0 && (
-          <>
-            <h5 className="font-medium text-sm mb-2">Specific Findings:</h5>
-            <ul className="list-disc pl-5 space-y-2 mb-4">
-              {categoryWeaknesses.map((weakness, index) => (
-                <li key={index} className="text-sm text-gray-700">{weakness}</li>
-              ))}
-            </ul>
-          </>
-        )}
-        
-        <div className="text-sm text-gray-700">
-          <p className="mb-2">
-            This area shows {getImpactLevel(score)} impact on overall operational efficiency.
-            {score <= 7 && " Immediate attention and corrective actions are recommended."}
-          </p>
+
+        <div className="space-y-4">
+          {categoryWeaknesses.length > 0 && (
+            <div>
+              <h5 className="font-medium text-sm mb-2">Specific Findings:</h5>
+              <ul className="list-disc pl-5 space-y-3">
+                {categoryWeaknesses.map((weakness, index) => (
+                  <li key={index} className="text-gray-700">
+                    {weakness}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {score <= 5 && (
+            <div className="mt-4 bg-orange-50 p-4 rounded-md">
+              <h5 className="font-medium text-sm mb-2 text-orange-800">Impact on Operations:</h5>
+              <p className="text-sm text-orange-700">
+                {score <= 3 
+                  ? "These issues are severely impacting operational efficiency and require immediate corrective action."
+                  : "These findings are causing notable inefficiencies in daily operations and should be addressed promptly."}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     );
   };
 
   return (
-    <Card className="p-4">
-      <h3 className="text-xl font-semibold mb-4">Detailed 5S Analysis</h3>
+    <Card className="p-6">
+      <h3 className="text-xl font-semibold mb-6">Detailed 5S Analysis</h3>
       
-      {getDetailedAnalysis(sortScore, "Sort")}
-      {getDetailedAnalysis(setScore, "Set in Order")}
-      {getDetailedAnalysis(shineScore, "Shine")}
-      {getDetailedAnalysis(standardizeScore, "Standardize")}
-      {getDetailedAnalysis(sustainScore, "Sustain")}
+      {renderCategoryAnalysis(sortScore, "Sort")}
+      {renderCategoryAnalysis(setScore, "Set in Order")}
+      {renderCategoryAnalysis(shineScore, "Shine")}
+      {renderCategoryAnalysis(standardizeScore, "Standardize")}
+      {renderCategoryAnalysis(sustainScore, "Sustain")}
+
+      {(sortScore <= 5 || setScore <= 5 || shineScore <= 5) && (
+        <div className="mt-6 bg-red-50 p-4 rounded-md">
+          <h4 className="font-medium text-red-800 mb-2">Priority Action Required</h4>
+          <p className="text-sm text-red-700">
+            Multiple areas require immediate attention. Focus first on addressing the lowest-scoring categories
+            to establish a foundation for sustainable 5S implementation.
+          </p>
+        </div>
+      )}
     </Card>
   );
 };
