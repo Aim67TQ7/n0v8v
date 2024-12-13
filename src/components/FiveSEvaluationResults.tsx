@@ -2,14 +2,13 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
 import { FiveSEvaluationHeader } from "@/components/FiveSEvaluationHeader";
 import { FiveSEvaluationSummary } from "@/components/FiveSEvaluationSummary";
 import { FiveSEvaluationImages } from "@/components/FiveSEvaluationImages";
 import { FiveSRadarChart } from "@/components/FiveSRadarChart";
 import { SWOTAnalysis } from "@/components/SWOTAnalysis";
 import { FiveSTrend } from "@/components/FiveSTrend";
+import { DetailedFiveSAnalysis } from "@/components/analysis/DetailedFiveSAnalysis";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import html2pdf from 'html2pdf.js';
@@ -26,15 +25,12 @@ export const FiveSEvaluationResults = ({
   isLoading 
 }: FiveSEvaluationResultsProps) => {
   const { toast } = useToast();
-  const [feedback, setFeedback] = useState("");
-  const [needsLearning, setNeedsLearning] = useState(false);
   const [evaluationData, setEvaluationData] = useState<any>(null);
   const [evaluationImages, setEvaluationImages] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchEvaluationData = async () => {
       try {
-        // Fetch the evaluation data
         const { data: evalData, error: evalError } = await supabase
           .from('five_s_evaluations')
           .select(`
@@ -98,37 +94,6 @@ export const FiveSEvaluationResults = ({
     }
   };
 
-  const handleSubmitFeedback = async () => {
-    if (!needsLearning || !feedback.trim()) return;
-
-    try {
-      const { error } = await supabase
-        .from('five_s_learning_feedback')
-        .insert({
-          evaluation_id: evaluation,
-          feedback,
-          created_by: (await supabase.auth.getUser()).data.user?.id
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Feedback Submitted",
-        description: "Thank you for helping improve our analysis system.",
-      });
-
-      setFeedback("");
-      setNeedsLearning(false);
-    } catch (error) {
-      console.error('Error submitting feedback:', error);
-      toast({
-        title: "Error",
-        description: "Failed to submit feedback. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
   if (isLoading || !evaluationData) {
     return (
       <div className="text-center py-8">
@@ -163,47 +128,14 @@ export const FiveSEvaluationResults = ({
             <FiveSTrend workcenterId={evaluationData.workcenter_id} />
           </div>
 
-          <Card className="p-4 mt-4">
-            <h3 className="text-lg font-semibold mb-2">Analysis & Recommendations</h3>
-            <SWOTAnalysis
-              strengths={evaluationData.strengths || []}
-              weaknesses={evaluationData.weaknesses || []}
-              sortScore={evaluationData.sort_score}
-              setScore={evaluationData.set_in_order_score}
-              shineScore={evaluationData.shine_score}
-              evaluationId={evaluationData.id}
-            />
-          </Card>
-
-          <Card className="p-4 mt-4">
-            <div className="flex items-center space-x-2 mb-4">
-              <Checkbox
-                id="learning"
-                checked={needsLearning}
-                onCheckedChange={(checked) => setNeedsLearning(checked as boolean)}
-              />
-              <label
-                htmlFor="learning"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Provide learning feedback
-              </label>
-            </div>
-
-            {needsLearning && (
-              <div className="space-y-4">
-                <Textarea
-                  placeholder="Please describe what could be improved in this analysis..."
-                  value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
-                  className="min-h-[100px]"
-                />
-                <Button onClick={handleSubmitFeedback}>
-                  Submit Feedback
-                </Button>
-              </div>
-            )}
-          </Card>
+          <DetailedFiveSAnalysis
+            sortScore={evaluationData.sort_score}
+            setScore={evaluationData.set_in_order_score}
+            shineScore={evaluationData.shine_score}
+            standardizeScore={evaluationData.standardize_score}
+            sustainScore={evaluationData.sustain_score}
+            weaknesses={evaluationData.weaknesses || []}
+          />
 
           <div className="text-center mt-4">
             <Button
