@@ -1,23 +1,20 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import "https://deno.land/x/xhr@0.1.0/mod.ts"
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+};
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { imageUrls } = await req.json()
+    const { imageUrls } = await req.json();
 
-    const messages = [
-      {
-        role: "system",
-        content: `You are a 5S workplace organization auditor and expert. Your task is to analyze images for 5S compliance and generate a detailed, structured audit report. Focus on the categories of Sort, Set in Order, and Shine. For each image analyzed, provide the following:
+    const systemPrompt = `You are a 5S workplace organization auditor and expert. Your task is to analyze images for 5S compliance and generate a detailed, structured audit report. Focus on the categories of Sort, Set in Order, and Shine. For each image analyzed, provide the following:
 
 **1. Summary of Observations**:
    - Note specific positive observations in the workspace. Highlight areas that align with 5S principles and how they contribute to operational efficiency or safety.
@@ -35,9 +32,9 @@ serve(async (req) => {
    - Provide a score out of 10 for each category (Sort, Set in Order, and Shine) based on compliance with 5S principles.
    - Offer a brief justification for each score, citing specific examples from the observations.
 
-Ensure the report is thorough and professional, with clear explanations and actionable insights tailored to the observed workspace conditions.`
-      }
-    ]
+Ensure the report is thorough and professional, with clear explanations and actionable insights tailored to the observed workspace conditions.`;
+
+    const messages = [];
 
     // Add each image to the messages array
     imageUrls.forEach((url: string, index: number) => {
@@ -57,8 +54,8 @@ Ensure the report is thorough and professional, with clear explanations and acti
             }
           }
         ]
-      })
-    })
+      });
+    });
 
     // Add final message to request specific JSON structure
     messages.push({
@@ -120,9 +117,9 @@ Ensure the report is thorough and professional, with clear explanations and acti
     }
   }
 }`
-    })
+    });
 
-    console.log('Sending request to Anthropic...')
+    console.log('Sending request to Anthropic...');
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -132,51 +129,57 @@ Ensure the report is thorough and professional, with clear explanations and acti
       },
       body: JSON.stringify({
         model: 'claude-3-sonnet-20240229',
+        system: systemPrompt,
         messages,
         temperature: 0.7,
         max_tokens: 2000,
         response_format: { type: "json_object" }
       }),
-    })
+    });
 
     if (!response.ok) {
-      throw new Error(`Anthropic API error: ${response.status} - ${await response.text()}`)
+      const errorData = await response.text();
+      console.error('Anthropic API error:', errorData);
+      throw new Error(`Anthropic API error: ${response.status} - ${errorData}`);
     }
 
-    console.log('Received response from Anthropic')
-    const result = await response.json()
+    console.log('Received response from Anthropic');
+    const result = await response.json();
     
     try {
-      const analysis = JSON.parse(result.content[0].text)
+      const analysis = JSON.parse(result.content[0].text);
       
       // Add safety deduction if any safety concerns are found
-      const safetyKeywords = ['hazard', 'unsafe', 'safety', 'risk', 'danger', 'trip', 'fall', 'spill']
+      const safetyKeywords = ['hazard', 'unsafe', 'safety', 'risk', 'danger', 'trip', 'fall', 'spill'];
       const allObservations = [
         ...analysis.analysis.sort.observations,
         ...analysis.analysis.set_in_order.observations,
         ...analysis.analysis.shine.observations,
         ...analysis.analysis.standardize.observations,
         ...analysis.analysis.sustain.observations
-      ].join(' ').toLowerCase()
+      ].join(' ').toLowerCase();
 
-      const safetyIssuesFound = safetyKeywords.some(keyword => allObservations.includes(keyword))
+      const safetyIssuesFound = safetyKeywords.some(keyword => allObservations.includes(keyword));
       if (safetyIssuesFound) {
-        analysis.safety_deduction = 2
-        analysis.weaknesses.unshift("Safety concerns identified - immediate attention required")
+        analysis.safety_deduction = 2;
+        analysis.weaknesses.unshift("Safety concerns identified - immediate attention required");
       }
 
       return new Response(JSON.stringify(analysis), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
+      });
     } catch (parseError) {
-      console.error('Error parsing Anthropic response:', result.content[0].text)
-      throw new Error('Failed to parse Anthropic response as JSON')
+      console.error('Error parsing Anthropic response:', result.content[0].text);
+      throw new Error('Failed to parse Anthropic response as JSON');
     }
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Error:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-    )
+      { 
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
+    );
   }
-})
+});
