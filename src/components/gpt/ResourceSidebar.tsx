@@ -26,12 +26,6 @@ export const ResourceSidebar = () => {
         onClick={handleEmailClick}
       />
       <ResourceCard
-        icon={Wrench}
-        title="Tools"
-        description="Access quality tools"
-        href="/tools"
-      />
-      <ResourceCard
         icon={Database}
         title="Epicor"
         description="Open ERP system"
@@ -42,6 +36,12 @@ export const ResourceSidebar = () => {
         title="Modules"
         description="View all modules"
         href="/modules"
+      />
+      <ResourceCard
+        icon={Wrench}
+        title="Tools"
+        description="Access quality tools"
+        href="/tools"
       />
       <KnowledgeCard />
     </div>
