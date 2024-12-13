@@ -1,5 +1,6 @@
 import { Home, Mail, Wrench, Database, Grid } from "lucide-react";
 import { ResourceCard } from "./ResourceCard";
+import { KnowledgeCard } from "./KnowledgeCard";
 
 export const ResourceSidebar = () => {
   const handleEmailClick = () => {
@@ -12,6 +13,7 @@ export const ResourceSidebar = () => {
 
   return (
     <div className="w-full p-4 space-y-3">
+      <KnowledgeCard />
       <ResourceCard
         icon={Home}
         title="Home"
