@@ -115,41 +115,48 @@ export const saveImageReferences = async (evaluation_id: string, imageUrls: stri
 export const saveTrainingData = async (
   evaluationId: string,
   feedback: string,
-  images: string[],
-  analysis: any
+  imageUrls: string[],
+  analysis: {
+    strengths: string[];
+    weaknesses: string[];
+    scores: {
+      sort?: number;
+      set?: number;
+      shine?: number;
+    };
+  }
 ) => {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('No authenticated user found');
+  try {
+    // Save feedback to the database
+    const { error: feedbackError } = await supabase
+      .from('five_s_learning_feedback')
+      .insert({
+        evaluation_id: evaluationId,
+        feedback,
+        created_by: (await supabase.auth.getUser()).data.user?.id
+      });
 
-  // First, save to the training_data table
-  const { error: dbError } = await supabase
-    .from('five_s_training_data')
-    .insert({
-      evaluation_id: evaluationId,
+    if (feedbackError) throw feedbackError;
+
+    // Create a JSON file with the training data
+    const trainingData = {
+      evaluationId,
       feedback,
-      images: images,
+      imageUrls,
       analysis,
-      created_by: user.id
-    });
+      timestamp: new Date().toISOString(),
+      userId: (await supabase.auth.getUser()).data.user?.id
+    };
 
-  if (dbError) throw dbError;
+    const fileName = `${evaluationId}-${Date.now()}.json`;
+    const { error: uploadError } = await supabase.storage
+      .from('Knowledge')
+      .upload(`5s-training/${fileName}`, JSON.stringify(trainingData, null, 2));
 
-  // Then, save the training data files to the Knowledge bucket
-  const trainingData = {
-    evaluationId,
-    feedback,
-    images,
-    analysis,
-    timestamp: new Date().toISOString(),
-    userId: user.id
-  };
+    if (uploadError) throw uploadError;
 
-  const blob = new Blob([JSON.stringify(trainingData, null, 2)], { type: 'application/json' });
-  const fileName = `5s-training/${evaluationId}.json`;
-
-  const { error: storageError } = await supabase.storage
-    .from('Knowledge')
-    .upload(fileName, blob);
-
-  if (storageError) throw storageError;
+  } catch (error) {
+    console.error('Error saving training data:', error);
+    throw error;
+  }
 };

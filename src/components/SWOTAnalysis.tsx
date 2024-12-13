@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { saveTrainingData } from "@/services/fiveSEvaluationService";
 import { StrengthsWeaknesses } from "./analysis/StrengthsWeaknesses";
 import { ScoreAnalysis } from "./analysis/ScoreAnalysis";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SWOTAnalysisProps {
   strengths: string[];
