@@ -10,10 +10,10 @@ export const modulesList: ModuleCardProps[] = [
     status: "ready"
   },
   {
-    title: "Team Management",
-    description: "Manage your team members, departments and locations",
-    icon: Users2,
-    href: "/team",
+    title: "Modules",
+    description: "Access all organizational modules and functions",
+    icon: Building2,
+    href: "/modules",
     status: "ready"
   },
   {
