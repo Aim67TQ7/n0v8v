@@ -126,7 +126,7 @@ export const customerFocusTools: ModuleCardProps[] = [
     description: "Web scraping tools for automated lead generation",
     icon: Globe,
     href: "/leads/scraping",
-    status: "coming-soon"
+    status: "ready"
   }
 ];
 
