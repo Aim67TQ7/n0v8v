@@ -7,7 +7,8 @@ import {
   ChartBar,
   Shield,
   Search,
-  Building2
+  Building2,
+  BookOpen
 } from "lucide-react";
 import type { ModuleCardProps } from "./ModuleCard";
 
@@ -31,6 +32,13 @@ export const modulesList: ModuleCardProps[] = [
     description: "Manage facilities, maintenance, and company maps",
     icon: Building2,
     href: "/operations/facilities",
+    status: "ready"
+  },
+  {
+    title: "Human Resources",
+    description: "Access ADP, employee handbook, and HR resources",
+    icon: BookOpen,
+    href: "/operations/hr",
     status: "ready"
   },
   {
