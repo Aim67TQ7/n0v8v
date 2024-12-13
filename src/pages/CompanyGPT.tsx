@@ -8,6 +8,8 @@ import { SidebarHeader } from "@/components/gpt/SidebarHeader";
 import { ConversationStarters } from "@/components/gpt/ConversationStarters";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ChatSession {
   id: string;
@@ -31,6 +33,7 @@ const CompanyGPT = () => {
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [isLeftColumnCollapsed, setIsLeftColumnCollapsed] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -74,27 +77,47 @@ const CompanyGPT = () => {
     setInputValue(prompt);
   };
 
+  const toggleLeftColumn = () => {
+    setIsLeftColumnCollapsed(!isLeftColumnCollapsed);
+  };
+
   return (
     <div className="h-screen flex flex-col">
       <div className="flex-1 flex overflow-hidden">
         <SidebarProvider>
           <div className="flex w-full h-full">
-            {/* Left Sidebar - Fixed */}
-            <Sidebar className="border-r w-64 flex flex-col">
-              <SidebarHeader onNewChat={handleNewChat} />
-              <ScrollArea className="flex-1">
-                <SidebarContent>
-                  <ChatHistory
-                    sessions={chatSessions}
-                    onSelect={setSelectedSession}
-                    selectedId={selectedSession}
-                  />
-                </SidebarContent>
-              </ScrollArea>
-              <div className="border-t p-4">
-                <ConversationStarters onSelect={handleStarterSelect} />
-              </div>
-            </Sidebar>
+            {/* Left Sidebar with collapse/expand functionality */}
+            <div className={`relative transition-all duration-300 ${isLeftColumnCollapsed ? 'w-0' : 'w-64'}`}>
+              <Sidebar className="border-r flex flex-col">
+                <SidebarHeader onNewChat={handleNewChat} />
+                <ScrollArea className="flex-1">
+                  <SidebarContent>
+                    <ChatHistory
+                      sessions={chatSessions}
+                      onSelect={setSelectedSession}
+                      selectedId={selectedSession}
+                    />
+                  </SidebarContent>
+                </ScrollArea>
+                <div className="border-t p-4">
+                  <ConversationStarters onSelect={handleStarterSelect} />
+                </div>
+              </Sidebar>
+              
+              {/* Collapse/Expand Button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute -right-4 top-1/2 transform -translate-y-1/2 z-50 bg-white border shadow-sm"
+                onClick={toggleLeftColumn}
+              >
+                {isLeftColumnCollapsed ? (
+                  <ChevronRight className="h-4 w-4" />
+                ) : (
+                  <ChevronLeft className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
 
             {/* Main Content - Scrollable */}
             <ChatContainer 
