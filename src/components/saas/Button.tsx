@@ -1,7 +1,5 @@
-import { Loader2 } from "lucide-react";
 import { Button as ShadcnButton } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Progress } from "@/components/ui/progress";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
@@ -25,7 +23,7 @@ export const Button = ({
     <div className="relative w-full">
       <ShadcnButton
         className={cn(
-          "w-full flex items-center justify-center gap-2",
+          "w-full flex items-center justify-center gap-2 overflow-hidden",
           isLoading && "min-h-[40px]",
           className
         )}
@@ -34,14 +32,13 @@ export const Button = ({
         size={size}
         {...props}
       >
-        {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
         {children}
+        {isLoading && (
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="loading-bar" />
+          </div>
+        )}
       </ShadcnButton>
-      {isLoading && loadingProgress > 0 && (
-        <div className="absolute bottom-0 left-0 right-0">
-          <Progress value={loadingProgress} className="h-1 rounded-none" />
-        </div>
-      )}
     </div>
   );
 };
