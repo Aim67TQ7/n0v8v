@@ -132,8 +132,7 @@ Ensure the report is thorough and professional, with clear explanations and acti
         system: systemPrompt,
         messages,
         temperature: 0.7,
-        max_tokens: 2000,
-        response_format: { type: "json_object" }
+        max_tokens: 2000
       }),
     });
 
