@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 
 interface SWOTAnalysisProps {
   strengths: string[];
@@ -29,13 +28,23 @@ export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shine
       (shineScore < 8 && weakness.toLowerCase().includes('shine'))
     );
 
-  const checklistItems = [
-    "Verify all tools have designated storage locations",
-    "Ensure cleaning supplies are readily available",
-    "Check if visual management boards are up-to-date",
-    "Confirm standard work procedures are posted",
-    "Review daily 5S checklist completion"
-  ];
+  const getScoreImpactSummary = (score: number | undefined, category: string) => {
+    if (score === undefined) return "";
+    if (score >= 8) return `Strong ${category} practices with minimal issues.`;
+    if (score >= 6) return `Some ${category} challenges affecting efficiency.`;
+    return `Significant ${category} issues impacting operations.`;
+  };
+
+  const getStartingPoint = (scores: { sort?: number, set?: number, shine?: number }) => {
+    const lowestScore = Math.min(...Object.values(scores).filter(score => score !== undefined) as number[]);
+    if (lowestScore === scores.sort) {
+      return "Focus on removing unnecessary items and implementing a red tag system to improve Sort score.";
+    }
+    if (lowestScore === scores.set) {
+      return "Implement visual management systems and designated storage locations to improve Set in Order score.";
+    }
+    return "Establish daily cleaning schedules and standards to improve Shine score.";
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -60,7 +69,7 @@ export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shine
         </Card>
       </div>
 
-      {/* Right Column - Detailed 5S Observations */}
+      {/* Right Column - Detailed 5S Analysis */}
       <div className="space-y-4">
         <Card className="p-4">
           <h3 className="font-semibold text-primary mb-2">Detailed 5S Analysis</h3>
@@ -69,6 +78,7 @@ export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shine
             <div>
               <h4 className="font-medium text-sm mb-2">Sort (Seiri)</h4>
               <p className="text-sm text-gray-600 mb-2">Score: {sortScore}/10</p>
+              <p className="text-sm text-gray-700 mb-2">{getScoreImpactSummary(sortScore, 'Sort')}</p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
                 {weaknesses.filter(w => w.toLowerCase().includes('sort')).map((item, i) => (
                   <li key={i} className="text-gray-700">{item}</li>
@@ -79,6 +89,7 @@ export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shine
             <div>
               <h4 className="font-medium text-sm mb-2">Set in Order (Seiton)</h4>
               <p className="text-sm text-gray-600 mb-2">Score: {setScore}/10</p>
+              <p className="text-sm text-gray-700 mb-2">{getScoreImpactSummary(setScore, 'Set in Order')}</p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
                 {weaknesses.filter(w => w.toLowerCase().includes('set in order')).map((item, i) => (
                   <li key={i} className="text-gray-700">{item}</li>
@@ -89,6 +100,7 @@ export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shine
             <div>
               <h4 className="font-medium text-sm mb-2">Shine (Seiso)</h4>
               <p className="text-sm text-gray-600 mb-2">Score: {shineScore}/10</p>
+              <p className="text-sm text-gray-700 mb-2">{getScoreImpactSummary(shineScore, 'Shine')}</p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
                 {weaknesses.filter(w => w.toLowerCase().includes('shine')).map((item, i) => (
                   <li key={i} className="text-gray-700">{item}</li>
@@ -98,20 +110,10 @@ export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shine
           </div>
 
           <div className="mt-6 border-t pt-4">
-            <h4 className="font-semibold text-sm mb-3">Action Items:</h4>
-            <div className="space-y-3">
-              {checklistItems.map((item, index) => (
-                <div key={index} className="flex items-start space-x-2">
-                  <Checkbox id={`checklist-${index}`} />
-                  <label
-                    htmlFor={`checklist-${index}`}
-                    className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    {item}
-                  </label>
-                </div>
-              ))}
-            </div>
+            <h4 className="font-semibold text-sm mb-3">Recommended Starting Point:</h4>
+            <p className="text-sm text-gray-700">
+              {getStartingPoint({ sort: sortScore, set: setScore, shine: shineScore })}
+            </p>
           </div>
         </Card>
       </div>
