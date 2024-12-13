@@ -27,9 +27,11 @@ export const DetailedFiveSAnalysis = ({
   const renderCategoryAnalysis = (score: number | undefined, category: string) => {
     if (score === undefined) return null;
 
-    // If Shine score is less than 8, don't show Standardize and Sustain
-    if (shineScore !== undefined && shineScore < 8 && 
-        (category === "Standardize" || category === "Sustain")) {
+    // Calculate total score of first 3 categories
+    const baseScore = (sortScore || 0) + (setScore || 0) + (shineScore || 0);
+    
+    // Don't show Standardize and Sustain if base score is less than 20
+    if (baseScore < 20 && (category === "Standardize" || category === "Sustain")) {
       return null;
     }
 
@@ -64,6 +66,9 @@ export const DetailedFiveSAnalysis = ({
     );
   };
 
+  // Calculate total score of first 3 categories
+  const baseScore = (sortScore || 0) + (setScore || 0) + (shineScore || 0);
+
   return (
     <Card className="p-6">
       <h3 className="text-xl font-semibold mb-6">Detailed 5S Analysis</h3>
@@ -73,6 +78,16 @@ export const DetailedFiveSAnalysis = ({
       {renderCategoryAnalysis(shineScore, "Shine")}
       {renderCategoryAnalysis(standardizeScore, "Standardize")}
       {renderCategoryAnalysis(sustainScore, "Sustain")}
+
+      {baseScore < 20 && (
+        <div className="mt-6 bg-blue-50 p-4 rounded-md">
+          <h4 className="font-medium text-blue-800 mb-2">Standardize and Sustain Locked</h4>
+          <p className="text-sm text-blue-700">
+            Sort, Set in Order, and Shine must achieve a combined score of 20 points before Standardize and Sustain evaluations become available.
+            Current combined score: {baseScore}/30
+          </p>
+        </div>
+      )}
 
       {(sortScore <= 5 || setScore <= 5 || shineScore <= 5) && (
         <div className="mt-6 bg-red-50 p-4 rounded-md">
