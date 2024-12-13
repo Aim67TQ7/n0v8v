@@ -117,7 +117,8 @@ Example weaknesses:
       "recommended_tools": [<specific tools/methods>]
     }
   }
-}`;
+}`
+    });
 
     console.log('Sending request to Anthropic...');
     const response = await fetch('https://api.anthropic.com/v1/messages', {
