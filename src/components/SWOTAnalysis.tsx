@@ -39,39 +39,82 @@ export const SWOTAnalysis = ({ strengths, weaknesses, sortScore, setScore, shine
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Card className="p-4">
-        <h3 className="font-semibold text-green-600 mb-2">Observations & Strengths</h3>
-        <p className="text-sm text-gray-600 mb-3">
-          Document positive practices: organized workspaces, labeled storage, clean equipment,
-          standardized procedures, and sustained improvements.
-        </p>
-        {renderList(strengths)}
-      </Card>
-      <Card className="p-4">
-        <h3 className="font-semibold text-red-600 mb-2">Areas for Improvement</h3>
-        <p className="text-sm text-gray-600 mb-3">
-          Each finding below identifies a specific issue across the workcenter,
-          its impact on operations, and provides a clear solution with expected benefits.
-        </p>
-        {renderList(filteredWeaknesses)}
-        
-        <div className="mt-6 border-t pt-4">
-          <h4 className="font-semibold text-sm mb-3">Additional Action Items:</h4>
-          <div className="space-y-3">
-            {checklistItems.map((item, index) => (
-              <div key={index} className="flex items-start space-x-2">
-                <Checkbox id={`checklist-${index}`} />
-                <label
-                  htmlFor={`checklist-${index}`}
-                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  {item}
-                </label>
-              </div>
-            ))}
+      {/* Left Column - Stacked Observations & Strengths */}
+      <div className="space-y-4">
+        <Card className="p-4">
+          <h3 className="font-semibold text-green-600 mb-2">Observations & Strengths</h3>
+          <p className="text-sm text-gray-600 mb-3">
+            Document positive practices: organized workspaces, labeled storage, clean equipment,
+            standardized procedures, and sustained improvements.
+          </p>
+          {renderList(strengths)}
+        </Card>
+
+        <Card className="p-4">
+          <h3 className="font-semibold text-red-600 mb-2">Areas for Improvement</h3>
+          <p className="text-sm text-gray-600 mb-3">
+            Each finding below identifies a specific issue across the workcenter,
+            its impact on operations, and provides a clear solution with expected benefits.
+          </p>
+          {renderList(filteredWeaknesses)}
+        </Card>
+      </div>
+
+      {/* Right Column - Detailed 5S Observations */}
+      <div className="space-y-4">
+        <Card className="p-4">
+          <h3 className="font-semibold text-primary mb-2">Detailed 5S Analysis</h3>
+          
+          <div className="space-y-6">
+            <div>
+              <h4 className="font-medium text-sm mb-2">Sort (Seiri)</h4>
+              <p className="text-sm text-gray-600 mb-2">Score: {sortScore}/10</p>
+              <ul className="list-disc pl-5 space-y-2 text-sm">
+                {weaknesses.filter(w => w.toLowerCase().includes('sort')).map((item, i) => (
+                  <li key={i} className="text-gray-700">{item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-medium text-sm mb-2">Set in Order (Seiton)</h4>
+              <p className="text-sm text-gray-600 mb-2">Score: {setScore}/10</p>
+              <ul className="list-disc pl-5 space-y-2 text-sm">
+                {weaknesses.filter(w => w.toLowerCase().includes('set in order')).map((item, i) => (
+                  <li key={i} className="text-gray-700">{item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-medium text-sm mb-2">Shine (Seiso)</h4>
+              <p className="text-sm text-gray-600 mb-2">Score: {shineScore}/10</p>
+              <ul className="list-disc pl-5 space-y-2 text-sm">
+                {weaknesses.filter(w => w.toLowerCase().includes('shine')).map((item, i) => (
+                  <li key={i} className="text-gray-700">{item}</li>
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
-      </Card>
+
+          <div className="mt-6 border-t pt-4">
+            <h4 className="font-semibold text-sm mb-3">Action Items:</h4>
+            <div className="space-y-3">
+              {checklistItems.map((item, index) => (
+                <div key={index} className="flex items-start space-x-2">
+                  <Checkbox id={`checklist-${index}`} />
+                  <label
+                    htmlFor={`checklist-${index}`}
+                    className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {item}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 };
