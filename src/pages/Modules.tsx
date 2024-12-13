@@ -12,7 +12,7 @@ const Modules = () => {
       <div className="flex items-center gap-3 mb-8">
         <Factory className="h-8 w-8 text-secondary" />
         <h1 className="text-3xl font-bold">
-          {isCustomerFocus ? 'Customer Focus' : 'Operations Management'}
+          {isCustomerFocus ? 'Customer Focus' : 'Modules'}
         </h1>
       </div>
       
