@@ -10,7 +10,8 @@ import {
   BookOpen,
   Globe,
   Building,
-  FileSpreadsheet
+  FileSpreadsheet,
+  GraduationCap
 } from "lucide-react";
 import type { ModuleCardProps } from "./ModuleCard";
 
@@ -38,7 +39,7 @@ export const modulesList: ModuleCardProps[] = [
   },
   {
     title: "Human Resources",
-    description: "Access ADP, employee handbook, and HR resources",
+    description: "Training, competency tracking, and HR resources",
     icon: BookOpen,
     href: "/operations/hr",
     status: "ready"
@@ -77,13 +78,6 @@ export const modulesList: ModuleCardProps[] = [
     icon: Shield,
     href: "/operations/compliance",
     status: "coming-soon"
-  },
-  {
-    title: "Vertical Agents",
-    description: "Industry-specific AI agents for customer engagement",
-    icon: Building,
-    href: "/vertical-agents",
-    status: "coming-soon"
   }
 ];
 
@@ -93,6 +87,23 @@ export const customerFocusTools: ModuleCardProps[] = [
     description: "Web scraping tools for automated lead generation",
     icon: Globe,
     href: "/leads/scraping",
+    status: "ready"
+  }
+];
+
+export const hrTools: ModuleCardProps[] = [
+  {
+    title: "Training Matrix",
+    description: "Track employee training and certifications",
+    icon: FileSpreadsheet,
+    href: "/operations/hr/training-matrix",
+    status: "ready"
+  },
+  {
+    title: "Cross-Training & Competency",
+    description: "AI-driven training and skill validation system",
+    icon: GraduationCap,
+    href: "/operations/hr/training",
     status: "ready"
   }
 ];

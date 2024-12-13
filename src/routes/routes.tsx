@@ -14,7 +14,6 @@ import ProductInspection from "@/pages/quality/ProductInspection";
 import DMRDocumentation from "@/pages/quality/DMRDocumentation";
 import FiveWhys from "@/pages/quality/FiveWhys";
 import Fishbone from "@/pages/quality/Fishbone";
-import { AuthWrapper } from "@/components/AuthWrapper";
 import TrainingMatrix from "@/pages/training/TrainingMatrix";
 import TeamManagement from "@/pages/TeamManagement";
 import Company from "@/pages/team/Company";
@@ -91,6 +90,10 @@ export const routes = [
   },
   {
     path: "/operations/hr/training-matrix",
+    element: <AuthWrapper><TrainingMatrix /></AuthWrapper>
+  },
+  {
+    path: "/operations/hr/training",
     element: <AuthWrapper><TrainingMatrix /></AuthWrapper>
   },
   {

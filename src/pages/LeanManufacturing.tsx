@@ -1,7 +1,6 @@
 import { 
   Eye, 
-  Activity, 
-  GraduationCap,
+  Activity
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -32,19 +31,6 @@ const leanModules = [
       "Real-time ergonomic risk assessment"
     ],
     status: "coming-soon"
-  },
-  {
-    title: "Cross-Training & Competency",
-    description: "AI-driven training and skill validation system",
-    icon: GraduationCap,
-    href: "/operations/lean/training",
-    features: [
-      "Expert performance analysis for baseline standards",
-      "Automated skill gap analysis",
-      "Real-time training feedback",
-      "Progress tracking with objective metrics"
-    ],
-    status: "coming-soon"
   }
 ];
 
@@ -56,7 +42,7 @@ const LeanManufacturing = () => {
         <h1 className="text-3xl font-bold">Lean Manufacturing</h1>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {leanModules.map((module) => (
           <Link 
             key={module.title} 
