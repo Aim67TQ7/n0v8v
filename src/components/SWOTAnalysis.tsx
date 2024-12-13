@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, Edit2, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { saveTrainingData } from "@/services/fiveSEvaluationService";
 import { StrengthsWeaknesses } from "./analysis/StrengthsWeaknesses";
@@ -28,8 +27,6 @@ export const SWOTAnalysis = ({
   evaluationId 
 }: SWOTAnalysisProps) => {
   const { toast } = useToast();
-  const [isGood, setIsGood] = useState(false);
-  const [needsImprovement, setNeedsImprovement] = useState(false);
   const [trainingFeedback, setTrainingFeedback] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -74,8 +71,6 @@ export const SWOTAnalysis = ({
       });
 
       setTrainingFeedback("");
-      setIsGood(false);
-      setNeedsImprovement(false);
     } catch (error) {
       console.error('Error submitting feedback:', error);
       toast({
@@ -119,62 +114,31 @@ export const SWOTAnalysis = ({
           <h3 className="font-semibold mb-4">Train the Model</h3>
           
           <div className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="good"
-                  checked={isGood}
-                  onCheckedChange={(checked) => {
-                    setIsGood(checked as boolean);
-                    if (checked) setNeedsImprovement(false);
-                  }}
-                />
-                <label htmlFor="good" className="flex items-center text-sm">
-                  <Check className="w-4 h-4 mr-1 text-green-500" />
-                  Good Analysis
-                </label>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="improve"
-                  checked={needsImprovement}
-                  onCheckedChange={(checked) => {
-                    setNeedsImprovement(checked as boolean);
-                    if (checked) setIsGood(false);
-                  }}
-                />
-                <label htmlFor="improve" className="flex items-center text-sm">
-                  <Edit2 className="w-4 h-4 mr-1 text-yellow-500" />
-                  Needs Improvement
-                </label>
-              </div>
-            </div>
-
-            {(isGood || needsImprovement) && (
-              <div className="space-y-4">
-                <Textarea
-                  placeholder="Provide training comments to help improve the model..."
-                  value={trainingFeedback}
-                  onChange={(e) => setTrainingFeedback(e.target.value)}
-                  className="min-h-[100px]"
-                />
-                <Button 
-                  onClick={handleSubmitFeedback}
-                  disabled={isSubmitting || !trainingFeedback.trim()}
-                  className="w-full"
-                >
-                  {isSubmitting ? (
-                    "Submitting..."
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4 mr-2" />
-                      Submit Training Feedback
-                    </>
-                  )}
-                </Button>
-              </div>
-            )}
+            <p className="text-sm text-muted-foreground">
+              Please provide feedback to improve the model
+            </p>
+            
+            <Textarea
+              placeholder="Enter your feedback..."
+              value={trainingFeedback}
+              onChange={(e) => setTrainingFeedback(e.target.value)}
+              className="min-h-[100px]"
+            />
+            
+            <Button 
+              onClick={handleSubmitFeedback}
+              disabled={isSubmitting}
+              className="w-full"
+            >
+              {isSubmitting ? (
+                "Submitting..."
+              ) : (
+                <>
+                  <Send className="w-4 h-4 mr-2" />
+                  Submit Feedback
+                </>
+              )}
+            </Button>
           </div>
         </Card>
       </div>
