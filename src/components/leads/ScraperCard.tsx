@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Search } from 'lucide-react';
+import { Search, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -33,6 +33,10 @@ const ScraperCard = () => {
 
       if (error) throw error;
 
+      if (!data.data || !Array.isArray(data.data)) {
+        throw new Error('Invalid response format from scraping service');
+      }
+
       setResults(data.data);
       toast({
         title: "Search Complete",
@@ -42,12 +46,37 @@ const ScraperCard = () => {
       console.error('Scraping error:', error);
       toast({
         title: "Search Failed",
-        description: "Failed to fetch results. Please try again.",
+        description: error.message || "Failed to fetch results. Please try again.",
         variant: "destructive"
       });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const downloadCSV = () => {
+    if (!results || results.length === 0) return;
+
+    const headers = ['Name', 'Address', 'Phone', 'Website', 'Rating'];
+    const csvContent = [
+      headers.join(','),
+      ...results.map(result => [
+        `"${result.name || ''}"`,
+        `"${result.address || ''}"`,
+        `"${result.phone || ''}"`,
+        `"${result.website || ''}"`,
+        `"${result.rating || ''}"`,
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `leads_${userInput.searchTerm}_${userInput.location}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -100,14 +129,26 @@ const ScraperCard = () => {
             />
           </div>
 
-          <button
-            onClick={handleSearch}
-            disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 flex items-center justify-center gap-2 disabled:opacity-50"
-          >
-            <Search className="w-4 h-4" />
-            {isLoading ? 'Searching...' : 'Search'}
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleSearch}
+              disabled={isLoading}
+              className="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              <Search className="w-4 h-4" />
+              {isLoading ? 'Searching...' : 'Search'}
+            </button>
+
+            {results && results.length > 0 && (
+              <button
+                onClick={downloadCSV}
+                className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 flex items-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Download CSV
+              </button>
+            )}
+          </div>
         </div>
 
         {results && (
@@ -130,6 +171,9 @@ const ScraperCard = () => {
                     >
                       {result.website}
                     </a>
+                  )}
+                  {result.rating && (
+                    <p className="text-sm text-gray-600">Rating: {result.rating}</p>
                   )}
                 </div>
               ))}
