@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
+import { Check, Edit2, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { saveTrainingData } from "@/services/fiveSEvaluationService";
 import { StrengthsWeaknesses } from "./analysis/StrengthsWeaknesses";
@@ -27,12 +28,13 @@ export const SWOTAnalysis = ({
   evaluationId 
 }: SWOTAnalysisProps) => {
   const { toast } = useToast();
-  const [isLearning, setIsLearning] = useState(false);
-  const [learningFeedback, setLearningFeedback] = useState("");
+  const [isGood, setIsGood] = useState(false);
+  const [needsImprovement, setNeedsImprovement] = useState(false);
+  const [trainingFeedback, setTrainingFeedback] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmitFeedback = async () => {
-    if (!isLearning || !learningFeedback.trim() || !evaluationId) return;
+    if (!evaluationId) return;
 
     try {
       setIsSubmitting(true);
@@ -53,7 +55,7 @@ export const SWOTAnalysis = ({
 
       await saveTrainingData(
         evaluationId,
-        learningFeedback,
+        trainingFeedback,
         imageUrls,
         {
           strengths,
@@ -71,8 +73,9 @@ export const SWOTAnalysis = ({
         description: "Thank you for helping train the model.",
       });
 
-      setLearningFeedback("");
-      setIsLearning(false);
+      setTrainingFeedback("");
+      setIsGood(false);
+      setNeedsImprovement(false);
     } catch (error) {
       console.error('Error submitting feedback:', error);
       toast({
@@ -113,36 +116,66 @@ export const SWOTAnalysis = ({
         />
 
         <Card className="p-4">
-          <div className="flex items-center space-x-2 mb-4">
-            <Checkbox
-              id="learning"
-              checked={isLearning}
-              onCheckedChange={(checked) => setIsLearning(checked as boolean)}
-            />
-            <label
-              htmlFor="learning"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Train the model
-            </label>
-          </div>
+          <h3 className="font-semibold mb-4">Train the Model</h3>
+          
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="good"
+                  checked={isGood}
+                  onCheckedChange={(checked) => {
+                    setIsGood(checked as boolean);
+                    if (checked) setNeedsImprovement(false);
+                  }}
+                />
+                <label htmlFor="good" className="flex items-center text-sm">
+                  <Check className="w-4 h-4 mr-1 text-green-500" />
+                  Good Analysis
+                </label>
+              </div>
 
-          {isLearning && (
-            <div className="space-y-4">
-              <Textarea
-                placeholder="Please provide feedback on the analysis to help train the model..."
-                value={learningFeedback}
-                onChange={(e) => setLearningFeedback(e.target.value)}
-                className="min-h-[100px]"
-              />
-              <Button 
-                onClick={handleSubmitFeedback}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Submitting..." : "Submit to Train Model"}
-              </Button>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="improve"
+                  checked={needsImprovement}
+                  onCheckedChange={(checked) => {
+                    setNeedsImprovement(checked as boolean);
+                    if (checked) setIsGood(false);
+                  }}
+                />
+                <label htmlFor="improve" className="flex items-center text-sm">
+                  <Edit2 className="w-4 h-4 mr-1 text-yellow-500" />
+                  Needs Improvement
+                </label>
+              </div>
             </div>
-          )}
+
+            {(isGood || needsImprovement) && (
+              <div className="space-y-4">
+                <Textarea
+                  placeholder="Provide training comments to help improve the model..."
+                  value={trainingFeedback}
+                  onChange={(e) => setTrainingFeedback(e.target.value)}
+                  className="min-h-[100px]"
+                />
+                <Button 
+                  onClick={handleSubmitFeedback}
+                  disabled={isSubmitting || !trainingFeedback.trim()}
+                  className="w-full"
+                >
+                  {isSubmitting ? (
+                    "Submitting..."
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 mr-2" />
+                      Submit Training Feedback
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+          </div>
         </Card>
       </div>
     </div>
