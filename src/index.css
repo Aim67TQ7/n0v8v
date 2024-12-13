@@ -32,6 +32,11 @@
     @apply bg-gray-50 text-gray-500 cursor-not-allowed;
   }
 
+  /* Button base styles for consistency */
+  button {
+    @apply min-h-[40px] min-w-[120px] px-4 py-2;
+  }
+
   /* Button loading state styles */
   button:disabled {
     @apply opacity-70 cursor-not-allowed;
