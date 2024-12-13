@@ -11,7 +11,9 @@ import {
   Globe,
   Building,
   FileSpreadsheet,
-  GraduationCap
+  GraduationCap,
+  MessageSquare,
+  User,
 } from "lucide-react";
 import type { ModuleCardProps } from "./ModuleCard";
 
@@ -82,6 +84,27 @@ export const modulesList: ModuleCardProps[] = [
 ];
 
 export const customerFocusTools: ModuleCardProps[] = [
+  {
+    title: "Bot Conversations",
+    description: "AI-powered chat interactions with customers",
+    icon: MessageSquare,
+    href: "/customer-focus/bot-conversations",
+    status: "ready"
+  },
+  {
+    title: "Customer Interaction",
+    description: "Track and improve customer engagement",
+    icon: User,
+    href: "/customer-focus/interactions",
+    status: "ready"
+  },
+  {
+    title: "Training Resources",
+    description: "Customer service training materials",
+    icon: BookOpen,
+    href: "/customer-focus/training",
+    status: "ready"
+  },
   {
     title: "Lead Generation",
     description: "Web scraping tools for automated lead generation",
