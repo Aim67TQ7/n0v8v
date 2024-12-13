@@ -10,17 +10,19 @@ export const FiveSEvaluationImages = ({ images }: FiveSEvaluationImagesProps) =>
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
       {displayImages.map((image, index) => (
         <div key={index} className="relative group">
-          {image ? (
-            <img
-              src={image.image_url}
-              alt={`Evaluation Image ${index + 1}`}
-              className="w-full h-24 object-cover rounded-lg"
-            />
-          ) : (
-            <div className="w-full h-24 bg-gray-100 rounded-lg flex items-center justify-center">
-              <p className="text-gray-400">Image {index + 1}</p>
-            </div>
-          )}
+          <div className="aspect-w-4 aspect-h-3 w-full">
+            {image ? (
+              <img
+                src={image.image_url}
+                alt={`Evaluation Image ${index + 1}`}
+                className="w-full h-full object-cover rounded-lg"
+              />
+            ) : (
+              <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
+                <p className="text-gray-400">Image {index + 1}</p>
+              </div>
+            )}
+          </div>
         </div>
       ))}
     </div>
