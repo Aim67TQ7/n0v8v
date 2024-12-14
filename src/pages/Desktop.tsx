@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -6,8 +7,10 @@ import { Home, Package, Bot } from "lucide-react";
 const Desktop = () => {
   const navigate = useNavigate();
 
-  // Automatically navigate to hub
-  navigate("/");
+  useEffect(() => {
+    // Immediately redirect to hub
+    navigate("/");
+  }, []); // Empty dependency array means this runs once on mount
 
   return (
     <div className="container mx-auto px-4 py-8">
