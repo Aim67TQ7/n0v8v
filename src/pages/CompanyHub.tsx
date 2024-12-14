@@ -15,9 +15,12 @@ const CompanyHub = () => {
             {/* Left Sidebar */}
             <div className="col-span-2">
               <div className="space-y-6">
-                <ChatHistory />
+                <Card className="p-3 bg-white/90 backdrop-blur-sm">
+                  <h2 className="font-semibold text-sm mb-3">Chat History</h2>
+                  <ChatHistory />
+                </Card>
                 
-                <Card className="p-4">
+                <Card className="p-4 bg-white/90 backdrop-blur-sm">
                   <h2 className="font-semibold mb-4">Train the Model</h2>
                   <Textarea
                     placeholder="Provide feedback, improve data, or report hallucinations..."
@@ -32,9 +35,12 @@ const CompanyHub = () => {
             {/* Main Content */}
             <div className="col-span-8">
               <div className="space-y-6">
-                <CompanyNews />
+                <Card className="p-4 bg-white/90 backdrop-blur-sm">
+                  <h2 className="font-semibold mb-4">Company News</h2>
+                  <CompanyNews />
+                </Card>
                 
-                <Card className="p-4">
+                <Card className="p-4 bg-white/90 backdrop-blur-sm">
                   <h2 className="font-semibold mb-4">Active Chat</h2>
                   <div className="space-y-4 mb-4 h-[400px] overflow-y-auto">
                     {/* Chat messages would go here */}
@@ -52,7 +58,9 @@ const CompanyHub = () => {
 
             {/* Right Sidebar */}
             <div className="col-span-2">
-              <HubLinks />
+              <Card className="p-4 bg-white/90 backdrop-blur-sm">
+                <HubLinks />
+              </Card>
             </div>
           </div>
         </HubCard>
