@@ -50,7 +50,7 @@ export const ChatHistory = () => {
               <Maximize2 className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
+          <DialogContent className="sm:max-w-[600px] bg-white">
             <div className="p-4">
               <h2 className="text-lg font-semibold mb-4">Chat History</h2>
               <ChatHistoryContent />
