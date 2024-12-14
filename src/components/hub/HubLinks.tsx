@@ -53,7 +53,7 @@ export const HubLinks = () => {
   ];
 
   return (
-    <Card className="p-3 bg-white/90 backdrop-blur-sm">
+    <Card className="p-3" style={{ backgroundColor: 'var(--card-bg)' }}>
       <h2 className="font-semibold mb-2 text-sm">Quick Links</h2>
       <ScrollArea className="h-[calc(100vh-200px)]">
         <div className="space-y-1.5">
@@ -62,6 +62,7 @@ export const HubLinks = () => {
               key={section.title} 
               className={`p-2 ${section.onClick ? 'cursor-pointer hover:bg-accent' : ''}`}
               onClick={section.onClick}
+              style={{ backgroundColor: 'var(--card-bg)' }}
             >
               <div className="flex items-center gap-1.5 mb-1">
                 <section.icon className="h-4 w-4 text-secondary" />
