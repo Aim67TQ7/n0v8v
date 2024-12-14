@@ -74,12 +74,6 @@ export const ScoreAnalysis = ({
           </div>
 
           <div className="space-y-4">
-            <div>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                {getCategoryAnalysis(name)}
-              </p>
-            </div>
-
             {weaknesses
               .filter(w => w.toLowerCase().includes(name.toLowerCase()))
               .length > 0 && (
@@ -96,6 +90,12 @@ export const ScoreAnalysis = ({
                 </ul>
               </div>
             )}
+
+            <div>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                {getCategoryAnalysis(name)}
+              </p>
+            </div>
           </div>
         </Card>
       ))}
