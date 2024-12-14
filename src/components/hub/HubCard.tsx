@@ -10,6 +10,7 @@ interface HubCardProps {
 
 export const HubCard = ({ children }: HubCardProps) => {
   const [hubColor, setHubColor] = useState("#9b87f5");
+  const [opacity, setOpacity] = useState(90);
   const { user } = useAuth();
   const currentDate = new Date();
 
@@ -49,9 +50,11 @@ export const HubCard = ({ children }: HubCardProps) => {
         <ColorSelector 
           selectedColor={hubColor}
           onColorSelect={setHubColor}
+          opacity={opacity}
+          onOpacityChange={setOpacity}
         />
       </div>
-      <div className="space-y-6">
+      <div className="space-y-6" style={{ '--card-opacity': opacity / 100 } as React.CSSProperties}>
         {children}
       </div>
     </Card>

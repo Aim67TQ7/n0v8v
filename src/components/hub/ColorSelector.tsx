@@ -1,8 +1,8 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider"; 
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 
 const colorOptions = [
   // Primary Colors
@@ -22,18 +22,19 @@ const colorOptions = [
 
 interface ColorSelectorProps {
   selectedColor: string;
-  selectedSecondaryColor?: string;
   onColorSelect: (color: string) => void;
+  opacity: number;
+  onOpacityChange: (opacity: number) => void;
 }
 
 export const ColorSelector = ({ 
   selectedColor, 
   onColorSelect,
+  opacity,
+  onOpacityChange
 }: ColorSelectorProps) => {
-  const [opacity, setOpacity] = useState(100);
-
   const handleOpacityChange = (value: number[]) => {
-    setOpacity(value[0]);
+    onOpacityChange(value[0]);
   };
 
   return (
@@ -73,7 +74,7 @@ export const ColorSelector = ({
           <div>
             <h4 className="text-sm font-medium mb-2">Card Transparency</h4>
             <Slider
-              defaultValue={[100]}
+              defaultValue={[opacity]}
               max={100}
               step={1}
               value={[opacity]}
