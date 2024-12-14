@@ -47,14 +47,14 @@ export const HubLinks = () => {
           <Card key={section.title} className="p-4">
             <div className="flex items-center gap-2 mb-3">
               <section.icon className="h-5 w-5 text-secondary" />
-              <h3 className="text-sm font-medium text-gray-500">{section.title}</h3>
+              <h3 className="text-xs font-medium text-gray-500">{section.title}</h3>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-0">
               {section.links.map((link) => (
                 <Button
                   key={link.name}
                   variant="ghost"
-                  className="w-full justify-start text-left hover:bg-accent"
+                  className="w-full justify-start text-left h-6 text-xs py-0"
                   asChild
                 >
                   <Link to={link.href}>{link.name}</Link>
