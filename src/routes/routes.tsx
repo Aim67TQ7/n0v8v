@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import CompanyGPT from "@/pages/CompanyGPT";
+import CompanyHub from "@/pages/CompanyHub";
 import Settings from "@/pages/Settings";
 import Modules from "@/pages/Modules";
 import Index from "@/pages/Index";
@@ -32,7 +33,7 @@ import { AuthWrapper } from "@/components/AuthWrapper";
 export const routes = [
   {
     path: "/",
-    element: <Index />
+    element: <CompanyHub />
   },
   {
     path: "/tools",
