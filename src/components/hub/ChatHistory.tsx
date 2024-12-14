@@ -44,6 +44,19 @@ export const ChatHistory = () => {
           />
           <Search className="absolute right-2 top-2.5 h-4 w-4 text-gray-400" />
         </div>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+              <Maximize2 className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[600px]">
+            <div className="p-4">
+              <h2 className="text-lg font-semibold mb-4">Chat History</h2>
+              <ChatHistoryContent />
+            </div>
+          </DialogContent>
+        </Dialog>
         <Button variant="secondary" size="sm">
           Search
         </Button>
@@ -74,21 +87,8 @@ export const ChatHistory = () => {
 
   return (
     <Card className="p-3">
-      <div className="flex items-center justify-between mb-2">
+      <div className="mb-2">
         <h2 className="font-semibold text-sm">Chat History</h2>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <Maximize2 className="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
-            <div className="p-4">
-              <h2 className="text-lg font-semibold mb-4">Chat History</h2>
-              <ChatHistoryContent />
-            </div>
-          </DialogContent>
-        </Dialog>
       </div>
       <ChatHistoryContent />
     </Card>
