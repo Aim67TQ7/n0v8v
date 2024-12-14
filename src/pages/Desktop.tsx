@@ -6,10 +6,13 @@ import { Home, Package, Bot } from "lucide-react";
 const Desktop = () => {
   const navigate = useNavigate();
 
+  // Automatically navigate to hub
+  navigate("/");
+
   return (
     <div className="container mx-auto px-4 py-8">
       <Card className="p-6 bg-white shadow-lg">
-        <h1 className="text-2xl font-bold mb-6">Welcome to Desktop</h1>
+        <h1 className="text-2xl font-bold mb-6">Redirecting to Hub...</h1>
         
         <div className="grid gap-4">
           <Button 
