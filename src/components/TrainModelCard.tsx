@@ -23,11 +23,12 @@ export const TrainModelCard = ({ toolType, resourceId, metadata }: TrainModelCar
     try {
       setIsSubmitting(true);
 
-      // Save the training feedback
+      // Save the training feedback to the new generic table
       const { error } = await supabase
-        .from(`${toolType}_learning_feedback`)
+        .from('learning_feedback')
         .insert({
-          [`${toolType}_id`]: resourceId,
+          tool_type: toolType,
+          resource_id: resourceId,
           feedback: trainingFeedback,
           metadata: metadata || {}
         });

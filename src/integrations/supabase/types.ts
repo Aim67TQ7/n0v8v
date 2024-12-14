@@ -726,6 +726,36 @@ export type Database = {
           },
         ]
       }
+      learning_feedback: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          feedback: string
+          id: string
+          metadata: Json | null
+          resource_id: string
+          tool_type: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          feedback: string
+          id?: string
+          metadata?: Json | null
+          resource_id: string
+          tool_type: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          feedback?: string
+          id?: string
+          metadata?: Json | null
+          resource_id?: string
+          tool_type?: string
+        }
+        Relationships: []
+      }
       locations: {
         Row: {
           company_id: string | null
