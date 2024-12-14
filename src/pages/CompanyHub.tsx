@@ -50,11 +50,11 @@ const CompanyHub = () => {
             </Sheet>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 h-full">
             {/* Left Sidebar - Hidden on mobile, shown in dropdown, visible on desktop */}
             <div className="hidden md:block md:col-span-2">
-              <div className="space-y-4 h-full flex flex-col">
-                <ChatHistory />
+              <div className="h-full flex flex-col">
+                <ChatHistory className="flex-grow" />
                 <Card className="p-4 bg-white/90 backdrop-blur-sm mt-auto">
                   <h2 className="font-semibold mb-4">Train the Model</h2>
                   <Textarea
@@ -69,7 +69,7 @@ const CompanyHub = () => {
 
             {/* Main Content - Full width on mobile, 8 cols on desktop */}
             <div className="md:col-span-8">
-              <div className="space-y-4 h-full flex flex-col">
+              <div className="h-full flex flex-col">
                 <Card className="p-4 bg-white/90 backdrop-blur-sm">
                   <h2 className="font-semibold mb-4">Company News</h2>
                   <CompanyNews />
@@ -93,7 +93,8 @@ const CompanyHub = () => {
 
             {/* Right Sidebar - Hidden on mobile, visible on desktop */}
             <div className="hidden md:block md:col-span-2">
-              <div className="h-full flex flex-col justify-between">
+              <div className="h-full flex flex-col">
+                <div className="flex-grow" />
                 <HubLinks />
               </div>
             </div>
