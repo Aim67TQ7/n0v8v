@@ -2,7 +2,6 @@ import { Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { AppProviders } from "@/components/AppProviders";
-import { Header } from "@/components/Header";
 import { routes } from "@/routes/routes";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AuthWrapper } from "@/components/AuthWrapper";
@@ -26,7 +25,7 @@ const App = () => {
                 />
               ))}
 
-            {/* CompanyGPT route (requires auth, no header) */}
+            {/* CompanyGPT route (requires auth) */}
             <Route
               path="/company-gpt"
               element={
@@ -48,27 +47,24 @@ const App = () => {
               }
             />
 
-            {/* All other protected routes (with header) */}
+            {/* All other protected routes */}
             <Route
               path="*"
               element={
                 <AuthWrapper>
-                  <>
-                    <Header />
-                    <main className="flex-1">
-                      <Routes>
-                        {routes
-                          .filter(route => !publicRoutes.includes(route.path) && route.path !== '/company-gpt')
-                          .map(route => (
-                            <Route
-                              key={route.path}
-                              path={route.path}
-                              element={route.element}
-                            />
-                          ))}
-                      </Routes>
-                    </main>
-                  </>
+                  <main className="flex-1">
+                    <Routes>
+                      {routes
+                        .filter(route => !publicRoutes.includes(route.path) && route.path !== '/company-gpt')
+                        .map(route => (
+                          <Route
+                            key={route.path}
+                            path={route.path}
+                            element={route.element}
+                          />
+                        ))}
+                    </Routes>
+                  </main>
                 </AuthWrapper>
               }
             />
