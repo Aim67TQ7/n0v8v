@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Header } from "@/components/Header";
 
 const Desktop = () => {
   const navigate = useNavigate();
@@ -8,7 +9,11 @@ const Desktop = () => {
     navigate("/");
   }, [navigate]);
 
-  return null;
+  return (
+    <div className="min-h-screen">
+      <Header />
+    </div>
+  );
 };
 
 export default Desktop;
