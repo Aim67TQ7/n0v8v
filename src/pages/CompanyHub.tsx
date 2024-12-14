@@ -32,10 +32,6 @@ const CompanyHub = () => {
         />
         <Button className="w-full">Submit Feedback</Button>
       </Card>
-
-      <Card className="p-4 bg-white/90 backdrop-blur-sm">
-        <HubLinks />
-      </Card>
     </div>
   );
 
@@ -87,11 +83,9 @@ const CompanyHub = () => {
               </div>
             </div>
 
-            {/* Right Sidebar - Hidden on mobile, shown in dropdown, visible on desktop */}
+            {/* Right Sidebar - Hidden on mobile, visible on desktop */}
             <div className="hidden md:block md:col-span-2">
-              <Card className="p-4 bg-white/90 backdrop-blur-sm">
-                <HubLinks />
-              </Card>
+              <HubLinks />
             </div>
           </div>
         </HubCard>
