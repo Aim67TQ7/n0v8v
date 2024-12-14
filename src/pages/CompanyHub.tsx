@@ -17,7 +17,7 @@ const CompanyHub = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const SidebarContent = () => (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <Card className="p-3 bg-white/90 backdrop-blur-sm">
         <h2 className="font-semibold text-sm mb-3">Chat History</h2>
         <ChatHistory />
@@ -53,7 +53,7 @@ const CompanyHub = () => {
             </Sheet>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
             {/* Left Sidebar - Hidden on mobile, shown in dropdown, visible on desktop */}
             <div className="hidden md:block md:col-span-2">
               <SidebarContent />
@@ -61,7 +61,7 @@ const CompanyHub = () => {
 
             {/* Main Content - Full width on mobile, 8 cols on desktop */}
             <div className="md:col-span-8">
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <Card className="p-4 bg-white/90 backdrop-blur-sm">
                   <h2 className="font-semibold mb-4">Company News</h2>
                   <CompanyNews />
