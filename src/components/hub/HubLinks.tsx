@@ -1,8 +1,10 @@
 import { Card } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Folder, Grid, Wrench, FileText } from "lucide-react";
 
 export const HubLinks = () => {
+  const navigate = useNavigate();
+
   const sections = [
     {
       title: "Company Resources",
@@ -19,9 +21,14 @@ export const HubLinks = () => {
       title: "Function Modules",
       icon: Grid,
       links: [
-        { name: "Sales", href: "/sales" },
-        { name: "Engineering", href: "/engineering" },
-      ]
+        { name: "Sales", href: "/modules/sales" },
+        { name: "Engineering", href: "/modules/engineering" },
+        { name: "Facilities", href: "/modules/facilities" },
+        { name: "Quality", href: "/modules/quality" },
+        { name: "Production", href: "/modules/production" },
+        { name: "Human Resources", href: "/modules/hr" },
+      ],
+      onClick: () => navigate("/modules")
     },
     {
       title: "Efficiency Tools",
@@ -46,7 +53,11 @@ export const HubLinks = () => {
       <h2 className="font-semibold mb-2 text-sm">Quick Links</h2>
       <div className="space-y-1.5">
         {sections.map((section) => (
-          <Card key={section.title} className="p-2">
+          <Card 
+            key={section.title} 
+            className={`p-2 ${section.onClick ? 'cursor-pointer hover:bg-accent' : ''}`}
+            onClick={section.onClick}
+          >
             <div className="flex items-center gap-1.5 mb-1">
               <section.icon className="h-4 w-4 text-secondary" />
               <h3 className="text-xs font-medium text-gray-500">{section.title}</h3>
