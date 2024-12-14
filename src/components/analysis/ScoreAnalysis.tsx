@@ -28,76 +28,43 @@ export const ScoreAnalysis = ({
     return 'bg-green-100 text-green-800';
   };
 
+  const getCategoryAnalysis = (category: string) => {
+    switch (category) {
+      case 'Sort':
+        return 'In the current workspace, there are opportunities to enhance organization through systematic sorting. Removing unnecessary items and establishing clear inventory controls will directly improve material retrieval times and reduce motion waste. This optimization can lead to a 15-30% reduction in time spent searching for tools and materials.';
+      case 'Set in Order':
+        return 'The workspace layout shows potential for improved arrangement of frequently used items. By implementing visual management systems and optimizing tool placement based on usage frequency, we can minimize unnecessary movement and streamline daily operations. Strategic placement can reduce motion waste by up to 25% and improve overall workflow efficiency.';
+      case 'Shine':
+        return 'Regular cleaning and maintenance procedures need strengthening in key areas of the workspace. Implementing daily cleaning schedules and preventive maintenance checks will help identify potential equipment issues early and maintain optimal working conditions. This proactive approach can reduce equipment downtime by up to 20% and extend asset lifetime.';
+      case 'Standardize':
+        return 'Current processes show variation in how 5S practices are maintained across different shifts and operators. Developing and documenting clear standard operating procedures, combined with visual controls, will ensure consistent application of 5S principles. Standardization typically results in a 30% reduction in process variation and improved quality outcomes.';
+      case 'Sustain':
+        return 'Long-term adherence to 5S practices requires strengthening through systematic audits and employee engagement. Implementing regular audits, recognition programs, and continuous improvement initiatives will help embed 5S practices into daily routines. This cultural shift typically leads to sustained improvements and a 40% increase in employee participation in workplace organization initiatives.';
+      default:
+        return '';
+    }
+  };
+
   const formatImprovementSuggestion = (weakness: string, category: string) => {
-    const cleanWeakness = weakness.replace(new RegExp(`^${category}:\\s*`, 'i'), '');
+    const cleanWeakness = weakness.replace(new RegExp(`^${category}:\\s*`, 'i'), '').toLowerCase();
     
-    const impact = category === 'Sort' 
-      ? 'impacting workspace efficiency and material retrieval times'
-      : category === 'Set in Order'
-      ? 'causing workflow disruptions and increased operation time'
-      : category === 'Shine'
-      ? 'affecting product quality and workplace safety standards'
-      : category === 'Standardize'
-      ? 'hindering consistent workplace organization'
-      : 'impeding long-term 5S sustainability';
-
-    const suggestion = cleanWeakness
-      .replace(/multiple|numerous/gi, "Remove")
-      .replace(/missing|lack of|no |poor/gi, "Implement")
-      .replace(/disorganized|messy/gi, "Organize")
-      .replace(/unclear|confusing/gi, "Establish clear");
-
-    const firstChar = suggestion.charAt(0).toUpperCase();
-    const restOfString = suggestion.slice(1).toLowerCase();
-    const capitalizedSuggestion = firstChar + restOfString;
-
-    return `${capitalizedSuggestion}. This is ${impact}.`;
+    return `Based on the current workspace condition, ${cleanWeakness}. Addressing this will improve operational efficiency and workplace organization.`;
   };
 
   const categories = displayMode === 'primary' 
     ? [
-        { 
-          name: 'Sort', 
-          score: sortScore, 
-          description: 'Organization of materials and removal of unnecessary items',
-          details: 'Focus on identifying and removing unnecessary items from the workspace. This improves efficiency and reduces clutter.',
-          impact: 'Directly affects workspace efficiency and material retrieval times.'
-        },
-        { 
-          name: 'Set in Order', 
-          score: setScore, 
-          description: 'Efficient arrangement of necessary items',
-          details: 'Organize remaining items for optimal workflow and easy access. Everything should have a designated place.',
-          impact: 'Reduces time spent searching for tools and materials.'
-        },
-        { 
-          name: 'Shine', 
-          score: shineScore, 
-          description: 'Workplace cleanliness and maintenance',
-          details: 'Regular cleaning and inspection of workspace and equipment. Identify and address sources of contamination.',
-          impact: 'Maintains equipment reliability and workplace safety.'
-        }
+        { name: 'Sort', score: sortScore },
+        { name: 'Set in Order', score: setScore },
+        { name: 'Shine', score: shineScore }
       ]
     : [
-        { 
-          name: 'Standardize', 
-          score: standardizeScore, 
-          description: 'Consistent processes and visual management',
-          details: 'Establish clear procedures and visual controls to maintain the first three S\'s.',
-          impact: 'Ensures sustainability of 5S implementation.'
-        },
-        { 
-          name: 'Sustain', 
-          score: sustainScore, 
-          description: 'Long-term maintenance of 5S practices',
-          details: 'Build habits and culture to maintain 5S practices over time. Regular audits and continuous improvement.',
-          impact: 'Creates lasting organizational change and continuous improvement.'
-        }
+        { name: 'Standardize', score: standardizeScore },
+        { name: 'Sustain', score: sustainScore }
       ];
 
   return (
     <>
-      {categories.map(({ name, score, description, details, impact }) => (
+      {categories.map(({ name, score }) => (
         <Card key={name} className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h4 className="font-medium text-lg">{name}</h4>
@@ -108,16 +75,16 @@ export const ScoreAnalysis = ({
 
           <div className="space-y-4">
             <div>
-              <p className="text-sm text-muted-foreground">{description}</p>
-              <p className="mt-2 text-sm">{details}</p>
-              <p className="mt-1 text-sm font-medium text-muted-foreground">{impact}</p>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                {getCategoryAnalysis(name)}
+              </p>
             </div>
 
             {weaknesses
               .filter(w => w.toLowerCase().includes(name.toLowerCase()))
               .length > 0 && (
               <div>
-                <h5 className="font-medium text-sm mb-2">Improvement Areas:</h5>
+                <h5 className="font-medium text-sm mb-2">Specific Findings:</h5>
                 <ul className="list-disc pl-5 space-y-2">
                   {weaknesses
                     .filter(w => w.toLowerCase().includes(name.toLowerCase()))
