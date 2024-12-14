@@ -31,32 +31,17 @@ export const ScoreAnalysis = ({
   const getCategoryAnalysis = (category: string) => {
     switch (category) {
       case 'Sort':
-        return [
-          "Current State: Excessive items and unclear inventory controls increase material retrieval times by 15-30%",
-          "Recommendation: Implement systematic sorting system and weekly inventory audits to optimize workspace organization"
-        ];
+        return "The current workspace shows excessive items and unclear inventory controls, resulting in 15-30% increased material retrieval times. To address this, implementing a systematic sorting system combined with weekly inventory audits will optimize workspace organization and significantly reduce time waste.";
       case 'Set in Order':
-        return [
-          "Current State: Suboptimal tool placement increases motion waste by 25% and impacts daily workflow efficiency",
-          "Recommendation: Create visual management system with tools arranged by frequency of use within arm's reach"
-        ];
+        return "Suboptimal tool placement is currently causing a 25% increase in motion waste and negatively impacting daily workflow efficiency. Creating a visual management system with tools arranged by frequency of use within arm's reach will streamline operations and enhance productivity.";
       case 'Shine':
-        return [
-          "Current State: Inconsistent cleaning leads to 20% increased equipment downtime and reduced asset lifetime",
-          "Recommendation: Establish daily cleaning schedules with visual inspection checklists for each work area"
-        ];
+        return "Inconsistent cleaning practices have led to a 20% increase in equipment downtime and reduced asset lifetime. Establishing daily cleaning schedules with visual inspection checklists for each work area will improve equipment reliability and maintain optimal working conditions.";
       case 'Standardize':
-        return [
-          "Current State: Process variations between shifts result in 30% inconsistency in 5S practice application",
-          "Recommendation: Develop clear SOPs with visual guides and implement regular cross-shift audits"
-        ];
+        return "Current process variations between shifts have resulted in 30% inconsistency in 5S practice application. Developing clear SOPs with visual guides and implementing regular cross-shift audits will ensure uniform practices and improve overall operational consistency.";
       case 'Sustain':
-        return [
-          "Current State: Limited long-term adherence reduces employee participation by 40% in workplace organization",
-          "Recommendation: Implement monthly recognition program and visual management boards to track improvements"
-        ];
+        return "Limited long-term adherence to 5S practices has reduced employee participation by 40% in workplace organization initiatives. Implementing a monthly recognition program alongside visual management boards will help track improvements and maintain sustained engagement in 5S practices.";
       default:
-        return [];
+        return "";
     }
   };
 
@@ -105,13 +90,9 @@ export const ScoreAnalysis = ({
             )}
 
             <div className="mt-4">
-              <ul className="space-y-2">
-                {getCategoryAnalysis(name).map((point, index) => (
-                  <li key={index} className="text-sm text-gray-700 leading-relaxed">
-                    • {point}
-                  </li>
-                ))}
-              </ul>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                {getCategoryAnalysis(name)}
+              </p>
             </div>
           </div>
         </Card>
