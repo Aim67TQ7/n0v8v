@@ -21,7 +21,7 @@ const CompanyHub = () => {
       <ChatHistory />
       
       <Card 
-        className="p-4 bg-white backdrop-blur-sm" 
+        className="p-4 bg-white backdrop-blur-sm absolute bottom-4 left-4 right-4" 
         style={{ 
           backgroundColor: `rgba(255, 255, 255, var(--card-opacity, 0.9))`,
           color: `var(--text-color, inherit)`
@@ -59,10 +59,10 @@ const CompanyHub = () => {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 h-full">
             {/* Left Sidebar */}
             <div className="hidden md:block md:col-span-2">
-              <div className="h-full flex flex-col">
+              <div className="h-full flex flex-col relative">
                 <ChatHistory />
                 <Card 
-                  className="p-4 bg-white backdrop-blur-sm mt-4" 
+                  className="p-4 bg-white backdrop-blur-sm absolute bottom-4 left-0 right-0" 
                   style={{ 
                     backgroundColor: `rgba(255, 255, 255, var(--card-opacity, 0.9))`,
                     color: `var(--text-color, inherit)`
