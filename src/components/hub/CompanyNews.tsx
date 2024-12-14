@@ -10,7 +10,6 @@ export const CompanyNews = () => {
 
   return (
     <Card className="p-2">
-      <h2 className="font-semibold text-sm mb-2">Company News</h2>
       <ScrollArea className="h-[100px]">
         <div className="space-y-2">
           {updates.map((update, index) => (
