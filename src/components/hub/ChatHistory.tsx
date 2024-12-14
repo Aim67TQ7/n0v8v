@@ -43,7 +43,7 @@ export const ChatHistory = () => {
         <div className="space-y-2 pr-2">
           {Object.entries(groupedChats).map(([date, chats]) => (
             <div key={date} className="space-y-1">
-              <h3 className="text-xs font-medium text-gray-500 px-2">{date}</h3>
+              <h3 className="text-xs font-semibold text-gray-700 px-2">{date}</h3>
               <div className="space-y-0.5">
                 {(chats as any[]).slice(0, 4).map((chat) => (
                   <Link
