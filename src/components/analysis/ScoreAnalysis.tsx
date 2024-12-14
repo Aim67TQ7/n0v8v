@@ -31,23 +31,37 @@ export const ScoreAnalysis = ({
   const getCategoryAnalysis = (category: string) => {
     switch (category) {
       case 'Sort':
-        return 'In the current workspace, there are opportunities to enhance organization through systematic sorting. Removing unnecessary items and establishing clear inventory controls will directly improve material retrieval times and reduce motion waste. This optimization can lead to a 15-30% reduction in time spent searching for tools and materials.';
+        return [
+          "Current State: Excessive items and unclear inventory controls increase material retrieval times by 15-30%",
+          "Recommendation: Implement systematic sorting system and weekly inventory audits to optimize workspace organization"
+        ];
       case 'Set in Order':
-        return 'The workspace layout shows potential for improved arrangement of frequently used items. By implementing visual management systems and optimizing tool placement based on usage frequency, we can minimize unnecessary movement and streamline daily operations. Strategic placement can reduce motion waste by up to 25% and improve overall workflow efficiency.';
+        return [
+          "Current State: Suboptimal tool placement increases motion waste by 25% and impacts daily workflow efficiency",
+          "Recommendation: Create visual management system with tools arranged by frequency of use within arm's reach"
+        ];
       case 'Shine':
-        return 'Regular cleaning and maintenance procedures need strengthening in key areas of the workspace. Implementing daily cleaning schedules and preventive maintenance checks will help identify potential equipment issues early and maintain optimal working conditions. This proactive approach can reduce equipment downtime by up to 20% and extend asset lifetime.';
+        return [
+          "Current State: Inconsistent cleaning leads to 20% increased equipment downtime and reduced asset lifetime",
+          "Recommendation: Establish daily cleaning schedules with visual inspection checklists for each work area"
+        ];
       case 'Standardize':
-        return 'Current processes show variation in how 5S practices are maintained across different shifts and operators. Developing and documenting clear standard operating procedures, combined with visual controls, will ensure consistent application of 5S principles. Standardization typically results in a 30% reduction in process variation and improved quality outcomes.';
+        return [
+          "Current State: Process variations between shifts result in 30% inconsistency in 5S practice application",
+          "Recommendation: Develop clear SOPs with visual guides and implement regular cross-shift audits"
+        ];
       case 'Sustain':
-        return 'Long-term adherence to 5S practices requires strengthening through systematic audits and employee engagement. Implementing regular audits, recognition programs, and continuous improvement initiatives will help embed 5S practices into daily routines. This cultural shift typically leads to sustained improvements and a 40% increase in employee participation in workplace organization initiatives.';
+        return [
+          "Current State: Limited long-term adherence reduces employee participation by 40% in workplace organization",
+          "Recommendation: Implement monthly recognition program and visual management boards to track improvements"
+        ];
       default:
-        return '';
+        return [];
     }
   };
 
   const formatImprovementSuggestion = (weakness: string, category: string) => {
     const cleanWeakness = weakness.replace(new RegExp(`^${category}:\\s*`, 'i'), '').toLowerCase();
-    
     return `Based on the current workspace condition, ${cleanWeakness}. Addressing this will improve operational efficiency and workplace organization.`;
   };
 
@@ -90,10 +104,14 @@ export const ScoreAnalysis = ({
               </div>
             )}
 
-            <div>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                {getCategoryAnalysis(name)}
-              </p>
+            <div className="mt-4">
+              <ul className="space-y-2">
+                {getCategoryAnalysis(name).map((point, index) => (
+                  <li key={index} className="text-sm text-gray-700 leading-relaxed">
+                    • {point}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </Card>
