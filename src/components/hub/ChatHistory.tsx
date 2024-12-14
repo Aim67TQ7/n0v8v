@@ -39,12 +39,12 @@ export const ChatHistory = () => {
         <Search className="absolute right-2 top-2.5 h-3 w-3 text-gray-400" />
       </div>
       
-      <div className="space-y-2">
-        {Object.entries(groupedChats).map(([date, chats]) => (
-          <Card key={date} className="p-2">
-            <h3 className="text-xs font-medium text-gray-500 mb-1">{date}</h3>
-            <ScrollArea className="h-[100px]">
-              <div className="space-y-0">
+      <ScrollArea className="h-[400px]">
+        <div className="space-y-2 pr-2">
+          {Object.entries(groupedChats).map(([date, chats]) => (
+            <div key={date} className="space-y-1">
+              <h3 className="text-xs font-medium text-gray-500 px-2">{date}</h3>
+              <div className="space-y-0.5">
                 {(chats as any[]).slice(0, 4).map((chat) => (
                   <Button
                     key={chat.id}
@@ -55,10 +55,10 @@ export const ChatHistory = () => {
                   </Button>
                 ))}
               </div>
-            </ScrollArea>
-          </Card>
-        ))}
-      </div>
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
     </Card>
   );
 };
