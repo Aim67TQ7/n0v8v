@@ -10,14 +10,23 @@ interface HubCardProps {
 
 export const HubCard = ({ children }: HubCardProps) => {
   const [hubColor, setHubColor] = useState("#9b87f5");
-  const [cardColor, setCardColor] = useState("#F2FCE2FF"); // Added FF for full opacity
   const { user } = useAuth();
   const currentDate = new Date();
 
-  const handleSecondaryColorSelect = (color: string, opacity: number = 100) => {
-    const hexOpacity = Math.round((opacity / 100) * 255).toString(16).padStart(2, '0');
-    setCardColor(`${color}${hexOpacity}`);
+  // Function to determine if background is dark
+  const isBackgroundDark = (color: string) => {
+    // Convert hex to RGB
+    const r = parseInt(color.slice(1, 3), 16);
+    const g = parseInt(color.slice(3, 5), 16);
+    const b = parseInt(color.slice(5, 7), 16);
+    
+    // Calculate relative luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance < 0.5;
   };
+
+  // Determine text color based on background
+  const textColorClass = isBackgroundDark(hubColor) ? "text-white" : "text-gray-900";
 
   return (
     <Card className="p-6 transition-colors duration-300" style={{ backgroundColor: hubColor }}>
@@ -28,9 +37,9 @@ export const HubCard = ({ children }: HubCardProps) => {
             alt="Company Logo" 
             className="h-12 w-12 object-contain bg-white rounded-full p-1"
           />
-          <div className="text-white">
+          <div className={textColorClass}>
             <h2 className="text-xl font-semibold">Company Name</h2>
-            <div className="text-sm opacity-90">
+            <div className="opacity-90">
               <span>{format(currentDate, 'PPPP')}</span>
               <span className="mx-2">•</span>
               <span>{user?.email}</span>
@@ -38,13 +47,11 @@ export const HubCard = ({ children }: HubCardProps) => {
           </div>
         </div>
         <ColorSelector 
-          selectedColor={hubColor} 
-          selectedSecondaryColor={cardColor}
+          selectedColor={hubColor}
           onColorSelect={setHubColor}
-          onSecondaryColorSelect={handleSecondaryColorSelect}
         />
       </div>
-      <div className="space-y-6" style={{ '--card-bg': cardColor } as React.CSSProperties}>
+      <div className="space-y-6">
         {children}
       </div>
     </Card>
