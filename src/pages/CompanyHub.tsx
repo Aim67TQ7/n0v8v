@@ -75,9 +75,9 @@ const CompanyHub = () => {
                   <CompanyNews />
                 </Card>
                 
-                <Card className="p-4 bg-white/90 backdrop-blur-sm mt-6" style={{ backgroundColor: 'var(--card-bg)' }}>
+                <Card className="p-4 bg-white/90 backdrop-blur-sm mt-6 flex-1" style={{ backgroundColor: 'var(--card-bg)' }}>
                   <h2 className="font-semibold mb-4">Active Chat</h2>
-                  <div className="space-y-4 mb-4 h-[500px] overflow-y-auto">
+                  <div className="space-y-4 mb-4 h-[400px] overflow-y-auto">
                     {/* Chat messages would go here */}
                   </div>
                   <div className="flex flex-col sm:flex-row gap-2">
