@@ -153,6 +153,8 @@ export const FiveSEvaluationResults = ({
                 sortScore={evaluationData.sort_score}
                 setScore={evaluationData.set_in_order_score}
                 shineScore={evaluationData.shine_score}
+                strengths={evaluationData.strengths || []}
+                weaknesses={evaluationData.weaknesses || []}
               />
             </div>
           </div>
