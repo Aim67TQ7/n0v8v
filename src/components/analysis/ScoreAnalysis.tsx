@@ -8,6 +8,7 @@ interface ScoreAnalysisProps {
   sustainScore?: number;
   weaknesses: string[];
   canShowAdvancedScores: boolean;
+  displayMode: 'primary' | 'advanced';
 }
 
 export const ScoreAnalysis = ({ 
@@ -17,7 +18,8 @@ export const ScoreAnalysis = ({
   standardizeScore,
   sustainScore,
   weaknesses,
-  canShowAdvancedScores
+  canShowAdvancedScores,
+  displayMode
 }: ScoreAnalysisProps) => {
   const getScoreClass = (score: number) => {
     if (score <= 3) return 'bg-red-100 text-red-800';
@@ -52,45 +54,46 @@ export const ScoreAnalysis = ({
     return `${capitalizedSuggestion}. This is ${impact}.`;
   };
 
-  const categories = [
-    { 
-      name: 'Sort', 
-      score: sortScore, 
-      description: 'Organization of materials and removal of unnecessary items',
-      details: 'Focus on identifying and removing unnecessary items from the workspace. This improves efficiency and reduces clutter.',
-      impact: 'Directly affects workspace efficiency and material retrieval times.'
-    },
-    { 
-      name: 'Set in Order', 
-      score: setScore, 
-      description: 'Efficient arrangement of necessary items',
-      details: 'Organize remaining items for optimal workflow and easy access. Everything should have a designated place.',
-      impact: 'Reduces time spent searching for tools and materials.'
-    },
-    { 
-      name: 'Shine', 
-      score: shineScore, 
-      description: 'Workplace cleanliness and maintenance',
-      details: 'Regular cleaning and inspection of workspace and equipment. Identify and address sources of contamination.',
-      impact: 'Maintains equipment reliability and workplace safety.'
-    },
-    ...(canShowAdvancedScores ? [
-      { 
-        name: 'Standardize', 
-        score: standardizeScore, 
-        description: 'Consistent processes and visual management',
-        details: 'Establish clear procedures and visual controls to maintain the first three S\'s.',
-        impact: 'Ensures sustainability of 5S implementation.'
-      },
-      { 
-        name: 'Sustain', 
-        score: sustainScore, 
-        description: 'Long-term maintenance of 5S practices',
-        details: 'Build habits and culture to maintain 5S practices over time. Regular audits and continuous improvement.',
-        impact: 'Creates lasting organizational change and continuous improvement.'
-      }
-    ] : [])
-  ];
+  const categories = displayMode === 'primary' 
+    ? [
+        { 
+          name: 'Sort', 
+          score: sortScore, 
+          description: 'Organization of materials and removal of unnecessary items',
+          details: 'Focus on identifying and removing unnecessary items from the workspace. This improves efficiency and reduces clutter.',
+          impact: 'Directly affects workspace efficiency and material retrieval times.'
+        },
+        { 
+          name: 'Set in Order', 
+          score: setScore, 
+          description: 'Efficient arrangement of necessary items',
+          details: 'Organize remaining items for optimal workflow and easy access. Everything should have a designated place.',
+          impact: 'Reduces time spent searching for tools and materials.'
+        },
+        { 
+          name: 'Shine', 
+          score: shineScore, 
+          description: 'Workplace cleanliness and maintenance',
+          details: 'Regular cleaning and inspection of workspace and equipment. Identify and address sources of contamination.',
+          impact: 'Maintains equipment reliability and workplace safety.'
+        }
+      ]
+    : [
+        { 
+          name: 'Standardize', 
+          score: standardizeScore, 
+          description: 'Consistent processes and visual management',
+          details: 'Establish clear procedures and visual controls to maintain the first three S\'s.',
+          impact: 'Ensures sustainability of 5S implementation.'
+        },
+        { 
+          name: 'Sustain', 
+          score: sustainScore, 
+          description: 'Long-term maintenance of 5S practices',
+          details: 'Build habits and culture to maintain 5S practices over time. Regular audits and continuous improvement.',
+          impact: 'Creates lasting organizational change and continuous improvement.'
+        }
+      ];
 
   return (
     <>
@@ -130,8 +133,8 @@ export const ScoreAnalysis = ({
         </Card>
       ))}
 
-      {!canShowAdvancedScores && (
-        <div className="col-span-4 bg-blue-50 p-4 rounded-md">
+      {!canShowAdvancedScores && displayMode === 'primary' && (
+        <div className="col-span-full bg-blue-50 p-4 rounded-md">
           <p className="text-sm text-blue-700">
             Standardize and Sustain scores will be available once Sort, Set in Order, and Shine scores total 20 points or more.
           </p>

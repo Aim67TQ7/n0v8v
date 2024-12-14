@@ -131,7 +131,8 @@ export const FiveSEvaluationResults = ({
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+          {/* Primary 5S Categories */}
+          <div className="grid grid-cols-1 gap-4 mt-4">
             <ScoreAnalysis
               sortScore={evaluationData.sort_score}
               setScore={evaluationData.set_in_order_score}
@@ -140,8 +141,25 @@ export const FiveSEvaluationResults = ({
               sustainScore={canShowAdvancedScores ? evaluationData.sustain_score : 0}
               weaknesses={evaluationData.weaknesses || []}
               canShowAdvancedScores={canShowAdvancedScores}
+              displayMode="primary"
             />
           </div>
+
+          {/* Advanced Categories (if scores allow) */}
+          {canShowAdvancedScores && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+              <ScoreAnalysis
+                sortScore={evaluationData.sort_score}
+                setScore={evaluationData.set_in_order_score}
+                shineScore={evaluationData.shine_score}
+                standardizeScore={evaluationData.standardize_score}
+                sustainScore={evaluationData.sustain_score}
+                weaknesses={evaluationData.weaknesses || []}
+                canShowAdvancedScores={canShowAdvancedScores}
+                displayMode="advanced"
+              />
+            </div>
+          )}
 
           <div className="mt-4">
             <SWOTAnalysis
