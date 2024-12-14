@@ -4,45 +4,63 @@ interface ScoreAnalysisProps {
   sortScore?: number;
   setScore?: number;
   shineScore?: number;
+  standardizeScore?: number;
+  sustainScore?: number;
   weaknesses: string[];
+  canShowAdvancedScores: boolean;
 }
 
 export const ScoreAnalysis = ({ 
   sortScore, 
   setScore, 
   shineScore,
-  weaknesses 
+  standardizeScore,
+  sustainScore,
+  weaknesses,
+  canShowAdvancedScores
 }: ScoreAnalysisProps) => {
   const formatImprovementSuggestion = (weakness: string, category: string) => {
-    // Remove category prefix if it exists
     const cleanWeakness = weakness.replace(new RegExp(`^${category}:\\s*`, 'i'), '');
     
     const impact = category === 'Sort' 
       ? 'impacting workspace efficiency and material retrieval times'
       : category === 'Set in Order'
       ? 'causing workflow disruptions and increased operation time'
-      : 'affecting product quality and workplace safety standards';
+      : category === 'Shine'
+      ? 'affecting product quality and workplace safety standards'
+      : category === 'Standardize'
+      ? 'hindering consistent workplace organization'
+      : 'impeding long-term 5S sustainability';
 
-    // Transform the weakness into an actionable improvement
     const suggestion = cleanWeakness
-      .replace(/multiple|numerous/gi, "remove")
-      .replace(/missing|lack of|no |poor/gi, "implement")
-      .replace(/disorganized|messy/gi, "organize")
-      .replace(/unclear|confusing/gi, "establish clear");
+      .replace(/multiple|numerous/gi, "Remove")
+      .replace(/missing|lack of|no |poor/gi, "Implement")
+      .replace(/disorganized|messy/gi, "Organize")
+      .replace(/unclear|confusing/gi, "Establish clear");
 
-    return `${cleanWeakness}. This is ${impact}. ${suggestion.toLowerCase()} to optimize workplace organization and efficiency.`;
+    const firstChar = suggestion.charAt(0).toUpperCase();
+    const restOfString = suggestion.slice(1).toLowerCase();
+    const capitalizedSuggestion = firstChar + restOfString;
+
+    return `${capitalizedSuggestion}. This is ${impact}.`;
   };
+
+  const categories = [
+    { name: 'Sort', score: sortScore },
+    { name: 'Set in Order', score: setScore },
+    { name: 'Shine', score: shineScore },
+    ...(canShowAdvancedScores ? [
+      { name: 'Standardize', score: standardizeScore },
+      { name: 'Sustain', score: sustainScore }
+    ] : [])
+  ];
 
   return (
     <Card className="p-4">
       <h3 className="font-semibold text-primary mb-2">5S Score Analysis</h3>
       
       <div className="space-y-6">
-        {[
-          { name: 'Sort', score: sortScore },
-          { name: 'Set in Order', score: setScore },
-          { name: 'Shine', score: shineScore }
-        ].map(({ name, score }) => {
+        {categories.map(({ name, score }) => {
           const categoryLower = name.toLowerCase();
           const categoryWeaknesses = weaknesses
             .filter(w => w.toLowerCase().includes(categoryLower))
@@ -61,6 +79,14 @@ export const ScoreAnalysis = ({
             </div>
           );
         })}
+
+        {!canShowAdvancedScores && (
+          <div className="bg-blue-50 p-4 rounded-md">
+            <p className="text-sm text-blue-700">
+              Standardize and Sustain scores will be available once Sort, Set in Order, and Shine scores total 20 points or more.
+            </p>
+          </div>
+        )}
       </div>
     </Card>
   );

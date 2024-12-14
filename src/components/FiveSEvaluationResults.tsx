@@ -103,6 +103,9 @@ export const FiveSEvaluationResults = ({
     );
   }
 
+  const baseScores = evaluationData.sort_score + evaluationData.set_in_order_score + evaluationData.shine_score;
+  const canShowAdvancedScores = baseScores >= 20;
+
   return (
     <div className="space-y-8">
       <FiveSEvaluationHeader
@@ -120,31 +123,36 @@ export const FiveSEvaluationResults = ({
           
           <FiveSEvaluationImages images={evaluationImages} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             <div className="space-y-4">
               <Card className="p-4">
                 <h3 className="text-lg font-semibold mb-2">5S Scores</h3>
-                <FiveSRadarChart scores={evaluationData} />
+                <FiveSRadarChart 
+                  scores={evaluationData} 
+                  canShowAdvancedScores={canShowAdvancedScores}
+                />
               </Card>
-              
+            </div>
+
+            <div>
               <ScoreAnalysis
                 sortScore={evaluationData.sort_score}
                 setScore={evaluationData.set_in_order_score}
                 shineScore={evaluationData.shine_score}
+                standardizeScore={canShowAdvancedScores ? evaluationData.standardize_score : 0}
+                sustainScore={canShowAdvancedScores ? evaluationData.sustain_score : 0}
                 weaknesses={evaluationData.weaknesses || []}
+                canShowAdvancedScores={canShowAdvancedScores}
               />
             </div>
 
             <div className="space-y-4">
               <FiveSTrend workcenterId={evaluationData.workcenter_id} />
-              
               <SWOTAnalysis
-                strengths={evaluationData.strengths || []}
-                weaknesses={evaluationData.weaknesses || []}
+                evaluationId={evaluationData.id}
                 sortScore={evaluationData.sort_score}
                 setScore={evaluationData.set_in_order_score}
                 shineScore={evaluationData.shine_score}
-                evaluationId={evaluationData.id}
               />
             </div>
           </div>
