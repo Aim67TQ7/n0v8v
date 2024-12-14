@@ -46,48 +46,42 @@ export const ScoreAnalysis = ({
   };
 
   const categories = [
-    { name: 'Sort', score: sortScore },
-    { name: 'Set in Order', score: setScore },
-    { name: 'Shine', score: shineScore },
+    { name: 'Sort', score: sortScore, description: 'Organization of materials and removal of unnecessary items' },
+    { name: 'Set in Order', score: setScore, description: 'Efficient arrangement of necessary items' },
+    { name: 'Shine', score: shineScore, description: 'Workplace cleanliness and maintenance' },
     ...(canShowAdvancedScores ? [
-      { name: 'Standardize', score: standardizeScore },
-      { name: 'Sustain', score: sustainScore }
+      { name: 'Standardize', score: standardizeScore, description: 'Consistent processes and visual management' },
+      { name: 'Sustain', score: sustainScore, description: 'Long-term maintenance of 5S practices' }
     ] : [])
   ];
 
   return (
-    <Card className="p-4">
-      <h3 className="font-semibold text-primary mb-2">5S Score Analysis</h3>
-      
-      <div className="space-y-6">
-        {categories.map(({ name, score }) => {
-          const categoryLower = name.toLowerCase();
-          const categoryWeaknesses = weaknesses
-            .filter(w => w.toLowerCase().includes(categoryLower))
-            .map(w => formatImprovementSuggestion(w, name));
-          
-          return (
-            <div key={name} className="border-b pb-4 last:border-0">
-              <h4 className="font-medium mb-2">
-                {name} ({score}/10)
-              </h4>
-              <ul className="list-disc pl-5 space-y-3">
-                {categoryWeaknesses.map((item, i) => (
-                  <li key={i} className="text-sm text-gray-700">{item}</li>
-                ))}
-              </ul>
-            </div>
-          );
-        })}
+    <>
+      {categories.map(({ name, score, description }) => (
+        <Card key={name} className="p-4">
+          <h4 className="font-medium mb-2">
+            {name} ({score}/10)
+          </h4>
+          <p className="text-sm text-muted-foreground mb-3">{description}</p>
+          <ul className="list-disc pl-5 space-y-2">
+            {weaknesses
+              .filter(w => w.toLowerCase().includes(name.toLowerCase()))
+              .map((item, i) => (
+                <li key={i} className="text-sm text-gray-700">
+                  {formatImprovementSuggestion(item, name)}
+                </li>
+              ))}
+          </ul>
+        </Card>
+      ))}
 
-        {!canShowAdvancedScores && (
-          <div className="bg-blue-50 p-4 rounded-md">
-            <p className="text-sm text-blue-700">
-              Standardize and Sustain scores will be available once Sort, Set in Order, and Shine scores total 20 points or more.
-            </p>
-          </div>
-        )}
-      </div>
-    </Card>
+      {!canShowAdvancedScores && (
+        <div className="col-span-4 bg-blue-50 p-4 rounded-md">
+          <p className="text-sm text-blue-700">
+            Standardize and Sustain scores will be available once Sort, Set in Order, and Shine scores total 20 points or more.
+          </p>
+        </div>
+      )}
+    </>
   );
 };

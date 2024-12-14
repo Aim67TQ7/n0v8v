@@ -133,11 +133,12 @@ export const FiveSEvaluationResults = ({
             </Card>
 
             <Card className="p-4">
+              <h3 className="text-lg font-semibold mb-2">Historical 5S Performance</h3>
               <FiveSTrend workcenterId={evaluationData.workcenter_id} />
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
             <ScoreAnalysis
               sortScore={evaluationData.sort_score}
               setScore={evaluationData.set_in_order_score}
@@ -147,7 +148,9 @@ export const FiveSEvaluationResults = ({
               weaknesses={evaluationData.weaknesses || []}
               canShowAdvancedScores={canShowAdvancedScores}
             />
+          </div>
 
+          <div className="mt-4">
             <SWOTAnalysis
               evaluationId={evaluationData.id}
               sortScore={evaluationData.sort_score}
