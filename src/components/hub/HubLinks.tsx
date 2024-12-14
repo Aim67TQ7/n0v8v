@@ -10,6 +10,9 @@ export const HubLinks = () => {
       links: [
         { name: "Desktop", href: "/desktop" },
         { name: "Epicor", href: "/epicor" },
+        { name: "Email", href: "/email" },
+        { name: "Teams", href: "/teams" },
+        { name: "Webex", href: "/webex" },
       ]
     },
     {
