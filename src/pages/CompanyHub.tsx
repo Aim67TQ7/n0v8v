@@ -80,7 +80,7 @@ const CompanyHub = () => {
                   <div className="space-y-4 mb-4 h-[400px] overflow-y-auto">
                     {/* Chat messages would go here */}
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2 mt-4">
                     <Textarea
                       placeholder="Type your message..."
                       className="flex-1 text-xs"
