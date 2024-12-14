@@ -78,7 +78,6 @@ export const ScoreAnalysis = ({
               .filter(w => w.toLowerCase().includes(name.toLowerCase()))
               .length > 0 && (
               <div>
-                <h5 className="font-medium text-sm mb-2">Specific Findings:</h5>
                 <ul className="list-disc pl-5 space-y-2">
                   {weaknesses
                     .filter(w => w.toLowerCase().includes(name.toLowerCase()))
