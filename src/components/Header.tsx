@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Package, Mail, Users, Settings, ChevronDown } from "lucide-react";
+import { Home, Package, Mail, Users, Settings, ChevronDown, Bot } from "lucide-react";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { ApiStatus } from "@/components/gpt/ApiStatus";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,6 +34,15 @@ export const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Navigation Links */}
           <nav className="flex items-center space-x-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate("/company-gpt")} 
+              className="gap-2 text-gray-600 hover:text-gray-900"
+            >
+              <Bot className="h-4 w-4" />
+              CompanyGPT
+            </Button>
+            
             <Button variant="ghost" onClick={() => navigate("/")} className="gap-2 text-gray-600 hover:text-gray-900">
               <Home className="h-4 w-4" />
               Home
