@@ -85,7 +85,26 @@ export const ChatHistory = () => {
           </DialogContent>
         </Dialog>
       </div>
-      <ChatHistoryContent />
+      <ScrollArea className="h-[400px]">
+        <div className="space-y-2 pr-2">
+          {Object.entries(groupedChats).map(([date, chats]) => (
+            <div key={date} className="space-y-1">
+              <h3 className="text-sm font-semibold text-gray-700 px-2">{date}</h3>
+              <div className="space-y-0.5">
+                {(chats as any[]).slice(0, 4).map((chat) => (
+                  <Link
+                    key={chat.id}
+                    to={`/chat/${chat.id}`}
+                    className="block text-xs text-gray-600 hover:text-primary hover:underline py-0.5 px-2"
+                  >
+                    {chat.title}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
     </Card>
   );
 };
