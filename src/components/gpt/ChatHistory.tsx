@@ -15,7 +15,7 @@ interface ChatHistoryProps {
 
 export const ChatHistory = ({ sessions = [], onSelect, selectedId }: ChatHistoryProps) => {
   return (
-    <div className="flex flex-col gap-2 p-4">
+    <div className="flex flex-col gap-2">
       {sessions.length === 0 ? (
         <div className="text-sm text-muted-foreground text-center py-4">
           No chat history yet
