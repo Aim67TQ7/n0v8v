@@ -28,28 +28,30 @@ export const ScoreAnalysis = ({
     return 'bg-green-100 text-green-800';
   };
 
-  const formatFinding = (weakness: string, category: string) => {
+  const formatImprovementSuggestion = (weakness: string, category: string) => {
     const cleanWeakness = weakness.replace(new RegExp(`^${category}:\\s*`, 'i'), '');
     
-    const findings = {
-      finding: cleanWeakness,
-      impact: category === 'Sort' 
-        ? 'Reduced workspace efficiency and increased material retrieval times'
-        : category === 'Set in Order'
-        ? 'Workflow disruptions and increased operation time'
-        : category === 'Shine'
-        ? 'Compromised product quality and workplace safety standards'
-        : category === 'Standardize'
-        ? 'Inconsistent workplace organization practices'
-        : 'Unsustainable 5S implementation',
-      fix: cleanWeakness
-        .replace(/multiple|numerous/gi, "Remove")
-        .replace(/missing|lack of|no |poor/gi, "Implement")
-        .replace(/disorganized|messy/gi, "Organize")
-        .replace(/unclear|confusing/gi, "Establish clear")
-    };
+    const impact = category === 'Sort' 
+      ? 'impacting workspace efficiency and material retrieval times'
+      : category === 'Set in Order'
+      ? 'causing workflow disruptions and increased operation time'
+      : category === 'Shine'
+      ? 'affecting product quality and workplace safety standards'
+      : category === 'Standardize'
+      ? 'hindering consistent workplace organization'
+      : 'impeding long-term 5S sustainability';
 
-    return findings;
+    const suggestion = cleanWeakness
+      .replace(/multiple|numerous/gi, "Remove")
+      .replace(/missing|lack of|no |poor/gi, "Implement")
+      .replace(/disorganized|messy/gi, "Organize")
+      .replace(/unclear|confusing/gi, "Establish clear");
+
+    const firstChar = suggestion.charAt(0).toUpperCase();
+    const restOfString = suggestion.slice(1).toLowerCase();
+    const capitalizedSuggestion = firstChar + restOfString;
+
+    return `${capitalizedSuggestion}. This is ${impact}.`;
   };
 
   const categories = displayMode === 'primary' 
@@ -57,35 +59,45 @@ export const ScoreAnalysis = ({
         { 
           name: 'Sort', 
           score: sortScore, 
-          description: 'Organization of materials and removal of unnecessary items'
+          description: 'Organization of materials and removal of unnecessary items',
+          details: 'Focus on identifying and removing unnecessary items from the workspace. This improves efficiency and reduces clutter.',
+          impact: 'Directly affects workspace efficiency and material retrieval times.'
         },
         { 
           name: 'Set in Order', 
           score: setScore, 
-          description: 'Efficient arrangement of necessary items'
+          description: 'Efficient arrangement of necessary items',
+          details: 'Organize remaining items for optimal workflow and easy access. Everything should have a designated place.',
+          impact: 'Reduces time spent searching for tools and materials.'
         },
         { 
           name: 'Shine', 
           score: shineScore, 
-          description: 'Workplace cleanliness and maintenance'
+          description: 'Workplace cleanliness and maintenance',
+          details: 'Regular cleaning and inspection of workspace and equipment. Identify and address sources of contamination.',
+          impact: 'Maintains equipment reliability and workplace safety.'
         }
       ]
     : [
         { 
           name: 'Standardize', 
           score: standardizeScore, 
-          description: 'Consistent processes and visual management'
+          description: 'Consistent processes and visual management',
+          details: 'Establish clear procedures and visual controls to maintain the first three S\'s.',
+          impact: 'Ensures sustainability of 5S implementation.'
         },
         { 
           name: 'Sustain', 
           score: sustainScore, 
-          description: 'Long-term maintenance of 5S practices'
+          description: 'Long-term maintenance of 5S practices',
+          details: 'Build habits and culture to maintain 5S practices over time. Regular audits and continuous improvement.',
+          impact: 'Creates lasting organizational change and continuous improvement.'
         }
       ];
 
   return (
     <>
-      {categories.map(({ name, score, description }) => (
+      {categories.map(({ name, score, description, details, impact }) => (
         <Card key={name} className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h4 className="font-medium text-lg">{name}</h4>
@@ -97,30 +109,26 @@ export const ScoreAnalysis = ({
           <div className="space-y-4">
             <div>
               <p className="text-sm text-muted-foreground">{description}</p>
+              <p className="mt-2 text-sm">{details}</p>
+              <p className="mt-1 text-sm font-medium text-muted-foreground">{impact}</p>
             </div>
 
             {weaknesses
               .filter(w => w.toLowerCase().includes(name.toLowerCase()))
-              .slice(0, 2) // Limit to 2 findings per category
-              .map((weakness, index) => {
-                const finding = formatFinding(weakness, name);
-                return (
-                  <div key={index} className="bg-slate-50 p-4 rounded-lg space-y-2">
-                    <div className="space-y-1">
-                      <h5 className="font-medium text-sm">Finding {index + 1}:</h5>
-                      <p className="text-sm text-gray-700">{finding.finding}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <h5 className="font-medium text-sm">Impact:</h5>
-                      <p className="text-sm text-gray-700">{finding.impact}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <h5 className="font-medium text-sm">Recommended Fix:</h5>
-                      <p className="text-sm text-gray-700">{finding.fix}</p>
-                    </div>
-                  </div>
-                );
-              })}
+              .length > 0 && (
+              <div>
+                <h5 className="font-medium text-sm mb-2">Improvement Areas:</h5>
+                <ul className="list-disc pl-5 space-y-2">
+                  {weaknesses
+                    .filter(w => w.toLowerCase().includes(name.toLowerCase()))
+                    .map((item, i) => (
+                      <li key={i} className="text-sm text-gray-700">
+                        {formatImprovementSuggestion(item, name)}
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            )}
           </div>
         </Card>
       ))}
