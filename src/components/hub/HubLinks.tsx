@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Folder, Grid, Wrench, FileText } from "lucide-react";
 
@@ -49,16 +48,15 @@ export const HubLinks = () => {
               <section.icon className="h-5 w-5 text-secondary" />
               <h3 className="text-xs font-medium text-gray-500">{section.title}</h3>
             </div>
-            <div className="space-y-0">
+            <div className="space-y-1">
               {section.links.map((link) => (
-                <Button
+                <Link
                   key={link.name}
-                  variant="ghost"
-                  className="w-full justify-start text-left h-6 text-xs py-0"
-                  asChild
+                  to={link.href}
+                  className="block text-sm text-gray-600 hover:text-primary hover:underline py-1 px-2"
                 >
-                  <Link to={link.href}>{link.name}</Link>
-                </Button>
+                  {link.name}
+                </Link>
               ))}
             </div>
           </Card>
