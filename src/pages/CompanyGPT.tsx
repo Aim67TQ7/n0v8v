@@ -1,164 +1,128 @@
 import { useState, useEffect } from "react";
+import { ChatContainer } from "@/components/gpt/ChatContainer";
 import { ChatHistory } from "@/components/gpt/ChatHistory";
 import { ResourceSidebar } from "@/components/gpt/ResourceSidebar";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { SidebarProvider, Sidebar, SidebarContent } from "@/components/ui/sidebar";
-import { ChatContainer } from "@/components/gpt/ChatContainer";
-import { SidebarHeader } from "@/components/gpt/SidebarHeader";
-import { ConversationStarters } from "@/components/gpt/ConversationStarters";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChatHeader } from "@/components/gpt/ChatHeader";
+import { QuickPrompts } from "@/components/gpt/QuickPrompts";
+import { ChatSettings } from "@/components/gpt/ChatSettings";
 import { Button } from "@/components/ui/button";
-
-interface ChatSession {
-  id: string;
-  title: string;
-  timestamp: Date;
-}
-
-interface UserProfile {
-  id: string;
-  email: string;
-  role: string;
-  company_id: string;
-  company: {
-    name: string;
-  };
-}
+import { Plus } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 
 const CompanyGPT = () => {
-  const [selectedModel, setSelectedModel] = useState("groq");
-  const [selectedSession, setSelectedSession] = useState<string>();
-  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
-  const [inputValue, setInputValue] = useState("");
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isLeftColumnCollapsed, setIsLeftColumnCollapsed] = useState(false);
+  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [chatHistory, setChatHistory] = useState<any[]>([]);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) return;
+    loadChatHistory();
+  }, []);
 
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select(`
-          id,
-          email,
-          role,
-          company_id,
-          company:companies(name)
-        `)
-        .eq('id', user.id)
+  const loadChatHistory = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('chat_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(30);
+
+      if (error) throw error;
+      setChatHistory(data || []);
+    } catch (error) {
+      console.error('Error loading chat history:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load chat history",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const createNewChat = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('chat_logs')
+        .insert({
+          user_id: user?.id,
+          model: 'gpt-4',
+          messages: [],
+          title: 'New Chat'
+        })
+        .select()
         .single();
 
-      if (error) {
-        toast({
-          title: "Error",
-          description: "Failed to fetch user profile",
-          variant: "destructive"
-        });
-        return;
-      }
+      if (error) throw error;
 
-      setUserProfile(profile);
-    };
-
-    fetchUserProfile();
-  }, [toast]);
-
-  const handleNewChat = () => {
-    setSelectedSession(undefined);
+      setCurrentChatId(data.id);
+      setMessages([]);
+      loadChatHistory();
+    } catch (error) {
+      console.error('Error creating new chat:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create new chat",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleStarterSelect = (prompt: string) => {
-    setInputValue(prompt);
-  };
-
-  const toggleLeftColumn = () => {
-    setIsLeftColumnCollapsed(!isLeftColumnCollapsed);
+  const handlePromptSelect = (prompt: string) => {
+    if (!currentChatId) {
+      createNewChat().then(() => {
+        setMessages([{ role: 'user', content: prompt }]);
+      });
+    } else {
+      setMessages([...messages, { role: 'user', content: prompt }]);
+    }
   };
 
   return (
-    <div className="h-screen flex flex-col">
-      <div className="flex-1 flex overflow-hidden">
-        <SidebarProvider>
-          <div className="flex w-full h-full">
-            {/* Left Sidebar with collapse/expand functionality */}
-            <div className={`relative transition-all duration-300 ${isLeftColumnCollapsed ? 'w-0' : 'w-64'}`}>
-              <Sidebar className="border-r flex flex-col">
-                <SidebarHeader onNewChat={handleNewChat} />
-                <ScrollArea className="flex-1">
-                  <SidebarContent>
-                    <ChatHistory
-                      sessions={chatSessions}
-                      onSelect={setSelectedSession}
-                      selectedId={selectedSession}
-                    />
-                  </SidebarContent>
-                </ScrollArea>
-                <div className="border-t p-4">
-                  <ConversationStarters onSelect={handleStarterSelect} />
-                </div>
-              </Sidebar>
-              
-              {/* Collapse/Expand Button - Only visible when needed */}
-              {!isLeftColumnCollapsed && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute -right-6 top-3 z-50 bg-white border shadow-sm hover:bg-gray-100"
-                  onClick={toggleLeftColumn}
-                  title="Collapse sidebar"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
+    <div className="flex h-screen">
+      {/* Left Column */}
+      <div className={`border-r flex flex-col ${isLeftColumnCollapsed ? 'w-12' : 'w-64'} transition-all duration-300`}>
+        <ChatHeader
+          isCollapsed={isLeftColumnCollapsed}
+          onToggle={() => setIsLeftColumnCollapsed(!isLeftColumnCollapsed)}
+        />
+        
+        <div className={`p-2 ${isLeftColumnCollapsed ? 'hidden' : 'block'}`}>
+          <Button
+            className="w-full mb-4"
+            onClick={createNewChat}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            New Chat
+          </Button>
+        </div>
 
-            {/* Expand button when sidebar is collapsed */}
-            {isLeftColumnCollapsed && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute left-0 top-3 z-50 bg-white border shadow-sm hover:bg-gray-100"
-                onClick={toggleLeftColumn}
-                title="Expand sidebar"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            )}
+        <div className={`flex-1 overflow-y-auto ${isLeftColumnCollapsed ? 'hidden' : 'block'}`}>
+          <ChatHistory
+            history={chatHistory}
+            currentChatId={currentChatId}
+            onSelectChat={setCurrentChatId}
+          />
+          <QuickPrompts onPromptSelect={handlePromptSelect} />
+        </div>
+      </div>
 
-            <ChatContainer 
-              selectedSession={selectedSession}
-              chatSessions={chatSessions}
-              onHistoryUpdate={() => {}}
-              inputValue={inputValue}
-              setInputValue={setInputValue}
-            />
-            
-            <div className="w-64 border-l bg-white flex flex-col">
-              <div className="p-4 border-b">
-                <div className="flex flex-col gap-1">
-                  <span className="text-sm font-medium">
-                    {userProfile?.email || 'Loading...'}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {userProfile?.company?.name || 'Loading...'}
-                  </span>
-                  <span className="text-xs text-muted-foreground capitalize">
-                    Role: {userProfile?.role || 'Loading...'}
-                  </span>
-                </div>
-              </div>
-              <div className="flex-1 overflow-y-auto">
-                <ResourceSidebar />
-              </div>
-            </div>
-          </div>
-        </SidebarProvider>
+      {/* Main Chat Area */}
+      <div className="flex-1">
+        <ChatContainer
+          messages={messages}
+          onMessagesChange={setMessages}
+          chatId={currentChatId}
+        />
+      </div>
+
+      {/* Right Column */}
+      <div className="w-64 border-l">
+        <ResourceSidebar />
+        <ChatSettings />
       </div>
     </div>
   );

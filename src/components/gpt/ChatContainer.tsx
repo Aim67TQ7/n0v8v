@@ -1,97 +1,129 @@
-import { useState, useEffect } from "react";
-import { ChatInterface } from "./ChatInterface";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Send, Loader2 } from "lucide-react";
 
 interface ChatContainerProps {
-  selectedSession?: string;
-  chatSessions: any[];
-  onHistoryUpdate: () => void;
-  inputValue: string;
-  setInputValue: (value: string) => void;
+  messages: any[];
+  onMessagesChange: (messages: any[]) => void;
+  chatId: string | null;
 }
 
-export const ChatContainer = ({ 
-  selectedSession, 
-  chatSessions,
-  onHistoryUpdate,
-  inputValue,
-  setInputValue
-}: ChatContainerProps) => {
-  const navigate = useNavigate();
+export const ChatContainer = ({ messages, onMessagesChange, chatId }: ChatContainerProps) => {
   const { toast } = useToast();
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [input, setInput] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const checkSuperUser = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (!user) {
-          navigate("/login");
-          return;
-        }
+    if (chatId && messages.length > 0) {
+      updateChatMessages();
+    }
+  }, [messages, chatId]);
 
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
-        if (profile?.role !== 'superuser') {
-          toast({
-            title: "Access Denied",
-            description: "Only superusers can access this feature.",
-            variant: "destructive"
-          });
-          navigate("/");
-          return;
-        }
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
-        setIsAuthorized(true);
-      } catch (error) {
-        console.error('Error checking superuser status:', error);
-        toast({
-          title: "Error",
-          description: "Failed to verify access permissions.",
-          variant: "destructive"
-        });
-        navigate("/");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const updateChatMessages = async () => {
+    try {
+      const { error } = await supabase
+        .from('chat_logs')
+        .update({ messages })
+        .eq('id', chatId);
 
-    checkSuperUser();
-  }, [navigate, toast]);
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error saving messages:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save chat messages",
+        variant: "destructive"
+      });
+    }
+  };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p>Loading...</p>
-      </div>
-    );
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || !chatId) return;
 
-  if (!isAuthorized) {
-    return null;
-  }
+    try {
+      setIsLoading(true);
+      const userMessage = { role: 'user', content: input };
+      const newMessages = [...messages, userMessage];
+      onMessagesChange(newMessages);
+      setInput("");
+
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: newMessages,
+          chatId: chatId
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to get response');
+
+      const data = await response.json();
+      onMessagesChange([...newMessages, data.message]);
+    } catch (error) {
+      console.error('Chat error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to process message",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-64px)] overflow-hidden">
-      <ScrollArea className="flex-1">
-        <div className="flex-1 flex flex-col p-4">
-          <ChatInterface 
-            systemPrompt={`You are BuntingGPT, an AI assistant specialized in magnetic separation and metal detection solutions.`}
-            onHistoryUpdate={onHistoryUpdate}
-            inputValue={inputValue}
-            setInputValue={setInputValue}
+    <div className="flex flex-col h-full">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.map((message, index) => (
+          <Card
+            key={index}
+            className={`p-4 ${
+              message.role === 'user' ? 'bg-primary/10' : 'bg-secondary/10'
+            }`}
+          >
+            <div className="flex items-start gap-3">
+              <div className="font-medium min-w-[60px]">
+                {message.role === 'user' ? 'You' : 'Assistant'}:
+              </div>
+              <div className="flex-1 whitespace-pre-wrap">{message.content}</div>
+            </div>
+          </Card>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+
+      <form onSubmit={handleSubmit} className="p-4 border-t">
+        <div className="flex gap-2">
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type your message..."
+            disabled={isLoading}
           />
+          <Button type="submit" disabled={isLoading || !input.trim()}>
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
+          </Button>
         </div>
-      </ScrollArea>
+      </form>
     </div>
   );
 };
