@@ -123,40 +123,39 @@ export const FiveSEvaluationResults = ({
           
           <FiveSEvaluationImages images={evaluationImages} />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-            <div className="space-y-4">
-              <Card className="p-4">
-                <h3 className="text-lg font-semibold mb-2">5S Scores</h3>
-                <FiveSRadarChart 
-                  scores={evaluationData} 
-                  canShowAdvancedScores={canShowAdvancedScores}
-                />
-              </Card>
-            </div>
-
-            <div>
-              <ScoreAnalysis
-                sortScore={evaluationData.sort_score}
-                setScore={evaluationData.set_in_order_score}
-                shineScore={evaluationData.shine_score}
-                standardizeScore={canShowAdvancedScores ? evaluationData.standardize_score : 0}
-                sustainScore={canShowAdvancedScores ? evaluationData.sustain_score : 0}
-                weaknesses={evaluationData.weaknesses || []}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <Card className="p-4">
+              <h3 className="text-lg font-semibold mb-2">5S Scores</h3>
+              <FiveSRadarChart 
+                scores={evaluationData} 
                 canShowAdvancedScores={canShowAdvancedScores}
               />
-            </div>
+            </Card>
 
-            <div className="space-y-4">
+            <Card className="p-4">
               <FiveSTrend workcenterId={evaluationData.workcenter_id} />
-              <SWOTAnalysis
-                evaluationId={evaluationData.id}
-                sortScore={evaluationData.sort_score}
-                setScore={evaluationData.set_in_order_score}
-                shineScore={evaluationData.shine_score}
-                strengths={evaluationData.strengths || []}
-                weaknesses={evaluationData.weaknesses || []}
-              />
-            </div>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <ScoreAnalysis
+              sortScore={evaluationData.sort_score}
+              setScore={evaluationData.set_in_order_score}
+              shineScore={evaluationData.shine_score}
+              standardizeScore={canShowAdvancedScores ? evaluationData.standardize_score : 0}
+              sustainScore={canShowAdvancedScores ? evaluationData.sustain_score : 0}
+              weaknesses={evaluationData.weaknesses || []}
+              canShowAdvancedScores={canShowAdvancedScores}
+            />
+
+            <SWOTAnalysis
+              evaluationId={evaluationData.id}
+              sortScore={evaluationData.sort_score}
+              setScore={evaluationData.set_in_order_score}
+              shineScore={evaluationData.shine_score}
+              strengths={evaluationData.strengths || []}
+              weaknesses={evaluationData.weaknesses || []}
+            />
           </div>
 
           <div className="text-center mt-4">
