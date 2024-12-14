@@ -6,8 +6,13 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
-export const ChatHistory = () => {
+interface ChatHistoryProps {
+  className?: string;
+}
+
+export const ChatHistory = ({ className }: ChatHistoryProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const recentChats = [
     { title: "Project Kickoff Meeting", id: 1, date: "Today" },
@@ -68,7 +73,7 @@ export const ChatHistory = () => {
   );
 
   return (
-    <Card className="p-3 bg-white/90 backdrop-blur-sm">
+    <Card className={cn("p-3 bg-white/90 backdrop-blur-sm", className)}>
       <div className="mb-2 flex items-center justify-between">
         <h2 className="font-semibold text-sm">Chat History</h2>
         <Dialog>
