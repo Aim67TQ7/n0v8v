@@ -11,11 +11,8 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useState } from "react";
 
 const CompanyHub = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
   const SidebarContent = () => (
     <div className="space-y-4">
       <ChatHistory />
