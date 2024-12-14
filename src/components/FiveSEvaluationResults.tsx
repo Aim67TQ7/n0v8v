@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { FiveSEvaluationHeader } from "@/components/FiveSEvaluationHeader";
 import { FiveSEvaluationImages } from "@/components/FiveSEvaluationImages";
 import { FiveSRadarChart } from "@/components/FiveSRadarChart";
-import { SWOTAnalysis } from "@/components/SWOTAnalysis";
+import { TrainModelCard } from "@/components/TrainModelCard";
 import { FiveSTrend } from "@/components/FiveSTrend";
 import { ScoreAnalysis } from "@/components/analysis/ScoreAnalysis";
 import { useToast } from "@/hooks/use-toast";
@@ -131,7 +131,7 @@ export const FiveSEvaluationResults = ({
             </Card>
           </div>
 
-          {/* Primary 5S Categories */}
+          {/* Primary 5S Categories - Full Width */}
           <div className="grid grid-cols-1 gap-4 mt-4">
             <ScoreAnalysis
               sortScore={evaluationData.sort_score}
@@ -145,9 +145,9 @@ export const FiveSEvaluationResults = ({
             />
           </div>
 
-          {/* Advanced Categories (if scores allow) */}
+          {/* Advanced Categories and Train Model - Side by Side */}
           {canShowAdvancedScores && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
               <ScoreAnalysis
                 sortScore={evaluationData.sort_score}
                 setScore={evaluationData.set_in_order_score}
@@ -158,19 +158,23 @@ export const FiveSEvaluationResults = ({
                 canShowAdvancedScores={canShowAdvancedScores}
                 displayMode="advanced"
               />
+              <div className="md:col-span-1">
+                <TrainModelCard
+                  toolType="five_s"
+                  resourceId={evaluationData.id}
+                  metadata={{
+                    scores: {
+                      sort: evaluationData.sort_score,
+                      set: evaluationData.set_in_order_score,
+                      shine: evaluationData.shine_score,
+                      standardize: evaluationData.standardize_score,
+                      sustain: evaluationData.sustain_score
+                    }
+                  }}
+                />
+              </div>
             </div>
           )}
-
-          <div className="mt-4">
-            <SWOTAnalysis
-              evaluationId={evaluationData.id}
-              sortScore={evaluationData.sort_score}
-              setScore={evaluationData.set_in_order_score}
-              shineScore={evaluationData.shine_score}
-              strengths={evaluationData.strengths || []}
-              weaknesses={evaluationData.weaknesses || []}
-            />
-          </div>
 
           <div className="text-center mt-4">
             <Button
