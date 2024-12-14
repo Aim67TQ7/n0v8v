@@ -33,8 +33,8 @@ const CompanyHub = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6">
-      <div className="container mx-auto">
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto py-6 px-4 sm:px-6">
         <HubCard>
           {/* Mobile Menu Button */}
           <div className="md:hidden mb-4">
@@ -53,18 +53,29 @@ const CompanyHub = () => {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
             {/* Left Sidebar - Hidden on mobile, shown in dropdown, visible on desktop */}
             <div className="hidden md:block md:col-span-2">
-              <SidebarContent />
+              <div className="space-y-4 h-full flex flex-col">
+                <ChatHistory />
+                <Card className="p-4 bg-white/90 backdrop-blur-sm mt-auto">
+                  <h2 className="font-semibold mb-4">Train the Model</h2>
+                  <Textarea
+                    placeholder="Provide feedback, improve data, or report hallucinations..."
+                    className="mb-4"
+                    rows={4}
+                  />
+                  <Button className="w-full">Submit Feedback</Button>
+                </Card>
+              </div>
             </div>
 
             {/* Main Content - Full width on mobile, 8 cols on desktop */}
             <div className="md:col-span-8">
-              <div className="space-y-4">
+              <div className="space-y-4 h-full flex flex-col">
                 <Card className="p-4 bg-white/90 backdrop-blur-sm">
                   <h2 className="font-semibold mb-4">Company News</h2>
                   <CompanyNews />
                 </Card>
                 
-                <Card className="p-4 bg-white/90 backdrop-blur-sm">
+                <Card className="p-4 bg-white/90 backdrop-blur-sm mt-auto">
                   <h2 className="font-semibold mb-4">Active Chat</h2>
                   <div className="space-y-4 mb-4 h-[400px] overflow-y-auto">
                     {/* Chat messages would go here */}
@@ -82,7 +93,9 @@ const CompanyHub = () => {
 
             {/* Right Sidebar - Hidden on mobile, visible on desktop */}
             <div className="hidden md:block md:col-span-2">
-              <HubLinks />
+              <div className="h-full flex flex-col">
+                <HubLinks />
+              </div>
             </div>
           </div>
         </HubCard>
