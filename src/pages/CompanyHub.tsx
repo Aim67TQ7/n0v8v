@@ -8,12 +8,12 @@ import { HubCard } from "@/components/hub/HubCard";
 
 const CompanyHub = () => {
   return (
-    <div className="min-h-screen bg-gray-50 py-6">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6">
+      <div className="container mx-auto">
         <HubCard>
-          <div className="grid grid-cols-12 gap-6">
-            {/* Left Sidebar */}
-            <div className="col-span-2">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            {/* Left Sidebar - Full width on mobile, 2 cols on desktop */}
+            <div className="md:col-span-2">
               <div className="space-y-6">
                 <Card className="p-3 bg-white/90 backdrop-blur-sm">
                   <h2 className="font-semibold text-sm mb-3">Chat History</h2>
@@ -32,8 +32,8 @@ const CompanyHub = () => {
               </div>
             </div>
 
-            {/* Main Content */}
-            <div className="col-span-8">
+            {/* Main Content - Full width on mobile, 8 cols on desktop */}
+            <div className="md:col-span-8">
               <div className="space-y-6">
                 <Card className="p-4 bg-white/90 backdrop-blur-sm">
                   <h2 className="font-semibold mb-4">Company News</h2>
@@ -45,19 +45,19 @@ const CompanyHub = () => {
                   <div className="space-y-4 mb-4 h-[400px] overflow-y-auto">
                     {/* Chat messages would go here */}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <Textarea
                       placeholder="Type your message..."
                       className="flex-1"
                     />
-                    <Button>Send</Button>
+                    <Button className="sm:w-auto">Send</Button>
                   </div>
                 </Card>
               </div>
             </div>
 
-            {/* Right Sidebar */}
-            <div className="col-span-2">
+            {/* Right Sidebar - Full width on mobile, 2 cols on desktop */}
+            <div className="md:col-span-2">
               <Card className="p-4 bg-white/90 backdrop-blur-sm">
                 <HubLinks />
               </Card>
