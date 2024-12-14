@@ -74,7 +74,7 @@ export const Header = () => {
           {/* API Status Indicators and User Info */}
           <div className="flex items-center gap-6">
             <ApiStatus />
-            {session && (
+            {session ? (
               <div className="flex items-center gap-4">
                 <div className="flex flex-col items-end">
                   <span className="text-sm font-medium text-gray-900">
@@ -97,6 +97,14 @@ export const Header = () => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
+            ) : (
+              <Button
+                variant="default"
+                onClick={() => navigate("/login")}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Sign In
+              </Button>
             )}
           </div>
         </div>
