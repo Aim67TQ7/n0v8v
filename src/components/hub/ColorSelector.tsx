@@ -22,18 +22,19 @@ const colorOptions = [
 
 interface ColorSelectorProps {
   selectedColor: string;
-  selectedSecondaryColor?: string;
+  opacity: number;
   onColorSelect: (color: string) => void;
+  onOpacityChange: (opacity: number) => void;
 }
 
 export const ColorSelector = ({ 
   selectedColor, 
+  opacity,
   onColorSelect,
+  onOpacityChange,
 }: ColorSelectorProps) => {
-  const [opacity, setOpacity] = useState(100);
-
   const handleOpacityChange = (value: number[]) => {
-    setOpacity(value[0]);
+    onOpacityChange(value[0]);
   };
 
   return (
@@ -73,7 +74,7 @@ export const ColorSelector = ({
           <div>
             <h4 className="text-sm font-medium mb-2">Card Transparency</h4>
             <Slider
-              defaultValue={[100]}
+              defaultValue={[opacity]}
               max={100}
               step={1}
               value={[opacity]}

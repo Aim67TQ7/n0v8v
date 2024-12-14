@@ -55,7 +55,7 @@ const CompanyHub = () => {
             <div className="hidden md:block md:col-span-2">
               <div className="h-full flex flex-col">
                 <ChatHistory className="flex-grow" />
-                <Card className="p-4 bg-white/90 backdrop-blur-sm mt-4" style={{ backgroundColor: 'var(--card-bg)' }}>
+                <Card className="p-4 bg-white/90 backdrop-blur-sm mt-4">
                   <h2 className="font-semibold mb-2">Train the Model</h2>
                   <Textarea
                     placeholder="Provide feedback, improve data, or report hallucinations..."
@@ -70,12 +70,12 @@ const CompanyHub = () => {
             {/* Main Content */}
             <div className="md:col-span-8">
               <div className="h-full flex flex-col">
-                <Card className="p-4 bg-white/90 backdrop-blur-sm" style={{ backgroundColor: 'var(--card-bg)' }}>
+                <Card className="p-4 bg-white/90 backdrop-blur-sm">
                   <h2 className="font-semibold mb-4">Company News</h2>
                   <CompanyNews />
                 </Card>
                 
-                <Card className="p-4 bg-white/90 backdrop-blur-sm mt-6 flex-1 relative" style={{ backgroundColor: 'var(--card-bg)' }}>
+                <Card className="p-4 bg-white/90 backdrop-blur-sm mt-6 flex-1 relative">
                   <h2 className="font-semibold mb-4">Active Chat</h2>
                   <div className="space-y-4 mb-4 h-[400px] overflow-y-auto">
                     {/* Chat messages would go here */}

@@ -10,6 +10,7 @@ interface HubCardProps {
 
 export const HubCard = ({ children }: HubCardProps) => {
   const [hubColor, setHubColor] = useState("#9b87f5");
+  const [opacity, setOpacity] = useState(100);
   const { user } = useAuth();
   const currentDate = new Date();
 
@@ -28,8 +29,11 @@ export const HubCard = ({ children }: HubCardProps) => {
   // Determine text color based on background
   const textColorClass = isBackgroundDark(hubColor) ? "text-white" : "text-gray-900";
 
+  // Calculate the background color with opacity
+  const backgroundColor = `${hubColor}${Math.round(opacity * 2.55).toString(16).padStart(2, '0')}`;
+
   return (
-    <Card className="p-6 transition-colors duration-300" style={{ backgroundColor: hubColor }}>
+    <Card className="p-6 transition-colors duration-300" style={{ backgroundColor }}>
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
           <img 
@@ -48,7 +52,9 @@ export const HubCard = ({ children }: HubCardProps) => {
         </div>
         <ColorSelector 
           selectedColor={hubColor}
+          opacity={opacity}
           onColorSelect={setHubColor}
+          onOpacityChange={setOpacity}
         />
       </div>
       <div className="space-y-6">
