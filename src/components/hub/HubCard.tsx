@@ -10,9 +10,14 @@ interface HubCardProps {
 
 export const HubCard = ({ children }: HubCardProps) => {
   const [hubColor, setHubColor] = useState("#9b87f5");
-  const [cardColor, setCardColor] = useState("#F2FCE2");
+  const [cardColor, setCardColor] = useState("#F2FCE2FF"); // Added FF for full opacity
   const { user } = useAuth();
   const currentDate = new Date();
+
+  const handleSecondaryColorSelect = (color: string, opacity: number = 100) => {
+    const hexOpacity = Math.round((opacity / 100) * 255).toString(16).padStart(2, '0');
+    setCardColor(`${color}${hexOpacity}`);
+  };
 
   return (
     <Card className="p-6 transition-colors duration-300" style={{ backgroundColor: hubColor }}>
@@ -36,7 +41,7 @@ export const HubCard = ({ children }: HubCardProps) => {
           selectedColor={hubColor} 
           selectedSecondaryColor={cardColor}
           onColorSelect={setHubColor}
-          onSecondaryColorSelect={setCardColor}
+          onSecondaryColorSelect={handleSecondaryColorSelect}
         />
       </div>
       <div className="space-y-6" style={{ '--card-bg': cardColor } as React.CSSProperties}>
