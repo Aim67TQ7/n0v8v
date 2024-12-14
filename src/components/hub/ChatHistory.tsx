@@ -68,7 +68,7 @@ export const ChatHistory = () => {
   );
 
   return (
-    <Card className="p-3">
+    <Card className="p-3 bg-white/90 backdrop-blur-sm">
       <div className="mb-2 flex items-center justify-between">
         <h2 className="font-semibold text-sm">Chat History</h2>
         <Dialog>
