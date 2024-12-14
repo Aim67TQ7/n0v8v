@@ -19,6 +19,13 @@ export const ScoreAnalysis = ({
   weaknesses,
   canShowAdvancedScores
 }: ScoreAnalysisProps) => {
+  const getScoreClass = (score: number) => {
+    if (score <= 3) return 'bg-red-100 text-red-800';
+    if (score <= 5) return 'bg-orange-100 text-orange-800';
+    if (score <= 7) return 'bg-yellow-100 text-yellow-800';
+    return 'bg-green-100 text-green-800';
+  };
+
   const formatImprovementSuggestion = (weakness: string, category: string) => {
     const cleanWeakness = weakness.replace(new RegExp(`^${category}:\\s*`, 'i'), '');
     
@@ -46,32 +53,80 @@ export const ScoreAnalysis = ({
   };
 
   const categories = [
-    { name: 'Sort', score: sortScore, description: 'Organization of materials and removal of unnecessary items' },
-    { name: 'Set in Order', score: setScore, description: 'Efficient arrangement of necessary items' },
-    { name: 'Shine', score: shineScore, description: 'Workplace cleanliness and maintenance' },
+    { 
+      name: 'Sort', 
+      score: sortScore, 
+      description: 'Organization of materials and removal of unnecessary items',
+      details: 'Focus on identifying and removing unnecessary items from the workspace. This improves efficiency and reduces clutter.',
+      impact: 'Directly affects workspace efficiency and material retrieval times.'
+    },
+    { 
+      name: 'Set in Order', 
+      score: setScore, 
+      description: 'Efficient arrangement of necessary items',
+      details: 'Organize remaining items for optimal workflow and easy access. Everything should have a designated place.',
+      impact: 'Reduces time spent searching for tools and materials.'
+    },
+    { 
+      name: 'Shine', 
+      score: shineScore, 
+      description: 'Workplace cleanliness and maintenance',
+      details: 'Regular cleaning and inspection of workspace and equipment. Identify and address sources of contamination.',
+      impact: 'Maintains equipment reliability and workplace safety.'
+    },
     ...(canShowAdvancedScores ? [
-      { name: 'Standardize', score: standardizeScore, description: 'Consistent processes and visual management' },
-      { name: 'Sustain', score: sustainScore, description: 'Long-term maintenance of 5S practices' }
+      { 
+        name: 'Standardize', 
+        score: standardizeScore, 
+        description: 'Consistent processes and visual management',
+        details: 'Establish clear procedures and visual controls to maintain the first three S\'s.',
+        impact: 'Ensures sustainability of 5S implementation.'
+      },
+      { 
+        name: 'Sustain', 
+        score: sustainScore, 
+        description: 'Long-term maintenance of 5S practices',
+        details: 'Build habits and culture to maintain 5S practices over time. Regular audits and continuous improvement.',
+        impact: 'Creates lasting organizational change and continuous improvement.'
+      }
     ] : [])
   ];
 
   return (
     <>
-      {categories.map(({ name, score, description }) => (
-        <Card key={name} className="p-4">
-          <h4 className="font-medium mb-2">
-            {name} ({score}/10)
-          </h4>
-          <p className="text-sm text-muted-foreground mb-3">{description}</p>
-          <ul className="list-disc pl-5 space-y-2">
+      {categories.map(({ name, score, description, details, impact }) => (
+        <Card key={name} className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="font-medium text-lg">{name}</h4>
+            <span className={`px-3 py-1 rounded-full text-sm ${getScoreClass(score || 0)}`}>
+              Score: {score}/10
+            </span>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm text-muted-foreground">{description}</p>
+              <p className="mt-2 text-sm">{details}</p>
+              <p className="mt-1 text-sm font-medium text-muted-foreground">{impact}</p>
+            </div>
+
             {weaknesses
               .filter(w => w.toLowerCase().includes(name.toLowerCase()))
-              .map((item, i) => (
-                <li key={i} className="text-sm text-gray-700">
-                  {formatImprovementSuggestion(item, name)}
-                </li>
-              ))}
-          </ul>
+              .length > 0 && (
+              <div>
+                <h5 className="font-medium text-sm mb-2">Improvement Areas:</h5>
+                <ul className="list-disc pl-5 space-y-2">
+                  {weaknesses
+                    .filter(w => w.toLowerCase().includes(name.toLowerCase()))
+                    .map((item, i) => (
+                      <li key={i} className="text-sm text-gray-700">
+                        {formatImprovementSuggestion(item, name)}
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            )}
+          </div>
         </Card>
       ))}
 
