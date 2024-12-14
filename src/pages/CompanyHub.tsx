@@ -24,7 +24,7 @@ const CompanyHub = () => {
         <h2 className="font-semibold mb-4">Train the Model</h2>
         <Textarea
           placeholder="Provide feedback, improve data, or report hallucinations..."
-          className="mb-4"
+          className="mb-4 text-xs"
           rows={4}
         />
         <Button className="w-full">Submit Feedback</Button>
@@ -59,7 +59,7 @@ const CompanyHub = () => {
                   <h2 className="font-semibold mb-4">Train the Model</h2>
                   <Textarea
                     placeholder="Provide feedback, improve data, or report hallucinations..."
-                    className="mb-4"
+                    className="mb-4 text-xs"
                     rows={4}
                   />
                   <Button className="w-full">Submit Feedback</Button>
@@ -83,7 +83,7 @@ const CompanyHub = () => {
                   <div className="flex flex-col sm:flex-row gap-2">
                     <Textarea
                       placeholder="Type your message..."
-                      className="flex-1"
+                      className="flex-1 text-xs"
                     />
                     <Button className="sm:w-auto">Send</Button>
                   </div>
