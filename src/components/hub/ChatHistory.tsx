@@ -72,7 +72,7 @@ export const ChatHistory = () => {
                   <Link
                     key={chat.id}
                     to={`/chat/${chat.id}`}
-                    className="block px-2 py-1.5 text-sm hover:bg-accent rounded-sm transition-colors"
+                    className="block text-xs text-gray-600 hover:text-primary hover:underline py-0.5 px-2"
                   >
                     {chat.title}
                   </Link>
