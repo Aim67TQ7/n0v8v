@@ -18,10 +18,7 @@ const CompanyHub = () => {
 
   const SidebarContent = () => (
     <div className="space-y-4">
-      <Card className="p-3 bg-white/90 backdrop-blur-sm">
-        <h2 className="font-semibold text-sm mb-3">Chat History</h2>
-        <ChatHistory />
-      </Card>
+      <ChatHistory />
       
       <Card className="p-4 bg-white/90 backdrop-blur-sm">
         <h2 className="font-semibold mb-4">Train the Model</h2>
