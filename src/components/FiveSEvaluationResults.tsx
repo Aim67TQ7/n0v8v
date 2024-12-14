@@ -107,10 +107,19 @@ export const FiveSEvaluationResults = ({
 
   return (
     <div className="space-y-8">
-      <FiveSEvaluationHeader
-        workcenterId={evaluationData.workcenter_id}
-        onSavePDF={handleSavePDF}
-      />
+      <div className="flex items-center justify-between">
+        <FiveSEvaluationHeader
+          workcenterId={evaluationData.workcenter_id}
+          onSavePDF={handleSavePDF}
+        />
+        <Button
+          onClick={onNewEvaluation}
+          variant="outline"
+          size="sm"
+        >
+          Start New Evaluation
+        </Button>
+      </div>
 
       <div id="evaluation-content" className="scale-[0.85] origin-top">
         <Card className="p-4">
@@ -148,16 +157,18 @@ export const FiveSEvaluationResults = ({
           {/* Advanced Categories and Train Model - Side by Side */}
           {canShowAdvancedScores && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-              <ScoreAnalysis
-                sortScore={evaluationData.sort_score}
-                setScore={evaluationData.set_in_order_score}
-                shineScore={evaluationData.shine_score}
-                standardizeScore={evaluationData.standardize_score}
-                sustainScore={evaluationData.sustain_score}
-                weaknesses={evaluationData.weaknesses || []}
-                canShowAdvancedScores={canShowAdvancedScores}
-                displayMode="advanced"
-              />
+              <div className="md:col-span-2">
+                <ScoreAnalysis
+                  sortScore={evaluationData.sort_score}
+                  setScore={evaluationData.set_in_order_score}
+                  shineScore={evaluationData.shine_score}
+                  standardizeScore={evaluationData.standardize_score}
+                  sustainScore={evaluationData.sustain_score}
+                  weaknesses={evaluationData.weaknesses || []}
+                  canShowAdvancedScores={canShowAdvancedScores}
+                  displayMode="advanced"
+                />
+              </div>
               <div className="md:col-span-1">
                 <TrainModelCard
                   toolType="five_s"
@@ -175,18 +186,25 @@ export const FiveSEvaluationResults = ({
               </div>
             </div>
           )}
-
-          <div className="text-center mt-4">
-            <Button
-              onClick={onNewEvaluation}
-              variant="outline"
-              size="sm"
-            >
-              Start New Evaluation
-            </Button>
-          </div>
         </Card>
       </div>
+
+      {/* Train Model Card - Below Report */}
+      <Card className="p-4">
+        <TrainModelCard
+          toolType="five_s"
+          resourceId={evaluationData.id}
+          metadata={{
+            scores: {
+              sort: evaluationData.sort_score,
+              set: evaluationData.set_in_order_score,
+              shine: evaluationData.shine_score,
+              standardize: evaluationData.standardize_score,
+              sustain: evaluationData.sustain_score
+            }
+          }}
+        />
+      </Card>
     </div>
   );
 };
