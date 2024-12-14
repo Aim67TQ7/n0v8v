@@ -120,10 +120,10 @@ const CompanyGPT = () => {
             />
           </div>
 
-          {/* Company News Scroll */}
-          <div className="p-4 border-t border-b">
-            <div className="h-20 overflow-y-auto">
-              <h3 className="font-semibold mb-2">Company News</h3>
+          {/* Company News Scroll - Height reduced */}
+          <div className="p-2 border-t border-b">
+            <div className="h-12 overflow-y-auto">
+              <h3 className="font-semibold text-sm mb-1">Company News</h3>
               {/* Add news content here */}
             </div>
           </div>
