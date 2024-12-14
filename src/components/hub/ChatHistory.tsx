@@ -1,8 +1,8 @@
 import { Search } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Link } from "react-router-dom";
 
 export const ChatHistory = () => {
   const recentChats = [
@@ -46,13 +46,13 @@ export const ChatHistory = () => {
               <h3 className="text-xs font-medium text-gray-500 px-2">{date}</h3>
               <div className="space-y-0.5">
                 {(chats as any[]).slice(0, 4).map((chat) => (
-                  <Button
+                  <Link
                     key={chat.id}
-                    variant="ghost"
-                    className="w-full justify-start text-left h-6 text-xs py-0"
+                    to={`/chat/${chat.id}`}
+                    className="block px-2 py-0.5 text-xs hover:bg-accent rounded-sm transition-colors"
                   >
                     {chat.title}
-                  </Button>
+                  </Link>
                 ))}
               </div>
             </div>
