@@ -26,8 +26,8 @@ export const HubCard = ({ children }: HubCardProps) => {
     return luminance < 0.5;
   };
 
-  // Determine text color based on background
   const textColorClass = isBackgroundDark(hubColor) ? "text-white" : "text-gray-900";
+  const iconColorClass = isBackgroundDark(hubColor) ? "text-white/80" : "text-gray-600";
 
   return (
     <Card className="p-6 transition-colors duration-300" style={{ backgroundColor: hubColor }}>
@@ -54,7 +54,7 @@ export const HubCard = ({ children }: HubCardProps) => {
           onOpacityChange={setOpacity}
         />
       </div>
-      <div className="space-y-6" style={{ '--card-opacity': opacity / 100 } as React.CSSProperties}>
+      <div className="space-y-6" style={{ '--card-opacity': opacity / 100, '--text-color': textColorClass, '--icon-color': iconColorClass } as React.CSSProperties}>
         {children}
       </div>
     </Card>

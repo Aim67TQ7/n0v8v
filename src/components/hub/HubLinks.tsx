@@ -53,7 +53,13 @@ export const HubLinks = () => {
   ];
 
   return (
-    <Card className="p-3 bg-white/90 backdrop-blur-sm" style={{ backgroundColor: 'var(--card-bg)' }}>
+    <Card 
+      className="p-3 bg-white backdrop-blur-sm" 
+      style={{ 
+        backgroundColor: `rgba(255, 255, 255, var(--card-opacity, 0.9))`,
+        color: `var(--text-color, inherit)`
+      }}
+    >
       <h2 className="font-semibold mb-2 text-sm">Quick Links</h2>
       <ScrollArea className="h-[calc(100vh-200px)]">
         <div className="space-y-1.5">
@@ -62,18 +68,22 @@ export const HubLinks = () => {
               key={section.title} 
               className={`p-2 ${section.onClick ? 'cursor-pointer hover:bg-accent' : ''}`}
               onClick={section.onClick}
-              style={{ backgroundColor: 'var(--card-bg)' }}
+              style={{ 
+                backgroundColor: `rgba(255, 255, 255, var(--card-opacity, 0.9))`,
+                color: `var(--text-color, inherit)`
+              }}
             >
               <div className="flex items-center gap-1.5 mb-1">
-                <section.icon className="h-4 w-4 text-secondary" />
-                <h3 className="text-xs font-medium text-gray-500">{section.title}</h3>
+                <section.icon className={`h-4 w-4 ${section.onClick ? 'text-secondary' : 'var(--icon-color, text-gray-600)'}`} />
+                <h3 className="text-xs font-medium">{section.title}</h3>
               </div>
               <div className="space-y-0.5">
                 {section.links.map((link) => (
                   <Link
                     key={link.name}
                     to={link.href}
-                    className="block text-xs text-gray-600 hover:text-primary hover:underline py-0.5 px-2"
+                    className="block text-xs hover:text-primary hover:underline py-0.5 px-2"
+                    style={{ color: 'var(--text-color, inherit)' }}
                   >
                     {link.name}
                   </Link>
