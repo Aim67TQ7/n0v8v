@@ -29,12 +29,12 @@ export const ChatHistory = () => {
         <Card className="p-2">
           <h3 className="text-xs font-medium text-gray-500 mb-1">Today</h3>
           <ScrollArea className="h-[100px]">
-            <div className="space-y-0.5">
+            <div className="space-y-0">
               {recentChats.slice(0, 2).map((chat) => (
                 <Button
                   key={chat.id}
                   variant="ghost"
-                  className="w-full justify-start text-left h-8 text-xs py-1"
+                  className="w-full justify-start text-left h-6 text-xs py-0"
                 >
                   {chat.title}
                 </Button>
@@ -46,12 +46,12 @@ export const ChatHistory = () => {
         <Card className="p-2">
           <h3 className="text-xs font-medium text-gray-500 mb-1">This Week</h3>
           <ScrollArea className="h-[100px]">
-            <div className="space-y-0.5">
+            <div className="space-y-0">
               {recentChats.slice(2, 4).map((chat) => (
                 <Button
                   key={chat.id}
                   variant="ghost"
-                  className="w-full justify-start text-left h-8 text-xs py-1"
+                  className="w-full justify-start text-left h-6 text-xs py-0"
                 >
                   {chat.title}
                 </Button>
@@ -63,12 +63,12 @@ export const ChatHistory = () => {
         <Card className="p-2">
           <h3 className="text-xs font-medium text-gray-500 mb-1">Recent</h3>
           <ScrollArea className="h-[100px]">
-            <div className="space-y-0.5">
+            <div className="space-y-0">
               {recentChats.slice(4).map((chat) => (
                 <Button
                   key={chat.id}
                   variant="ghost"
-                  className="w-full justify-start text-left h-8 text-xs py-1"
+                  className="w-full justify-start text-left h-6 text-xs py-0"
                 >
                   {chat.title}
                 </Button>
