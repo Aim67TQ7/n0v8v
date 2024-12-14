@@ -1,10 +1,14 @@
-import { Search } from "lucide-react";
+import { Search, Maximize2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export const ChatHistory = () => {
+  const [searchQuery, setSearchQuery] = useState("");
   const recentChats = [
     { title: "Project Kickoff Meeting", id: 1, date: "Today" },
     { title: "Client Presentation Prep", id: 2, date: "Today" },
@@ -28,28 +32,34 @@ export const ChatHistory = () => {
     return acc;
   }, {});
 
-  return (
-    <Card className="p-3">
-      <h2 className="font-semibold text-sm mb-2">Chat History</h2>
-      <div className="relative mb-2">
-        <Input 
-          placeholder="Search chat history..." 
-          className="pr-8 text-xs"
-        />
-        <Search className="absolute right-2 top-2.5 h-3 w-3 text-gray-400" />
+  const ChatHistoryContent = () => (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 mb-4">
+        <div className="relative flex-1">
+          <Input 
+            placeholder="Search chat history..." 
+            className="pr-8 text-sm"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <Search className="absolute right-2 top-2.5 h-4 w-4 text-gray-400" />
+        </div>
+        <Button variant="secondary" size="sm">
+          Search
+        </Button>
       </div>
       
       <ScrollArea className="h-[400px]">
         <div className="space-y-2 pr-2">
           {Object.entries(groupedChats).map(([date, chats]) => (
             <div key={date} className="space-y-1">
-              <h3 className="text-xs font-semibold text-gray-700 px-2">{date}</h3>
+              <h3 className="text-sm font-semibold text-gray-700 px-2">{date}</h3>
               <div className="space-y-0.5">
                 {(chats as any[]).slice(0, 4).map((chat) => (
                   <Link
                     key={chat.id}
                     to={`/chat/${chat.id}`}
-                    className="block px-2 py-0.5 text-xs hover:bg-accent rounded-sm transition-colors"
+                    className="block px-2 py-1.5 text-sm hover:bg-accent rounded-sm transition-colors"
                   >
                     {chat.title}
                   </Link>
@@ -59,6 +69,28 @@ export const ChatHistory = () => {
           ))}
         </div>
       </ScrollArea>
+    </div>
+  );
+
+  return (
+    <Card className="p-3">
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="font-semibold text-sm">Chat History</h2>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <Maximize2 className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[600px]">
+            <div className="p-4">
+              <h2 className="text-lg font-semibold mb-4">Chat History</h2>
+              <ChatHistoryContent />
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+      <ChatHistoryContent />
     </Card>
   );
 };
