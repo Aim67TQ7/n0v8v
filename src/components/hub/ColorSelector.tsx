@@ -22,23 +22,18 @@ const colorOptions = [
 
 interface ColorSelectorProps {
   selectedColor: string;
-  selectedSecondaryColor: string;
+  selectedSecondaryColor?: string;
   onColorSelect: (color: string) => void;
-  onSecondaryColorSelect: (color: string, opacity?: number) => void;
 }
 
 export const ColorSelector = ({ 
   selectedColor, 
-  selectedSecondaryColor,
   onColorSelect,
-  onSecondaryColorSelect 
 }: ColorSelectorProps) => {
   const [opacity, setOpacity] = useState(100);
 
   const handleOpacityChange = (value: number[]) => {
-    const newOpacity = value[0];
-    setOpacity(newOpacity);
-    onSecondaryColorSelect("#FFFFFF", newOpacity);
+    setOpacity(value[0]);
   };
 
   return (
