@@ -21,11 +21,11 @@ const CompanyHub = () => {
       <ChatHistory />
       
       <Card className="p-4 bg-white/90 backdrop-blur-sm">
-        <h2 className="font-semibold mb-4">Train the Model</h2>
+        <h2 className="font-semibold mb-2">Train the Model</h2>
         <Textarea
           placeholder="Provide feedback, improve data, or report hallucinations..."
-          className="mb-4 text-xs"
-          rows={4}
+          className="mb-2 text-xs"
+          rows={3}
         />
         <Button className="w-full">Submit Feedback</Button>
       </Card>
@@ -55,12 +55,12 @@ const CompanyHub = () => {
             <div className="hidden md:block md:col-span-2">
               <div className="h-full flex flex-col">
                 <ChatHistory className="flex-grow" />
-                <Card className="p-4 bg-white/90 backdrop-blur-sm mt-auto" style={{ backgroundColor: 'var(--card-bg)' }}>
-                  <h2 className="font-semibold mb-4">Train the Model</h2>
+                <Card className="p-4 bg-white/90 backdrop-blur-sm mt-4" style={{ backgroundColor: 'var(--card-bg)' }}>
+                  <h2 className="font-semibold mb-2">Train the Model</h2>
                   <Textarea
                     placeholder="Provide feedback, improve data, or report hallucinations..."
-                    className="mb-4 text-xs"
-                    rows={4}
+                    className="mb-2 text-xs"
+                    rows={3}
                   />
                   <Button className="w-full">Submit Feedback</Button>
                 </Card>
