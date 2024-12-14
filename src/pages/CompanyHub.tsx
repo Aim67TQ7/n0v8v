@@ -93,7 +93,7 @@ const CompanyHub = () => {
 
             {/* Right Sidebar - Hidden on mobile, visible on desktop */}
             <div className="hidden md:block md:col-span-2">
-              <div className="h-full flex flex-col">
+              <div className="h-full flex flex-col justify-between">
                 <HubLinks />
               </div>
             </div>
