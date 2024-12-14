@@ -3,7 +3,6 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { FiveSEvaluationHeader } from "@/components/FiveSEvaluationHeader";
-import { FiveSEvaluationSummary } from "@/components/FiveSEvaluationSummary";
 import { FiveSEvaluationImages } from "@/components/FiveSEvaluationImages";
 import { FiveSRadarChart } from "@/components/FiveSRadarChart";
 import { SWOTAnalysis } from "@/components/SWOTAnalysis";
@@ -115,12 +114,6 @@ export const FiveSEvaluationResults = ({
 
       <div id="evaluation-content" className="scale-[0.85] origin-top">
         <Card className="p-4">
-          <FiveSEvaluationSummary
-            workcenterName={evaluationData.workcenter?.name}
-            evaluationDate={new Date(evaluationData.created_at).toLocaleDateString()}
-            scores={evaluationData}
-          />
-          
           <FiveSEvaluationImages images={evaluationImages} />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
