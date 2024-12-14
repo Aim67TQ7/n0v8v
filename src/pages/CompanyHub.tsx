@@ -51,11 +51,11 @@ const CompanyHub = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 h-full">
-            {/* Left Sidebar - Hidden on mobile, shown in dropdown, visible on desktop */}
+            {/* Left Sidebar */}
             <div className="hidden md:block md:col-span-2">
               <div className="h-full flex flex-col">
                 <ChatHistory className="flex-grow" />
-                <Card className="p-4 bg-white/90 backdrop-blur-sm mt-auto">
+                <Card className="p-4 bg-white/90 backdrop-blur-sm mt-auto" style={{ backgroundColor: 'var(--card-bg)' }}>
                   <h2 className="font-semibold mb-4">Train the Model</h2>
                   <Textarea
                     placeholder="Provide feedback, improve data, or report hallucinations..."
@@ -67,17 +67,17 @@ const CompanyHub = () => {
               </div>
             </div>
 
-            {/* Main Content - Full width on mobile, 8 cols on desktop */}
+            {/* Main Content */}
             <div className="md:col-span-8">
               <div className="h-full flex flex-col">
-                <Card className="p-4 bg-white/90 backdrop-blur-sm">
+                <Card className="p-4 bg-white/90 backdrop-blur-sm" style={{ backgroundColor: 'var(--card-bg)' }}>
                   <h2 className="font-semibold mb-4">Company News</h2>
                   <CompanyNews />
                 </Card>
                 
-                <Card className="p-4 bg-white/90 backdrop-blur-sm mt-auto">
+                <Card className="p-4 bg-white/90 backdrop-blur-sm mt-6" style={{ backgroundColor: 'var(--card-bg)' }}>
                   <h2 className="font-semibold mb-4">Active Chat</h2>
-                  <div className="space-y-4 mb-4 h-[400px] overflow-y-auto">
+                  <div className="space-y-4 mb-4 h-[500px] overflow-y-auto">
                     {/* Chat messages would go here */}
                   </div>
                   <div className="flex flex-col sm:flex-row gap-2">
@@ -91,7 +91,7 @@ const CompanyHub = () => {
               </div>
             </div>
 
-            {/* Right Sidebar - Hidden on mobile, visible on desktop */}
+            {/* Right Sidebar */}
             <div className="hidden md:block md:col-span-2">
               <div className="h-full flex flex-col">
                 <div className="flex-grow" />

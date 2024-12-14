@@ -10,6 +10,7 @@ interface HubCardProps {
 
 export const HubCard = ({ children }: HubCardProps) => {
   const [hubColor, setHubColor] = useState("#9b87f5");
+  const [cardColor, setCardColor] = useState("#F2FCE2");
   const { user } = useAuth();
   const currentDate = new Date();
 
@@ -31,9 +32,14 @@ export const HubCard = ({ children }: HubCardProps) => {
             </div>
           </div>
         </div>
-        <ColorSelector selectedColor={hubColor} onColorSelect={setHubColor} />
+        <ColorSelector 
+          selectedColor={hubColor} 
+          selectedSecondaryColor={cardColor}
+          onColorSelect={setHubColor}
+          onSecondaryColorSelect={setCardColor}
+        />
       </div>
-      <div className="space-y-6">
+      <div className="space-y-6" style={{ '--card-bg': cardColor } as React.CSSProperties}>
         {children}
       </div>
     </Card>
