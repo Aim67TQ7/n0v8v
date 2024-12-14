@@ -2,6 +2,7 @@ import { Search } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const ChatHistory = () => {
   const recentChats = [
@@ -24,39 +25,57 @@ export const ChatHistory = () => {
         <Search className="absolute right-2 top-2.5 h-4 w-4 text-gray-400" />
       </div>
       
-      <div className="space-y-1">
-        <h3 className="text-sm font-medium text-gray-500 mb-2">Today</h3>
-        {recentChats.slice(0, 2).map((chat) => (
-          <Button
-            key={chat.id}
-            variant="ghost"
-            className="w-full justify-start text-left"
-          >
-            {chat.title}
-          </Button>
-        ))}
+      <div className="space-y-4">
+        <Card className="p-3">
+          <h3 className="text-sm font-medium text-gray-500 mb-2">Today</h3>
+          <ScrollArea className="h-[100px]">
+            <div className="space-y-1">
+              {recentChats.slice(0, 2).map((chat) => (
+                <Button
+                  key={chat.id}
+                  variant="ghost"
+                  className="w-full justify-start text-left"
+                >
+                  {chat.title}
+                </Button>
+              ))}
+            </div>
+          </ScrollArea>
+        </Card>
         
-        <h3 className="text-sm font-medium text-gray-500 mb-2 mt-4">This Week</h3>
-        {recentChats.slice(2, 4).map((chat) => (
-          <Button
-            key={chat.id}
-            variant="ghost"
-            className="w-full justify-start text-left"
-          >
-            {chat.title}
-          </Button>
-        ))}
+        <Card className="p-3">
+          <h3 className="text-sm font-medium text-gray-500 mb-2">This Week</h3>
+          <ScrollArea className="h-[100px]">
+            <div className="space-y-1">
+              {recentChats.slice(2, 4).map((chat) => (
+                <Button
+                  key={chat.id}
+                  variant="ghost"
+                  className="w-full justify-start text-left"
+                >
+                  {chat.title}
+                </Button>
+              ))}
+            </div>
+          </ScrollArea>
+        </Card>
         
-        <h3 className="text-sm font-medium text-gray-500 mb-2 mt-4">Recent</h3>
-        {recentChats.slice(4).map((chat) => (
-          <Button
-            key={chat.id}
-            variant="ghost"
-            className="w-full justify-start text-left"
-          >
-            {chat.title}
-          </Button>
-        ))}
+        <Card className="p-3">
+          <h3 className="text-sm font-medium text-gray-500 mb-2">Recent</h3>
+          <ScrollArea className="h-[100px]">
+            <div className="space-y-1">
+              {recentChats.slice(4).map((chat) => (
+                <Button
+                  key={chat.id}
+                  variant="ghost"
+                  className="w-full justify-start text-left"
+                >
+                  {chat.title}
+                </Button>
+              ))}
+            </div>
+          </ScrollArea>
+        </Card>
       </div>
     </Card>
   );
