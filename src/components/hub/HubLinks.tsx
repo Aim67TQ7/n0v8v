@@ -40,20 +40,20 @@ export const HubLinks = () => {
 
   return (
     <Card className="p-3 bg-white/90 backdrop-blur-sm">
-      <h2 className="font-semibold mb-2">Quick Links</h2>
-      <div className="space-y-2">
+      <h2 className="font-semibold mb-2 text-sm">Quick Links</h2>
+      <div className="space-y-1.5">
         {sections.map((section) => (
           <Card key={section.title} className="p-2">
-            <div className="flex items-center gap-2 mb-2">
-              <section.icon className="h-5 w-5 text-secondary" />
+            <div className="flex items-center gap-1.5 mb-1">
+              <section.icon className="h-4 w-4 text-secondary" />
               <h3 className="text-xs font-medium text-gray-500">{section.title}</h3>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               {section.links.map((link) => (
                 <Link
                   key={link.name}
                   to={link.href}
-                  className="block text-sm text-gray-600 hover:text-primary hover:underline py-1 px-2"
+                  className="block text-xs text-gray-600 hover:text-primary hover:underline py-0.5 px-2"
                 >
                   {link.name}
                 </Link>
