@@ -8,12 +8,12 @@ interface ChatSession {
 }
 
 interface ChatHistoryProps {
-  sessions: ChatSession[];
+  sessions?: ChatSession[];
   onSelect: (sessionId: string) => void;
   selectedId?: string;
 }
 
-export const ChatHistory = ({ sessions, onSelect, selectedId }: ChatHistoryProps) => {
+export const ChatHistory = ({ sessions = [], onSelect, selectedId }: ChatHistoryProps) => {
   return (
     <div className="flex flex-col gap-2 p-4">
       {sessions.length === 0 ? (

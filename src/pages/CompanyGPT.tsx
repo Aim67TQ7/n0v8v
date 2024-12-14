@@ -83,7 +83,6 @@ const CompanyGPT = () => {
 
   return (
     <div className="flex h-screen">
-      {/* Left Column */}
       <div className={`border-r flex flex-col ${isLeftColumnCollapsed ? 'w-12' : 'w-64'} transition-all duration-300`}>
         <ChatHeader
           isCollapsed={isLeftColumnCollapsed}
@@ -102,15 +101,14 @@ const CompanyGPT = () => {
 
         <div className={`flex-1 overflow-y-auto ${isLeftColumnCollapsed ? 'hidden' : 'block'}`}>
           <ChatHistory
-            history={chatHistory}
-            currentChatId={currentChatId}
-            onSelectChat={setCurrentChatId}
+            sessions={chatHistory}
+            selectedId={currentChatId}
+            onSelect={setCurrentChatId}
           />
           <QuickPrompts onPromptSelect={handlePromptSelect} />
         </div>
       </div>
 
-      {/* Main Chat Area */}
       <div className="flex-1">
         <ChatContainer
           messages={messages}
@@ -119,7 +117,6 @@ const CompanyGPT = () => {
         />
       </div>
 
-      {/* Right Column */}
       <div className="w-64 border-l">
         <ResourceSidebar />
         <ChatSettings />
