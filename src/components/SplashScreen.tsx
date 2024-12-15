@@ -2,14 +2,23 @@ import { useEffect, useState } from 'react';
 
 export const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [isAnimating, setIsAnimating] = useState(true);
+  const SPLASH_DURATION = 2000; // 2 seconds in milliseconds
+  const FADE_DURATION = 500;    // 500ms for fade out
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    // Show splash for SPLASH_DURATION milliseconds
+    const splashTimer = setTimeout(() => {
       setIsAnimating(false);
-      setTimeout(onComplete, 500); // Wait for fade out animation before completing
-    }, 2000); // Show splash for 2 seconds
+      
+      // Wait for fade out animation before completing
+      const fadeTimer = setTimeout(onComplete, FADE_DURATION);
+      
+      // Cleanup fade timer
+      return () => clearTimeout(fadeTimer);
+    }, SPLASH_DURATION);
 
-    return () => clearTimeout(timer);
+    // Cleanup splash timer
+    return () => clearTimeout(splashTimer);
   }, [onComplete]);
 
   return (
