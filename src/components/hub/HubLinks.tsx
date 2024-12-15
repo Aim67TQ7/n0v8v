@@ -67,14 +67,14 @@ export const HubLinks = () => {
             >
               <div className="flex items-center gap-1.5 mb-1">
                 <section.icon className="h-4 w-4 text-secondary" />
-                <h3 className="text-sm font-medium text-primary-content">{section.title}</h3>
+                <h3 className="text-sm font-medium text-white">{section.title}</h3>
               </div>
               <div className="space-y-0.5">
                 {section.links.map((link) => (
                   <Link
                     key={link.name}
                     to={link.href}
-                    className="block text-xs text-secondary-content interactive-element py-0.5 px-2 rounded"
+                    className="block text-xs text-gray-300 hover:text-white py-0.5 px-2 rounded transition-colors"
                   >
                     {link.name}
                   </Link>
