@@ -54,27 +54,27 @@ export const HubLinks = () => {
   return (
     <Card className="card h-[calc(100vh-8rem)] flex flex-col">
       <div className="p-4 border-b">
-        <h2 className="font-semibold text-lg text-black">Quick Links</h2>
+        <h2 className="font-semibold text-base text-black">Quick Links</h2>
       </div>
       
       <ScrollArea className="flex-1 p-4">
-        <div className="space-y-3">
+        <div className="space-y-2">
           {sections.map((section) => (
             <Card 
               key={section.title} 
-              className="content-area content-hover cursor-pointer p-4"
+              className="content-area content-hover cursor-pointer p-3"
               onClick={() => section.title === "Company Resources" && navigate("/modules")}
             >
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-1.5">
                 <section.icon className="h-5 w-5 text-black" />
-                <h3 className="text-lg font-medium text-black">{section.title}</h3>
+                <h3 className="text-base font-medium text-black">{section.title}</h3>
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 {section.links.map((link) => (
                   <Link
                     key={link.name}
                     to={link.href}
-                    className="block text-base text-black hover:text-primary py-1 px-2 rounded transition-colors"
+                    className="block text-sm text-black hover:text-primary py-0.5 px-2 rounded transition-colors"
                     onClick={(e) => e.stopPropagation()}
                   >
                     {link.name}
