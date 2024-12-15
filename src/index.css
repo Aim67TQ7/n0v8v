@@ -11,16 +11,16 @@
 
   /* Global card styles */
   .card, .card-container {
-    @apply bg-card backdrop-blur-sm text-card-foreground transition-all duration-200;
+    @apply bg-card text-card-foreground backdrop-blur-sm shadow-sm transition-all duration-200;
   }
 
   .card-hover:hover {
-    @apply bg-card-hover;
+    @apply bg-card-hover shadow-md;
   }
 
   /* Content area styles */
   .content-area {
-    @apply bg-content backdrop-blur-sm text-content-foreground transition-all duration-200;
+    @apply bg-content text-content-foreground backdrop-blur-sm transition-all duration-200;
   }
 
   .content-hover:hover {
@@ -29,20 +29,20 @@
 
   /* Text hierarchy */
   .text-primary-content {
-    @apply text-gray-900;
+    @apply text-content-foreground;
   }
 
   .text-secondary-content {
-    @apply text-gray-700;
+    @apply text-content-muted;
   }
 
   .text-tertiary-content {
-    @apply text-gray-500;
+    @apply text-card-muted;
   }
 
   /* Interactive elements */
   .interactive-element {
-    @apply hover:text-primary transition-colors duration-200;
+    @apply hover:text-primary-hover transition-colors duration-200;
   }
 
   /* Improve input field legibility */
@@ -53,34 +53,28 @@
   input[type="date"],
   input[type="search"],
   textarea {
-    @apply bg-content border-gray-200 text-gray-900 placeholder:text-gray-400;
-  }
-
-  /* Improve input field focus states */
-  input:focus,
-  textarea:focus {
-    @apply border-primary ring-1 ring-primary ring-opacity-50;
+    @apply bg-content border-content-muted text-content-foreground placeholder:text-content-muted focus:border-primary focus:ring-1 focus:ring-primary;
   }
 
   /* Improve disabled state contrast */
   input:disabled,
   textarea:disabled {
-    @apply bg-gray-50 text-gray-500 cursor-not-allowed;
+    @apply bg-accent text-accent-foreground cursor-not-allowed;
   }
 
-  /* Button base styles for consistency */
+  /* Button base styles */
   button {
     @apply min-h-[40px] min-w-[120px] px-4 py-2;
   }
 
-  /* Button loading state styles */
+  /* Button loading state */
   button:disabled {
     @apply opacity-70 cursor-not-allowed;
   }
 }
 
 .gradient-bg {
-  background: linear-gradient(135deg, #4F46E5 0%, #0EA5E9 100%);
+  background: linear-gradient(135deg, #9b87f5 0%, #0EA5E9 100%);
 }
 
 .feature-card {
