@@ -68,11 +68,11 @@ export const ApiStatus = () => {
   const getStatusIcon = (status: ApiStatus) => {
     switch (status) {
       case 'checking':
-        return <Loader className="h-4 w-4 animate-spin text-yellow-500" />;
+        return <Loader className="h-3 w-3 animate-spin text-yellow-500" />;
       case 'up':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
+        return <CheckCircle className="h-3 w-3 text-green-500" />;
       case 'down':
-        return <XCircle className="h-4 w-4 text-red-500" />;
+        return <XCircle className="h-3 w-3 text-red-500" />;
     }
   };
 
@@ -84,13 +84,13 @@ export const ApiStatus = () => {
   };
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-1">
       {(Object.entries(statuses) as [ApiProvider, ApiStatus][]).map(([provider, status]) => (
         <TooltipProvider key={provider}>
           <Tooltip>
             <TooltipTrigger>
-              <div className="flex items-center gap-1">
-                <span className="text-xs font-medium text-gray-600">{providerLabels[provider]}</span>
+              <div className="flex items-center gap-0.5 bg-gray-50 rounded px-1 py-0.5">
+                <span className="text-[10px] font-medium text-gray-600">{providerLabels[provider]}</span>
                 {getStatusIcon(status)}
               </div>
             </TooltipTrigger>
