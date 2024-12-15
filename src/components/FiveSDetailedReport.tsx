@@ -30,49 +30,63 @@ interface FiveSDetailedReportProps {
 export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) => {
   const [report, setReport] = useState<DetailedReport | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchReport = async () => {
-      const { data, error } = await supabase
-        .from('five_s_detailed_reports')
-        .select('*')
-        .eq('evaluation_id', evaluationId)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from('five_s_detailed_reports')
+          .select('*')
+          .eq('evaluation_id', evaluationId)
+          .maybeSingle(); // Using maybeSingle() instead of single()
 
-      if (error) {
-        console.error('Error fetching report:', error);
-        return;
+        if (error) {
+          console.error('Error fetching report:', error);
+          setError('Failed to load the detailed report');
+          return;
+        }
+
+        if (!data) {
+          setError('No detailed report found for this evaluation');
+          setIsLoading(false);
+          return;
+        }
+
+        // Parse the JSON fields to ensure they match our expected types
+        const parsedReport: DetailedReport = {
+          sort_checklist: Array.isArray(data.sort_checklist) ? data.sort_checklist.map((item: any) => ({
+            item: item.item || '',
+            score: Number(item.score) || 0,
+            description: item.description || ''
+          })) : [],
+          sort_positive_observations: Array.isArray(data.sort_positive_observations) ? data.sort_positive_observations : [],
+          sort_concerns: Array.isArray(data.sort_concerns) ? data.sort_concerns : [],
+          set_checklist: Array.isArray(data.set_checklist) ? data.set_checklist.map((item: any) => ({
+            item: item.item || '',
+            score: Number(item.score) || 0,
+            description: item.description || ''
+          })) : [],
+          set_positive_observations: Array.isArray(data.set_positive_observations) ? data.set_positive_observations : [],
+          set_concerns: Array.isArray(data.set_concerns) ? data.set_concerns : [],
+          shine_checklist: Array.isArray(data.shine_checklist) ? data.shine_checklist.map((item: any) => ({
+            item: item.item || '',
+            score: Number(item.score) || 0,
+            description: item.description || ''
+          })) : [],
+          shine_positive_observations: Array.isArray(data.shine_positive_observations) ? data.shine_positive_observations : [],
+          shine_concerns: Array.isArray(data.shine_concerns) ? data.shine_concerns : [],
+          follow_up_actions: Array.isArray(data.follow_up_actions) ? data.follow_up_actions : [],
+          recommendations: Array.isArray(data.recommendations) ? data.recommendations : []
+        };
+
+        setReport(parsedReport);
+        setIsLoading(false);
+      } catch (err) {
+        console.error('Error in fetchReport:', err);
+        setError('An unexpected error occurred');
+        setIsLoading(false);
       }
-
-      // Parse the JSON fields to ensure they match our expected types
-      const parsedReport: DetailedReport = {
-        sort_checklist: Array.isArray(data.sort_checklist) ? data.sort_checklist.map((item: any) => ({
-          item: item.item || '',
-          score: Number(item.score) || 0,
-          description: item.description || ''
-        })) : [],
-        sort_positive_observations: Array.isArray(data.sort_positive_observations) ? data.sort_positive_observations : [],
-        sort_concerns: Array.isArray(data.sort_concerns) ? data.sort_concerns : [],
-        set_checklist: Array.isArray(data.set_checklist) ? data.set_checklist.map((item: any) => ({
-          item: item.item || '',
-          score: Number(item.score) || 0,
-          description: item.description || ''
-        })) : [],
-        set_positive_observations: Array.isArray(data.set_positive_observations) ? data.set_positive_observations : [],
-        set_concerns: Array.isArray(data.set_concerns) ? data.set_concerns : [],
-        shine_checklist: Array.isArray(data.shine_checklist) ? data.shine_checklist.map((item: any) => ({
-          item: item.item || '',
-          score: Number(item.score) || 0,
-          description: item.description || ''
-        })) : [],
-        shine_positive_observations: Array.isArray(data.shine_positive_observations) ? data.shine_positive_observations : [],
-        shine_concerns: Array.isArray(data.shine_concerns) ? data.shine_concerns : [],
-        follow_up_actions: Array.isArray(data.follow_up_actions) ? data.follow_up_actions : [],
-        recommendations: Array.isArray(data.recommendations) ? data.recommendations : []
-      };
-
-      setReport(parsedReport);
-      setIsLoading(false);
     };
 
     fetchReport();
@@ -83,6 +97,14 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
       <div className="flex items-center justify-center p-8">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="p-4 text-center text-red-600">
+        {error}
+      </Card>
     );
   }
 
@@ -137,21 +159,21 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
 
   return (
     <div className="space-y-8">
-      {renderChecklist(report?.sort_checklist || [], 'Sort')}
-      {renderObservations(report?.sort_positive_observations || [], report?.sort_concerns || [], 'Sort')}
+      {renderChecklist(report.sort_checklist, 'Sort')}
+      {renderObservations(report.sort_positive_observations, report.sort_concerns, 'Sort')}
       
-      {renderChecklist(report?.set_checklist || [], 'Set in Order')}
-      {renderObservations(report?.set_positive_observations || [], report?.set_concerns || [], 'Set in Order')}
+      {renderChecklist(report.set_checklist, 'Set in Order')}
+      {renderObservations(report.set_positive_observations, report.set_concerns, 'Set in Order')}
       
-      {renderChecklist(report?.shine_checklist || [], 'Shine')}
-      {renderObservations(report?.shine_positive_observations || [], report?.shine_concerns || [], 'Shine')}
+      {renderChecklist(report.shine_checklist, 'Shine')}
+      {renderObservations(report.shine_positive_observations, report.shine_concerns, 'Shine')}
 
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Action Items</h3>
         <Card className="p-4">
           <h4 className="font-medium mb-2">Recommendations</h4>
           <ul className="list-disc pl-4 space-y-1">
-            {(report?.recommendations || []).map((item, index) => (
+            {report.recommendations.map((item, index) => (
               <li key={index} className="text-sm">{item}</li>
             ))}
           </ul>
@@ -159,7 +181,7 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
         <Card className="p-4">
           <h4 className="font-medium mb-2">Follow-up Actions</h4>
           <ul className="list-disc pl-4 space-y-1">
-            {(report?.follow_up_actions || []).map((item, index) => (
+            {report.follow_up_actions.map((item, index) => (
               <li key={index} className="text-sm">{item}</li>
             ))}
           </ul>
