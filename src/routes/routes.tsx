@@ -1,11 +1,11 @@
 import { lazy } from "react";
-import { Login } from "@/pages/auth/Login";
-import { Register } from "@/pages/auth/Register";
-import { ResetPassword } from "@/pages/auth/ResetPassword";
-import { Dashboard } from "@/pages/Dashboard";
-import { CompanyGPT } from "@/pages/CompanyGPT";
-import { Modules } from "@/pages/Modules";
-import { Tools } from "@/pages/Tools";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
+import ResetPassword from "@/pages/ResetPassword";
+import { Dashboard } from "@/components/Dashboard";
+import CompanyGPT from "@/pages/CompanyGPT";
+import Modules from "@/pages/Modules";
+import Tools from "@/pages/Tools";
 import { CustomerFocus } from "@/pages/operations/CustomerFocus";
 import { Engineering } from "@/pages/operations/Engineering";
 import { Facilities } from "@/pages/operations/Facilities";
