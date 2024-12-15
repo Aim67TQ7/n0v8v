@@ -6,21 +6,9 @@ import { Dashboard } from "@/components/Dashboard";
 import CompanyGPT from "@/pages/CompanyGPT";
 import Modules from "@/pages/Modules";
 import Tools from "@/pages/Tools";
+import CompanyHub from "@/pages/CompanyHub";
 
-// Lazy load all operation pages
-const CustomerFocus = lazy(() => import("@/pages/operations/CustomerFocus"));
-const Engineering = lazy(() => import("@/pages/operations/Engineering"));
-const Facilities = lazy(() => import("@/pages/operations/Facilities"));
-const Quality = lazy(() => import("@/pages/operations/Quality"));
-const Production = lazy(() => import("@/pages/operations/Production"));
-const SupplyChain = lazy(() => import("@/pages/operations/SupplyChain"));
-const Lean = lazy(() => import("@/pages/operations/Lean"));
-const Compliance = lazy(() => import("@/pages/operations/Compliance"));
-const LeadScraping = lazy(() => import("@/pages/leads/LeadScraping"));
-const FiveWhys = lazy(() => import("@/pages/operations/quality/FiveWhys"));
-const Fishbone = lazy(() => import("@/pages/operations/quality/Fishbone"));
-const FiveS = lazy(() => import("@/pages/operations/lean/FiveS"));
-const Maintenance = lazy(() => import("@/pages/operations/Maintenance"));
+// Lazy load operation pages
 const HROperations = lazy(() => import("@/pages/operations/hr"));
 const CompanyNews = lazy(() => import("@/pages/operations/hr/CompanyNews"));
 const TrainingMatrix = lazy(() => import("@/pages/training/TrainingMatrix"));
@@ -47,6 +35,10 @@ export const routes = [
     element: <ResetPassword />
   },
   {
+    path: "/company-hub",
+    element: <CompanyHub />
+  },
+  {
     path: "/company-gpt",
     element: <CompanyGPT />
   },
@@ -57,58 +49,6 @@ export const routes = [
   {
     path: "/tools",
     element: <Tools />
-  },
-  {
-    path: "/operations/customer-focus",
-    element: <CustomerFocus />
-  },
-  {
-    path: "/operations/engineering",
-    element: <Engineering />
-  },
-  {
-    path: "/operations/facilities",
-    element: <Facilities />
-  },
-  {
-    path: "/operations/quality",
-    element: <Quality />
-  },
-  {
-    path: "/operations/production",
-    element: <Production />
-  },
-  {
-    path: "/operations/supply-chain",
-    element: <SupplyChain />
-  },
-  {
-    path: "/operations/lean",
-    element: <Lean />
-  },
-  {
-    path: "/operations/compliance",
-    element: <Compliance />
-  },
-  {
-    path: "/leads/scraping",
-    element: <LeadScraping />
-  },
-  {
-    path: "/operations/quality/five-whys",
-    element: <FiveWhys />
-  },
-  {
-    path: "/operations/quality/fishbone",
-    element: <Fishbone />
-  },
-  {
-    path: "/operations/lean/5s-vision",
-    element: <FiveS />
-  },
-  {
-    path: "/operations/maintenance",
-    element: <Maintenance />
   },
   {
     path: "/operations/hr",
