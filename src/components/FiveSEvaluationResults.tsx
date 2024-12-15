@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, TrendingDown, TrendingUp } from "lucide-react";
 import { FiveSEvaluationHeader } from "@/components/FiveSEvaluationHeader";
 import { FiveSEvaluationImages } from "@/components/FiveSEvaluationImages";
 import { FiveSRadarChart } from "@/components/FiveSRadarChart";
@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import html2pdf from 'html2pdf.js';
 import { FiveSDetailedReport } from "@/components/FiveSDetailedReport";
+import { format } from "date-fns";
 
 interface FiveSEvaluationResultsProps {
   evaluation: any;
@@ -27,6 +28,7 @@ export const FiveSEvaluationResults = ({
   const { toast } = useToast();
   const [evaluationData, setEvaluationData] = useState<any>(null);
   const [evaluationImages, setEvaluationImages] = useState<any[]>([]);
+  const [previousScore, setPreviousScore] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchEvaluationData = async () => {
@@ -59,6 +61,45 @@ export const FiveSEvaluationResults = ({
       fetchEvaluationData();
     }
   }, [evaluation, toast]);
+
+  const calculateTotalScore = () => {
+    if (!evaluationData) return 0;
+    return (
+      (evaluationData.sort_score || 0) +
+      (evaluationData.set_in_order_score || 0) +
+      (evaluationData.shine_score || 0) +
+      (evaluationData.standardize_score || 0) +
+      (evaluationData.sustain_score || 0)
+    );
+  };
+
+  useEffect(() => {
+    const fetchPreviousScore = async () => {
+      if (!evaluationData?.workcenter_id) return;
+
+      const { data, error } = await supabase
+        .from('five_s_evaluations')
+        .select('*')
+        .eq('workcenter_id', evaluationData.workcenter_id)
+        .lt('created_at', evaluationData.created_at)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (!error && data) {
+        const prevTotal = (
+          (data.sort_score || 0) +
+          (data.set_in_order_score || 0) +
+          (data.shine_score || 0) +
+          (data.standardize_score || 0) +
+          (data.sustain_score || 0)
+        );
+        setPreviousScore(prevTotal);
+      }
+    };
+
+    fetchPreviousScore();
+  }, [evaluationData]);
 
   const handleSavePDF = async () => {
     try {
@@ -103,6 +144,10 @@ export const FiveSEvaluationResults = ({
     );
   }
 
+  const totalScore = calculateTotalScore();
+  const scorePercentage = (totalScore / 50) * 100;
+  const scoreDifference = previousScore !== null ? totalScore - previousScore : null;
+
   const baseScores = evaluationData.sort_score + evaluationData.set_in_order_score + evaluationData.shine_score;
   const canShowAdvancedScores = baseScores >= 20;
 
@@ -122,13 +167,46 @@ export const FiveSEvaluationResults = ({
             <FiveSDetailedReport evaluationId={evaluation} />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
             <Card className="p-4">
               <h3 className="text-lg font-semibold mb-2">5S Scores</h3>
               <FiveSRadarChart 
                 scores={evaluationData} 
                 canShowAdvancedScores={canShowAdvancedScores}
               />
+            </Card>
+
+            <Card className="p-4">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold">Score Summary</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {evaluationData.workcenter?.name} - {format(new Date(evaluationData.created_at), 'PPP')}
+                  </p>
+                </div>
+                
+                <div className="text-center py-4">
+                  <div className="text-4xl font-bold">
+                    {totalScore.toFixed(1)}/50
+                  </div>
+                  <div className="text-2xl text-muted-foreground">
+                    {scorePercentage.toFixed(1)}%
+                  </div>
+                  
+                  {scoreDifference !== null && (
+                    <div className={`flex items-center justify-center mt-2 ${
+                      scoreDifference > 0 ? 'text-green-600' : scoreDifference < 0 ? 'text-red-600' : 'text-gray-600'
+                    }`}>
+                      {scoreDifference > 0 ? (
+                        <TrendingUp className="w-5 h-5 mr-1" />
+                      ) : scoreDifference < 0 ? (
+                        <TrendingDown className="w-5 h-5 mr-1" />
+                      ) : null}
+                      <span>{Math.abs(scoreDifference).toFixed(1)} points {scoreDifference > 0 ? 'improvement' : 'decrease'}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
             </Card>
 
             <Card className="p-4">
