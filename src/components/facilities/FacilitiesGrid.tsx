@@ -1,5 +1,5 @@
 import { ModuleCard } from "@/components/operations/ModuleCard";
-import { Database, ClipboardList, Calendar, BookOpen, Package } from "lucide-react";
+import { Database, ClipboardList, Calendar, BookOpen, Package, Building2, Tools, Warehouse, Construction } from "lucide-react";
 
 const facilitiesModules = [
   {
@@ -7,35 +7,56 @@ const facilitiesModules = [
     description: "Track and manage facility assets, equipment, and resources",
     icon: Database,
     href: "/operations/facilities/assets",
-    status: "coming-soon" as const
+    status: "ready" as const
   },
   {
     title: "Work Orders",
     description: "Create and manage maintenance work orders and requests",
     icon: ClipboardList,
     href: "/operations/facilities/work-orders",
-    status: "coming-soon" as const
+    status: "ready" as const
   },
   {
     title: "Preventive Maintenance",
     description: "Schedule and track routine maintenance activities",
     icon: Calendar,
     href: "/operations/facilities/maintenance",
-    status: "coming-soon" as const
+    status: "ready" as const
   },
   {
     title: "Equipment History",
     description: "Access equipment documentation and maintenance history",
-    icon: BookOpen,
+    icon: Tools,
     href: "/operations/facilities/equipment",
-    status: "coming-soon" as const
+    status: "ready" as const
   },
   {
     title: "Inventory Control",
     description: "Manage spare parts and maintenance supplies inventory",
     icon: Package,
     href: "/operations/facilities/inventory",
-    status: "coming-soon" as const
+    status: "ready" as const
+  },
+  {
+    title: "Building Management",
+    description: "Manage building systems and infrastructure",
+    icon: Building2,
+    href: "/operations/facilities/buildings",
+    status: "ready" as const
+  },
+  {
+    title: "Warehouse Operations",
+    description: "Manage warehouse space and storage facilities",
+    icon: Warehouse,
+    href: "/operations/facilities/warehouse",
+    status: "ready" as const
+  },
+  {
+    title: "Construction Projects",
+    description: "Track and manage facility construction and renovation projects",
+    icon: Construction,
+    href: "/operations/facilities/construction",
+    status: "ready" as const
   }
 ];
 

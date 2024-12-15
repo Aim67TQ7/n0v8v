@@ -7,6 +7,7 @@ import CompanyGPT from "@/pages/CompanyGPT";
 import Modules from "@/pages/Modules";
 import Tools from "@/pages/Tools";
 import CompanyHub from "@/pages/CompanyHub";
+import Facilities from "@/pages/operations/Facilities";
 
 // Lazy load operation pages
 const HROperations = lazy(() => import("@/pages/operations/hr"));
@@ -49,6 +50,10 @@ export const routes = [
   {
     path: "/tools",
     element: <Tools />
+  },
+  {
+    path: "/operations/facilities",
+    element: <Facilities />
   },
   {
     path: "/operations/hr",
