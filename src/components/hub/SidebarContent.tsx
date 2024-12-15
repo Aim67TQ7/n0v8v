@@ -10,7 +10,7 @@ export const SidebarContent = () => {
       <Card className="p-4 mt-4">
         <Textarea
           placeholder="Provide feedback, improve data, or report hallucinations..."
-          className="mb-2 text-xs border border-gray-100 focus:border-gray-200 transition-colors"
+          className="mb-2 text-xs text-gray-900 border border-gray-100 focus:border-gray-200 transition-colors"
           rows={3}
         />
         <Button 

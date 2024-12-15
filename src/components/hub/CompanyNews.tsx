@@ -13,7 +13,7 @@ export const CompanyNews = () => {
       <ScrollArea className="h-[100px]">
         <div className="space-y-1">
           {updates.map((update, index) => (
-            <p key={index} className="text-xs text-gray-600 px-2">
+            <p key={index} className="text-xs text-gray-900 px-2">
               {update}
             </p>
           ))}
