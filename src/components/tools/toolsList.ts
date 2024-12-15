@@ -1,16 +1,16 @@
 import { 
-  Eye, 
-  Activity, 
-  Calculator,
-  FileSpreadsheet,
+  Bot, 
+  FileText,
   MessageSquare,
-  PackageSearch,
-  Scale,
-  Microscope,
-  GitFork,
-  Fish,
+  Search,
+  Brain,
+  Mail,
+  Phone,
+  Database,
+  Image,
   Wrench,
-  BookOpen
+  GitFork,
+  Fish
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
@@ -20,77 +20,104 @@ interface Tool {
   icon: LucideIcon;
   href: string;
   status: "ready" | "coming-soon";
+  functionName?: string;
 }
 
 export const tools: Tool[] = [
   {
-    title: "5S Vision Tool",
-    description: "AI-powered visual workplace organization assessment and tracking",
-    icon: Eye,
-    href: "/operations/lean/5s-vision",
-    status: "ready" as const
-  },
-  {
-    title: "AI Maintenance",
-    description: "AI-powered preventative maintenance system",
-    icon: Wrench,
-    href: "/operations/maintenance",
-    status: "ready" as const
-  },
-  {
-    title: "Company GPT",
-    description: "Chat with your AI assistant for process improvement insights",
+    title: "Chat Analysis",
+    description: "AI-powered chat analysis with multiple model options",
     icon: MessageSquare,
     href: "/company-gpt",
-    status: "ready" as const
+    status: "ready",
+    functionName: "chat-with-ai"
   },
   {
-    title: "Five Whys Analysis",
-    description: "AI-guided root cause analysis tool",
-    icon: GitFork,
-    href: "/operations/quality/five-whys",
-    status: "ready" as const
+    title: "Groq Integration",
+    description: "High-performance AI model integration",
+    icon: Brain,
+    href: "/tools/groq",
+    status: "ready",
+    functionName: "chat-with-groq"
   },
   {
-    title: "Fishbone Analysis",
-    description: "Structured cause-and-effect analysis tool",
-    icon: Fish,
-    href: "/operations/quality/fishbone",
-    status: "ready" as const
+    title: "AI Status Check",
+    description: "Monitor AI services and model availability",
+    icon: Bot,
+    href: "/tools/ai-status",
+    status: "ready",
+    functionName: "check-ai-status"
   },
   {
-    title: "Part Analysis",
-    description: "Visual inspection and analysis system for part quality",
-    icon: PackageSearch,
-    href: "/operations/quality/part-analysis",
-    status: "ready" as const
+    title: "Document Processing",
+    description: "Process and analyze documents with RAG technology",
+    icon: FileText,
+    href: "/tools/process-document",
+    status: "ready",
+    functionName: "process-rag-document"
+  },
+  {
+    title: "Lead Generation",
+    description: "Automated lead scraping and analysis",
+    icon: Search,
+    href: "/leads/scraping",
+    status: "ready",
+    functionName: "scrape-leads"
+  },
+  {
+    title: "Email Automation",
+    description: "Automated email sending and processing",
+    icon: Mail,
+    href: "/tools/email",
+    status: "ready",
+    functionName: "send-email"
+  },
+  {
+    title: "SMS Integration",
+    description: "SMS messaging and notifications",
+    icon: Phone,
+    href: "/tools/sms",
+    status: "ready",
+    functionName: "send-sms"
+  },
+  {
+    title: "Maintenance Analysis",
+    description: "AI-powered equipment maintenance analysis",
+    icon: Wrench,
+    href: "/operations/maintenance",
+    status: "ready",
+    functionName: "analyze-maintenance"
+  },
+  {
+    title: "5S Analysis",
+    description: "Detailed 5S workplace organization analysis",
+    icon: Database,
+    href: "/operations/lean/5s-vision",
+    status: "ready",
+    functionName: "analyze-5s-detailed"
   },
   {
     title: "Process Analysis",
-    description: "Analyze and optimize manufacturing processes",
-    icon: Activity,
+    description: "Visual process analysis and improvement",
+    icon: Image,
     href: "/operations/process",
-    status: "ready" as const
+    status: "ready",
+    functionName: "analyze-process"
   },
   {
-    title: "Product Inspection",
-    description: "Automated visual inspection and pass/fail analysis",
-    icon: Microscope,
-    href: "/operations/quality/product-inspection",
-    status: "ready" as const
+    title: "Five Whys Analysis",
+    description: "Root cause analysis using Five Whys methodology",
+    icon: GitFork,
+    href: "/operations/quality/five-whys",
+    status: "ready",
+    functionName: "analyze-five-whys"
   },
   {
-    title: "Training Matrix",
-    description: "Track employee training and certifications",
-    icon: FileSpreadsheet,
-    href: "/operations/hr/training-matrix",
-    status: "ready" as const
-  },
-  {
-    title: "VAVE Analysis",
-    description: "Value Analysis and Value Engineering with AI assistance",
-    icon: Calculator,
-    href: "/operations/engineering/vave-analysis",
-    status: "ready" as const
+    title: "Fishbone Analysis",
+    description: "Cause and effect analysis using Fishbone diagram",
+    icon: Fish,
+    href: "/operations/quality/fishbone",
+    status: "ready",
+    functionName: "analyze-fishbone"
   }
-].sort((a, b) => a.title.localeCompare(b.title));
+];
