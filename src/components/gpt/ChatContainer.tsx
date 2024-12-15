@@ -4,16 +4,15 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Send, Loader2, Plus } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
 
 interface ChatContainerProps {
   messages: any[];
   onMessagesChange: (messages: any[]) => void;
   chatId: string | null;
-  onNewChat?: () => void;
 }
 
-export const ChatContainer = ({ messages, onMessagesChange, chatId, onNewChat }: ChatContainerProps) => {
+export const ChatContainer = ({ messages, onMessagesChange, chatId }: ChatContainerProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState("");
@@ -53,7 +52,7 @@ export const ChatContainer = ({ messages, onMessagesChange, chatId, onNewChat }:
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || !chatId || isLoading) return;
+    if (!input.trim() || !chatId) return;
 
     try {
       setIsLoading(true);
@@ -62,20 +61,19 @@ export const ChatContainer = ({ messages, onMessagesChange, chatId, onNewChat }:
       onMessagesChange(newMessages);
       setInput("");
 
-      const response = await supabase.functions.invoke('chat-with-groq', {
-        body: {
-          messages: newMessages
-        },
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: newMessages,
+          chatId: chatId
+        }),
       });
 
-      if (response.error) throw new Error(response.error.message);
+      if (!response.ok) throw new Error('Failed to get response');
 
-      const assistantMessage = { 
-        role: "assistant", 
-        content: response.data.choices[0].message.content 
-      };
-      
-      onMessagesChange([...newMessages, assistantMessage]);
+      const data = await response.json();
+      onMessagesChange([...newMessages, data.message]);
     } catch (error) {
       console.error('Chat error:', error);
       toast({
@@ -89,60 +87,35 @@ export const ChatContainer = ({ messages, onMessagesChange, chatId, onNewChat }:
   };
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message, index) => (
-          <div
+          <Card
             key={index}
-            className={`flex ${
-              message.role === "user" ? "justify-end" : "justify-start"
+            className={`p-4 ${
+              message.role === 'user' ? 'bg-primary/10' : 'bg-secondary/10'
             }`}
           >
-            <div
-              className={`max-w-[80%] rounded-lg p-3 text-sm ${
-                message.role === "user"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-900"
-              }`}
-            >
-              <p className="whitespace-pre-wrap">{message.content}</p>
+            <div className="flex items-start gap-3">
+              <div className="font-medium min-w-[60px]">
+                {message.role === 'user' ? 'You' : 'Assistant'}:
+              </div>
+              <div className="flex-1 whitespace-pre-wrap">{message.content}</div>
             </div>
-          </div>
+          </Card>
         ))}
         <div ref={messagesEndRef} />
       </div>
 
-      <Card className="p-4 border-t">
-        <div className="flex gap-2 items-center">
-          {onNewChat && (
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={onNewChat}
-              className="shrink-0"
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          )}
+      <form onSubmit={handleSubmit} className="p-4 border-t">
+        <div className="flex gap-2">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             disabled={isLoading}
-            className="flex-1"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit(e);
-              }
-            }}
           />
-          <Button 
-            type="submit" 
-            onClick={handleSubmit}
-            disabled={isLoading || !input.trim()}
-            className="bg-blue-600 text-white hover:bg-blue-700"
-          >
+          <Button type="submit" disabled={isLoading || !input.trim()}>
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
@@ -150,7 +123,7 @@ export const ChatContainer = ({ messages, onMessagesChange, chatId, onNewChat }:
             )}
           </Button>
         </div>
-      </Card>
+      </form>
     </div>
   );
 };
