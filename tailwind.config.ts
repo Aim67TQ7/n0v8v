@@ -35,21 +35,21 @@ export default {
           hover: "#0b8ac5"
         },
         accent: {
-          DEFAULT: "#F1F0FB",
-          foreground: "#1A1F2C",
-          hover: "#E5DEFF"
+          DEFAULT: "#F1F1F1",
+          foreground: "#000000",
+          hover: "#E5E5E5"
         },
         card: {
-          DEFAULT: "#F1F0FB",
-          foreground: "#1A1F2C",
-          hover: "#E5DEFF",
-          muted: "#8A898C"
+          DEFAULT: "#F1F1F1",
+          foreground: "#000000",
+          hover: "#E5E5E5",
+          muted: "#666666"
         },
         content: {
-          DEFAULT: "#F1F0FB",
-          foreground: "#1A1F2C",
-          hover: "#E5DEFF",
-          muted: "#8A898C"
+          DEFAULT: "#F1F1F1",
+          foreground: "#000000",
+          hover: "#E5E5E5",
+          muted: "#666666"
         },
         destructive: {
           DEFAULT: "#ea384c",
