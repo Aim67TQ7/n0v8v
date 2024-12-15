@@ -6,14 +6,14 @@
 
 @layer base {
   body {
-    @apply bg-white text-gray-900 antialiased;
+    @apply bg-white text-black antialiased;
   }
 }
 
 @layer components {
   /* Card Components */
   .card, .card-container {
-    @apply bg-card text-card-foreground backdrop-blur-sm shadow-sm transition-all duration-200;
+    @apply bg-card text-black backdrop-blur-sm shadow-sm transition-all duration-200;
   }
 
   .card-hover:hover {
@@ -22,7 +22,7 @@
 
   /* Content Areas */
   .content-area {
-    @apply bg-content text-content-foreground backdrop-blur-sm transition-all duration-200;
+    @apply bg-content text-black backdrop-blur-sm transition-all duration-200;
   }
 
   .content-hover:hover {
@@ -31,15 +31,15 @@
 
   /* Text Hierarchy */
   .text-primary-content {
-    @apply text-content-foreground;
+    @apply text-black;
   }
 
   .text-secondary-content {
-    @apply text-content-muted;
+    @apply text-black;
   }
 
   .text-tertiary-content {
-    @apply text-card-muted;
+    @apply text-black;
   }
 
   /* Interactive Elements */
@@ -49,8 +49,8 @@
 
   /* Form Elements */
   .form-input {
-    @apply bg-content border-content-muted text-content-foreground 
-           placeholder:text-content-muted focus:border-primary 
+    @apply bg-content border-content-muted text-black 
+           placeholder:text-black focus:border-primary 
            focus:ring-1 focus:ring-primary;
   }
 
@@ -66,7 +66,7 @@
 
   input:disabled,
   textarea:disabled {
-    @apply bg-accent text-accent-foreground cursor-not-allowed;
+    @apply bg-accent text-black cursor-not-allowed;
   }
 
   /* Button Styles */
