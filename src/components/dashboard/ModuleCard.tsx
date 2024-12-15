@@ -1,5 +1,5 @@
 import { LucideIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 
 export interface ModuleCardProps {
@@ -11,11 +11,19 @@ export interface ModuleCardProps {
 }
 
 export const ModuleCard = ({ title, description, icon: Icon, href, status }: ModuleCardProps) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (status === "ready") {
+      navigate(href);
+    }
+  };
+
   return (
-    <Link 
-      to={href}
+    <div 
+      onClick={handleClick}
       className={`block transition-transform duration-200 hover:scale-105 ${
-        status === "coming-soon" ? "pointer-events-none opacity-60" : ""
+        status === "coming-soon" ? "pointer-events-none opacity-60" : "cursor-pointer"
       }`}
     >
       <Card className="p-4 h-full">
@@ -32,6 +40,6 @@ export const ModuleCard = ({ title, description, icon: Icon, href, status }: Mod
           </div>
         </div>
       </Card>
-    </Link>
+    </div>
   );
 };
