@@ -6,6 +6,7 @@ import { CompanyNews } from "@/components/hub/CompanyNews";
 import { HubLinks } from "@/components/hub/HubLinks";
 import { Menu } from "lucide-react";
 import { ColorSelector } from "@/components/hub/ColorSelector";
+import { SidebarContent } from "@/components/hub/SidebarContent";
 import {
   Sheet,
   SheetContent,
@@ -63,21 +64,7 @@ const CompanyHub = () => {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 h-full">
             {/* Left Sidebar */}
             <div className="hidden md:block md:col-span-2">
-              <div className="h-full flex flex-col">
-                <ChatHistory className="flex-grow" />
-                <Card className="p-4 mt-4" style={{ 
-                  backgroundColor,
-                  opacity: opacity / 100 
-                }}>
-                  <h2 className="font-semibold mb-2">Train the Model</h2>
-                  <Textarea
-                    placeholder="Provide feedback, improve data, or report hallucinations..."
-                    className="mb-2 text-xs"
-                    rows={3}
-                  />
-                  <Button className="w-full">Submit Feedback</Button>
-                </Card>
-              </div>
+              <SidebarContent />
             </div>
 
             {/* Main Content */}
