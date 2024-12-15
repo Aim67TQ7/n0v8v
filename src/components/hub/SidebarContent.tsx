@@ -1,7 +1,7 @@
-import { ChatHistory } from "@/components/hub/ChatHistory";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
+import { ChatHistory } from "./ChatHistory";
 
 export const SidebarContent = () => {
   return (
@@ -15,7 +15,7 @@ export const SidebarContent = () => {
         />
         <Button 
           variant="link" 
-          className="w-full text-primary hover:text-primary/80"
+          className="text-sm font-semibold text-primary px-2 hover:text-primary/80"
         >
           Train the Model
         </Button>
