@@ -7,7 +7,7 @@ export const SidebarContent = () => {
   return (
     <div className="h-full flex flex-col">
       <ChatHistory className="flex-grow" />
-      <Card className="p-4 mt-4">
+      <Card className="p-4 mt-4 bg-white">
         <Textarea
           placeholder="Provide feedback, improve data, or report hallucinations..."
           className="mb-2 text-xs text-gray-900 border border-gray-100 focus:border-gray-200 transition-colors"

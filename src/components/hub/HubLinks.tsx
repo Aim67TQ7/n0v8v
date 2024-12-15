@@ -53,14 +53,14 @@ export const HubLinks = () => {
   ];
 
   return (
-    <Card className="p-3">
+    <Card className="p-3 bg-white">
       <h2 className="font-semibold mb-2 text-sm text-primary">Quick Links</h2>
       <ScrollArea className="h-[calc(100vh-200px)]">
         <div className="space-y-1.5">
           {sections.map((section) => (
             <Card 
               key={section.title} 
-              className={`p-2 ${section.onClick ? 'cursor-pointer hover:bg-accent/50 transition-colors' : ''}`}
+              className={`p-2 bg-white ${section.onClick ? 'cursor-pointer hover:bg-accent/50 transition-colors' : ''}`}
               onClick={section.onClick}
             >
               <div className="flex items-center gap-1.5 mb-1">

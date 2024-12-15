@@ -9,7 +9,7 @@ export const CompanyNews = () => {
   ];
 
   return (
-    <Card className="p-1">
+    <Card className="p-1 bg-white">
       <ScrollArea className="h-[100px]">
         <div className="space-y-1">
           {updates.map((update, index) => (
