@@ -17,7 +17,7 @@ export const ChatHistory = ({ sessions = [], onSelect, selectedId }: ChatHistory
   return (
     <div className="flex flex-col gap-2">
       {sessions.length === 0 ? (
-        <div className="text-sm text-muted-foreground text-center py-4">
+        <div className="text-base font-medium text-black text-center py-4">
           No chat history yet
         </div>
       ) : (
@@ -30,10 +30,10 @@ export const ChatHistory = ({ sessions = [], onSelect, selectedId }: ChatHistory
           >
             <MessageSquare className="h-4 w-4 shrink-0" />
             <div className="flex flex-col items-start gap-1 overflow-hidden">
-              <span className="text-sm font-medium truncate w-full">
+              <span className="text-base font-medium text-black truncate w-full">
                 {session.title}
               </span>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-sm text-gray-700">
                 {new Date(session.timestamp).toLocaleDateString(undefined, {
                   month: 'short',
                   day: 'numeric',
