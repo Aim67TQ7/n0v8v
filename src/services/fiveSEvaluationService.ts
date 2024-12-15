@@ -88,21 +88,21 @@ export const createEvaluation = async (workcenter_id: string, analysis: any) => 
     throw new Error('User profile not found. Please ensure you are properly logged in.');
   }
 
-  // Create the evaluation
+  // Create the evaluation with safe defaults
   const { data: evaluation, error: evalError } = await supabase
     .from('five_s_evaluations')
     .insert({
       workcenter_id,
       created_by: user.id,
-      sort_score: analysis.sort_score,
-      set_in_order_score: analysis.set_in_order_score,
-      shine_score: analysis.shine_score,
-      standardize_score: analysis.standardize_score,
-      sustain_score: analysis.sustain_score,
-      strengths: analysis.strengths,
-      weaknesses: analysis.weaknesses,
-      opportunities: analysis.opportunities,
-      threats: analysis.threats,
+      sort_score: analysis.sort_score || 0,
+      set_in_order_score: analysis.set_in_order_score || 0,
+      shine_score: analysis.shine_score || 0,
+      standardize_score: analysis.standardize_score || 0,
+      sustain_score: analysis.sustain_score || 0,
+      strengths: analysis.strengths || [],
+      weaknesses: analysis.weaknesses || [],
+      opportunities: analysis.opportunities || [],
+      threats: analysis.threats || [],
       safety_deduction: analysis.safety_deduction || 0
     })
     .select()
@@ -110,23 +110,23 @@ export const createEvaluation = async (workcenter_id: string, analysis: any) => 
     
   if (evalError) throw evalError;
 
-  // Create the detailed report
+  // Create the detailed report with safe defaults for all arrays
   const { error: detailError } = await supabase
     .from('five_s_detailed_reports')
     .insert({
       evaluation_id: evaluation.id,
       created_by: user.id,
-      sort_checklist: analysis.detailedAnalysis.sort.checklist || [],
-      sort_positive_observations: analysis.detailedAnalysis.sort.positive_observations || [],
-      sort_concerns: analysis.detailedAnalysis.sort.concerns || [],
-      set_checklist: analysis.detailedAnalysis.set_in_order.checklist || [],
-      set_positive_observations: analysis.detailedAnalysis.set_in_order.positive_observations || [],
-      set_concerns: analysis.detailedAnalysis.set_in_order.concerns || [],
-      shine_checklist: analysis.detailedAnalysis.shine.checklist || [],
-      shine_positive_observations: analysis.detailedAnalysis.shine.positive_observations || [],
-      shine_concerns: analysis.detailedAnalysis.shine.concerns || [],
-      follow_up_actions: analysis.detailedAnalysis.follow_up_actions || [],
-      recommendations: analysis.detailedAnalysis.recommendations || []
+      sort_checklist: analysis.detailedAnalysis?.sort?.checklist || [],
+      sort_positive_observations: analysis.detailedAnalysis?.sort?.positiveObservations || [],
+      sort_concerns: analysis.detailedAnalysis?.sort?.concerns || [],
+      set_checklist: analysis.detailedAnalysis?.setInOrder?.checklist || [],
+      set_positive_observations: analysis.detailedAnalysis?.setInOrder?.positiveObservations || [],
+      set_concerns: analysis.detailedAnalysis?.setInOrder?.concerns || [],
+      shine_checklist: analysis.detailedAnalysis?.shine?.checklist || [],
+      shine_positive_observations: analysis.detailedAnalysis?.shine?.positiveObservations || [],
+      shine_concerns: analysis.detailedAnalysis?.shine?.concerns || [],
+      follow_up_actions: analysis.detailedAnalysis?.followUpActions || [],
+      recommendations: analysis.detailedAnalysis?.recommendations || []
     });
 
   if (detailError) {
