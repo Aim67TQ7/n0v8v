@@ -11,6 +11,7 @@ import { ScoreAnalysis } from "@/components/analysis/ScoreAnalysis";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import html2pdf from 'html2pdf.js';
+import { FiveSDetailedReport } from "@/components/FiveSDetailedReport";
 
 interface FiveSEvaluationResultsProps {
   evaluation: any;
@@ -117,7 +118,11 @@ export const FiveSEvaluationResults = ({
         <Card className="p-4">
           <FiveSEvaluationImages images={evaluationImages} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div className="mt-8">
+            <FiveSDetailedReport evaluationId={evaluation} />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
             <Card className="p-4">
               <h3 className="text-lg font-semibold mb-2">5S Scores</h3>
               <FiveSRadarChart 
@@ -132,19 +137,6 @@ export const FiveSEvaluationResults = ({
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 mt-4">
-            <ScoreAnalysis
-              sortScore={evaluationData.sort_score}
-              setScore={evaluationData.set_in_order_score}
-              shineScore={evaluationData.shine_score}
-              standardizeScore={canShowAdvancedScores ? evaluationData.standardize_score : 0}
-              sustainScore={canShowAdvancedScores ? evaluationData.sustain_score : 0}
-              weaknesses={evaluationData.weaknesses || []}
-              canShowAdvancedScores={canShowAdvancedScores}
-              displayMode="primary"
-            />
-          </div>
-
           {canShowAdvancedScores && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
               <div className="md:col-span-2">
@@ -152,8 +144,8 @@ export const FiveSEvaluationResults = ({
                   sortScore={evaluationData.sort_score}
                   setScore={evaluationData.set_in_order_score}
                   shineScore={evaluationData.shine_score}
-                  standardizeScore={evaluationData.standardize_score}
-                  sustainScore={evaluationData.sustain_score}
+                  standardizeScore={canShowAdvancedScores ? evaluationData.standardize_score : 0}
+                  sustainScore={canShowAdvancedScores ? evaluationData.sustain_score : 0}
                   weaknesses={evaluationData.weaknesses || []}
                   canShowAdvancedScores={canShowAdvancedScores}
                   displayMode="advanced"

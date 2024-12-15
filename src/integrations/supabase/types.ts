@@ -570,6 +570,75 @@ export type Database = {
           },
         ]
       }
+      five_s_detailed_reports: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          evaluation_id: string | null
+          follow_up_actions: string[] | null
+          id: string
+          recommendations: string[] | null
+          set_checklist: Json
+          set_concerns: string[] | null
+          set_positive_observations: string[] | null
+          shine_checklist: Json
+          shine_concerns: string[] | null
+          shine_positive_observations: string[] | null
+          sort_checklist: Json
+          sort_concerns: string[] | null
+          sort_positive_observations: string[] | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          evaluation_id?: string | null
+          follow_up_actions?: string[] | null
+          id?: string
+          recommendations?: string[] | null
+          set_checklist?: Json
+          set_concerns?: string[] | null
+          set_positive_observations?: string[] | null
+          shine_checklist?: Json
+          shine_concerns?: string[] | null
+          shine_positive_observations?: string[] | null
+          sort_checklist?: Json
+          sort_concerns?: string[] | null
+          sort_positive_observations?: string[] | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          evaluation_id?: string | null
+          follow_up_actions?: string[] | null
+          id?: string
+          recommendations?: string[] | null
+          set_checklist?: Json
+          set_concerns?: string[] | null
+          set_positive_observations?: string[] | null
+          shine_checklist?: Json
+          shine_concerns?: string[] | null
+          shine_positive_observations?: string[] | null
+          sort_checklist?: Json
+          sort_concerns?: string[] | null
+          sort_positive_observations?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "five_s_detailed_reports_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "five_s_detailed_reports_evaluation_id_fkey"
+            columns: ["evaluation_id"]
+            isOneToOne: false
+            referencedRelation: "five_s_evaluations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       five_s_evaluations: {
         Row: {
           created_at: string

@@ -33,7 +33,6 @@ export const analyzeImages = async (imageUrls: string[]) => {
         const reader = new FileReader();
         reader.onloadend = () => {
           const base64String = reader.result as string;
-          // Remove the data URL prefix
           const base64Data = base64String.split(',')[1];
           resolve(base64Data);
         };
@@ -43,16 +42,30 @@ export const analyzeImages = async (imageUrls: string[]) => {
     })
   );
 
-  const { data, error } = await supabase.functions.invoke('analyze-5s-images', {
+  // Get basic 5S analysis
+  const { data: basicAnalysis, error: basicError } = await supabase.functions.invoke('analyze-5s-images', {
     body: { imageUrls: base64Images }
   });
 
-  if (error) {
-    console.error('Analysis error:', error);
+  if (basicError) {
+    console.error('Basic analysis error:', basicError);
     throw new Error('Failed to analyze images');
   }
 
-  return data;
+  // Get detailed analysis
+  const { data: detailedAnalysis, error: detailedError } = await supabase.functions.invoke('analyze-5s-detailed', {
+    body: { imageUrls: base64Images }
+  });
+
+  if (detailedError) {
+    console.error('Detailed analysis error:', detailedError);
+    throw new Error('Failed to get detailed analysis');
+  }
+
+  return {
+    ...basicAnalysis,
+    detailedAnalysis
+  };
 };
 
 export const createEvaluation = async (workcenter_id: string, analysis: any) => {
