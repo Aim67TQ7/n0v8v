@@ -88,6 +88,7 @@ export const createEvaluation = async (workcenter_id: string, analysis: any) => 
     throw new Error('User profile not found. Please ensure you are properly logged in.');
   }
 
+  // Create the evaluation
   const { data: evaluation, error: evalError } = await supabase
     .from('five_s_evaluations')
     .insert({
@@ -108,6 +109,31 @@ export const createEvaluation = async (workcenter_id: string, analysis: any) => 
     .single();
     
   if (evalError) throw evalError;
+
+  // Create the detailed report
+  const { error: detailError } = await supabase
+    .from('five_s_detailed_reports')
+    .insert({
+      evaluation_id: evaluation.id,
+      created_by: user.id,
+      sort_checklist: analysis.detailedAnalysis.sort.checklist || [],
+      sort_positive_observations: analysis.detailedAnalysis.sort.positive_observations || [],
+      sort_concerns: analysis.detailedAnalysis.sort.concerns || [],
+      set_checklist: analysis.detailedAnalysis.set_in_order.checklist || [],
+      set_positive_observations: analysis.detailedAnalysis.set_in_order.positive_observations || [],
+      set_concerns: analysis.detailedAnalysis.set_in_order.concerns || [],
+      shine_checklist: analysis.detailedAnalysis.shine.checklist || [],
+      shine_positive_observations: analysis.detailedAnalysis.shine.positive_observations || [],
+      shine_concerns: analysis.detailedAnalysis.shine.concerns || [],
+      follow_up_actions: analysis.detailedAnalysis.follow_up_actions || [],
+      recommendations: analysis.detailedAnalysis.recommendations || []
+    });
+
+  if (detailError) {
+    console.error('Error creating detailed report:', detailError);
+    throw detailError;
+  }
+
   return evaluation;
 };
 
