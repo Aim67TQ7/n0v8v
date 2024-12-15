@@ -20,7 +20,7 @@ const CompanyHub = () => {
     <div className="space-y-4">
       <ChatHistory />
       
-      <Card className="p-4 bg-white/90 backdrop-blur-sm">
+      <Card className="p-4" style={{ backgroundColor }}>
         <h2 className="font-semibold mb-2">Train the Model</h2>
         <Textarea
           placeholder="Provide feedback, improve data, or report hallucinations..."
@@ -32,8 +32,23 @@ const CompanyHub = () => {
     </div>
   );
 
+  // Function to determine if background is dark
+  const isBackgroundDark = (color: string) => {
+    // Convert hex to RGB
+    const r = parseInt(color.slice(1, 3), 16);
+    const g = parseInt(color.slice(3, 5), 16);
+    const b = parseInt(color.slice(5, 7), 16);
+    
+    // Calculate relative luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance < 0.5;
+  };
+
+  // Determine text color based on background
+  const textColorClass = isBackgroundDark(backgroundColor) ? "text-white" : "text-gray-900";
+
   return (
-    <div className="min-h-screen" style={{ backgroundColor }}>
+    <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto py-6 px-4 sm:px-6">
         <div className="flex justify-end mb-4">
           <Button
@@ -58,7 +73,7 @@ const CompanyHub = () => {
           </Button>
         </div>
 
-        <Card className="bg-white/90 backdrop-blur-sm">
+        <Card className={`${textColorClass}`} style={{ backgroundColor }}>
           {/* Mobile Menu Button */}
           <div className="md:hidden mb-4">
             <Sheet>
@@ -78,7 +93,7 @@ const CompanyHub = () => {
             <div className="hidden md:block md:col-span-2">
               <div className="h-full flex flex-col">
                 <ChatHistory className="flex-grow" />
-                <Card className="p-4 bg-white/90 backdrop-blur-sm mt-4">
+                <Card className="p-4 mt-4" style={{ backgroundColor }}>
                   <h2 className="font-semibold mb-2">Train the Model</h2>
                   <Textarea
                     placeholder="Provide feedback, improve data, or report hallucinations..."
@@ -93,21 +108,21 @@ const CompanyHub = () => {
             {/* Main Content */}
             <div className="md:col-span-8">
               <div className="h-full flex flex-col">
-                <Card className="p-4 bg-white/90 backdrop-blur-sm">
+                <Card className="p-4" style={{ backgroundColor }}>
                   <h2 className="font-semibold mb-4">Company News</h2>
                   <CompanyNews />
                 </Card>
                 
-                <Card className="p-4 bg-white/90 backdrop-blur-sm mt-6 flex-1 relative">
+                <Card className="p-4 mt-6 flex-1 relative" style={{ backgroundColor }}>
                   <h2 className="font-semibold mb-4">Active Chat</h2>
                   <div className="space-y-4 mb-4 h-[400px] overflow-y-auto">
                     {/* Chat messages would go here */}
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/50 backdrop-blur-sm border-t">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 border-t">
                     <div className="flex flex-col sm:flex-row gap-2">
                       <Textarea
                         placeholder="Type your message..."
-                        className="flex-1 text-xs bg-white/70"
+                        className="flex-1 text-xs"
                       />
                       <Button className="sm:w-auto">Send</Button>
                     </div>
