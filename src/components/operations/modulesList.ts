@@ -139,10 +139,31 @@ export const hrTools: ModuleCardProps[] = [
     status: "ready"
   },
   {
-    title: "Cross-Training & Competency",
-    description: "AI-driven training and skill validation system",
-    icon: GraduationCap,
-    href: "/operations/hr/training",
+    title: "Employee Data",
+    description: "View and manage employee information",
+    icon: User,
+    href: "/operations/hr/employee-data",
+    status: "ready"
+  },
+  {
+    title: "Employee Handbook",
+    description: "Access company policies and procedures",
+    icon: BookOpen,
+    href: "/operations/hr/handbook",
+    status: "ready"
+  },
+  {
+    title: "Insurance Benefits",
+    description: "Learn about available insurance coverage and benefits",
+    icon: Shield,
+    href: "/operations/hr/insurance",
+    status: "ready"
+  },
+  {
+    title: "Organization Chart",
+    description: "View company structure and reporting relationships",
+    icon: Users,
+    href: "/operations/hr/org-chart",
     status: "ready"
   }
 ];
