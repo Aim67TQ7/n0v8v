@@ -17,7 +17,7 @@ serve(async (req) => {
     const APIFY_API_KEY = Deno.env.get('APIFY_API_KEY');
     if (!APIFY_API_KEY) {
       console.error('APIFY_API_KEY not found in environment variables');
-      throw new Error('Apify API key not configured');
+      throw new Error('Apify API key not configured. Please set the APIFY_API_KEY secret in the Supabase dashboard.');
     }
 
     // Construct the search query for Google Maps
