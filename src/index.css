@@ -13,7 +13,7 @@
 @layer components {
   /* Card Components */
   .card, .card-container {
-    @apply bg-card text-black backdrop-blur-sm shadow-sm transition-all duration-200;
+    @apply bg-white text-black backdrop-blur-sm shadow-sm transition-all duration-200;
   }
 
   .card-hover:hover {
@@ -22,7 +22,7 @@
 
   /* Content Areas */
   .content-area {
-    @apply bg-content text-black backdrop-blur-sm transition-all duration-200;
+    @apply bg-white text-black backdrop-blur-sm transition-all duration-200;
   }
 
   .content-hover:hover {
@@ -49,7 +49,7 @@
 
   /* Form Elements */
   .form-input {
-    @apply bg-content border-content-muted text-black 
+    @apply bg-white border-content-muted text-black 
            placeholder:text-black focus:border-primary 
            focus:ring-1 focus:ring-primary;
   }
@@ -102,6 +102,6 @@
 
   /* Feature Cards */
   .feature-card {
-    @apply p-6 rounded-xl bg-card shadow-sm hover:shadow-md transition-shadow duration-300;
+    @apply p-6 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow duration-300;
   }
 }
