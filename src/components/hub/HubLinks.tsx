@@ -53,14 +53,14 @@ export const HubLinks = () => {
   ];
 
   return (
-    <Card className="card p-3">
+    <Card className="card">
       <h2 className="font-semibold mb-2 text-sm text-primary">Quick Links</h2>
       <ScrollArea className="h-[calc(100vh-200px)]">
         <div className="space-y-1.5">
           {sections.map((section) => (
             <Card 
               key={section.title} 
-              className={`content-area content-hover p-2 ${
+              className={`content-area content-hover ${
                 section.onClick ? 'cursor-pointer' : ''
               }`}
               onClick={section.onClick}
