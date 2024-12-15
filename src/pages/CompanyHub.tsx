@@ -34,7 +34,7 @@ const CompanyHub = () => {
             </Sheet>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 h-full">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 min-h-[calc(100vh-8rem)]">
             {/* Left Sidebar */}
             <div className="hidden md:block md:col-span-2">
               <SidebarContent />
@@ -68,10 +68,7 @@ const CompanyHub = () => {
 
             {/* Right Sidebar */}
             <div className="hidden md:block md:col-span-2">
-              <div className="h-full flex flex-col">
-                <div className="flex-grow" />
-                <HubLinks />
-              </div>
+              <HubLinks />
             </div>
           </div>
         </Card>
