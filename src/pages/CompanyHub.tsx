@@ -48,7 +48,7 @@ const CompanyHub = () => {
   const textColorClass = isBackgroundDark(backgroundColor) ? "text-white" : "text-gray-900";
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor }}>
+    <div className="min-h-screen bg-white" style={{ backgroundColor }}>
       <div className="container mx-auto py-6 px-4 sm:px-6">
         <div className="flex justify-end mb-4">
           <Button
