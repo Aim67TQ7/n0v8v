@@ -7,7 +7,6 @@ import { FiveWhysForm } from "@/components/five-whys/FiveWhysForm";
 import { QuestioningInterface } from "@/components/five-whys/QuestioningInterface";
 import { FishboneResult } from "@/components/five-whys/FishboneResult";
 import { AnalysisHeader } from "@/components/five-whys/AnalysisHeader";
-import { CausesList } from "@/components/five-whys/CausesList";
 
 interface LearningFeedback {
   iteration: number;
@@ -132,18 +131,6 @@ const FiveWhys = () => {
     }
   };
 
-  const addGroupFeedback = async (feedback: string) => {
-    if (!session?.user) return;
-    
-    const newFeedback = {
-      userId: session.user.id,
-      feedback,
-      timestamp: new Date().toISOString()
-    };
-    
-    setGroupFeedback([...groupFeedback, newFeedback]);
-  };
-
   const resetAnalysis = () => {
     setProblemStatement("");
     setCurrentIteration(0);
@@ -160,27 +147,13 @@ const FiveWhys = () => {
         {currentIteration === 0 ? (
           <FiveWhysForm onSubmit={startAnalysis} />
         ) : !analysis ? (
-          <>
-            <QuestioningInterface
-              problemStatement={problemStatement}
-              currentIteration={currentIteration}
-              previousAnswers={answers}
-              onAnswer={handleAnswer}
-              isAnalyzing={isAnalyzing}
-            />
-            <CausesList
-              causes={answers.map((text, index) => ({
-                id: `cause-${index}`,
-                text,
-                checked: true
-              }))}
-              currentIteration={currentIteration}
-              isAnalyzing={isAnalyzing}
-              onCauseToggle={() => {}}
-              onNext={() => {}}
-              onReset={resetAnalysis}
-            />
-          </>
+          <QuestioningInterface
+            problemStatement={problemStatement}
+            currentIteration={currentIteration}
+            previousAnswers={answers}
+            onAnswer={handleAnswer}
+            isAnalyzing={isAnalyzing}
+          />
         ) : (
           <FishboneResult
             analysis={analysis}
