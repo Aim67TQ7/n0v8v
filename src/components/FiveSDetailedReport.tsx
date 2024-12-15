@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
+import { FiveSDetailedReport as DetailedReportType } from "@/types/five-s";
 
 interface FiveSDetailedReportProps {
   evaluationId: string;
@@ -25,7 +26,7 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
       }
 
       console.log('Received detailed report data:', data);
-      return data;
+      return data as DetailedReportType;
     }
   });
 
@@ -73,7 +74,7 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
             <div className="space-y-4">
               <h4 className="font-medium">Checklist</h4>
               <ul className="list-disc pl-5 space-y-2">
-                {detailedReport.sort_checklist.map((item: any, index: number) => (
+                {detailedReport.sort_checklist.map((item, index) => (
                   <li key={index} className="text-sm">
                     {item.item} - Score: {item.score}/10
                     {item.description && (
@@ -89,7 +90,7 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
             <div className="mt-4">
               <h4 className="font-medium">Positive Observations</h4>
               <ul className="list-disc pl-5 space-y-2">
-                {detailedReport.sort_positive_observations.map((obs: string, index: number) => (
+                {detailedReport.sort_positive_observations.map((obs, index) => (
                   <li key={index} className="text-sm">{obs}</li>
                 ))}
               </ul>
@@ -100,7 +101,7 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
             <div className="mt-4">
               <h4 className="font-medium">Areas of Concern</h4>
               <ul className="list-disc pl-5 space-y-2">
-                {detailedReport.sort_concerns.map((concern: string, index: number) => (
+                {detailedReport.sort_concerns.map((concern, index) => (
                   <li key={index} className="text-sm">{concern}</li>
                 ))}
               </ul>
@@ -116,7 +117,7 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
             <div className="space-y-4">
               <h4 className="font-medium">Checklist</h4>
               <ul className="list-disc pl-5 space-y-2">
-                {detailedReport.set_checklist.map((item: any, index: number) => (
+                {detailedReport.set_checklist.map((item, index) => (
                   <li key={index} className="text-sm">
                     {item.item} - Score: {item.score}/10
                     {item.description && (
@@ -132,7 +133,7 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
             <div className="mt-4">
               <h4 className="font-medium">Positive Observations</h4>
               <ul className="list-disc pl-5 space-y-2">
-                {detailedReport.set_positive_observations.map((obs: string, index: number) => (
+                {detailedReport.set_positive_observations.map((obs, index) => (
                   <li key={index} className="text-sm">{obs}</li>
                 ))}
               </ul>
@@ -143,7 +144,7 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
             <div className="mt-4">
               <h4 className="font-medium">Areas of Concern</h4>
               <ul className="list-disc pl-5 space-y-2">
-                {detailedReport.set_concerns.map((concern: string, index: number) => (
+                {detailedReport.set_concerns.map((concern, index) => (
                   <li key={index} className="text-sm">{concern}</li>
                 ))}
               </ul>
@@ -159,7 +160,7 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
             <div className="space-y-4">
               <h4 className="font-medium">Checklist</h4>
               <ul className="list-disc pl-5 space-y-2">
-                {detailedReport.shine_checklist.map((item: any, index: number) => (
+                {detailedReport.shine_checklist.map((item, index) => (
                   <li key={index} className="text-sm">
                     {item.item} - Score: {item.score}/10
                     {item.description && (
@@ -175,7 +176,7 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
             <div className="mt-4">
               <h4 className="font-medium">Positive Observations</h4>
               <ul className="list-disc pl-5 space-y-2">
-                {detailedReport.shine_positive_observations.map((obs: string, index: number) => (
+                {detailedReport.shine_positive_observations.map((obs, index) => (
                   <li key={index} className="text-sm">{obs}</li>
                 ))}
               </ul>
@@ -186,7 +187,7 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
             <div className="mt-4">
               <h4 className="font-medium">Areas of Concern</h4>
               <ul className="list-disc pl-5 space-y-2">
-                {detailedReport.shine_concerns.map((concern: string, index: number) => (
+                {detailedReport.shine_concerns.map((concern, index) => (
                   <li key={index} className="text-sm">{concern}</li>
                 ))}
               </ul>
@@ -199,7 +200,7 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
           <section>
             <h3 className="text-lg font-semibold mb-4">Follow-up Actions</h3>
             <ul className="list-disc pl-5 space-y-2">
-              {detailedReport.follow_up_actions.map((action: string, index: number) => (
+              {detailedReport.follow_up_actions.map((action, index) => (
                 <li key={index} className="text-sm">{action}</li>
               ))}
             </ul>
@@ -211,7 +212,7 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
           <section>
             <h3 className="text-lg font-semibold mb-4">Recommendations</h3>
             <ul className="list-disc pl-5 space-y-2">
-              {detailedReport.recommendations.map((rec: string, index: number) => (
+              {detailedReport.recommendations.map((rec, index) => (
                 <li key={index} className="text-sm">{rec}</li>
               ))}
             </ul>
