@@ -66,7 +66,7 @@ export const HubLinks = () => {
             >
               <div className="flex items-center gap-1.5 mb-1">
                 <section.icon className="h-4 w-4 text-secondary" />
-                <h3 className="text-xs font-medium text-muted-foreground">{section.title}</h3>
+                <h3 className="text-sm font-medium text-muted-foreground">{section.title}</h3>
               </div>
               <div className="space-y-0.5">
                 {section.links.map((link) => (
