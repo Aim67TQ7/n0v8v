@@ -5,14 +5,19 @@ import { AppProviders } from "@/components/AppProviders";
 import { routes } from "@/routes/routes";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AuthWrapper } from "@/components/AuthWrapper";
+import { Header } from "@/components/Header";
+import { useLocation } from "react-router-dom";
 
 const App = () => {
   const publicRoutes = ['/login', '/reset-password', '/register'];
+  const location = useLocation();
+  const showHeader = location.pathname !== '/company-gpt';
 
   return (
     <AppProviders>
       <AuthProvider>
         <div className="min-h-screen flex flex-col">
+          {showHeader && <Header />}
           <Routes>
             {/* Public routes (no auth required) */}
             {routes
