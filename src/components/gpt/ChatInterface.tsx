@@ -104,11 +104,15 @@ export const ChatInterface = ({
         return;
       }
 
+      console.log('Sending chat request with messages:', [...messages, userMessage]);
+
       const response = await supabase.functions.invoke('chat-with-groq', {
         body: {
           messages: [...messages, userMessage]
         },
       });
+
+      console.log('Received response:', response);
 
       if (response.error) {
         throw new Error(response.error.message);
@@ -136,7 +140,7 @@ export const ChatInterface = ({
   };
 
   return (
-    <div className="relative flex flex-col min-h-full">
+    <div className="relative flex flex-col min-h-full bg-white">
       <div className="flex-1 p-4">
         <div className="space-y-4">
           {messages.slice(1).map((message, index) => (
@@ -149,8 +153,8 @@ export const ChatInterface = ({
               <div
                 className={`max-w-[80%] rounded-lg p-3 text-sm ${
                   message.role === "user"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-accent"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-900"
                 }`}
               >
                 <p className="whitespace-pre-wrap">{message.content}</p>
@@ -168,7 +172,7 @@ export const ChatInterface = ({
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Type your message..."
-              className="flex-1 min-h-[60px] resize-none text-sm"
+              className="flex-1 min-h-[60px] resize-none text-sm text-gray-900 bg-white border-gray-300"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
@@ -176,7 +180,11 @@ export const ChatInterface = ({
                 }
               }}
             />
-            <Button type="submit" disabled={isLoading}>
+            <Button 
+              type="submit" 
+              disabled={isLoading}
+              className="bg-blue-600 text-white hover:bg-blue-700"
+            >
               {isLoading ? "Sending..." : "Send"}
             </Button>
           </div>
