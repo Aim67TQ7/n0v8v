@@ -36,9 +36,15 @@ export default {
           DEFAULT: "#F9FAFB",
           foreground: "#111827",
         },
-        popover: {
-          DEFAULT: "#FFFFFF",
+        card: {
+          DEFAULT: "rgba(255, 255, 255, 0.9)",
           foreground: "#111827",
+          hover: "rgba(255, 255, 255, 0.95)",
+        },
+        content: {
+          DEFAULT: "rgba(255, 255, 255, 0.8)",
+          foreground: "#111827",
+          hover: "rgba(255, 255, 255, 0.85)",
         },
       },
       fontFamily: {

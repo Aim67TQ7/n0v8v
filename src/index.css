@@ -9,6 +9,42 @@
     @apply bg-white text-gray-900 antialiased;
   }
 
+  /* Global card styles */
+  .card, .card-container {
+    @apply bg-card backdrop-blur-sm text-card-foreground transition-all duration-200;
+  }
+
+  .card-hover:hover {
+    @apply bg-card-hover;
+  }
+
+  /* Content area styles */
+  .content-area {
+    @apply bg-content backdrop-blur-sm text-content-foreground transition-all duration-200;
+  }
+
+  .content-hover:hover {
+    @apply bg-content-hover;
+  }
+
+  /* Text hierarchy */
+  .text-primary-content {
+    @apply text-gray-900;
+  }
+
+  .text-secondary-content {
+    @apply text-gray-700;
+  }
+
+  .text-tertiary-content {
+    @apply text-gray-500;
+  }
+
+  /* Interactive elements */
+  .interactive-element {
+    @apply hover:text-primary transition-colors duration-200;
+  }
+
   /* Improve input field legibility */
   input[type="text"],
   input[type="email"],
@@ -17,13 +53,13 @@
   input[type="date"],
   input[type="search"],
   textarea {
-    @apply bg-white border-gray-200 text-gray-900 placeholder:text-gray-400;
+    @apply bg-content border-gray-200 text-gray-900 placeholder:text-gray-400;
   }
 
   /* Improve input field focus states */
   input:focus,
   textarea:focus {
-    @apply border-indigo-500 ring-1 ring-indigo-500 ring-opacity-50;
+    @apply border-primary ring-1 ring-primary ring-opacity-50;
   }
 
   /* Improve disabled state contrast */
@@ -48,7 +84,7 @@
 }
 
 .feature-card {
-  @apply p-6 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow duration-300;
+  @apply p-6 rounded-xl bg-card shadow-sm hover:shadow-md transition-shadow duration-300;
 }
 
 /* Loading bar animation */
