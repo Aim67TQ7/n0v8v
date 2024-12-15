@@ -1,132 +1,97 @@
 import { lazy } from "react";
-import CompanyGPT from "@/pages/CompanyGPT";
-import CompanyHub from "@/pages/CompanyHub";
-import Settings from "@/pages/Settings";
-import Modules from "@/pages/Modules";
-import Index from "@/pages/Index";
-import Login from "@/pages/Login";
-import ResetPassword from "@/pages/ResetPassword";
-import Register from "@/pages/Register";
-import LeanManufacturing from "@/pages/LeanManufacturing";
-import FiveSVision from "@/pages/FiveSVision";
-import QualityAssurance from "@/pages/QualityAssurance";
-import PartAnalysis from "@/pages/quality/PartAnalysis";
-import ProductInspection from "@/pages/quality/ProductInspection";
-import DMRDocumentation from "@/pages/quality/DMRDocumentation";
-import FiveWhys from "@/pages/quality/FiveWhys";
-import Fishbone from "@/pages/quality/Fishbone";
-import TrainingMatrix from "@/pages/training/TrainingMatrix";
-import TeamManagement from "@/pages/TeamManagement";
-import Company from "@/pages/team/Company";
-import PricingPage from "@/pages/Pricing";
-import Locations from "@/pages/team/Locations";
-import Departments from "@/pages/team/Departments";
-import WorkCenters from "@/pages/team/WorkCenters";
-import Apps from "@/pages/Apps";
-import Tools from "@/pages/Tools";
-import MaintenanceSystem from "@/pages/maintenance/MaintenanceSystem";
-import WebScraping from "@/pages/leads/WebScraping";
-import GoogleMapsScraper from "@/pages/leads/GoogleMapsScraper";
-import VAVEAnalysis from "@/pages/operations/VAVEAnalysis";
-import { AuthWrapper } from "@/components/AuthWrapper";
-import CompanyNews from "@/pages/operations/hr/CompanyNews";
+import { Login } from "@/pages/auth/Login";
+import { Register } from "@/pages/auth/Register";
+import { ResetPassword } from "@/pages/auth/ResetPassword";
+import { Dashboard } from "@/pages/Dashboard";
+import { CompanyGPT } from "@/pages/CompanyGPT";
+import { Modules } from "@/pages/Modules";
+import { Tools } from "@/pages/Tools";
+import { CustomerFocus } from "@/pages/operations/CustomerFocus";
+import { Engineering } from "@/pages/operations/Engineering";
+import { Facilities } from "@/pages/operations/Facilities";
+import { Quality } from "@/pages/operations/Quality";
+import { Production } from "@/pages/operations/Production";
+import { SupplyChain } from "@/pages/operations/SupplyChain";
+import { Lean } from "@/pages/operations/Lean";
+import { Compliance } from "@/pages/operations/Compliance";
+import { LeadScraping } from "@/pages/leads/LeadScraping";
+import { FiveWhys } from "@/pages/operations/quality/FiveWhys";
+import { Fishbone } from "@/pages/operations/quality/Fishbone";
+import { FiveS } from "@/pages/operations/lean/FiveS";
+import { Maintenance } from "@/pages/operations/Maintenance";
+
+const HROperations = lazy(() => import("@/pages/operations/hr"));
+const CompanyNews = lazy(() => import("@/pages/operations/hr/CompanyNews"));
+const TrainingMatrix = lazy(() => import("@/pages/training/TrainingMatrix"));
+const EmployeeData = lazy(() => import("@/pages/operations/hr/EmployeeData"));
+const EmployeeHandbook = lazy(() => import("@/pages/operations/hr/Handbook"));
+const Insurance = lazy(() => import("@/pages/operations/hr/Insurance"));
+const OrgChart = lazy(() => import("@/pages/operations/hr/OrgChart"));
 
 export const routes = [
   {
     path: "/",
-    element: <CompanyHub />
-  },
-  {
-    path: "/tools",
-    element: <AuthWrapper><Tools /></AuthWrapper>
-  },
-  {
-    path: "/apps",
-    element: <AuthWrapper><Apps /></AuthWrapper>
+    element: <Dashboard />
   },
   {
     path: "/login",
     element: <Login />
   },
   {
-    path: "/pricing",
-    element: <PricingPage />
+    path: "/register",
+    element: <Register />
   },
   {
     path: "/reset-password",
     element: <ResetPassword />
   },
   {
-    path: "/register",
-    element: <Register />
-  },
-  {
     path: "/company-gpt",
-    element: <AuthWrapper><CompanyGPT /></AuthWrapper>
-  },
-  {
-    path: "/company-hub",
-    element: <AuthWrapper><CompanyHub /></AuthWrapper>
-  },
-  {
-    path: "/team/locations",
-    element: <AuthWrapper><Locations /></AuthWrapper>
-  },
-  {
-    path: "/team/departments",
-    element: <AuthWrapper><Departments /></AuthWrapper>
-  },
-  {
-    path: "/team/workcenters",
-    element: <AuthWrapper><WorkCenters /></AuthWrapper>
-  },
-  {
-    path: "/settings",
-    element: <Settings />
+    element: <CompanyGPT />
   },
   {
     path: "/modules",
     element: <Modules />
   },
   {
-    path: "/team",
-    element: <AuthWrapper><TeamManagement /></AuthWrapper>
+    path: "/tools",
+    element: <Tools />
   },
   {
-    path: "/team/company",
-    element: <AuthWrapper><Company /></AuthWrapper>
+    path: "/operations/customer-focus",
+    element: <CustomerFocus />
   },
   {
-    path: "/operations/hr/training-matrix",
-    element: <AuthWrapper><TrainingMatrix /></AuthWrapper>
+    path: "/operations/engineering",
+    element: <Engineering />
   },
   {
-    path: "/operations/hr/training",
-    element: <AuthWrapper><TrainingMatrix /></AuthWrapper>
-  },
-  {
-    path: "/operations/lean",
-    element: <LeanManufacturing />
-  },
-  {
-    path: "/operations/lean/5s-vision",
-    element: <FiveSVision />
+    path: "/operations/facilities",
+    element: <Facilities />
   },
   {
     path: "/operations/quality",
-    element: <QualityAssurance />
+    element: <Quality />
   },
   {
-    path: "/operations/quality/part-analysis",
-    element: <PartAnalysis />
+    path: "/operations/production",
+    element: <Production />
   },
   {
-    path: "/operations/quality/product-inspection",
-    element: <ProductInspection />
+    path: "/operations/supply-chain",
+    element: <SupplyChain />
   },
   {
-    path: "/operations/quality/dmr",
-    element: <DMRDocumentation />
+    path: "/operations/lean",
+    element: <Lean />
+  },
+  {
+    path: "/operations/compliance",
+    element: <Compliance />
+  },
+  {
+    path: "/leads/scraping",
+    element: <LeadScraping />
   },
   {
     path: "/operations/quality/five-whys",
@@ -137,27 +102,39 @@ export const routes = [
     element: <Fishbone />
   },
   {
+    path: "/operations/lean/5s-vision",
+    element: <FiveS />
+  },
+  {
     path: "/operations/maintenance",
-    element: <AuthWrapper><MaintenanceSystem /></AuthWrapper>
+    element: <Maintenance />
   },
   {
-    path: "/leads/scraping",
-    element: <AuthWrapper><WebScraping /></AuthWrapper>
-  },
-  {
-    path: "/leads/scraping/google-maps",
-    element: <AuthWrapper><GoogleMapsScraper /></AuthWrapper>
-  },
-  {
-    path: "/operations/customer-focus",
-    element: <Modules />
+    path: "/operations/hr",
+    element: <HROperations />
   },
   {
     path: "/operations/hr/company-news",
-    element: <AuthWrapper><CompanyNews /></AuthWrapper>
+    element: <CompanyNews />
   },
   {
-    path: "/operations/engineering/vave-analysis",
-    element: <AuthWrapper><VAVEAnalysis /></AuthWrapper>
+    path: "/operations/hr/training-matrix",
+    element: <TrainingMatrix />
+  },
+  {
+    path: "/operations/hr/employee-data",
+    element: <EmployeeData />
+  },
+  {
+    path: "/operations/hr/handbook",
+    element: <EmployeeHandbook />
+  },
+  {
+    path: "/operations/hr/insurance",
+    element: <Insurance />
+  },
+  {
+    path: "/operations/hr/org-chart",
+    element: <OrgChart />
   }
 ];
