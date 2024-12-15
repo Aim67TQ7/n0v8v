@@ -1,5 +1,5 @@
 import { ModuleCard } from "@/components/operations/ModuleCard";
-import { Database, ClipboardList, Calendar, BookOpen, Package, Building2, Tools, Warehouse, Construction } from "lucide-react";
+import { Database, ClipboardList, Calendar, Package, Building2, Wrench, Warehouse, Construction } from "lucide-react";
 
 const facilitiesModules = [
   {
@@ -26,7 +26,7 @@ const facilitiesModules = [
   {
     title: "Equipment History",
     description: "Access equipment documentation and maintenance history",
-    icon: Tools,
+    icon: Wrench,
     href: "/operations/facilities/equipment",
     status: "ready" as const
   },
