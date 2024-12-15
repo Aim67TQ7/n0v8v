@@ -32,18 +32,20 @@ export const FiveSScoreCards = ({
       <Card className="p-4">
         <div className="space-y-4">
           <div>
-            <h3 className="text-lg font-semibold">Score Summary</h3>
+            <h2 className="text-2xl font-bold text-primary">
+              {evaluationData.workcenter?.name}
+            </h2>
             <p className="text-sm text-muted-foreground">
-              {evaluationData.workcenter?.name} - {format(new Date(evaluationData.created_at), 'PPP')}
+              {format(new Date(evaluationData.created_at), 'PPP')}
             </p>
           </div>
           
-          <div className="text-center py-4">
-            <div className="text-4xl font-bold">
-              {totalScore.toFixed(1)}/50
-            </div>
-            <div className="text-2xl text-muted-foreground">
+          <div className="text-center">
+            <div className="text-4xl font-bold text-primary">
               {scorePercentage.toFixed(1)}%
+            </div>
+            <div className="text-xl text-muted-foreground mt-1">
+              {totalScore.toFixed(1)}/50
             </div>
             
             {scoreDifference !== null && (
