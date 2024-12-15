@@ -8,13 +8,17 @@ export const SidebarContent = () => {
     <div className="h-full flex flex-col">
       <ChatHistory className="flex-grow" />
       <Card className="p-4 mt-4">
-        <h2 className="font-semibold mb-2">Train the Model</h2>
         <Textarea
           placeholder="Provide feedback, improve data, or report hallucinations..."
           className="mb-2 text-xs border border-gray-100 focus:border-gray-200 transition-colors"
           rows={3}
         />
-        <Button className="w-full">Submit Feedback</Button>
+        <Button 
+          variant="link" 
+          className="w-full text-primary hover:text-primary/80"
+        >
+          Train the Model
+        </Button>
       </Card>
     </div>
   );
