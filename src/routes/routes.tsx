@@ -29,6 +29,7 @@ import WebScraping from "@/pages/leads/WebScraping";
 import GoogleMapsScraper from "@/pages/leads/GoogleMapsScraper";
 import VAVEAnalysis from "@/pages/operations/VAVEAnalysis";
 import { AuthWrapper } from "@/components/AuthWrapper";
+import { CompanyNews } from "@/pages/operations/hr/CompanyNews";
 
 export const routes = [
   {
@@ -150,6 +151,10 @@ export const routes = [
   {
     path: "/operations/customer-focus",
     element: <Modules />
+  },
+  {
+    path: "/operations/hr/company-news",
+    element: <AuthWrapper><CompanyNews /></AuthWrapper>
   },
   {
     path: "/operations/engineering/vave-analysis",
