@@ -2,7 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
-import { FiveSDetailedReport as DetailedReportType } from "@/types/five-s";
+import { 
+  FiveSDetailedReport as DetailedReportType,
+  parseChecklistData 
+} from "@/types/five-s";
 
 interface FiveSDetailedReportProps {
   evaluationId: string;
@@ -25,8 +28,24 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
         throw error;
       }
 
-      console.log('Received detailed report data:', data);
-      return data as DetailedReportType;
+      // Parse the JSON data into strongly typed arrays
+      const parsedData: DetailedReportType = {
+        ...data,
+        sort_checklist: parseChecklistData(data.sort_checklist),
+        set_checklist: parseChecklistData(data.set_checklist),
+        shine_checklist: parseChecklistData(data.shine_checklist),
+        sort_positive_observations: Array.isArray(data.sort_positive_observations) ? data.sort_positive_observations : [],
+        sort_concerns: Array.isArray(data.sort_concerns) ? data.sort_concerns : [],
+        set_positive_observations: Array.isArray(data.set_positive_observations) ? data.set_positive_observations : [],
+        set_concerns: Array.isArray(data.set_concerns) ? data.set_concerns : [],
+        shine_positive_observations: Array.isArray(data.shine_positive_observations) ? data.shine_positive_observations : [],
+        shine_concerns: Array.isArray(data.shine_concerns) ? data.shine_concerns : [],
+        follow_up_actions: Array.isArray(data.follow_up_actions) ? data.follow_up_actions : [],
+        recommendations: Array.isArray(data.recommendations) ? data.recommendations : [],
+      };
+
+      console.log('Parsed detailed report data:', parsedData);
+      return parsedData;
     }
   });
 

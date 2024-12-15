@@ -21,3 +21,23 @@ export interface FiveSDetailedReport {
   follow_up_actions: string[];
   recommendations: string[];
 }
+
+// Type guard to check if a JSON value is a ChecklistItem[]
+export function isChecklistItemArray(value: unknown): value is ChecklistItem[] {
+  if (!Array.isArray(value)) return false;
+  return value.every(item => 
+    typeof item === 'object' && 
+    item !== null &&
+    'item' in item &&
+    'score' in item &&
+    typeof item.item === 'string' &&
+    typeof item.score === 'number'
+  );
+}
+
+// Helper function to safely parse JSON checklist data
+export function parseChecklistData(data: unknown): ChecklistItem[] {
+  if (!data) return [];
+  if (isChecklistItemArray(data)) return data;
+  return [];
+}
