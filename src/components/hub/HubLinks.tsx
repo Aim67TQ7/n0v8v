@@ -53,10 +53,6 @@ export const HubLinks = () => {
 
   return (
     <Card className="card h-[calc(100vh-8rem)] flex flex-col bg-white">
-      <div className="p-4 border-b bg-gray-50">
-        <h2 className="font-semibold text-sm text-black">Quick Links</h2>
-      </div>
-      
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-2">
           {sections.map((section) => (
