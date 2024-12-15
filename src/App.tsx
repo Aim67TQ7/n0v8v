@@ -7,11 +7,18 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { AuthWrapper } from "@/components/AuthWrapper";
 import { Header } from "@/components/Header";
 import { useLocation } from "react-router-dom";
+import { useState } from "react";
+import { SplashScreen } from "@/components/SplashScreen";
 
 const App = () => {
   const publicRoutes = ['/login', '/reset-password', '/register'];
   const location = useLocation();
   const showHeader = location.pathname !== '/company-gpt';
+  const [showSplash, setShowSplash] = useState(true);
+
+  if (showSplash) {
+    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
 
   return (
     <AppProviders>
