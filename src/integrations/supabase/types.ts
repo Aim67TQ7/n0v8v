@@ -750,33 +750,48 @@ export type Database = {
           created_at: string
           created_by: string | null
           fishbone_data: Json | null
+          group_feedback: Json[] | null
           id: string
+          immediate_actions: string[] | null
           learning_feedback: Json[] | null
+          long_term_actions: string[] | null
           problem_statement: string
+          root_cause: string | null
           selected_causes: string[]
           selected_questions: Json[] | null
+          validation_feedback: string | null
         }
         Insert: {
           company_id?: string | null
           created_at?: string
           created_by?: string | null
           fishbone_data?: Json | null
+          group_feedback?: Json[] | null
           id?: string
+          immediate_actions?: string[] | null
           learning_feedback?: Json[] | null
+          long_term_actions?: string[] | null
           problem_statement: string
+          root_cause?: string | null
           selected_causes?: string[]
           selected_questions?: Json[] | null
+          validation_feedback?: string | null
         }
         Update: {
           company_id?: string | null
           created_at?: string
           created_by?: string | null
           fishbone_data?: Json | null
+          group_feedback?: Json[] | null
           id?: string
+          immediate_actions?: string[] | null
           learning_feedback?: Json[] | null
+          long_term_actions?: string[] | null
           problem_statement?: string
+          root_cause?: string | null
           selected_causes?: string[]
           selected_questions?: Json[] | null
+          validation_feedback?: string | null
         }
         Relationships: [
           {
@@ -789,6 +804,48 @@ export type Database = {
           {
             foreignKeyName: "five_whys_analysis_created_by_fkey"
             columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      five_whys_collaboration: {
+        Row: {
+          analysis_id: string | null
+          created_at: string | null
+          feedback: string | null
+          id: string
+          step_number: number | null
+          user_id: string | null
+        }
+        Insert: {
+          analysis_id?: string | null
+          created_at?: string | null
+          feedback?: string | null
+          id?: string
+          step_number?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          analysis_id?: string | null
+          created_at?: string | null
+          feedback?: string | null
+          id?: string
+          step_number?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "five_whys_collaboration_analysis_id_fkey"
+            columns: ["analysis_id"]
+            isOneToOne: false
+            referencedRelation: "five_whys_analysis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "five_whys_collaboration_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]

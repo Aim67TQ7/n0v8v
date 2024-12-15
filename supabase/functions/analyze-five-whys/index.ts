@@ -12,9 +12,9 @@ serve(async (req) => {
   }
 
   try {
-    const { problemStatement, answers, generateFishbone } = await req.json();
+    const { problemStatement, answers, generateAnalysis } = await req.json();
 
-    console.log('Analyzing with inputs:', { problemStatement, answers, generateFishbone });
+    console.log('Analyzing with inputs:', { problemStatement, answers, generateAnalysis });
 
     const openAIResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -27,7 +27,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: generateFishbone
+            content: generateAnalysis
               ? `You are an expert in root cause analysis. Based on the problem statement and the series of "why" answers provided, generate:
                  1. A clear, concise root cause statement (2-3 sentences max)
                  2. A comprehensive solution that addresses:
@@ -49,7 +49,7 @@ serve(async (req) => {
           },
           {
             role: 'user',
-            content: generateFishbone
+            content: generateAnalysis
               ? `Problem: "${problemStatement}"
                  Five Whys Analysis:
                  ${answers.map((a: string, i: number) => `Why ${i + 1}: ${a}`).join('\n')}
@@ -80,13 +80,13 @@ serve(async (req) => {
     const data = await openAIResponse.json();
     console.log('Groq API response:', data);
 
-    if (generateFishbone) {
+    if (generateAnalysis) {
       // Parse the structured response
       const response = data.choices[0].message.content;
       const sections = response.split('\n\n');
       
       const analysis = {
-        rootCause: sections[0].replace('Root Cause: ', '').trim(),
+        rootCause: sections[0].replace('Root Cause:', '').trim(),
         correctiveActions: sections[1].replace('Comprehensive Solution:', '')
           .split('\n')
           .filter((line: string) => line.trim().length > 0)

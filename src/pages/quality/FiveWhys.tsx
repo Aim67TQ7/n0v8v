@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { FiveWhysForm } from "@/components/five-whys/FiveWhysForm";
 import { QuestioningInterface } from "@/components/five-whys/QuestioningInterface";
 import { FishboneResult } from "@/components/five-whys/FishboneResult";
 import { AnalysisHeader } from "@/components/five-whys/AnalysisHeader";
+import { CausesList } from "@/components/five-whys/CausesList";
 
 interface LearningFeedback {
   iteration: number;
@@ -22,6 +23,7 @@ const FiveWhys = () => {
   const [learningFeedback, setLearningFeedback] = useState<LearningFeedback[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
+  const [groupFeedback, setGroupFeedback] = useState<any[]>([]);
 
   const startAnalysis = async (statement: string) => {
     if (!statement.trim()) {
@@ -60,11 +62,11 @@ const FiveWhys = () => {
     if (currentIteration < 5) {
       setCurrentIteration(prev => prev + 1);
     } else {
-      await generateFishbone(newAnswers);
+      await generateAnalysis(newAnswers);
     }
   };
 
-  const generateFishbone = async (allAnswers: string[]) => {
+  const generateAnalysis = async (allAnswers: string[]) => {
     if (!session?.user) {
       toast({
         title: "Error",
@@ -88,7 +90,7 @@ const FiveWhys = () => {
         body: {
           problemStatement,
           answers: allAnswers,
-          generateFishbone: true,
+          generateAnalysis: true,
         },
       });
 
@@ -107,7 +109,11 @@ const FiveWhys = () => {
         problem_statement: problemStatement,
         selected_causes: allAnswers,
         fishbone_data: data.result,
-        learning_feedback: transformedFeedback
+        learning_feedback: transformedFeedback,
+        root_cause: data.result.rootCause,
+        immediate_actions: data.result.correctiveActions,
+        long_term_actions: data.result.preventiveActions,
+        group_feedback: groupFeedback
       });
 
       toast({
@@ -115,7 +121,7 @@ const FiveWhys = () => {
         description: "Five Whys analysis has been completed and saved.",
       });
     } catch (error) {
-      console.error('Error generating fishbone:', error);
+      console.error('Error generating analysis:', error);
       toast({
         title: "Error",
         description: "Failed to generate analysis. Please try again.",
@@ -126,12 +132,25 @@ const FiveWhys = () => {
     }
   };
 
+  const addGroupFeedback = async (feedback: string) => {
+    if (!session?.user) return;
+    
+    const newFeedback = {
+      userId: session.user.id,
+      feedback,
+      timestamp: new Date().toISOString()
+    };
+    
+    setGroupFeedback([...groupFeedback, newFeedback]);
+  };
+
   const resetAnalysis = () => {
     setProblemStatement("");
     setCurrentIteration(0);
     setAnswers([]);
     setLearningFeedback([]);
     setAnalysis(null);
+    setGroupFeedback([]);
   };
 
   return (
@@ -141,13 +160,27 @@ const FiveWhys = () => {
         {currentIteration === 0 ? (
           <FiveWhysForm onSubmit={startAnalysis} />
         ) : !analysis ? (
-          <QuestioningInterface
-            problemStatement={problemStatement}
-            currentIteration={currentIteration}
-            previousAnswers={answers}
-            onAnswer={handleAnswer}
-            isAnalyzing={isAnalyzing}
-          />
+          <>
+            <QuestioningInterface
+              problemStatement={problemStatement}
+              currentIteration={currentIteration}
+              previousAnswers={answers}
+              onAnswer={handleAnswer}
+              isAnalyzing={isAnalyzing}
+            />
+            <CausesList
+              causes={answers.map((text, index) => ({
+                id: `cause-${index}`,
+                text,
+                checked: true
+              }))}
+              currentIteration={currentIteration}
+              isAnalyzing={isAnalyzing}
+              onCauseToggle={() => {}}
+              onNext={() => {}}
+              onReset={resetAnalysis}
+            />
+          </>
         ) : (
           <FishboneResult
             analysis={analysis}
