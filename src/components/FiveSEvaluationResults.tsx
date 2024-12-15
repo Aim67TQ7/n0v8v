@@ -188,23 +188,6 @@ export const FiveSEvaluationResults = ({
           )}
         </Card>
       </div>
-
-      {/* Train Model Card - Below Report */}
-      <Card className="p-4">
-        <TrainModelCard
-          toolType="five_s"
-          resourceId={evaluationData.id}
-          metadata={{
-            scores: {
-              sort: evaluationData.sort_score,
-              set: evaluationData.set_in_order_score,
-              shine: evaluationData.shine_score,
-              standardize: evaluationData.standardize_score,
-              sustain: evaluationData.sustain_score
-            }
-          }}
-        />
-      </Card>
     </div>
   );
 };
