@@ -23,7 +23,6 @@ export const TrainModelCard = ({ toolType, resourceId, metadata }: TrainModelCar
     try {
       setIsSubmitting(true);
 
-      // Save the training feedback to the new generic table
       const { error } = await supabase
         .from('learning_feedback')
         .insert({
@@ -54,11 +53,11 @@ export const TrainModelCard = ({ toolType, resourceId, metadata }: TrainModelCar
   };
 
   return (
-    <Card className="p-4">
-      <h3 className="font-semibold mb-4">Train the Model</h3>
+    <Card className="card card-hover p-4">
+      <h3 className="font-semibold mb-4 text-primary-content">Train the Model</h3>
       
       <div className="space-y-4">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-secondary-content">
           Please provide feedback to improve the model's accuracy
         </p>
         
@@ -66,7 +65,7 @@ export const TrainModelCard = ({ toolType, resourceId, metadata }: TrainModelCar
           placeholder="Enter your feedback..."
           value={trainingFeedback}
           onChange={(e) => setTrainingFeedback(e.target.value)}
-          className="min-h-[100px]"
+          className="content-area min-h-[100px]"
         />
         
         <Button 

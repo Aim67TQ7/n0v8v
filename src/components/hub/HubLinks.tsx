@@ -53,28 +53,28 @@ export const HubLinks = () => {
   ];
 
   return (
-    <Card className="p-3 bg-white/90 backdrop-blur-sm">
+    <Card className="card p-3">
       <h2 className="font-semibold mb-2 text-sm text-primary">Quick Links</h2>
       <ScrollArea className="h-[calc(100vh-200px)]">
         <div className="space-y-1.5">
           {sections.map((section) => (
             <Card 
               key={section.title} 
-              className={`p-2 bg-white/80 hover:bg-white/90 transition-all ${
+              className={`content-area content-hover p-2 ${
                 section.onClick ? 'cursor-pointer' : ''
               }`}
               onClick={section.onClick}
             >
               <div className="flex items-center gap-1.5 mb-1">
                 <section.icon className="h-4 w-4 text-secondary" />
-                <h3 className="text-sm font-medium text-gray-900">{section.title}</h3>
+                <h3 className="text-sm font-medium text-primary-content">{section.title}</h3>
               </div>
               <div className="space-y-0.5">
                 {section.links.map((link) => (
                   <Link
                     key={link.name}
                     to={link.href}
-                    className="block text-xs text-gray-700 hover:text-primary hover:bg-accent/10 py-0.5 px-2 rounded transition-colors"
+                    className="block text-xs text-secondary-content interactive-element py-0.5 px-2 rounded"
                   >
                     {link.name}
                   </Link>
