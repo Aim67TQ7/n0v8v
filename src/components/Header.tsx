@@ -36,11 +36,11 @@ export const Header = () => {
           <nav className="flex items-center space-x-4">
             <Button 
               variant="ghost" 
-              onClick={() => navigate("/company-gpt")} 
+              onClick={() => navigate("/company-hub")} 
               className="gap-2 text-gray-600 hover:text-gray-900"
             >
               <Bot className="h-4 w-4" />
-              CompanyGPT
+              Company Hub
             </Button>
             
             <Button variant="ghost" onClick={() => navigate("/")} className="gap-2 text-gray-600 hover:text-gray-900">
