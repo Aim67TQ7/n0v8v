@@ -107,19 +107,11 @@ export const FiveSEvaluationResults = ({
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <FiveSEvaluationHeader
-          workcenterId={evaluationData.workcenter_id}
-          onSavePDF={handleSavePDF}
-        />
-        <Button
-          onClick={onNewEvaluation}
-          variant="outline"
-          size="sm"
-        >
-          Start New Evaluation
-        </Button>
-      </div>
+      <FiveSEvaluationHeader
+        workcenterId={evaluationData.workcenter_id}
+        onSavePDF={handleSavePDF}
+        onNewEvaluation={onNewEvaluation}
+      />
 
       <div id="evaluation-content" className="scale-[0.85] origin-top">
         <Card className="p-4">
@@ -140,7 +132,6 @@ export const FiveSEvaluationResults = ({
             </Card>
           </div>
 
-          {/* Primary 5S Categories - Full Width */}
           <div className="grid grid-cols-1 gap-4 mt-4">
             <ScoreAnalysis
               sortScore={evaluationData.sort_score}
@@ -154,7 +145,6 @@ export const FiveSEvaluationResults = ({
             />
           </div>
 
-          {/* Advanced Categories and Train Model - Side by Side */}
           {canShowAdvancedScores && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
               <div className="md:col-span-2">
