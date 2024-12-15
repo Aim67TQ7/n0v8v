@@ -4,7 +4,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { ChatHistory } from "@/components/hub/ChatHistory";
 import { CompanyNews } from "@/components/hub/CompanyNews";
 import { HubLinks } from "@/components/hub/HubLinks";
-import { HubCard } from "@/components/hub/HubCard";
 import { Menu } from "lucide-react";
 import {
   Sheet,
@@ -15,6 +14,7 @@ import { useState } from "react";
 
 const CompanyHub = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [backgroundColor, setBackgroundColor] = useState("#9b87f5");
 
   const SidebarContent = () => (
     <div className="space-y-4">
@@ -33,9 +33,32 @@ const CompanyHub = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor }}>
       <div className="container mx-auto py-6 px-4 sm:px-6">
-        <HubCard>
+        <div className="flex justify-end mb-4">
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-[100px] flex items-center gap-2"
+            onClick={() => {
+              const colorPicker = document.createElement('input');
+              colorPicker.type = 'color';
+              colorPicker.value = backgroundColor;
+              colorPicker.addEventListener('change', (e) => {
+                setBackgroundColor((e.target as HTMLInputElement).value);
+              });
+              colorPicker.click();
+            }}
+          >
+            <div 
+              className="w-4 h-4 rounded-full border"
+              style={{ backgroundColor }}
+            />
+            Color
+          </Button>
+        </div>
+
+        <Card className="bg-white/90 backdrop-blur-sm">
           {/* Mobile Menu Button */}
           <div className="md:hidden mb-4">
             <Sheet>
@@ -101,7 +124,7 @@ const CompanyHub = () => {
               </div>
             </div>
           </div>
-        </HubCard>
+        </Card>
       </div>
     </div>
   );
