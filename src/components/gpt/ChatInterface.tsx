@@ -69,8 +69,9 @@ export const ChatInterface = ({
       const { error: insertError } = await supabase.from('chat_logs').insert({
         company_id: profile.company_id,
         user_id: session.user.id,
-        model: 'groq',
-        messages: jsonMessages
+        model: 'anthropic',
+        messages: jsonMessages,
+        title: messages[1]?.content.slice(0, 50) || 'New Chat'
       });
 
       if (insertError) {
@@ -106,7 +107,7 @@ export const ChatInterface = ({
 
       console.log('Sending chat request with messages:', [...messages, userMessage]);
 
-      const response = await supabase.functions.invoke('chat-with-groq', {
+      const response = await supabase.functions.invoke('chat-with-anthropic', {
         body: {
           messages: [...messages, userMessage]
         },
@@ -120,7 +121,7 @@ export const ChatInterface = ({
 
       const assistantMessage = { 
         role: "assistant" as const, 
-        content: response.data.choices[0].message.content 
+        content: response.data.content[0].text 
       };
       
       const updatedMessages = [...messages, userMessage, assistantMessage];
