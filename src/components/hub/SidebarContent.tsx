@@ -11,7 +11,7 @@ export const SidebarContent = () => {
         <div className="p-4">
           <Textarea
             placeholder="Provide feedback, improve data, or report hallucinations..."
-            className="mb-2 text-xs text-[#555555] content-area"
+            className="mb-2 text-xs text-[#888888] content-area"
             rows={3}
           />
           <Button 
