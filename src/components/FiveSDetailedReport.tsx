@@ -44,7 +44,22 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
         return;
       }
 
-      setReport(data);
+      // Parse the JSON fields to ensure they match our expected types
+      const parsedReport: DetailedReport = {
+        sort_checklist: Array.isArray(data.sort_checklist) ? data.sort_checklist : [],
+        sort_positive_observations: data.sort_positive_observations || [],
+        sort_concerns: data.sort_concerns || [],
+        set_checklist: Array.isArray(data.set_checklist) ? data.set_checklist : [],
+        set_positive_observations: data.set_positive_observations || [],
+        set_concerns: data.set_concerns || [],
+        shine_checklist: Array.isArray(data.shine_checklist) ? data.shine_checklist : [],
+        shine_positive_observations: data.shine_positive_observations || [],
+        shine_concerns: data.shine_concerns || [],
+        follow_up_actions: data.follow_up_actions || [],
+        recommendations: data.recommendations || []
+      };
+
+      setReport(parsedReport);
       setIsLoading(false);
     };
 
