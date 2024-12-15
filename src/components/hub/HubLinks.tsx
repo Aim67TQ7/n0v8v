@@ -53,7 +53,7 @@ export const HubLinks = () => {
   ];
 
   return (
-    <Card className="p-3 bg-white/90 backdrop-blur-sm" style={{ backgroundColor: 'var(--card-bg)' }}>
+    <Card className="p-3" style={{ backgroundColor: 'var(--card-bg)' }}>
       <h2 className="font-semibold mb-2 text-sm">Quick Links</h2>
       <ScrollArea className="h-[calc(100vh-200px)]">
         <div className="space-y-1.5">
