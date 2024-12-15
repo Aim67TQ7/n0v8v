@@ -17,7 +17,7 @@ const CompanyHub = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-black">
       <div className="container mx-auto py-6 px-4 sm:px-6">
         <Card>
           {/* Mobile Menu Button */}

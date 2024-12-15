@@ -40,10 +40,10 @@ export default {
           hover: "#E5E5E5"
         },
         card: {
-          DEFAULT: "#F1F1F1",
-          foreground: "#000000",
-          hover: "#E5E5E5",
-          muted: "#666666"
+          DEFAULT: "#000000",
+          foreground: "#FFFFFF",
+          hover: "#1a1a1a",
+          muted: "#999999"
         },
         content: {
           DEFAULT: "#F1F1F1",
