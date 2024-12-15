@@ -64,6 +64,10 @@ export const routes = [
     element: <AuthWrapper><CompanyGPT /></AuthWrapper>
   },
   {
+    path: "/company-hub",
+    element: <AuthWrapper><CompanyHub /></AuthWrapper>
+  },
+  {
     path: "/team/locations",
     element: <AuthWrapper><Locations /></AuthWrapper>
   },
