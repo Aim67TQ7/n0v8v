@@ -9,11 +9,11 @@ export const CompanyNews = () => {
   ];
 
   return (
-    <Card className="p-1 bg-white">
+    <Card className="p-1 bg-white/90 backdrop-blur-sm">
       <ScrollArea className="h-[100px]">
         <div className="space-y-1">
           {updates.map((update, index) => (
-            <p key={index} className="text-xs text-gray-900 px-2">
+            <p key={index} className="text-xs text-gray-900 px-2 hover:bg-accent/10 rounded transition-colors">
               {update}
             </p>
           ))}
