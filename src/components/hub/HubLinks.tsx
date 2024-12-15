@@ -1,20 +1,20 @@
 import { Card } from "@/components/ui/card";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Folder, Grid, Wrench, FileText } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const HubLinks = () => {
-  const navigate = useNavigate();
-
   const sections = [
     {
       title: "Company Resources",
       icon: Folder,
       links: [
-        { name: "Company News", href: "/operations/hr/company-news" },
-        { name: "Employee Data", href: "/operations/hr/employee-data" },
-        { name: "Training Matrix", href: "/operations/hr/training-matrix" },
-        { name: "Organization", href: "/operations/hr/org-chart" },
+        { name: "Desktop", href: "#" },
+        { name: "Email", href: "#" },
+        { name: "Teams", href: "#" },
+        { name: "Epicor", href: "#" },
+        { name: "Shared Folder", href: "#" },
+        { name: "Windchill", href: "#" },
       ]
     },
     {
@@ -26,8 +26,7 @@ export const HubLinks = () => {
         { name: "Facilities", href: "/operations/facilities" },
         { name: "Quality", href: "/operations/quality" },
         { name: "Production", href: "/operations/production" },
-      ],
-      onClick: () => navigate("/modules")
+      ]
     },
     {
       title: "Efficiency Tools",
@@ -38,8 +37,7 @@ export const HubLinks = () => {
         { name: "PM Assist", href: "/operations/maintenance" },
         { name: "Lead Scraping", href: "/leads/scraping" },
         { name: "Fishbone Analysis", href: "/operations/quality/fishbone" },
-      ],
-      onClick: () => navigate("/tools")
+      ]
     },
     {
       title: "Recent Files",
@@ -62,10 +60,7 @@ export const HubLinks = () => {
           {sections.map((section) => (
             <Card 
               key={section.title} 
-              className={`content-area content-hover ${
-                section.onClick ? 'cursor-pointer' : ''
-              }`}
-              onClick={section.onClick}
+              className="content-area content-hover"
             >
               <div className="flex items-center gap-1.5 mb-1">
                 <section.icon className="h-4 w-4 text-secondary" />
