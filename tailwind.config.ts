@@ -41,15 +41,15 @@ export default {
         },
         card: {
           DEFAULT: "#ffffff",
-          foreground: "#1A1F2C",
+          foreground: "#000000",
           hover: "#f9fafb",
-          muted: "#1A1F2C"
+          muted: "#000000"
         },
         content: {
           DEFAULT: "#ffffff",
-          foreground: "#1A1F2C",
+          foreground: "#000000",
           hover: "#f9fafb",
-          muted: "#1A1F2C"
+          muted: "#000000"
         },
         destructive: {
           DEFAULT: "#ef4444",
