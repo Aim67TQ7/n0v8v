@@ -1,4 +1,4 @@
-import { User, BookOpen, Shield, DollarSign, Users } from "lucide-react";
+import { User, BookOpen, Shield, DollarSign, Users, GraduationCap } from "lucide-react";
 import type { ModuleCardProps } from "@/components/operations/ModuleCard";
 
 export const hrTools: ModuleCardProps[] = [
@@ -35,6 +35,13 @@ export const hrTools: ModuleCardProps[] = [
     description: "View company structure and reporting relationships",
     icon: Users,
     href: "/operations/hr/org-chart",
+    status: "ready"
+  },
+  {
+    title: "Training Matrix",
+    description: "Track employee training and certifications",
+    icon: GraduationCap,
+    href: "/operations/hr/training-matrix",
     status: "ready"
   }
 ];

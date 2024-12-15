@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { ModuleCard } from "@/components/operations/ModuleCard";
-import { hrTools } from "@/components/operations/modulesList";
+import { hrTools } from "@/components/operations/hr/hrTools";
 import { Newspaper } from "lucide-react";
 
 const HROperations = () => {
