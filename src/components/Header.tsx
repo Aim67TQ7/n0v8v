@@ -29,7 +29,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="bg-white border-b border-gray-100 shadow-sm">
+    <header className="card">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Navigation Links */}
@@ -37,13 +37,17 @@ export const Header = () => {
             <Button 
               variant="ghost" 
               onClick={() => navigate("/company-hub")} 
-              className="gap-2 text-gray-600 hover:text-gray-900"
+              className="gap-2 text-secondary-content interactive-element"
             >
               <Bot className="h-4 w-4" />
               Company Hub
             </Button>
             
-            <Button variant="ghost" onClick={() => navigate("/")} className="gap-2 text-gray-600 hover:text-gray-900">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate("/")} 
+              className="gap-2 text-secondary-content interactive-element"
+            >
               <Home className="h-4 w-4" />
               Home
             </Button>
@@ -51,19 +55,35 @@ export const Header = () => {
             {session ? (
               // Show these links only for authenticated users
               <>
-                <Button variant="ghost" onClick={() => navigate("/modules")} className="gap-2 text-gray-600 hover:text-gray-900">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => navigate("/modules")} 
+                  className="gap-2 text-secondary-content interactive-element"
+                >
                   <Package className="h-4 w-4" />
                   Modules
                 </Button>
-                <Button variant="ghost" onClick={openOutlook} className="gap-2 text-gray-600 hover:text-gray-900">
+                <Button 
+                  variant="ghost" 
+                  onClick={openOutlook} 
+                  className="gap-2 text-secondary-content interactive-element"
+                >
                   <Mail className="h-4 w-4" />
                   Contact
                 </Button>
-                <Button variant="ghost" onClick={openTeams} className="gap-2 text-gray-600 hover:text-gray-900">
+                <Button 
+                  variant="ghost" 
+                  onClick={openTeams} 
+                  className="gap-2 text-secondary-content interactive-element"
+                >
                   <Users className="h-4 w-4" />
                   Teams
                 </Button>
-                <Button variant="ghost" onClick={() => navigate("/settings")} className="gap-2 text-gray-600 hover:text-gray-900">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => navigate("/settings")} 
+                  className="gap-2 text-secondary-content interactive-element"
+                >
                   <Settings className="h-4 w-4" />
                   Settings
                 </Button>
@@ -77,10 +97,10 @@ export const Header = () => {
             {session && (
               <div className="flex items-center gap-4">
                 <div className="flex flex-col items-end">
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-primary-content">
                     {session.user.email}
                   </span>
-                  <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
+                  <span className="text-xs px-2 py-1 content-area rounded-full">
                     DEMO Company
                   </span>
                 </div>
@@ -90,7 +110,7 @@ export const Header = () => {
                       <ChevronDown className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+                  <DropdownMenuContent align="end" className="card">
                     <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
                       Sign Out
                     </DropdownMenuItem>
