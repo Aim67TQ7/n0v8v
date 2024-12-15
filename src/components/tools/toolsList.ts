@@ -10,7 +10,8 @@ import {
   Image,
   Wrench,
   GitFork,
-  Fish
+  Fish,
+  Newspaper
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
@@ -119,5 +120,13 @@ export const tools: Tool[] = [
     href: "/operations/quality/fishbone",
     status: "ready",
     functionName: "analyze-fishbone"
+  },
+  {
+    title: "Company News",
+    description: "Manage and publish company announcements",
+    icon: Newspaper,
+    href: "/operations/hr/company-news",
+    status: "ready",
+    functionName: "manage-news"
   }
 ];
