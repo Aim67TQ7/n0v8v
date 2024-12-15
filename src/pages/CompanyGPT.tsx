@@ -11,6 +11,7 @@ import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const CompanyGPT = () => {
   const [isLeftColumnCollapsed, setIsLeftColumnCollapsed] = useState(false);
@@ -110,7 +111,7 @@ const CompanyGPT = () => {
 
       {/* Middle Three Columns - Main Content */}
       <div className="flex-1 flex flex-col">
-        <Card className="m-4 flex-1">
+        <Card className="m-4 flex-1 flex flex-col">
           {/* Company Logo */}
           <div className="p-4 flex justify-center">
             <img 
@@ -128,17 +129,19 @@ const CompanyGPT = () => {
             </div>
           </div>
 
-          {/* Chat Conversation */}
-          <div className="flex-1 p-4">
-            <ChatContainer
-              messages={messages}
-              onMessagesChange={setMessages}
-              chatId={currentChatId}
-            />
+          {/* Chat Conversation - Now using flex-1 to fill available space */}
+          <div className="flex-1 flex flex-col min-h-0 p-4">
+            <ScrollArea className="flex-1">
+              <ChatContainer
+                messages={messages}
+                onMessagesChange={setMessages}
+                chatId={currentChatId}
+              />
+            </ScrollArea>
           </div>
 
           {/* Chat Entry Box */}
-          <div className="p-4 border-t">
+          <div className="p-4 border-t mt-auto">
             <Button
               className="w-full"
               onClick={createNewChat}
