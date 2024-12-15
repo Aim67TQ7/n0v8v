@@ -25,36 +25,36 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#9b87f5",
+          DEFAULT: "#3b82f6",
           foreground: "#FFFFFF",
-          hover: "#7E69AB"
+          hover: "#2563eb"
         },
         secondary: {
-          DEFAULT: "#0EA5E9",
+          DEFAULT: "#6b7280",
           foreground: "#FFFFFF",
-          hover: "#0b8ac5"
+          hover: "#4b5563"
         },
         accent: {
-          DEFAULT: "#F1F1F1",
-          foreground: "#000000",
-          hover: "#E5E5E5"
+          DEFAULT: "#f3f4f6",
+          foreground: "#1f2937",
+          hover: "#e5e7eb"
         },
         card: {
-          DEFAULT: "#000000",
-          foreground: "#FFFFFF",
-          hover: "#1a1a1a",
-          muted: "#999999"
+          DEFAULT: "#ffffff",
+          foreground: "#1f2937",
+          hover: "#f9fafb",
+          muted: "#6b7280"
         },
         content: {
-          DEFAULT: "#F1F1F1",
-          foreground: "#000000",
-          hover: "#E5E5E5",
-          muted: "#666666"
+          DEFAULT: "#ffffff",
+          foreground: "#1f2937",
+          hover: "#f9fafb",
+          muted: "#6b7280"
         },
         destructive: {
-          DEFAULT: "#ea384c",
+          DEFAULT: "#ef4444",
           foreground: "#FFFFFF",
-          hover: "#d62d3f"
+          hover: "#dc2626"
         }
       },
       fontFamily: {
