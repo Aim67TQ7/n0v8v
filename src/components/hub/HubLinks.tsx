@@ -1,9 +1,11 @@
 import { Card } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Folder, Grid, Wrench, FileText } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const HubLinks = () => {
+  const navigate = useNavigate();
+  
   const sections = [
     {
       title: "Company Resources",
@@ -60,7 +62,8 @@ export const HubLinks = () => {
           {sections.map((section) => (
             <Card 
               key={section.title} 
-              className="content-area content-hover"
+              className="content-area content-hover cursor-pointer"
+              onClick={() => section.title === "Company Resources" && navigate("/modules")}
             >
               <div className="flex items-center gap-1.5 mb-1">
                 <section.icon className="h-5 w-5 text-secondary" />
@@ -72,6 +75,7 @@ export const HubLinks = () => {
                     key={link.name}
                     to={link.href}
                     className="block text-sm text-gray-300 hover:text-white py-0.5 px-2 rounded transition-colors"
+                    onClick={(e) => e.stopPropagation()}
                   >
                     {link.name}
                   </Link>
