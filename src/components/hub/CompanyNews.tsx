@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { NewsItem } from "./news/NewsItem";
 
 export const CompanyNews = () => {
   const { data: news } = useQuery({
@@ -21,14 +22,15 @@ export const CompanyNews = () => {
   return (
     <Card className="p-1 bg-card text-card-foreground">
       <ScrollArea className="h-[100px]">
-        <div className="space-y-1">
+        <div className="divide-y divide-gray-800">
           {news?.map((item) => (
-            <p
-              key={item.id}
-              className="text-xs text-gray-300 px-2 hover:text-white rounded transition-colors"
-            >
-              {item.title}: {item.content}
-            </p>
+            <div key={item.id} className="px-2 py-1.5">
+              <NewsItem
+                title={item.title}
+                content={item.content}
+                createdAt={item.created_at}
+              />
+            </div>
           ))}
         </div>
       </ScrollArea>
