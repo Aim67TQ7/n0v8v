@@ -49,7 +49,6 @@ const CompanyHub = () => {
                 </Card>
                 
                 <Card className="p-4 mt-6 flex-1 relative">
-                  <h2 className="font-semibold mb-4">Active Chat</h2>
                   <div className="space-y-4 mb-4 h-[400px] overflow-y-auto">
                     {/* Chat messages would go here */}
                   </div>
