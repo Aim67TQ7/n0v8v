@@ -11,22 +11,21 @@ export const HubLinks = () => {
       title: "Company Resources",
       icon: Folder,
       links: [
-        { name: "Desktop", href: "/desktop" },
-        { name: "Epicor", href: "/epicor" },
-        { name: "Email", href: "/email" },
-        { name: "Teams", href: "/teams" },
-        { name: "Webex", href: "/webex" },
+        { name: "Company News", href: "/operations/hr/company-news" },
+        { name: "Employee Data", href: "/operations/hr/employee-data" },
+        { name: "Training Matrix", href: "/operations/hr/training-matrix" },
+        { name: "Organization", href: "/operations/hr/org-chart" },
       ]
     },
     {
       title: "Function Modules",
       icon: Grid,
       links: [
-        { name: "Sales", href: "/modules/sales" },
-        { name: "Engineering", href: "/modules/engineering" },
-        { name: "Facilities", href: "/modules/facilities" },
-        { name: "Quality", href: "/modules/quality" },
-        { name: "Production", href: "/modules/production" },
+        { name: "HR Operations", href: "/operations/hr" },
+        { name: "Engineering", href: "/operations/engineering" },
+        { name: "Facilities", href: "/operations/facilities" },
+        { name: "Quality", href: "/operations/quality" },
+        { name: "Production", href: "/operations/production" },
       ],
       onClick: () => navigate("/modules")
     },
@@ -37,7 +36,7 @@ export const HubLinks = () => {
         { name: "5S Scoring", href: "/operations/lean/5s-vision" },
         { name: "Five Whys", href: "/operations/quality/five-whys" },
         { name: "PM Assist", href: "/operations/maintenance" },
-        { name: "Lead Scraping", href: "/leads/web-scraping" },
+        { name: "Lead Scraping", href: "/leads/scraping" },
         { name: "Fishbone Analysis", href: "/operations/quality/fishbone" },
       ],
       onClick: () => navigate("/tools")
@@ -46,8 +45,8 @@ export const HubLinks = () => {
       title: "Recent Files",
       icon: FileText,
       links: [
-        { name: "Q4 Report.pdf", href: "/files/q4-report" },
-        { name: "Project Timeline.xlsx", href: "/files/project-timeline" },
+        { name: "Training Records", href: "/operations/hr/training-matrix" },
+        { name: "Company Policies", href: "/operations/hr/handbook" },
       ]
     }
   ];

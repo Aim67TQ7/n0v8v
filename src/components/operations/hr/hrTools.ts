@@ -1,4 +1,4 @@
-import { User, BookOpen, Shield, DollarSign, Users, Newspaper } from "lucide-react";
+import { User, BookOpen, Shield, DollarSign, Users } from "lucide-react";
 import type { ModuleCardProps } from "@/components/operations/ModuleCard";
 
 export const hrTools: ModuleCardProps[] = [
@@ -28,13 +28,6 @@ export const hrTools: ModuleCardProps[] = [
     description: "Access tax-related resources and forms",
     icon: DollarSign,
     href: "/operations/hr/tax",
-    status: "ready"
-  },
-  {
-    title: "Company News",
-    description: "Manage company news and announcements",
-    icon: Newspaper,
-    href: "/operations/hr/company-news",
     status: "ready"
   },
   {
