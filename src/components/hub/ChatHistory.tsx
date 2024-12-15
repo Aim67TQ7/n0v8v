@@ -42,24 +42,24 @@ export const ChatHistory = ({ className }: ChatHistoryProps) => {
       <div className="relative flex-1">
         <Input 
           placeholder="Search chat history..." 
-          className="text-sm"
+          className="text-sm bg-accent"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Search className="absolute right-2 top-2.5 h-4 w-4 text-gray-400" />
+        <Search className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground" />
       </div>
       
       <ScrollArea className="h-[400px]">
         <div className="space-y-2 pr-2">
           {Object.entries(groupedChats).map(([date, chats]) => (
             <div key={date} className="space-y-1">
-              <h3 className="text-sm font-semibold text-gray-700 px-2">{date}</h3>
+              <h3 className="text-sm font-semibold text-primary px-2">{date}</h3>
               <div className="space-y-0.5">
                 {(chats as any[]).slice(0, 4).map((chat) => (
                   <Link
                     key={chat.id}
                     to={`/chat/${chat.id}`}
-                    className="block text-xs text-gray-600 hover:text-primary hover:underline py-0.5 px-2"
+                    className="block text-xs hover:text-primary hover:bg-accent/50 py-0.5 px-2 rounded transition-colors"
                   >
                     {chat.title}
                   </Link>
@@ -73,16 +73,16 @@ export const ChatHistory = ({ className }: ChatHistoryProps) => {
   );
 
   return (
-    <Card className={cn("p-3 bg-white/90 backdrop-blur-sm", className)}>
+    <Card className={cn("p-3", className)} style={{ backgroundColor: 'var(--card-bg)' }}>
       <div className="mb-2 flex items-center justify-between">
         <h2 className="font-semibold text-sm">Chat History</h2>
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-6 w-6 p-0">
+            <Button variant="ghost" size="icon" className="h-6 w-6 p-0 hover:bg-accent/50">
               <Search className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] bg-white">
+          <DialogContent className="sm:max-w-[600px]" style={{ backgroundColor: 'var(--card-bg)' }}>
             <div className="p-4">
               <h2 className="text-lg font-semibold mb-4">Search Chat History</h2>
               <ChatHistoryContent />
@@ -94,13 +94,13 @@ export const ChatHistory = ({ className }: ChatHistoryProps) => {
         <div className="space-y-2 pr-2">
           {Object.entries(groupedChats).map(([date, chats]) => (
             <div key={date} className="space-y-1">
-              <h3 className="text-sm font-semibold text-gray-700 px-2">{date}</h3>
+              <h3 className="text-sm font-semibold text-primary px-2">{date}</h3>
               <div className="space-y-0.5">
                 {(chats as any[]).slice(0, 4).map((chat) => (
                   <Link
                     key={chat.id}
                     to={`/chat/${chat.id}`}
-                    className="block text-xs text-gray-600 hover:text-primary hover:underline py-0.5 px-2"
+                    className="block text-xs hover:text-primary hover:bg-accent/50 py-0.5 px-2 rounded transition-colors"
                   >
                     {chat.title}
                   </Link>
