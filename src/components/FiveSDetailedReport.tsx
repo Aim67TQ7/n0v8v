@@ -1,96 +1,33 @@
+import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
-import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
-
-interface ChecklistItem {
-  item: string;
-  score: number;
-  description: string;
-}
-
-interface DetailedReport {
-  sort_checklist: ChecklistItem[];
-  sort_positive_observations: string[];
-  sort_concerns: string[];
-  set_checklist: ChecklistItem[];
-  set_positive_observations: string[];
-  set_concerns: string[];
-  shine_checklist: ChecklistItem[];
-  shine_positive_observations: string[];
-  shine_concerns: string[];
-  follow_up_actions: string[];
-  recommendations: string[];
-}
 
 interface FiveSDetailedReportProps {
   evaluationId: string;
 }
 
 export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) => {
-  const [report, setReport] = useState<DetailedReport | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: detailedReport, isLoading } = useQuery({
+    queryKey: ['detailed-report', evaluationId],
+    queryFn: async () => {
+      console.log('Fetching detailed report for evaluation:', evaluationId);
+      
+      const { data, error } = await supabase
+        .from('five_s_detailed_reports')
+        .select('*')
+        .eq('evaluation_id', evaluationId)
+        .single();
 
-  useEffect(() => {
-    const fetchReport = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('five_s_detailed_reports')
-          .select('*')
-          .eq('evaluation_id', evaluationId)
-          .maybeSingle(); // Using maybeSingle() instead of single()
-
-        if (error) {
-          console.error('Error fetching report:', error);
-          setError('Failed to load the detailed report');
-          return;
-        }
-
-        if (!data) {
-          setError('No detailed report found for this evaluation');
-          setIsLoading(false);
-          return;
-        }
-
-        // Parse the JSON fields to ensure they match our expected types
-        const parsedReport: DetailedReport = {
-          sort_checklist: Array.isArray(data.sort_checklist) ? data.sort_checklist.map((item: any) => ({
-            item: item.item || '',
-            score: Number(item.score) || 0,
-            description: item.description || ''
-          })) : [],
-          sort_positive_observations: Array.isArray(data.sort_positive_observations) ? data.sort_positive_observations : [],
-          sort_concerns: Array.isArray(data.sort_concerns) ? data.sort_concerns : [],
-          set_checklist: Array.isArray(data.set_checklist) ? data.set_checklist.map((item: any) => ({
-            item: item.item || '',
-            score: Number(item.score) || 0,
-            description: item.description || ''
-          })) : [],
-          set_positive_observations: Array.isArray(data.set_positive_observations) ? data.set_positive_observations : [],
-          set_concerns: Array.isArray(data.set_concerns) ? data.set_concerns : [],
-          shine_checklist: Array.isArray(data.shine_checklist) ? data.shine_checklist.map((item: any) => ({
-            item: item.item || '',
-            score: Number(item.score) || 0,
-            description: item.description || ''
-          })) : [],
-          shine_positive_observations: Array.isArray(data.shine_positive_observations) ? data.shine_positive_observations : [],
-          shine_concerns: Array.isArray(data.shine_concerns) ? data.shine_concerns : [],
-          follow_up_actions: Array.isArray(data.follow_up_actions) ? data.follow_up_actions : [],
-          recommendations: Array.isArray(data.recommendations) ? data.recommendations : []
-        };
-
-        setReport(parsedReport);
-        setIsLoading(false);
-      } catch (err) {
-        console.error('Error in fetchReport:', err);
-        setError('An unexpected error occurred');
-        setIsLoading(false);
+      if (error) {
+        console.error('Error fetching detailed report:', error);
+        throw error;
       }
-    };
 
-    fetchReport();
-  }, [evaluationId]);
+      console.log('Received detailed report data:', data);
+      return data;
+    }
+  });
 
   if (isLoading) {
     return (
@@ -100,93 +37,187 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
     );
   }
 
-  if (error) {
+  if (!detailedReport) {
+    console.log('No detailed report found for evaluation:', evaluationId);
     return (
-      <Card className="p-4 text-center text-red-600">
-        {error}
+      <Card className="p-6 mt-8">
+        <p className="text-center text-muted-foreground">
+          No detailed report found for this evaluation
+        </p>
       </Card>
     );
   }
 
-  if (!report) return null;
-
-  const renderChecklist = (checklist: ChecklistItem[], title: string) => (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold">{title} Checklist</h3>
-      <div className="space-y-2">
-        {checklist.map((item, index) => (
-          <div key={index} className="flex justify-between items-start border-b pb-2">
-            <div className="flex-1">
-              <p className="font-medium">{item.item}</p>
-              <p className="text-sm text-gray-600">{item.description}</p>
-            </div>
-            <span className={`px-2 py-1 rounded text-sm ${
-              item.score === 1 ? 'bg-green-100 text-green-800' :
-              item.score === 0.5 ? 'bg-yellow-100 text-yellow-800' :
-              'bg-red-100 text-red-800'
-            }`}>
-              {item.score.toFixed(1)}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderObservations = (positives: string[], concerns: string[], title: string) => (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold">{title} Observations</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="p-4 bg-green-50">
-          <h4 className="font-medium text-green-800 mb-2">Positive Notes</h4>
-          <ul className="list-disc pl-4 space-y-1">
-            {positives.map((item, index) => (
-              <li key={index} className="text-sm text-green-700">{item}</li>
-            ))}
-          </ul>
-        </Card>
-        <Card className="p-4 bg-yellow-50">
-          <h4 className="font-medium text-yellow-800 mb-2">Areas of Concern</h4>
-          <ul className="list-disc pl-4 space-y-1">
-            {concerns.map((item, index) => (
-              <li key={index} className="text-sm text-yellow-700">{item}</li>
-            ))}
-          </ul>
-        </Card>
-      </div>
-    </div>
-  );
+  // Log the structure of the report data
+  console.log('Detailed report structure:', {
+    hasSort: !!detailedReport.sort_checklist,
+    sortChecklistLength: detailedReport.sort_checklist?.length,
+    hasSet: !!detailedReport.set_checklist,
+    setChecklistLength: detailedReport.set_checklist?.length,
+    hasShine: !!detailedReport.shine_checklist,
+    shineChecklistLength: detailedReport.shine_checklist?.length,
+    hasFollowUp: !!detailedReport.follow_up_actions,
+    followUpLength: detailedReport.follow_up_actions?.length,
+    hasRecommendations: !!detailedReport.recommendations,
+    recommendationsLength: detailedReport.recommendations?.length,
+  });
 
   return (
-    <div className="space-y-8">
-      {renderChecklist(report.sort_checklist, 'Sort')}
-      {renderObservations(report.sort_positive_observations, report.sort_concerns, 'Sort')}
-      
-      {renderChecklist(report.set_checklist, 'Set in Order')}
-      {renderObservations(report.set_positive_observations, report.set_concerns, 'Set in Order')}
-      
-      {renderChecklist(report.shine_checklist, 'Shine')}
-      {renderObservations(report.shine_positive_observations, report.shine_concerns, 'Shine')}
+    <Card className="p-6 mt-8">
+      <div className="space-y-8">
+        {/* Sort Section */}
+        <section>
+          <h3 className="text-lg font-semibold mb-4">Sort (整理)</h3>
+          
+          {detailedReport.sort_checklist?.length > 0 && (
+            <div className="space-y-4">
+              <h4 className="font-medium">Checklist</h4>
+              <ul className="list-disc pl-5 space-y-2">
+                {detailedReport.sort_checklist.map((item: any, index: number) => (
+                  <li key={index} className="text-sm">
+                    {item.item} - Score: {item.score}/10
+                    {item.description && (
+                      <p className="text-muted-foreground mt-1">{item.description}</p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Action Items</h3>
-        <Card className="p-4">
-          <h4 className="font-medium mb-2">Recommendations</h4>
-          <ul className="list-disc pl-4 space-y-1">
-            {report.recommendations.map((item, index) => (
-              <li key={index} className="text-sm">{item}</li>
-            ))}
-          </ul>
-        </Card>
-        <Card className="p-4">
-          <h4 className="font-medium mb-2">Follow-up Actions</h4>
-          <ul className="list-disc pl-4 space-y-1">
-            {report.follow_up_actions.map((item, index) => (
-              <li key={index} className="text-sm">{item}</li>
-            ))}
-          </ul>
-        </Card>
+          {detailedReport.sort_positive_observations?.length > 0 && (
+            <div className="mt-4">
+              <h4 className="font-medium">Positive Observations</h4>
+              <ul className="list-disc pl-5 space-y-2">
+                {detailedReport.sort_positive_observations.map((obs: string, index: number) => (
+                  <li key={index} className="text-sm">{obs}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {detailedReport.sort_concerns?.length > 0 && (
+            <div className="mt-4">
+              <h4 className="font-medium">Areas of Concern</h4>
+              <ul className="list-disc pl-5 space-y-2">
+                {detailedReport.sort_concerns.map((concern: string, index: number) => (
+                  <li key={index} className="text-sm">{concern}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+
+        {/* Set in Order Section */}
+        <section>
+          <h3 className="text-lg font-semibold mb-4">Set in Order (整頓)</h3>
+          
+          {detailedReport.set_checklist?.length > 0 && (
+            <div className="space-y-4">
+              <h4 className="font-medium">Checklist</h4>
+              <ul className="list-disc pl-5 space-y-2">
+                {detailedReport.set_checklist.map((item: any, index: number) => (
+                  <li key={index} className="text-sm">
+                    {item.item} - Score: {item.score}/10
+                    {item.description && (
+                      <p className="text-muted-foreground mt-1">{item.description}</p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {detailedReport.set_positive_observations?.length > 0 && (
+            <div className="mt-4">
+              <h4 className="font-medium">Positive Observations</h4>
+              <ul className="list-disc pl-5 space-y-2">
+                {detailedReport.set_positive_observations.map((obs: string, index: number) => (
+                  <li key={index} className="text-sm">{obs}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {detailedReport.set_concerns?.length > 0 && (
+            <div className="mt-4">
+              <h4 className="font-medium">Areas of Concern</h4>
+              <ul className="list-disc pl-5 space-y-2">
+                {detailedReport.set_concerns.map((concern: string, index: number) => (
+                  <li key={index} className="text-sm">{concern}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+
+        {/* Shine Section */}
+        <section>
+          <h3 className="text-lg font-semibold mb-4">Shine (清掃)</h3>
+          
+          {detailedReport.shine_checklist?.length > 0 && (
+            <div className="space-y-4">
+              <h4 className="font-medium">Checklist</h4>
+              <ul className="list-disc pl-5 space-y-2">
+                {detailedReport.shine_checklist.map((item: any, index: number) => (
+                  <li key={index} className="text-sm">
+                    {item.item} - Score: {item.score}/10
+                    {item.description && (
+                      <p className="text-muted-foreground mt-1">{item.description}</p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {detailedReport.shine_positive_observations?.length > 0 && (
+            <div className="mt-4">
+              <h4 className="font-medium">Positive Observations</h4>
+              <ul className="list-disc pl-5 space-y-2">
+                {detailedReport.shine_positive_observations.map((obs: string, index: number) => (
+                  <li key={index} className="text-sm">{obs}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {detailedReport.shine_concerns?.length > 0 && (
+            <div className="mt-4">
+              <h4 className="font-medium">Areas of Concern</h4>
+              <ul className="list-disc pl-5 space-y-2">
+                {detailedReport.shine_concerns.map((concern: string, index: number) => (
+                  <li key={index} className="text-sm">{concern}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+
+        {/* Follow-up Actions */}
+        {detailedReport.follow_up_actions?.length > 0 && (
+          <section>
+            <h3 className="text-lg font-semibold mb-4">Follow-up Actions</h3>
+            <ul className="list-disc pl-5 space-y-2">
+              {detailedReport.follow_up_actions.map((action: string, index: number) => (
+                <li key={index} className="text-sm">{action}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {/* Recommendations */}
+        {detailedReport.recommendations?.length > 0 && (
+          <section>
+            <h3 className="text-lg font-semibold mb-4">Recommendations</h3>
+            <ul className="list-disc pl-5 space-y-2">
+              {detailedReport.recommendations.map((rec: string, index: number) => (
+                <li key={index} className="text-sm">{rec}</li>
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
-    </div>
+    </Card>
   );
 };
