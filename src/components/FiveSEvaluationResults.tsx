@@ -1,18 +1,15 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Loader2, TrendingDown, TrendingUp } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { FiveSEvaluationHeader } from "@/components/FiveSEvaluationHeader";
 import { FiveSEvaluationImages } from "@/components/FiveSEvaluationImages";
-import { FiveSRadarChart } from "@/components/FiveSRadarChart";
 import { TrainModelCard } from "@/components/TrainModelCard";
-import { FiveSTrend } from "@/components/FiveSTrend";
 import { ScoreAnalysis } from "@/components/analysis/ScoreAnalysis";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import html2pdf from 'html2pdf.js';
 import { FiveSDetailedReport } from "@/components/FiveSDetailedReport";
-import { format } from "date-fns";
+import { FiveSScoreCards } from "@/components/FiveSScoreCards";
 
 interface FiveSEvaluationResultsProps {
   evaluation: any;
@@ -147,7 +144,6 @@ export const FiveSEvaluationResults = ({
   const totalScore = calculateTotalScore();
   const scorePercentage = (totalScore / 50) * 100;
   const scoreDifference = previousScore !== null ? totalScore - previousScore : null;
-
   const baseScores = evaluationData.sort_score + evaluationData.set_in_order_score + evaluationData.shine_score;
   const canShowAdvancedScores = baseScores >= 20;
 
@@ -159,60 +155,22 @@ export const FiveSEvaluationResults = ({
         onNewEvaluation={onNewEvaluation}
       />
 
-      <div id="evaluation-content" className="scale-[0.85] origin-top">
+      <div id="evaluation-content" className="scale-[0.85] origin-top space-y-8">
         <Card className="p-4">
-          <FiveSEvaluationImages images={evaluationImages} />
+          <FiveSScoreCards
+            evaluationData={evaluationData}
+            totalScore={totalScore}
+            scorePercentage={scorePercentage}
+            scoreDifference={scoreDifference}
+            canShowAdvancedScores={canShowAdvancedScores}
+          />
+
+          <div className="mt-8">
+            <FiveSEvaluationImages images={evaluationImages} />
+          </div>
 
           <div className="mt-8">
             <FiveSDetailedReport evaluationId={evaluation} />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-            <Card className="p-4">
-              <h3 className="text-lg font-semibold mb-2">5S Scores</h3>
-              <FiveSRadarChart 
-                scores={evaluationData} 
-                canShowAdvancedScores={canShowAdvancedScores}
-              />
-            </Card>
-
-            <Card className="p-4">
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-semibold">Score Summary</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {evaluationData.workcenter?.name} - {format(new Date(evaluationData.created_at), 'PPP')}
-                  </p>
-                </div>
-                
-                <div className="text-center py-4">
-                  <div className="text-4xl font-bold">
-                    {totalScore.toFixed(1)}/50
-                  </div>
-                  <div className="text-2xl text-muted-foreground">
-                    {scorePercentage.toFixed(1)}%
-                  </div>
-                  
-                  {scoreDifference !== null && (
-                    <div className={`flex items-center justify-center mt-2 ${
-                      scoreDifference > 0 ? 'text-green-600' : scoreDifference < 0 ? 'text-red-600' : 'text-gray-600'
-                    }`}>
-                      {scoreDifference > 0 ? (
-                        <TrendingUp className="w-5 h-5 mr-1" />
-                      ) : scoreDifference < 0 ? (
-                        <TrendingDown className="w-5 h-5 mr-1" />
-                      ) : null}
-                      <span>{Math.abs(scoreDifference).toFixed(1)} points {scoreDifference > 0 ? 'improvement' : 'decrease'}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-4">
-              <h3 className="text-lg font-semibold mb-2">Historical 5S Performance</h3>
-              <FiveSTrend workcenterId={evaluationData.workcenter_id} />
-            </Card>
           </div>
 
           {canShowAdvancedScores && (
