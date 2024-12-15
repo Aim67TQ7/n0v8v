@@ -14,6 +14,8 @@ serve(async (req) => {
 
   try {
     const { imageUrls, evaluationId } = await req.json();
+    console.log('Processing request for evaluation:', evaluationId);
+    console.log('Number of images:', imageUrls.length);
 
     const systemPrompt = `You are a 5S workplace organization expert conducting a detailed evaluation. Analyze the provided images and generate a comprehensive report with the following structure:
 
@@ -84,11 +86,38 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      throw new Error(`Anthropic API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Anthropic API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText
+      });
+      throw new Error(`Anthropic API error: ${response.status} - ${errorText}`);
     }
 
     const result = await response.json();
-    const analysis = JSON.parse(result.content[0].text);
+    console.log('Received response from Anthropic');
+    
+    if (!result.content || !result.content[0] || !result.content[0].text) {
+      console.error('Unexpected response structure:', result);
+      throw new Error('Invalid response structure from Anthropic API');
+    }
+
+    let analysis;
+    try {
+      analysis = JSON.parse(result.content[0].text);
+      console.log('Successfully parsed analysis:', analysis);
+    } catch (error) {
+      console.error('Failed to parse Anthropic response:', error);
+      console.error('Raw response text:', result.content[0].text);
+      throw new Error('Failed to parse AI response');
+    }
+
+    // Validate the analysis structure
+    if (!analysis.sort?.checklist || !analysis.setInOrder?.checklist || !analysis.shine?.checklist) {
+      console.error('Invalid analysis structure:', analysis);
+      throw new Error('AI response missing required fields');
+    }
 
     // Save detailed report to database
     const supabase = createClient(
@@ -113,7 +142,12 @@ serve(async (req) => {
         recommendations: analysis.recommendations
       });
 
-    if (dbError) throw dbError;
+    if (dbError) {
+      console.error('Database error:', dbError);
+      throw dbError;
+    }
+
+    console.log('Successfully saved detailed report to database');
 
     return new Response(
       JSON.stringify(analysis),
