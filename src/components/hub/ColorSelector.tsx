@@ -1,24 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Slider } from "@/components/ui/slider"; 
+import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
-
-const colorOptions = [
-  // Primary Colors
-  { name: "Primary Purple", value: "#9b87f5" },
-  { name: "Secondary Purple", value: "#7E69AB" },
-  { name: "Tertiary Purple", value: "#6E59A5" },
-  { name: "Dark Purple", value: "#1A1F2C" },
-  { name: "Light Purple", value: "#D6BCFA" },
-  { name: "Vivid Purple", value: "#8B5CF6" },
-  { name: "Magenta Pink", value: "#D946EF" },
-  { name: "Bright Orange", value: "#F97316" },
-  { name: "Ocean Blue", value: "#0EA5E9" },
-  { name: "Bright Blue", value: "#1EAEDB" },
-  { name: "Sky Blue", value: "#33C3F0" },
-  { name: "Deep Blue", value: "#0FA0CE" },
-];
+import { useState, useRef, useEffect } from "react";
 
 interface ColorSelectorProps {
   selectedColor: string;
@@ -33,60 +16,76 @@ export const ColorSelector = ({
   onColorSelect,
   onOpacityChange,
 }: ColorSelectorProps) => {
-  const handleOpacityChange = (value: number[]) => {
-    onOpacityChange(value[0]);
+  const [isDragging, setIsDragging] = useState(false);
+  const dialRef = useRef<HTMLDivElement>(null);
+
+  const handleColorClick = () => {
+    const colorPicker = document.createElement('input');
+    colorPicker.type = 'color';
+    colorPicker.value = selectedColor;
+    colorPicker.addEventListener('change', (e) => {
+      onColorSelect((e.target as HTMLInputElement).value);
+    });
+    colorPicker.click();
   };
 
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button 
-          variant="outline" 
-          className="w-[120px] flex items-center gap-2"
-        >
-          <div 
-            className="w-4 h-4 rounded-full border"
-            style={{ backgroundColor: selectedColor }}
-          />
-          Colors
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[280px] p-3">
-        <div className="space-y-4">
-          <div>
-            <h4 className="text-sm font-medium mb-2">Primary Color</h4>
-            <div className="grid grid-cols-6 gap-2">
-              {colorOptions.map((color) => (
-                <button
-                  key={color.value}
-                  className={cn(
-                    "w-8 h-8 rounded-full border transition-all hover:scale-110",
-                    selectedColor === color.value && "ring-2 ring-primary"
-                  )}
-                  style={{ backgroundColor: color.value }}
-                  onClick={() => onColorSelect(color.value)}
-                  title={color.name}
-                />
-              ))}
-            </div>
-          </div>
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    handleMouseMove(e);
+  };
 
-          <div>
-            <h4 className="text-sm font-medium mb-2">Card Transparency</h4>
-            <Slider
-              defaultValue={[opacity]}
-              max={100}
-              step={1}
-              value={[opacity]}
-              onValueChange={handleOpacityChange}
-              className="w-full"
-            />
-            <div className="text-xs text-gray-500 mt-1 text-center">
-              {opacity}%
-            </div>
-          </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !dialRef.current) return;
+
+    const dial = dialRef.current;
+    const rect = dial.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
+    const degrees = ((angle * 180) / Math.PI + 360) % 360;
+    const opacity = Math.round((degrees / 360) * 100);
+
+    onOpacityChange(opacity);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove as any);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove as any);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging]);
+
+  return (
+    <div className="relative w-16 h-16">
+      {/* Transparency Dial */}
+      <div 
+        ref={dialRef}
+        className="absolute inset-0 rounded-full border-4 border-transparent cursor-pointer"
+        style={{
+          background: `conic-gradient(from 0deg, rgba(255,255,255,0.1), rgba(255,255,255,0.5) ${opacity}%, rgba(255,255,255,0.1) ${opacity}%, rgba(255,255,255,0.1))`,
+        }}
+        onMouseDown={handleMouseDown}
+      />
+      
+      {/* Color Button */}
+      <Button 
+        onClick={handleColorClick}
+        className={cn(
+          "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
+          "w-12 h-12 rounded-full p-0 border-2 border-white/20"
+        )}
+        style={{ backgroundColor: selectedColor }}
+      />
+    </div>
   );
 };

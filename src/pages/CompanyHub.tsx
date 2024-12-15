@@ -5,6 +5,7 @@ import { ChatHistory } from "@/components/hub/ChatHistory";
 import { CompanyNews } from "@/components/hub/CompanyNews";
 import { HubLinks } from "@/components/hub/HubLinks";
 import { Menu } from "lucide-react";
+import { ColorSelector } from "@/components/hub/ColorSelector";
 import {
   Sheet,
   SheetContent,
@@ -15,31 +16,13 @@ import { useState } from "react";
 const CompanyHub = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [backgroundColor, setBackgroundColor] = useState("#9b87f5");
-
-  const SidebarContent = () => (
-    <div className="space-y-4">
-      <ChatHistory />
-      
-      <Card className="p-4" style={{ backgroundColor }}>
-        <h2 className="font-semibold mb-2">Train the Model</h2>
-        <Textarea
-          placeholder="Provide feedback, improve data, or report hallucinations..."
-          className="mb-2 text-xs"
-          rows={3}
-        />
-        <Button className="w-full">Submit Feedback</Button>
-      </Card>
-    </div>
-  );
+  const [opacity, setOpacity] = useState(100);
 
   // Function to determine if background is dark
   const isBackgroundDark = (color: string) => {
-    // Convert hex to RGB
     const r = parseInt(color.slice(1, 3), 16);
     const g = parseInt(color.slice(3, 5), 16);
     const b = parseInt(color.slice(5, 7), 16);
-    
-    // Calculate relative luminance
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     return luminance < 0.5;
   };
@@ -51,29 +34,18 @@ const CompanyHub = () => {
     <div className="min-h-screen bg-white" style={{ backgroundColor }}>
       <div className="container mx-auto py-6 px-4 sm:px-6">
         <div className="flex justify-end mb-4">
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-[100px] flex items-center gap-2"
-            onClick={() => {
-              const colorPicker = document.createElement('input');
-              colorPicker.type = 'color';
-              colorPicker.value = backgroundColor;
-              colorPicker.addEventListener('change', (e) => {
-                setBackgroundColor((e.target as HTMLInputElement).value);
-              });
-              colorPicker.click();
-            }}
-          >
-            <div 
-              className="w-4 h-4 rounded-full border"
-              style={{ backgroundColor }}
-            />
-            Color
-          </Button>
+          <ColorSelector
+            selectedColor={backgroundColor}
+            opacity={opacity}
+            onColorSelect={setBackgroundColor}
+            onOpacityChange={setOpacity}
+          />
         </div>
 
-        <Card className={`${textColorClass}`} style={{ backgroundColor }}>
+        <Card className={`${textColorClass}`} style={{ 
+          backgroundColor,
+          opacity: opacity / 100 
+        }}>
           {/* Mobile Menu Button */}
           <div className="md:hidden mb-4">
             <Sheet>
@@ -93,7 +65,10 @@ const CompanyHub = () => {
             <div className="hidden md:block md:col-span-2">
               <div className="h-full flex flex-col">
                 <ChatHistory className="flex-grow" />
-                <Card className="p-4 mt-4" style={{ backgroundColor }}>
+                <Card className="p-4 mt-4" style={{ 
+                  backgroundColor,
+                  opacity: opacity / 100 
+                }}>
                   <h2 className="font-semibold mb-2">Train the Model</h2>
                   <Textarea
                     placeholder="Provide feedback, improve data, or report hallucinations..."
@@ -108,12 +83,18 @@ const CompanyHub = () => {
             {/* Main Content */}
             <div className="md:col-span-8">
               <div className="h-full flex flex-col">
-                <Card className="p-4" style={{ backgroundColor }}>
+                <Card className="p-4" style={{ 
+                  backgroundColor,
+                  opacity: opacity / 100 
+                }}>
                   <h2 className="font-semibold mb-4">Company News</h2>
                   <CompanyNews />
                 </Card>
                 
-                <Card className="p-4 mt-6 flex-1 relative" style={{ backgroundColor }}>
+                <Card className="p-4 mt-6 flex-1 relative" style={{ 
+                  backgroundColor,
+                  opacity: opacity / 100 
+                }}>
                   <h2 className="font-semibold mb-4">Active Chat</h2>
                   <div className="space-y-4 mb-4 h-[400px] overflow-y-auto">
                     {/* Chat messages would go here */}
