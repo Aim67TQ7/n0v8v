@@ -3,13 +3,13 @@ import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { FiveSEvaluationHeader } from "@/components/FiveSEvaluationHeader";
 import { FiveSEvaluationImages } from "@/components/FiveSEvaluationImages";
-import { TrainModelCard } from "@/components/TrainModelCard";
 import { ScoreAnalysis } from "@/components/analysis/ScoreAnalysis";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import html2pdf from 'html2pdf.js';
 import { FiveSDetailedReport } from "@/components/FiveSDetailedReport";
 import { FiveSScoreCards } from "@/components/FiveSScoreCards";
+import { TrainingMaterials } from "@/components/hub/TrainingMaterials";
 
 interface FiveSEvaluationResultsProps {
   evaluation: any;
@@ -188,19 +188,7 @@ export const FiveSEvaluationResults = ({
                 />
               </div>
               <div className="md:col-span-1">
-                <TrainModelCard
-                  toolType="five_s"
-                  resourceId={evaluationData.id}
-                  metadata={{
-                    scores: {
-                      sort: evaluationData.sort_score,
-                      set: evaluationData.set_in_order_score,
-                      shine: evaluationData.shine_score,
-                      standardize: evaluationData.standardize_score,
-                      sustain: evaluationData.sustain_score
-                    }
-                  }}
-                />
+                <TrainingMaterials />
               </div>
             </div>
           )}

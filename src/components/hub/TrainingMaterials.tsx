@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, Book, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -13,11 +13,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useAuth } from "@/hooks/use-auth";
 
 export const TrainingMaterials = () => {
   const [materials, setMaterials] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { user } = useAuth();
   const [newMaterial, setNewMaterial] = useState({
     title: "",
     content: "",
@@ -44,18 +46,35 @@ export const TrainingMaterials = () => {
     }
   };
 
+  useEffect(() => {
+    loadMaterials();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.from("company_training_materials").insert([
-        {
+      // Get user's company_id
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('company_id')
+        .eq('id', user?.id)
+        .single();
+
+      if (!profileData?.company_id) {
+        throw new Error('Company ID not found');
+      }
+
+      const { error } = await supabase
+        .from("company_training_materials")
+        .insert({
           title: newMaterial.title,
           content: newMaterial.content,
           category: newMaterial.category,
-        },
-      ]);
+          company_id: profileData.company_id,
+          created_by: user?.id
+        });
 
       if (error) throw error;
 
@@ -82,10 +101,7 @@ export const TrainingMaterials = () => {
   return (
     <Card className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold flex items-center gap-2">
-          <Book className="h-5 w-5" />
-          Training Materials
-        </h2>
+        <h2 className="text-lg font-semibold">Training Materials</h2>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm">
