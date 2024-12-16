@@ -8,11 +8,13 @@ import { useAuth } from "@/hooks/use-auth";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 export const NewsForm = ({ onNewsAdded }: { onNewsAdded: () => void }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -21,27 +23,43 @@ export const NewsForm = ({ onNewsAdded }: { onNewsAdded: () => void }) => {
   const { toast } = useToast();
   const { user } = useAuth();
 
+  // Fetch user's company ID
+  const { data: profile } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("company_id")
+        .eq("id", user.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!profile?.company_id) {
+      toast({
+        title: "Error",
+        description: "Unable to determine your company. Please try again later.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const { data: profileData, error: profileError } = await supabase
-        .from("profiles")
-        .select("company_id")
-        .eq("id", user?.id)
-        .single();
-
-      if (profileError || !profileData?.company_id) {
-        throw new Error('Company ID not found');
-      }
-
       const { error } = await supabase
         .from("company_news")
         .insert({
           title: newNews.title,
           content: newNews.content,
-          company_id: profileData.company_id,
+          company_id: profile.company_id,
           created_by: user?.id
         });
 
@@ -78,6 +96,9 @@ export const NewsForm = ({ onNewsAdded }: { onNewsAdded: () => void }) => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add Company News</DialogTitle>
+          <DialogDescription>
+            Create a new announcement for your company.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -87,6 +108,7 @@ export const NewsForm = ({ onNewsAdded }: { onNewsAdded: () => void }) => {
               onChange={(e) =>
                 setNewNews({ ...newNews, title: e.target.value })
               }
+              required
             />
           </div>
           <div>
@@ -97,6 +119,7 @@ export const NewsForm = ({ onNewsAdded }: { onNewsAdded: () => void }) => {
                 setNewNews({ ...newNews, content: e.target.value })
               }
               rows={5}
+              required
             />
           </div>
           <Button type="submit" disabled={isLoading} className="w-full">
