@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -81,7 +82,14 @@ export const ChatContainer = ({ messages, setMessages }: ChatContainerProps) => 
             className="sm:w-auto"
             disabled={isLoading}
           >
-            {isLoading ? "Sending..." : "Send"}
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Sending...
+              </>
+            ) : (
+              'Send'
+            )}
           </Button>
         </form>
       </div>
