@@ -9,6 +9,7 @@ import { Header } from "@/components/Header";
 import { useLocation, Navigate } from "react-router-dom";
 import { useState, Suspense } from "react";
 import { SplashScreen } from "@/components/SplashScreen";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Loading component for route transitions
 const RouteLoadingComponent = () => (
@@ -22,9 +23,15 @@ const App = () => {
   const location = useLocation();
   const showHeader = location.pathname !== '/company-gpt';
   const [showSplash, setShowSplash] = useState(true);
+  const { isAuthenticated } = useAuth();
 
   if (showSplash) {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
+
+  // Redirect to login if not authenticated and not on a public route
+  if (!isAuthenticated && !publicRoutes.includes(location.pathname)) {
+    return <Navigate to="/login" replace />;
   }
 
   return (
@@ -35,7 +42,16 @@ const App = () => {
           <Suspense fallback={<RouteLoadingComponent />}>
             <Routes>
               {/* Default route redirect */}
-              <Route path="/" element={<Navigate to="/company-hub" replace />} />
+              <Route 
+                path="/" 
+                element={
+                  isAuthenticated ? (
+                    <Navigate to="/company-hub" replace />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                } 
+              />
 
               {/* Public routes (no auth required) */}
               {routes
@@ -48,29 +64,7 @@ const App = () => {
                   />
                 ))}
 
-              {/* CompanyGPT route (requires auth) */}
-              <Route
-                path="/company-gpt"
-                element={
-                  <AuthWrapper>
-                    <main className="flex-1">
-                      <Routes>
-                        {routes
-                          .filter(route => route.path === '/company-gpt')
-                          .map(route => (
-                            <Route
-                              key={route.path}
-                              path="/"
-                              element={route.element}
-                            />
-                          ))}
-                      </Routes>
-                    </main>
-                  </AuthWrapper>
-                }
-              />
-
-              {/* All other protected routes */}
+              {/* Protected routes */}
               <Route
                 path="*"
                 element={
@@ -78,7 +72,7 @@ const App = () => {
                     <main className="flex-1">
                       <Routes>
                         {routes
-                          .filter(route => !publicRoutes.includes(route.path) && route.path !== '/company-gpt')
+                          .filter(route => !publicRoutes.includes(route.path))
                           .map(route => (
                             <Route
                               key={route.path}
