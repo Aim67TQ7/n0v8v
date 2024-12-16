@@ -88,7 +88,7 @@ const CompanyHub = () => {
                 </Card>
                 
                 <Card className="p-4 flex-1 relative">
-                  <div className="space-y-4 mb-4 h-[calc(100vh-24rem)] overflow-y-auto">
+                  <div className="space-y-4 mb-4 h-[calc(100vh-32rem)] overflow-y-auto">
                     {messages.map((msg, index) => (
                       <div
                         key={index}
