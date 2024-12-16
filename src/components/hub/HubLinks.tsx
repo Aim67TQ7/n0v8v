@@ -11,12 +11,12 @@ export const HubLinks = () => {
       title: "Company Resources",
       icon: Folder,
       links: [
-        { name: "Desktop", href: "file:///C:/Users/rclausing/Desktop" },
-        { name: "Email", href: "#" },
-        { name: "Teams", href: "#" },
-        { name: "Epicor", href: "#" },
-        { name: "Shared Folder", href: "#" },
-        { name: "Windchill", href: "#" },
+        { name: "Desktop", href: "company-resource://desktop" },
+        { name: "Email", href: "company-resource://email" },
+        { name: "Teams", href: "company-resource://teams" },
+        { name: "Epicor", href: "company-resource://epicor" },
+        { name: "Shared Folder", href: "company-resource://shared" },
+        { name: "Windchill", href: "company-resource://windchill" },
       ]
     },
     {
@@ -51,6 +51,14 @@ export const HubLinks = () => {
     }
   ];
 
+  const handleLinkClick = (href: string, e: React.MouseEvent) => {
+    if (href.startsWith('company-resource://')) {
+      e.preventDefault();
+      // This will be handled by Electron's protocol handler
+      console.log('Electron will handle:', href);
+    }
+  };
+
   return (
     <Card className="card h-[calc(100vh-8rem)] flex flex-col bg-white">
       <ScrollArea className="flex-1 p-4">
@@ -71,12 +79,7 @@ export const HubLinks = () => {
                     key={link.name}
                     to={link.href}
                     className="block text-xs text-gray-700 hover:text-black hover:bg-gray-100 py-0.5 px-2 rounded transition-colors"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (link.href.startsWith('file://')) {
-                        window.location.href = link.href;
-                      }
-                    }}
+                    onClick={(e) => handleLinkClick(link.href, e)}
                   >
                     {link.name}
                   </Link>
