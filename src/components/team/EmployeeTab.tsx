@@ -8,6 +8,10 @@ export interface Employee {
   id: string;
   employee_number: string;
   start_date: string;
+  company_id: string | null;
+  created_at: string;
+  manager_id: string | null;
+  profile_id: string | null;
   profile: {
     first_name: string;
     last_name: string;
@@ -37,17 +41,20 @@ export const EmployeeTab = () => {
           id,
           employee_number,
           start_date,
+          company_id,
+          created_at,
+          manager_id,
+          profile_id,
           profile:profiles(first_name, last_name),
           manager:employees!employees_manager_id_fkey(
             profile:profiles(first_name, last_name)
           )
-        `)
-        .single();
+        `);
 
       if (error) throw error;
 
       if (employeesData) {
-        setEmployees(employeesData);
+        setEmployees(employeesData as Employee[]);
       }
     } catch (error) {
       console.error('Error fetching employees:', error);

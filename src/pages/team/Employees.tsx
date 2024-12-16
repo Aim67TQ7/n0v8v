@@ -23,6 +23,10 @@ export default function Employees() {
           id,
           employee_number,
           start_date,
+          company_id,
+          created_at,
+          manager_id,
+          profile_id,
           profile:profiles(first_name, last_name),
           manager:employees!employees_manager_id_fkey(
             profile:profiles(first_name, last_name)
@@ -32,7 +36,7 @@ export default function Employees() {
       if (error) throw error;
 
       if (employeesData) {
-        setEmployees(employeesData);
+        setEmployees(employeesData as Employee[]);
       }
     } catch (error) {
       console.error('Error fetching employees:', error);

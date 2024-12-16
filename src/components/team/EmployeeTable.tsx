@@ -6,29 +6,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Database } from "@/integrations/supabase/types";
 import { UserCheck, GraduationCap, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-
-type Employee = Database["public"]["Tables"]["employees"]["Row"] & {
-  profile: {
-    first_name: string;
-    last_name: string;
-  };
-  manager?: {
-    profile: {
-      first_name: string;
-      last_name: string;
-    };
-  } | null;
-};
+import type { Employee } from "./EmployeeTab";
 
 interface EmployeeTableProps {
   employees: Employee[];
-  sortField: string;
-  sortDirection: "asc" | "desc";
-  onSort: (field: string) => void;
+  sortField?: string;
+  sortDirection?: "asc" | "desc";
+  onSort?: (field: string) => void;
 }
 
 export const EmployeeTable = ({
@@ -41,16 +28,16 @@ export const EmployeeTable = ({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="cursor-pointer" onClick={() => onSort("employee_number")}>
+          <TableHead className={onSort ? "cursor-pointer" : ""} onClick={() => onSort?.("employee_number")}>
             Employee Number
           </TableHead>
-          <TableHead className="cursor-pointer" onClick={() => onSort("name")}>
+          <TableHead className={onSort ? "cursor-pointer" : ""} onClick={() => onSort?.("name")}>
             Name
           </TableHead>
-          <TableHead className="cursor-pointer" onClick={() => onSort("manager")}>
+          <TableHead className={onSort ? "cursor-pointer" : ""} onClick={() => onSort?.("manager")}>
             Manager
           </TableHead>
-          <TableHead className="cursor-pointer" onClick={() => onSort("start_date")}>
+          <TableHead className={onSort ? "cursor-pointer" : ""} onClick={() => onSort?.("start_date")}>
             Start Date
           </TableHead>
           <TableHead>Actions</TableHead>
