@@ -81,12 +81,12 @@ const CompanyHub = () => {
             {/* Main Content */}
             <div className="md:col-span-8">
               <div className="h-full flex flex-col">
-                <Card className="p-4">
+                <Card className="p-4 mb-4">
                   <h2 className="font-semibold mb-4">Company News</h2>
                   <CompanyNews />
                 </Card>
                 
-                <Card className="p-4 mt-6 flex-1 relative">
+                <Card className="p-4 flex-1 relative">
                   <div className="space-y-4 mb-4 h-[400px] overflow-y-auto">
                     {messages.map((msg, index) => (
                       <div
