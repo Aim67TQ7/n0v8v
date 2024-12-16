@@ -1,81 +1,63 @@
-import { useState } from "react";
-import { useSession } from "@supabase/auth-helpers-react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Users } from "lucide-react";
-import { AuthWrapper } from "@/components/AuthWrapper";
-import { EmployeesList } from "@/components/team/employees/EmployeesList";
-import { EmployeeFilter } from "@/components/team/employees/EmployeeFilter";
-import { AddEmployeeDialog } from "@/components/team/employees/AddEmployeeDialog";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
+import type { Employee } from "@/components/team/EmployeeTab";
+import { EmployeeTable } from "@/components/team/EmployeeTable";
 
-const Employees = () => {
-  const session = useSession();
-  const [filter, setFilter] = useState("");
-  const [filterBy, setFilterBy] = useState("name");
+export default function Employees() {
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const { data: employees, isLoading } = useQuery({
-    queryKey: ["employees"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("employees")
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
+
+  const fetchEmployees = async () => {
+    try {
+      const { data: employeesData, error } = await supabase
+        .from('employees')
         .select(`
-          *,
+          id,
+          employee_number,
+          start_date,
           profile:profiles(first_name, last_name),
-          manager:employees(
+          manager:employees!employees_manager_id_fkey(
             profile:profiles(first_name, last_name)
           )
-        `)
-        .order('employee_number');
+        `);
 
       if (error) throw error;
-      return data;
-    },
-    enabled: !!session?.user?.id,
-  });
 
-  const filteredEmployees = employees?.filter((employee) => {
-    if (!filter) return true;
-    const searchTerm = filter.toLowerCase();
-    const fullName = `${employee.profile.first_name} ${employee.profile.last_name}`.toLowerCase();
-
-    switch (filterBy) {
-      case "name":
-        return fullName.includes(searchTerm);
-      case "employee_number":
-        return employee.employee_number.toLowerCase().includes(searchTerm);
-      default:
-        return true;
+      if (employeesData) {
+        setEmployees(employeesData);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch employees",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-  });
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
-    <AuthWrapper>
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center gap-3 mb-8">
-          <Users className="h-8 w-8 text-secondary" />
-          <h1 className="text-3xl font-bold">Employees</h1>
-        </div>
-
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <EmployeeFilter
-              filter={filter}
-              filterBy={filterBy}
-              onFilterChange={setFilter}
-              onFilterByChange={setFilterBy}
-            />
-            <AddEmployeeDialog />
-          </div>
-
-          {isLoading ? (
-            <div className="text-center py-8">Loading...</div>
-          ) : (
-            <EmployeesList employees={filteredEmployees || []} />
-          )}
-        </div>
-      </div>
-    </AuthWrapper>
+    <Card className="p-6">
+      <h2 className="text-2xl font-bold mb-6">Employees</h2>
+      <EmployeeTable employees={employees} />
+    </Card>
   );
-};
-
-export default Employees;
+}

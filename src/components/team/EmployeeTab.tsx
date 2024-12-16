@@ -1,86 +1,77 @@
-import { useState } from "react";
-import { useSession } from "@supabase/auth-helpers-react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { TeamFilter } from "./TeamFilter";
 import { EmployeeTable } from "./EmployeeTable";
-import { AddEmployeeDialog } from "./AddEmployeeDialog";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
+
+export interface Employee {
+  id: string;
+  employee_number: string;
+  start_date: string;
+  profile: {
+    first_name: string;
+    last_name: string;
+  };
+  manager?: {
+    profile: {
+      first_name: string;
+      last_name: string;
+    };
+  } | null;
+}
 
 export const EmployeeTab = () => {
-  const session = useSession();
-  const [filter, setFilter] = useState("");
-  const [filterBy, setFilterBy] = useState("name");
-  const [employeeSortField, setEmployeeSortField] = useState("employee_number");
-  const [employeeSortDirection, setEmployeeSortDirection] = useState<"asc" | "desc">("asc");
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const { data: employees, isLoading: isLoadingEmployees } = useQuery({
-    queryKey: ["employees", employeeSortField, employeeSortDirection],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("employees")
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
+
+  const fetchEmployees = async () => {
+    try {
+      const { data: employeesData, error } = await supabase
+        .from('employees')
         .select(`
-          *,
+          id,
+          employee_number,
+          start_date,
           profile:profiles(first_name, last_name),
           manager:employees!employees_manager_id_fkey(
             profile:profiles(first_name, last_name)
           )
         `)
-        .order(employeeSortField, { ascending: employeeSortDirection === "asc" });
+        .single();
 
       if (error) throw error;
-      return data;
-    },
-    enabled: !!session?.user?.id,
-  });
 
-  const handleEmployeeSort = (field: string) => {
-    if (field === employeeSortField) {
-      setEmployeeSortDirection(employeeSortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setEmployeeSortField(field);
-      setEmployeeSortDirection("asc");
+      if (employeesData) {
+        setEmployees(employeesData);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch employees",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const filteredEmployees = employees?.filter((employee) => {
-    if (!filter) return true;
-    const searchTerm = filter.toLowerCase();
-    const fullName = `${employee.profile.first_name} ${employee.profile.last_name}`.toLowerCase();
-
-    switch (filterBy) {
-      case "name":
-        return fullName.includes(searchTerm);
-      case "employee_number":
-        return employee.employee_number.toLowerCase().includes(searchTerm);
-      default:
-        return true;
-    }
-  });
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <TeamFilter
-          filter={filter}
-          filterBy={filterBy}
-          onFilterChange={setFilter}
-          onFilterByChange={setFilterBy}
-        />
-        <AddEmployeeDialog />
-      </div>
-
-      {isLoadingEmployees ? (
-        <div className="text-center py-8">Loading...</div>
-      ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <EmployeeTable
-            employees={filteredEmployees || []}
-            sortField={employeeSortField}
-            sortDirection={employeeSortDirection}
-            onSort={handleEmployeeSort}
-          />
-        </div>
-      )}
+    <div className="space-y-4">
+      <EmployeeTable employees={employees} />
     </div>
   );
 };
