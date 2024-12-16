@@ -1,11 +1,14 @@
 import { cn } from "@/lib/utils";
 
 interface MessageBubbleProps {
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "system";
   content: string;
 }
 
 export const MessageBubble = ({ role, content }: MessageBubbleProps) => {
+  // Don't render system messages
+  if (role === "system") return null;
+
   return (
     <div className={cn("flex", role === "user" ? "justify-end" : "justify-start")}>
       <div

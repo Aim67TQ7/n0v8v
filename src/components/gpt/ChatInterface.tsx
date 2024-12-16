@@ -59,14 +59,12 @@ export const ChatInterface = ({
 
       <div className="flex-1 p-4">
         <div className="space-y-4">
-          {messages
-            .filter(message => message.role !== "system")
-            .map((message, index) => (
-              <MessageBubble
-                key={index}
-                role={message.role}
-                content={message.content}
-              />
+          {messages.map((message, index) => (
+            <MessageBubble
+              key={index}
+              role={message.role}
+              content={message.content}
+            />
           ))}
           <div ref={messagesEndRef} />
         </div>
