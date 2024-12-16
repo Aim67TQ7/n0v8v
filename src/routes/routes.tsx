@@ -1,4 +1,4 @@
-import { lazy } from "react";
+import { lazy, Suspense } from "react";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import ResetPassword from "@/pages/ResetPassword";
@@ -40,6 +40,20 @@ const ShortagePrediction = lazy(() => import("@/pages/operations/production/Shor
 
 const WebScraping = lazy(() => import("@/pages/leads/WebScraping"));
 const GoogleMapsScraper = lazy(() => import("@/pages/leads/GoogleMapsScraper"));
+
+// Loading component for Suspense fallback
+const LoadingComponent = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+  </div>
+);
+
+// Wrap lazy components with Suspense
+const withSuspense = (Component: React.LazyExoticComponent<any>) => (
+  <Suspense fallback={<LoadingComponent />}>
+    <Component />
+  </Suspense>
+);
 
 export const routes = [
   {
@@ -84,99 +98,99 @@ export const routes = [
   },
   {
     path: "/operations/production/planning",
-    element: <ProductionPlanning />
+    element: withSuspense(ProductionPlanning)
   },
   {
     path: "/operations/production/tracking",
-    element: <ProductionTracking />
+    element: withSuspense(ProductionTracking)
   },
   {
     path: "/operations/production/capacity",
-    element: <CapacityPlanning />
+    element: withSuspense(CapacityPlanning)
   },
   {
     path: "/operations/production/bottlenecks",
-    element: <BottleneckAnalysis />
+    element: withSuspense(BottleneckAnalysis)
   },
   {
     path: "/operations/production/equipment",
-    element: <EquipmentMonitoring />
+    element: withSuspense(EquipmentMonitoring)
   },
   {
     path: "/operations/production/labor",
-    element: <LaborEfficiency />
+    element: withSuspense(LaborEfficiency)
   },
   {
     path: "/operations/production/shortages",
-    element: <ShortagePrediction />
+    element: withSuspense(ShortagePrediction)
   },
   {
     path: "/operations/hr",
-    element: <HROperations />
+    element: withSuspense(HROperations)
   },
   {
     path: "/operations/hr/company-news",
-    element: <CompanyNews />
+    element: withSuspense(CompanyNews)
   },
   {
     path: "/operations/hr/training-matrix",
-    element: <TrainingMatrix />
+    element: withSuspense(TrainingMatrix)
   },
   {
     path: "/operations/hr/employee-data",
-    element: <EmployeeData />
+    element: withSuspense(EmployeeData)
   },
   {
     path: "/operations/hr/handbook",
-    element: <EmployeeHandbook />
+    element: withSuspense(EmployeeHandbook)
   },
   {
     path: "/operations/hr/insurance",
-    element: <Insurance />
+    element: withSuspense(Insurance)
   },
   {
     path: "/operations/hr/org-chart",
-    element: <OrgChart />
+    element: withSuspense(OrgChart)
   },
   // Quality routes
   {
     path: "/operations/quality",
-    element: <Quality />
+    element: withSuspense(Quality)
   },
   {
     path: "/operations/quality/part-analysis",
-    element: <PartAnalysis />
+    element: withSuspense(PartAnalysis)
   },
   {
     path: "/operations/quality/product-inspection",
-    element: <ProductInspection />
+    element: withSuspense(ProductInspection)
   },
   {
     path: "/operations/quality/dmr",
-    element: <DMRDocumentation />
+    element: withSuspense(DMRDocumentation)
   },
   {
     path: "/operations/quality/five-whys",
-    element: <FiveWhys />
+    element: withSuspense(FiveWhys)
   },
   {
     path: "/operations/quality/fishbone",
-    element: <Fishbone />
+    element: withSuspense(Fishbone)
   },
   {
     path: "/operations/quality/process-improvement",
-    element: <ProcessImprovement />
+    element: withSuspense(ProcessImprovement)
   },
   {
     path: "/operations/quality/vave",
-    element: <VAVEAnalysis />
+    element: withSuspense(VAVEAnalysis)
   },
   {
     path: "/leads/scraping",
-    element: <WebScraping />
+    element: withSuspense(WebScraping)
   },
   {
     path: "/leads/scraping/google-maps",
-    element: <GoogleMapsScraper />
+    element: withSuspense(GoogleMapsScraper)
   }
 ];
