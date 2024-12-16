@@ -57,26 +57,32 @@ export const useChatMessages = (chatId: string | null) => {
       const newMessages = [...messages, userMessage];
       setMessages(newMessages);
 
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('chat-with-anthropic', {
+        body: {
           messages: newMessages,
           chatId: chatId
-        }),
+        },
       });
 
-      if (!response.ok) throw new Error('Failed to get response');
+      if (error) {
+        console.error('Edge function error:', error);
+        throw new Error(error.message || 'Failed to get AI response');
+      }
 
-      const data = await response.json();
+      if (!data) {
+        throw new Error('No response data received');
+      }
+
       setMessages([...newMessages, data.message]);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Chat error:', error);
       toast({
         title: "Error",
-        description: "Failed to process message",
+        description: error.message || "Failed to process message",
         variant: "destructive"
       });
+      // Optionally remove the user message if the AI response failed
+      setMessages(messages);
     } finally {
       setIsLoading(false);
     }
