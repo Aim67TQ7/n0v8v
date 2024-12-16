@@ -20,11 +20,14 @@ export const CompanyNews = () => {
   });
 
   return (
-    <Card className="p-1 bg-card text-card-foreground">
-      <ScrollArea className="h-[100px]">
-        <div className="divide-y divide-gray-800">
+    <Card className="p-1 bg-gradient-to-r from-indigo-50 to-blue-50 border border-blue-100 shadow-lg">
+      <ScrollArea className="h-[120px]">
+        <div className="divide-y divide-gray-200">
           {news?.map((item) => (
-            <div key={item.id} className="px-2 py-1.5">
+            <div 
+              key={item.id} 
+              className="px-3 py-2 hover:bg-white/50 transition-colors duration-200"
+            >
               <NewsItem
                 title={item.title}
                 content={item.content}
@@ -32,6 +35,11 @@ export const CompanyNews = () => {
               />
             </div>
           ))}
+          {!news?.length && (
+            <div className="px-3 py-2 text-gray-500 text-sm italic">
+              No company news available
+            </div>
+          )}
         </div>
       </ScrollArea>
     </Card>
