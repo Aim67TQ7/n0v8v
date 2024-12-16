@@ -38,6 +38,9 @@ const EquipmentMonitoring = lazy(() => import("@/pages/operations/production/Equ
 const LaborEfficiency = lazy(() => import("@/pages/operations/production/Labor"));
 const ShortagePrediction = lazy(() => import("@/pages/operations/production/Shortages"));
 
+const WebScraping = lazy(() => import("@/pages/leads/WebScraping"));
+const GoogleMapsScraper = lazy(() => import("@/pages/leads/GoogleMapsScraper"));
+
 export const routes = [
   {
     path: "/",
@@ -167,5 +170,13 @@ export const routes = [
   {
     path: "/operations/quality/vave",
     element: <VAVEAnalysis />
+  },
+  {
+    path: "/leads/scraping",
+    element: <WebScraping />
+  },
+  {
+    path: "/leads/scraping/google-maps",
+    element: <GoogleMapsScraper />
   }
 ];
