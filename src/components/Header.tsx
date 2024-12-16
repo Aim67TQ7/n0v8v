@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, Package, Mail, Users, Settings, ChevronDown, Bot } from "lucide-react";
 import { useSessionContext } from "@supabase/auth-helpers-react";
-import { ApiStatus } from "@/components/gpt/ApiStatus";
 import { supabase } from "@/integrations/supabase/client";
 import {
   DropdownMenu,
@@ -91,9 +90,8 @@ export const Header = () => {
             ) : null}
           </nav>
 
-          {/* API Status Indicators and User Info */}
+          {/* User Info */}
           <div className="flex items-center gap-6">
-            <ApiStatus />
             {session && (
               <div className="flex items-center gap-4">
                 <div className="flex flex-col items-end">
