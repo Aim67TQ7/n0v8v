@@ -86,8 +86,6 @@ const CompanyHub = () => {
                   <h2 className="font-semibold mb-4">Company News</h2>
                   <CompanyNews />
                 </Card>
-
-                <TrainingMaterials />
                 
                 <Card className="p-4 flex-1 relative">
                   <div className="space-y-4 mb-4 h-[calc(100vh-24rem)] overflow-y-auto">
