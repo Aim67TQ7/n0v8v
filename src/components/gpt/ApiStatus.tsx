@@ -7,6 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { toast } from "sonner";
 
 type ServiceProvider = 
   | 'openai' 
@@ -78,6 +79,7 @@ export const ApiStatus = () => {
       });
     } catch (error) {
       console.error('Error checking service statuses:', error);
+      toast.error("Failed to check service statuses");
       setStatuses(prev => ({
         ...prev,
         openai: 'down',
@@ -92,6 +94,19 @@ export const ApiStatus = () => {
       }));
     }
   };
+
+  useEffect(() => {
+    // Check status on component mount
+    checkAllServices();
+
+    // Listen for manual check triggers
+    const handleStatusCheck = () => checkAllServices();
+    window.addEventListener('checkStatus', handleStatusCheck);
+
+    return () => {
+      window.removeEventListener('checkStatus', handleStatusCheck);
+    };
+  }, []);
 
   const getStatusIcon = (status: ServiceStatus) => {
     switch (status) {

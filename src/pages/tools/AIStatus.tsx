@@ -1,101 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { CheckCircle, XCircle, Loader, Bot } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { Bot } from "lucide-react";
+import { ApiStatus } from "@/components/gpt/ApiStatus";
 import { toast } from "sonner";
 
-type ApiProvider = 'openai' | 'anthropic' | 'perplexity' | 'groq';
-type ApiStatus = 'checking' | 'up' | 'down' | 'idle';
-
-const providers: { name: ApiProvider; label: string }[] = [
-  { name: 'openai', label: 'OpenAI' },
-  { name: 'anthropic', label: 'Anthropic' },
-  { name: 'perplexity', label: 'Perplexity' },
-  { name: 'groq', label: 'Groq' }
-];
-
 const AIStatus = () => {
-  const [statuses, setStatuses] = useState<Record<ApiProvider, ApiStatus>>({
-    openai: 'idle',
-    anthropic: 'idle',
-    perplexity: 'idle',
-    groq: 'idle'
-  });
   const [isChecking, setIsChecking] = useState(false);
 
-  const checkAllApiStatuses = async () => {
+  const handleCheckStatus = async () => {
     setIsChecking(true);
-    // Set all statuses to checking
-    setStatuses(prev => {
-      const newStatuses = { ...prev };
-      providers.forEach(({ name }) => {
-        newStatuses[name] = 'checking';
-      });
-      return newStatuses;
-    });
-
     try {
-      const results = await Promise.all(
-        providers.map(async ({ name }) => {
-          try {
-            const { data, error } = await supabase.functions.invoke('check-ai-status', {
-              body: { provider: name }
-            });
-
-            if (error) {
-              console.error(`Error checking ${name} API:`, error);
-              return { provider: name, status: 'down' as ApiStatus };
-            }
-
-            return { provider: name, status: data?.status || 'down' as ApiStatus };
-          } catch (error) {
-            console.error(`Error checking ${name} API:`, error);
-            return { provider: name, status: 'down' as ApiStatus };
-          }
-        })
-      );
-
-      setStatuses(prev => {
-        const newStatuses = { ...prev };
-        results.forEach(({ provider, status }) => {
-          newStatuses[provider] = status;
-        });
-        return newStatuses;
-      });
-
-      toast.success("API status check completed");
+      // This will trigger the status check in the ApiStatus component
+      await window.dispatchEvent(new Event('checkStatus'));
+      toast.success("Status check initiated");
     } catch (error) {
-      console.error('Error checking API statuses:', error);
-      toast.error("Failed to check API statuses");
+      console.error('Error triggering status check:', error);
+      toast.error("Failed to initiate status check");
     } finally {
       setIsChecking(false);
-    }
-  };
-
-  const getStatusIcon = (status: ApiStatus) => {
-    switch (status) {
-      case 'checking':
-        return <Loader className="h-5 w-5 animate-spin text-yellow-500" />;
-      case 'up':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'down':
-        return <XCircle className="h-5 w-5 text-red-500" />;
-      default:
-        return <div className="h-5 w-5 rounded-full bg-gray-200" />;
-    }
-  };
-
-  const getStatusText = (status: ApiStatus) => {
-    switch (status) {
-      case 'checking':
-        return 'Checking...';
-      case 'up':
-        return 'Operational';
-      case 'down':
-        return 'Down';
-      default:
-        return 'Not checked';
     }
   };
 
@@ -112,7 +35,7 @@ const AIStatus = () => {
             Check the operational status of all AI services
           </p>
           <Button 
-            onClick={checkAllApiStatuses} 
+            onClick={handleCheckStatus} 
             disabled={isChecking}
             className="min-w-[150px]"
           >
@@ -120,22 +43,7 @@ const AIStatus = () => {
           </Button>
         </div>
 
-        <div className="space-y-4">
-          {providers.map(({ name, label }) => (
-            <div 
-              key={name}
-              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8">{getStatusIcon(statuses[name])}</div>
-                <span className="font-medium">{label}</span>
-              </div>
-              <span className="text-sm text-gray-600">
-                {getStatusText(statuses[name])}
-              </span>
-            </div>
-          ))}
-        </div>
+        <ApiStatus />
       </Card>
     </div>
   );
