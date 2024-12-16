@@ -21,7 +21,7 @@ export const EmployeeTab = () => {
         .select(`
           *,
           profile:profiles(first_name, last_name),
-          manager:employees(
+          manager:employees!employees_manager_id_fkey(
             profile:profiles(first_name, last_name)
           )
         `)

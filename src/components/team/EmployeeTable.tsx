@@ -16,12 +16,12 @@ type Employee = Database["public"]["Tables"]["employees"]["Row"] & {
     first_name: string;
     last_name: string;
   };
-  manager: {
+  manager?: {
     profile: {
       first_name: string;
       last_name: string;
     };
-  };
+  } | null;
 };
 
 interface EmployeeTableProps {
