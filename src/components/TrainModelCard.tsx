@@ -23,7 +23,8 @@ export const TrainModelCard = ({ toolType, resourceId, metadata }: TrainModelCar
     try {
       setIsSubmitting(true);
 
-      const { error } = await supabase
+      // Save to learning_feedback table
+      const { error: feedbackError } = await supabase
         .from('learning_feedback')
         .insert({
           tool_type: toolType,
@@ -32,7 +33,23 @@ export const TrainModelCard = ({ toolType, resourceId, metadata }: TrainModelCar
           metadata: metadata || {}
         });
 
-      if (error) throw error;
+      if (feedbackError) throw feedbackError;
+
+      // Save to Knowledge bucket for future training
+      const fileName = `training/${toolType}/${resourceId}/${Date.now()}.json`;
+      const feedbackData = {
+        tool_type: toolType,
+        resource_id: resourceId,
+        feedback: trainingFeedback,
+        metadata: metadata || {},
+        timestamp: new Date().toISOString()
+      };
+
+      const { error: storageError } = await supabase.storage
+        .from('Knowledge')
+        .upload(fileName, JSON.stringify(feedbackData, null, 2));
+
+      if (storageError) throw storageError;
 
       toast({
         title: "Feedback Submitted",

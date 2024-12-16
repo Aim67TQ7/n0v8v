@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Send, Loader2 } from "lucide-react";
+import { Send, Loader2, Plus, Paperclip } from "lucide-react";
 
 interface ChatContainerProps {
   messages: any[];
@@ -17,6 +17,7 @@ export const ChatContainer = ({ messages, onMessagesChange, chatId }: ChatContai
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (chatId && messages.length > 0) {
@@ -45,6 +46,54 @@ export const ChatContainer = ({ messages, onMessagesChange, chatId }: ChatContai
       toast({
         title: "Error",
         description: "Failed to save chat messages",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleNewChat = () => {
+    onMessagesChange([]);
+    setInput("");
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${crypto.randomUUID()}.${fileExt}`;
+      const filePath = `chat-attachments/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('Knowledge')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('Knowledge')
+        .getPublicUrl(filePath);
+
+      const fileMessage = {
+        role: 'user',
+        content: `[Attached file: ${file.name}](${publicUrl})`,
+        attachment: {
+          name: file.name,
+          url: publicUrl
+        }
+      };
+
+      onMessagesChange([...messages, fileMessage]);
+      toast({
+        title: "Success",
+        description: "File uploaded successfully",
+      });
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upload file",
         variant: "destructive"
       });
     }
@@ -100,7 +149,15 @@ export const ChatContainer = ({ messages, onMessagesChange, chatId }: ChatContai
               <div className="font-medium min-w-[60px]">
                 {message.role === 'user' ? 'You' : 'Assistant'}:
               </div>
-              <div className="flex-1 whitespace-pre-wrap">{message.content}</div>
+              <div className="flex-1 whitespace-pre-wrap">
+                {message.attachment ? (
+                  <a href={message.attachment.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                    {message.content}
+                  </a>
+                ) : (
+                  message.content
+                )}
+              </div>
             </div>
           </Card>
         ))}
@@ -109,12 +166,36 @@ export const ChatContainer = ({ messages, onMessagesChange, chatId }: ChatContai
 
       <form onSubmit={handleSubmit} className="p-4 border-t">
         <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={handleNewChat}
+            className="shrink-0"
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             disabled={isLoading}
           />
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            className="hidden"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={() => fileInputRef.current?.click()}
+            className="shrink-0"
+          >
+            <Paperclip className="h-4 w-4" />
+          </Button>
           <Button type="submit" disabled={isLoading || !input.trim()}>
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
