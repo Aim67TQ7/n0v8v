@@ -14,45 +14,53 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
       try {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
-        if (sessionError) throw sessionError;
+        if (sessionError) {
+          console.error("Session error:", sessionError);
+          throw sessionError;
+        }
 
+        // If no session and not in development mode, redirect to login
         if (!session && !isDevelopment) {
           console.log("No session found, redirecting to login");
-          sessionStorage.setItem('redirectAfterLogin', '/company-hub');
+          const currentPath = location.pathname;
+          if (currentPath !== '/login') {
+            sessionStorage.setItem('redirectAfterLogin', currentPath);
+          }
           navigate("/login");
           return;
         }
 
-        if (!session) {
-          console.log("No session but in development mode");
-          return;
-        }
-
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .single();
-
-        if (profileError) {
-          console.error("Error fetching profile:", profileError);
-          throw profileError;
-        }
-
-        const isSuperUser = profile?.role === 'superuser';
-
+        // If in development mode, allow access
         if (isDevelopment) {
           console.log("Development mode, allowing access");
           return;
         }
 
-        if (!session || !isSuperUser) {
-          console.log("Not authorized, redirecting to login");
-          sessionStorage.setItem('redirectAfterLogin', '/company-hub');
-          navigate("/login");
+        // If we have a session, check if user is a superuser
+        if (session) {
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profileError) {
+            console.error("Error fetching profile:", profileError);
+            throw profileError;
+          }
+
+          const isSuperUser = profile?.role === 'superuser';
+
+          // If not a superuser, redirect to login
+          if (!isSuperUser) {
+            console.log("Not authorized, redirecting to login");
+            sessionStorage.setItem('redirectAfterLogin', location.pathname);
+            navigate("/login");
+          }
         }
       } catch (error) {
         console.error('Auth check error:', error);
+        // On any error, redirect to login
         navigate("/login");
       }
     };

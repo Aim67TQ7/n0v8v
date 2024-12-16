@@ -21,7 +21,7 @@ export interface Employee {
       first_name: string;
       last_name: string;
     };
-  } | null;
+  };
 }
 
 export const EmployeeTab = () => {
@@ -50,12 +50,13 @@ export const EmployeeTab = () => {
             profile:profiles(first_name, last_name)
           )
         `)
-        .returns<Employee[]>();
+        .single()
+        .returns<Employee>();
 
       if (error) throw error;
 
       if (employeesData) {
-        setEmployees(employeesData);
+        setEmployees([employeesData]);
       }
     } catch (error) {
       console.error('Error fetching employees:', error);
