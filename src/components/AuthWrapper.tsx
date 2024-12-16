@@ -12,36 +12,47 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) throw sessionError;
 
         if (!session && !isDevelopment) {
-          // Store the attempted URL to redirect back after login
+          console.log("No session found, redirecting to login");
           sessionStorage.setItem('redirectAfterLogin', location.pathname);
           navigate("/login");
           return;
         }
 
-        if (!session) return;
+        if (!session) {
+          console.log("No session but in development mode");
+          return;
+        }
 
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('role')
           .eq('id', session.user.id)
           .single();
 
+        if (profileError) {
+          console.error("Error fetching profile:", profileError);
+          throw profileError;
+        }
+
         const isSuperUser = profile?.role === 'superuser';
 
-        // In development, allow access without authentication
-        if (isDevelopment) return;
+        if (isDevelopment) {
+          console.log("Development mode, allowing access");
+          return;
+        }
 
-        // In production, redirect to login if not authenticated or not superuser
         if (!session || !isSuperUser) {
+          console.log("Not authorized, redirecting to login");
           sessionStorage.setItem('redirectAfterLogin', location.pathname);
           navigate("/login");
         }
       } catch (error) {
         console.error('Auth check error:', error);
-        // On auth error, redirect to login
         navigate("/login");
       }
     };
@@ -50,7 +61,11 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   }, [isLoading, isAuthenticated, navigate, location.pathname, isDevelopment]);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
   }
 
   if (error) {
