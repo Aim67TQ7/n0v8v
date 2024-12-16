@@ -47,7 +47,6 @@ export const HubLinks = () => {
   const handleLinkClick = (href: string, e: React.MouseEvent) => {
     if (href.startsWith('company-resource://')) {
       e.preventDefault();
-      // This will be handled by Electron's protocol handler
       console.log('Electron will handle:', href);
     }
   };
