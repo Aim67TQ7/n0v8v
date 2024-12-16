@@ -18,7 +18,7 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
 
         if (!session && !isDevelopment) {
           console.log("No session found, redirecting to login");
-          sessionStorage.setItem('redirectAfterLogin', location.pathname);
+          sessionStorage.setItem('redirectAfterLogin', '/company-hub');
           navigate("/login");
           return;
         }
@@ -48,7 +48,7 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
 
         if (!session || !isSuperUser) {
           console.log("Not authorized, redirecting to login");
-          sessionStorage.setItem('redirectAfterLogin', location.pathname);
+          sessionStorage.setItem('redirectAfterLogin', '/company-hub');
           navigate("/login");
         }
       } catch (error) {

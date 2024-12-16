@@ -6,7 +6,7 @@ import { routes } from "@/routes/routes";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AuthWrapper } from "@/components/AuthWrapper";
 import { Header } from "@/components/Header";
-import { useLocation } from "react-router-dom";
+import { useLocation, Navigate } from "react-router-dom";
 import { useState, Suspense } from "react";
 import { SplashScreen } from "@/components/SplashScreen";
 
@@ -34,6 +34,9 @@ const App = () => {
           {showHeader && <Header />}
           <Suspense fallback={<RouteLoadingComponent />}>
             <Routes>
+              {/* Default route redirect */}
+              <Route path="/" element={<Navigate to="/company-hub" replace />} />
+
               {/* Public routes (no auth required) */}
               {routes
                 .filter(route => publicRoutes.includes(route.path))
