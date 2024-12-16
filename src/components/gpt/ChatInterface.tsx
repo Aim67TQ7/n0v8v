@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Json } from "@/integrations/supabase/types";
+import { Plus } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -17,13 +18,15 @@ interface ChatInterfaceProps {
   onHistoryUpdate?: () => void;
   inputValue: string;
   setInputValue: (value: string) => void;
+  onNewChat?: () => void;
 }
 
 export const ChatInterface = ({ 
   systemPrompt = "You are a helpful AI assistant.",
   onHistoryUpdate,
   inputValue,
-  setInputValue
+  setInputValue,
+  onNewChat
 }: ChatInterfaceProps) => {
   const { session } = useSessionContext();
   const { toast } = useToast();
@@ -142,6 +145,19 @@ export const ChatInterface = ({
 
   return (
     <div className="relative flex flex-col min-h-full bg-white">
+      <div className="flex justify-between items-center p-4 border-b">
+        <h2 className="text-lg font-semibold">Chat</h2>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onNewChat}
+          className="gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          New Chat
+        </Button>
+      </div>
+
       <div className="flex-1 p-4">
         <div className="space-y-4">
           {messages.slice(1).map((message, index) => (

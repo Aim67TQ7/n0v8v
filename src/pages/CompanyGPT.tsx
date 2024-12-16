@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ChatContainer } from "@/components/gpt/ChatContainer";
 import { ChatHistory } from "@/components/gpt/ChatHistory";
 import { ResourceSidebar } from "@/components/gpt/ResourceSidebar";
@@ -79,6 +79,12 @@ const CompanyGPT = () => {
     }
   };
 
+  const handleNewChat = () => {
+    setMessages([]);
+    setCurrentChatId(null);
+    createNewChat();
+  };
+
   return (
     <div className="flex h-screen">
       {/* Left Column - Company Info, Chat History, Settings */}
@@ -136,6 +142,7 @@ const CompanyGPT = () => {
                 messages={messages}
                 onMessagesChange={setMessages}
                 chatId={currentChatId}
+                onNewChat={handleNewChat}
               />
             </ScrollArea>
           </div>
