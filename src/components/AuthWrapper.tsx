@@ -11,29 +11,37 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      if (!isLoading && !isAuthenticated) {
-        // Store the attempted URL to redirect back after login
-        sessionStorage.setItem('redirectAfterLogin', location.pathname);
-        navigate("/login");
-        return;
-      }
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
 
-      if (!isAuthenticated) return;
+        if (!session && !isDevelopment) {
+          // Store the attempted URL to redirect back after login
+          sessionStorage.setItem('redirectAfterLogin', location.pathname);
+          navigate("/login");
+          return;
+        }
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', (await supabase.auth.getUser()).data.user?.id)
-        .single();
+        if (!session) return;
 
-      const isSuperUser = profile?.role === 'superuser';
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
 
-      // In development, allow access without authentication
-      if (isDevelopment) return;
+        const isSuperUser = profile?.role === 'superuser';
 
-      // In production, redirect to login if not authenticated or not superuser
-      if (!isLoading && (!isAuthenticated || !isSuperUser)) {
-        sessionStorage.setItem('redirectAfterLogin', location.pathname);
+        // In development, allow access without authentication
+        if (isDevelopment) return;
+
+        // In production, redirect to login if not authenticated or not superuser
+        if (!session || !isSuperUser) {
+          sessionStorage.setItem('redirectAfterLogin', location.pathname);
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+        // On auth error, redirect to login
         navigate("/login");
       }
     };
