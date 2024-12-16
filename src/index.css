@@ -7,13 +7,14 @@
 @layer base {
   body {
     @apply bg-[#403E43] text-black antialiased;
+    background-color: #403E43;
   }
 }
 
 @layer components {
   /* Card Components */
   .card, .card-container {
-    @apply bg-white text-black backdrop-blur-sm shadow-sm transition-all duration-200;
+    @apply bg-white text-black shadow-sm transition-all duration-200;
   }
 
   .card-hover:hover {
@@ -22,7 +23,7 @@
 
   /* Content Areas */
   .content-area {
-    @apply bg-white text-black backdrop-blur-sm transition-all duration-200;
+    @apply bg-white text-black transition-all duration-200;
   }
 
   .content-hover:hover {
@@ -35,7 +36,7 @@
   }
 
   [data-radix-dialog-content] {
-    @apply bg-white/95 backdrop-blur-sm;
+    @apply bg-white;
   }
 
   /* Text Hierarchy */
