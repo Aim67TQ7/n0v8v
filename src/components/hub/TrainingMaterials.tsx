@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus } from "lucide-react";
+import { Plus, Upload, File, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +25,7 @@ export const TrainingMaterials = () => {
     content: "",
     category: "",
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { toast } = useToast();
 
   const loadMaterials = async () => {
@@ -50,6 +51,22 @@ export const TrainingMaterials = () => {
     loadMaterials();
   }, []);
 
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.type === 'application/pdf' || file.type.startsWith('application/msword') || 
+          file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        setSelectedFile(file);
+      } else {
+        toast({
+          title: "Invalid file type",
+          description: "Please upload a PDF or Word document",
+          variant: "destructive"
+        });
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -66,6 +83,26 @@ export const TrainingMaterials = () => {
         throw new Error('Company ID not found');
       }
 
+      let attachmentUrl = '';
+      if (selectedFile) {
+        const fileExt = selectedFile.name.split('.').pop();
+        const fileName = `training/${Date.now()}.${fileExt}`;
+
+        // Upload file to Knowledge bucket
+        const { error: uploadError } = await supabase.storage
+          .from('Knowledge')
+          .upload(fileName, selectedFile);
+
+        if (uploadError) throw uploadError;
+
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('Knowledge')
+          .getPublicUrl(fileName);
+
+        attachmentUrl = publicUrl;
+      }
+
       const { error } = await supabase
         .from("company_training_materials")
         .insert({
@@ -73,7 +110,8 @@ export const TrainingMaterials = () => {
           content: newMaterial.content,
           category: newMaterial.category,
           company_id: profileData.company_id,
-          created_by: user?.id
+          created_by: user?.id,
+          attachment_url: attachmentUrl || null
         });
 
       if (error) throw error;
@@ -84,6 +122,7 @@ export const TrainingMaterials = () => {
       });
 
       setNewMaterial({ title: "", content: "", category: "" });
+      setSelectedFile(null);
       setIsDialogOpen(false);
       loadMaterials();
     } catch (error) {
@@ -142,6 +181,24 @@ export const TrainingMaterials = () => {
                   rows={5}
                 />
               </div>
+              <div>
+                <input
+                  type="file"
+                  id="file-upload"
+                  className="hidden"
+                  onChange={handleFileSelect}
+                  accept=".pdf,.doc,.docx"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => document.getElementById('file-upload')?.click()}
+                  className="w-full"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  {selectedFile ? selectedFile.name : "Attach Document"}
+                </Button>
+              </div>
               <Button type="submit" disabled={isLoading} className="w-full">
                 {isLoading ? "Adding..." : "Add Material"}
               </Button>
@@ -155,6 +212,17 @@ export const TrainingMaterials = () => {
             <h3 className="font-medium">{material.title}</h3>
             <p className="text-sm text-gray-500">{material.category}</p>
             <p className="text-sm mt-2">{material.content}</p>
+            {material.attachment_url && (
+              <a 
+                href={material.attachment_url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center mt-2 text-sm text-blue-600 hover:text-blue-800"
+              >
+                <File className="w-4 h-4 mr-1" />
+                View Attachment
+              </a>
+            )}
           </Card>
         ))}
       </div>
