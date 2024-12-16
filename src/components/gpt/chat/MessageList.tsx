@@ -27,10 +27,10 @@ export const MessageList = ({ messages, messagesEndRef }: MessageListProps) => {
           }`}
         >
           <div className="flex items-start gap-3">
-            <div className="font-medium min-w-[60px]">
+            <div className="font-medium min-w-[60px] text-xs">
               {message.role === 'user' ? 'You' : 'Assistant'}:
             </div>
-            <div className="flex-1 whitespace-pre-wrap">
+            <div className="flex-1 whitespace-pre-wrap text-xs">
               {message.attachment ? (
                 <a href={message.attachment.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
                   {message.content}
