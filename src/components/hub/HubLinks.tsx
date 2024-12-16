@@ -8,7 +8,7 @@ export const HubLinks = () => {
   
   const sections = [
     {
-      title: "Company Resources",
+      title: "Resources",
       icon: Folder,
       links: [
         { name: "Desktop", href: "company-resource://desktop" },
@@ -20,9 +20,10 @@ export const HubLinks = () => {
       ]
     },
     {
-      title: "Function Modules",
+      title: "Modules",
       icon: Grid,
       links: [
+        { name: "Company Resources", href: "/modules" },
         { name: "HR Operations", href: "/operations/hr" },
         { name: "Engineering", href: "/operations/engineering" },
         { name: "Facilities", href: "/operations/facilities" },
@@ -59,7 +60,7 @@ export const HubLinks = () => {
             <Card 
               key={section.title} 
               className="bg-white hover:bg-gray-50 cursor-pointer p-3 shadow-sm"
-              onClick={() => section.title === "Company Resources" && navigate("/modules")}
+              onClick={() => section.title === "Resources" && navigate("/modules")}
             >
               <div className="flex items-center gap-2 mb-1.5">
                 <section.icon className="h-4 w-4 text-gray-700" />
