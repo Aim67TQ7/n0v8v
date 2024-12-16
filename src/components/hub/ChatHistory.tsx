@@ -73,7 +73,7 @@ export const ChatHistory = ({ className }: ChatHistoryProps) => {
   );
 
   return (
-    <Card className={cn("p-3", className)} style={{ backgroundColor: 'var(--card-bg)' }}>
+    <Card className={cn("p-3 bg-white", className)}>
       <div className="mb-2 flex items-center justify-between">
         <h2 className="font-semibold text-sm">Chat History</h2>
         <Dialog>
@@ -82,7 +82,7 @@ export const ChatHistory = ({ className }: ChatHistoryProps) => {
               <Search className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]" style={{ backgroundColor: 'var(--card-bg)' }}>
+          <DialogContent className="sm:max-w-[600px] bg-white">
             <div className="p-4">
               <h2 className="text-lg font-semibold mb-4">Search Chat History</h2>
               <ChatHistoryContent />
