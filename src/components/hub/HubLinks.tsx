@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
-import { Folder, Grid, Wrench, FileText } from "lucide-react";
+import { Folder, Grid, Wrench } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const HubLinks = () => {
@@ -39,14 +39,6 @@ export const HubLinks = () => {
         { name: "PM Assist", href: "/operations/maintenance" },
         { name: "Lead Scraping", href: "/leads/scraping" },
         { name: "Fishbone Analysis", href: "/operations/quality/fishbone" },
-      ]
-    },
-    {
-      title: "Recent Files",
-      icon: FileText,
-      links: [
-        { name: "Training Records", href: "/operations/hr/training-matrix" },
-        { name: "Company Policies", href: "/operations/hr/handbook" },
       ]
     }
   ];
