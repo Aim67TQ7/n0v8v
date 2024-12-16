@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send } from "lucide-react";
+import { Send, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -16,12 +16,40 @@ export const TrainModelCard = ({ toolType, resourceId, metadata }: TrainModelCar
   const { toast } = useToast();
   const [trainingFeedback, setTrainingFeedback] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
 
   const handleSubmitFeedback = async () => {
     if (!resourceId || !trainingFeedback.trim()) return;
 
     try {
       setIsSubmitting(true);
+
+      let fileUrl = '';
+      if (selectedFile) {
+        const fileExt = selectedFile.name.split('.').pop();
+        const fileName = `training/${toolType}/${resourceId}/${Date.now()}.${fileExt}`;
+
+        // Upload file to Knowledge bucket
+        const { error: uploadError } = await supabase.storage
+          .from('Knowledge')
+          .upload(fileName, selectedFile);
+
+        if (uploadError) throw uploadError;
+
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('Knowledge')
+          .getPublicUrl(fileName);
+
+        fileUrl = publicUrl;
+      }
 
       // Save to learning_feedback table
       const { error: feedbackError } = await supabase
@@ -30,7 +58,10 @@ export const TrainModelCard = ({ toolType, resourceId, metadata }: TrainModelCar
           tool_type: toolType,
           resource_id: resourceId,
           feedback: trainingFeedback,
-          metadata: metadata || {}
+          metadata: {
+            ...metadata,
+            attachment_url: fileUrl || null
+          }
         });
 
       if (feedbackError) throw feedbackError;
@@ -41,7 +72,10 @@ export const TrainModelCard = ({ toolType, resourceId, metadata }: TrainModelCar
         tool_type: toolType,
         resource_id: resourceId,
         feedback: trainingFeedback,
-        metadata: metadata || {},
+        metadata: {
+          ...metadata,
+          attachment_url: fileUrl || null
+        },
         timestamp: new Date().toISOString()
       };
 
@@ -57,6 +91,7 @@ export const TrainModelCard = ({ toolType, resourceId, metadata }: TrainModelCar
       });
 
       setTrainingFeedback("");
+      setSelectedFile(null);
     } catch (error) {
       console.error('Error submitting feedback:', error);
       toast({
@@ -75,15 +110,34 @@ export const TrainModelCard = ({ toolType, resourceId, metadata }: TrainModelCar
       
       <div className="space-y-4">
         <p className="text-sm text-secondary-content">
-          Please provide feedback to improve the model's accuracy
+          Please provide feedback or documentation to improve the model's knowledge
         </p>
         
         <Textarea
-          placeholder="Enter your feedback..."
+          placeholder="Enter your feedback or context..."
           value={trainingFeedback}
           onChange={(e) => setTrainingFeedback(e.target.value)}
           className="content-area min-h-[100px]"
         />
+
+        <div className="flex items-center gap-2">
+          <input
+            type="file"
+            id="file-upload"
+            className="hidden"
+            onChange={handleFileSelect}
+            accept=".pdf,.doc,.docx,.txt"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => document.getElementById('file-upload')?.click()}
+            className="flex-1"
+          >
+            <Upload className="w-4 h-4 mr-2" />
+            {selectedFile ? selectedFile.name : "Attach Document"}
+          </Button>
+        </div>
         
         <Button 
           onClick={handleSubmitFeedback}
