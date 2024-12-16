@@ -6,6 +6,7 @@ import { CompanyNews } from "@/components/hub/CompanyNews";
 import { HubLinks } from "@/components/hub/HubLinks";
 import { Menu } from "lucide-react";
 import { SidebarContent } from "@/components/hub/SidebarContent";
+import { TrainingMaterials } from "@/components/hub/TrainingMaterials";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -80,11 +81,13 @@ const CompanyHub = () => {
 
             {/* Main Content */}
             <div className="md:col-span-8">
-              <div className="h-full flex flex-col">
-                <Card className="p-4 mb-4">
+              <div className="h-full flex flex-col space-y-4">
+                <Card className="p-4">
                   <h2 className="font-semibold mb-4">Company News</h2>
                   <CompanyNews />
                 </Card>
+
+                <TrainingMaterials />
                 
                 <Card className="p-4 flex-1 relative">
                   <div className="space-y-4 mb-4 h-[calc(100vh-24rem)] overflow-y-auto">
