@@ -9,7 +9,6 @@ import { Header } from "@/components/Header";
 import { useLocation, Navigate } from "react-router-dom";
 import { useState, Suspense } from "react";
 import { SplashScreen } from "@/components/SplashScreen";
-import { useAuth } from "@/contexts/AuthContext";
 
 // Loading component for route transitions
 const RouteLoadingComponent = () => (
@@ -18,7 +17,7 @@ const RouteLoadingComponent = () => (
   </div>
 );
 
-const App = () => {
+const AppContent = () => {
   const publicRoutes = ['/login', '/reset-password', '/register'];
   const location = useLocation();
   const showHeader = location.pathname !== '/company-gpt';
@@ -35,61 +34,67 @@ const App = () => {
   }
 
   return (
+    <div className="min-h-screen flex flex-col">
+      {showHeader && <Header />}
+      <Suspense fallback={<RouteLoadingComponent />}>
+        <Routes>
+          {/* Default route redirect */}
+          <Route 
+            path="/" 
+            element={
+              isAuthenticated ? (
+                <Navigate to="/company-hub" replace />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            } 
+          />
+
+          {/* Public routes (no auth required) */}
+          {routes
+            .filter(route => publicRoutes.includes(route.path))
+            .map(route => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={route.element}
+              />
+            ))}
+
+          {/* Protected routes */}
+          <Route
+            path="*"
+            element={
+              <AuthWrapper>
+                <main className="flex-1">
+                  <Routes>
+                    {routes
+                      .filter(route => !publicRoutes.includes(route.path))
+                      .map(route => (
+                        <Route
+                          key={route.path}
+                          path={route.path}
+                          element={route.element}
+                        />
+                      ))}
+                  </Routes>
+                </main>
+              </AuthWrapper>
+            }
+          />
+        </Routes>
+      </Suspense>
+      <Toaster />
+      <Sonner />
+    </div>
+  );
+};
+
+const App = () => {
+  return (
     <AppProviders>
       <AuthProvider>
-        <div className="min-h-screen flex flex-col">
-          {showHeader && <Header />}
-          <Suspense fallback={<RouteLoadingComponent />}>
-            <Routes>
-              {/* Default route redirect */}
-              <Route 
-                path="/" 
-                element={
-                  isAuthenticated ? (
-                    <Navigate to="/company-hub" replace />
-                  ) : (
-                    <Navigate to="/login" replace />
-                  )
-                } 
-              />
-
-              {/* Public routes (no auth required) */}
-              {routes
-                .filter(route => publicRoutes.includes(route.path))
-                .map(route => (
-                  <Route
-                    key={route.path}
-                    path={route.path}
-                    element={route.element}
-                  />
-                ))}
-
-              {/* Protected routes */}
-              <Route
-                path="*"
-                element={
-                  <AuthWrapper>
-                    <main className="flex-1">
-                      <Routes>
-                        {routes
-                          .filter(route => !publicRoutes.includes(route.path))
-                          .map(route => (
-                            <Route
-                              key={route.path}
-                              path={route.path}
-                              element={route.element}
-                            />
-                          ))}
-                      </Routes>
-                    </main>
-                  </AuthWrapper>
-                }
-              />
-            </Routes>
-          </Suspense>
-        </div>
-        <Toaster />
-        <Sonner />
+        <AppContent />
       </AuthProvider>
     </AppProviders>
   );
