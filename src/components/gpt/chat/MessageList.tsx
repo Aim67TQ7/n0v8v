@@ -20,8 +20,10 @@ export const MessageList = ({ messages, messagesEndRef }: MessageListProps) => {
       {messages.map((message, index) => (
         <Card
           key={index}
-          className={`p-4 ${
-            message.role === 'user' ? 'bg-primary/10' : 'bg-secondary/10'
+          className={`p-4 border ${
+            message.role === 'user' 
+              ? 'bg-primary/10 border-primary/20' 
+              : 'bg-secondary/10 border-secondary/20'
           }`}
         >
           <div className="flex items-start gap-3">
