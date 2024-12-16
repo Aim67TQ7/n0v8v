@@ -31,12 +31,13 @@ export default function Employees() {
           manager:employees!employees_manager_id_fkey(
             profile:profiles(first_name, last_name)
           )
-        `);
+        `)
+        .returns<Employee[]>();
 
       if (error) throw error;
 
       if (employeesData) {
-        setEmployees(employeesData as Employee[]);
+        setEmployees(employeesData);
       }
     } catch (error) {
       console.error('Error fetching employees:', error);
