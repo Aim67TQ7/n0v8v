@@ -6,15 +6,53 @@ import { CompanyNews } from "@/components/hub/CompanyNews";
 import { HubLinks } from "@/components/hub/HubLinks";
 import { Menu } from "lucide-react";
 import { SidebarContent } from "@/components/hub/SidebarContent";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const CompanyHub = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!message.trim() || isLoading) return;
+
+    try {
+      setIsLoading(true);
+      const userMessage = { role: 'user' as const, content: message };
+      setMessages(prev => [...prev, userMessage]);
+      setMessage("");
+
+      const { data, error } = await supabase.functions.invoke('chat-with-anthropic', {
+        body: {
+          messages: [...messages, userMessage]
+        }
+      });
+
+      if (error) throw error;
+
+      const assistantMessage = { 
+        role: 'assistant' as const, 
+        content: data.content[0].text 
+      };
+      
+      setMessages(prev => [...prev, assistantMessage]);
+    } catch (error) {
+      console.error('Chat error:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to send message. Please try again."
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black">
@@ -50,16 +88,36 @@ const CompanyHub = () => {
                 
                 <Card className="p-4 mt-6 flex-1 relative">
                   <div className="space-y-4 mb-4 h-[400px] overflow-y-auto">
-                    {/* Chat messages would go here */}
+                    {messages.map((msg, index) => (
+                      <div
+                        key={index}
+                        className={`p-3 rounded-lg ${
+                          msg.role === 'user' 
+                            ? 'bg-primary text-white ml-auto max-w-[80%]' 
+                            : 'bg-muted max-w-[80%]'
+                        }`}
+                      >
+                        {msg.content}
+                      </div>
+                    ))}
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 p-4 border-t">
-                    <div className="flex flex-col sm:flex-row gap-2">
+                    <form onSubmit={handleSendMessage} className="flex flex-col sm:flex-row gap-2">
                       <Textarea
                         placeholder="Type your message..."
                         className="flex-1 text-xs"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        disabled={isLoading}
                       />
-                      <Button className="sm:w-auto">Send</Button>
-                    </div>
+                      <Button 
+                        type="submit" 
+                        className="sm:w-auto"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? "Sending..." : "Send"}
+                      </Button>
+                    </form>
                   </div>
                 </Card>
               </div>
