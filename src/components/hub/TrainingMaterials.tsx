@@ -106,10 +106,10 @@ export const TrainingMaterials = () => {
   return (
     <Card className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Train the Model</h2>
+        <h2 className="text-lg font-semibold">Train Max</h2>
         <Button variant="outline" size="sm" onClick={() => setIsDialogOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
-          Add Material
+          Add Training Data
         </Button>
       </div>
       <TrainingMaterialsList materials={materials} />

@@ -8,7 +8,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 interface AddMaterialDialogProps {
@@ -49,7 +48,7 @@ export const AddMaterialDialog = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Training Material</DialogTitle>
+          <DialogTitle>Train Max</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -72,7 +71,7 @@ export const AddMaterialDialog = ({
           </div>
           <div>
             <Textarea
-              placeholder="Content"
+              placeholder="Content for Max to learn"
               value={newMaterial.content}
               onChange={(e) =>
                 setNewMaterial({ ...newMaterial, content: e.target.value })
@@ -95,11 +94,11 @@ export const AddMaterialDialog = ({
               className="w-full"
             >
               <Upload className="w-4 h-4 mr-2" />
-              {selectedFile ? selectedFile.name : "Attach Document"}
+              {selectedFile ? selectedFile.name : "Attach Document for Max"}
             </Button>
           </div>
           <Button type="submit" disabled={isLoading} className="w-full">
-            {isLoading ? "Adding..." : "Add Material"}
+            {isLoading ? "Training Max..." : "Train Max"}
           </Button>
         </form>
       </DialogContent>
