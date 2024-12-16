@@ -11,7 +11,7 @@ export const HubLinks = () => {
       title: "Company Resources",
       icon: Folder,
       links: [
-        { name: "Desktop", href: "#" },
+        { name: "Desktop", href: "file:///C:/Users/rclausing/Desktop" },
         { name: "Email", href: "#" },
         { name: "Teams", href: "#" },
         { name: "Epicor", href: "#" },
@@ -71,7 +71,12 @@ export const HubLinks = () => {
                     key={link.name}
                     to={link.href}
                     className="block text-xs text-gray-700 hover:text-black hover:bg-gray-100 py-0.5 px-2 rounded transition-colors"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (link.href.startsWith('file://')) {
+                        window.location.href = link.href;
+                      }
+                    }}
                   >
                     {link.name}
                   </Link>
