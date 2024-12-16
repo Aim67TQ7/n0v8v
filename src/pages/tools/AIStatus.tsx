@@ -11,8 +11,7 @@ const AIStatus = () => {
   const handleCheckStatus = async () => {
     setIsChecking(true);
     try {
-      // This will trigger the status check in the ApiStatus component
-      await window.dispatchEvent(new Event('checkStatus'));
+      window.dispatchEvent(new Event('checkStatus'));
       toast.success("Status check initiated");
     } catch (error) {
       console.error('Error triggering status check:', error);
@@ -21,6 +20,11 @@ const AIStatus = () => {
       setIsChecking(false);
     }
   };
+
+  // Automatically check status when component mounts
+  useEffect(() => {
+    handleCheckStatus();
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
