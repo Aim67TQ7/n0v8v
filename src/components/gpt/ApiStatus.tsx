@@ -27,10 +27,16 @@ export const ApiStatus = () => {
         const results = await Promise.all(
           providers.map(async (provider) => {
             try {
-              const response = await supabase.functions.invoke('check-ai-status', {
+              const { data, error } = await supabase.functions.invoke('check-ai-status', {
                 body: { provider }
               });
-              return { provider, status: response.error ? 'down' : 'up' as ApiStatus };
+
+              if (error) {
+                console.error(`Error checking ${provider} API:`, error);
+                return { provider, status: 'down' as ApiStatus };
+              }
+
+              return { provider, status: data?.status || 'down' as ApiStatus };
             } catch (error) {
               console.error(`Error checking ${provider} API:`, error);
               return { provider, status: 'down' as ApiStatus };
