@@ -1,75 +1,80 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { EmailSignIn } from "./EmailSignIn";
-import { EmailSignUp } from "./EmailSignUp";
-import { PhoneSignIn } from "./PhoneSignIn";
-import { OTPVerification } from "./OTPVerification";
-import { PhoneVerification } from "./PhoneVerification";
-import { ResetPasswordForm } from "./ResetPasswordForm";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { Loader2 } from "lucide-react";
 
 export const SignInForm = () => {
-  const [showPasswordReset, setShowPasswordReset] = useState(false);
-  const [showOTPVerification, setShowOTPVerification] = useState(false);
-  const [showPhoneVerification, setShowPhoneVerification] = useState(false);
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
-  if (showPhoneVerification) {
-    return <PhoneVerification phone={phone} />;
-  }
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
-  if (showOTPVerification) {
-    return <OTPVerification email={email} />;
-  }
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/company-hub`
+        }
+      });
 
-  if (showPasswordReset) {
-    return (
-      <ResetPasswordForm
-        onBack={() => setShowPasswordReset(false)}
-      />
-    );
-  }
+      if (error) throw error;
+
+      toast({
+        title: "Magic link sent!",
+        description: "Check your email for the login link.",
+      });
+    } catch (error: any) {
+      console.error("Auth error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <Tabs defaultValue="signin" className="space-y-4">
-      <TabsList className="grid w-full grid-cols-3">
-        <TabsTrigger value="signin">Email Sign In</TabsTrigger>
-        <TabsTrigger value="signup">Sign Up</TabsTrigger>
-        <TabsTrigger value="phone">Phone Sign In</TabsTrigger>
-      </TabsList>
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold">Welcome Back</h2>
+        <p className="mt-2 text-sm text-gray-600">
+          Enter your email to receive a magic link
+        </p>
+      </div>
 
-      <TabsContent value="signin">
-        <div className="space-y-4">
-          <EmailSignIn />
-          <Button
-            type="button"
-            variant="link"
-            className="text-sm"
-            onClick={() => setShowPasswordReset(true)}
-          >
-            Forgot password?
-          </Button>
-        </div>
-      </TabsContent>
-
-      <TabsContent value="signup">
-        <EmailSignUp 
-          onVerificationSent={(email) => {
-            setEmail(email);
-            setShowOTPVerification(true);
-          }}
+      <form onSubmit={handleSignIn} className="space-y-4">
+        <Input
+          type="email"
+          required
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full"
         />
-      </TabsContent>
-
-      <TabsContent value="phone">
-        <PhoneSignIn 
-          onVerificationSent={(phone) => {
-            setPhone(phone);
-            setShowPhoneVerification(true);
-          }}
-        />
-      </TabsContent>
-    </Tabs>
+        
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={loading}
+        >
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Sending Magic Link...
+            </>
+          ) : (
+            "Send Magic Link"
+          )}
+        </Button>
+      </form>
+    </div>
   );
 };

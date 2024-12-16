@@ -25,7 +25,7 @@ serve(async (req) => {
         Authorization: `Bearer ${Deno.env.get('RESEND_API_KEY')}`,
       },
       body: JSON.stringify({
-        from: "Company GPT <onboarding@resend.dev>",
+        from: "n0v8v <onboarding@resend.dev>",
         to: Array.isArray(to) ? to : [to],
         subject,
         html,
