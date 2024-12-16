@@ -29,6 +29,15 @@
     @apply bg-content-hover;
   }
 
+  /* Dialog Styles */
+  [data-radix-dialog-overlay] {
+    @apply bg-black/40;
+  }
+
+  [data-radix-dialog-content] {
+    @apply bg-white/95 backdrop-blur-sm;
+  }
+
   /* Text Hierarchy */
   .text-primary-content {
     @apply text-black;

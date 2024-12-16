@@ -46,7 +46,7 @@ export const AddMaterialDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="bg-white/95">
         <DialogHeader>
           <DialogTitle>Train Max</DialogTitle>
         </DialogHeader>
@@ -58,6 +58,7 @@ export const AddMaterialDialog = ({
               onChange={(e) =>
                 setNewMaterial({ ...newMaterial, title: e.target.value })
               }
+              className="bg-white"
             />
           </div>
           <div>
@@ -67,6 +68,7 @@ export const AddMaterialDialog = ({
               onChange={(e) =>
                 setNewMaterial({ ...newMaterial, category: e.target.value })
               }
+              className="bg-white"
             />
           </div>
           <div>
@@ -77,6 +79,7 @@ export const AddMaterialDialog = ({
                 setNewMaterial({ ...newMaterial, content: e.target.value })
               }
               rows={5}
+              className="bg-white"
             />
           </div>
           <div>
@@ -91,7 +94,7 @@ export const AddMaterialDialog = ({
               type="button"
               variant="outline"
               onClick={() => document.getElementById('file-upload')?.click()}
-              className="w-full"
+              className="w-full bg-white"
             >
               <Upload className="w-4 h-4 mr-2" />
               {selectedFile ? selectedFile.name : "Attach Document for Max"}
