@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/use-auth";
+import { useSessionContext } from "@supabase/auth-helpers-react";
 import {
   Dialog,
   DialogContent,
@@ -21,23 +21,23 @@ export const NewsForm = ({ onNewsAdded }: { onNewsAdded: () => void }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [newNews, setNewNews] = useState({ title: "", content: "" });
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { session } = useSessionContext();
 
   // Fetch user's company ID
   const { data: profile } = useQuery({
-    queryKey: ["profile", user?.id],
+    queryKey: ["profile", session?.user?.id],
     queryFn: async () => {
-      if (!user?.id) return null;
+      if (!session?.user?.id) return null;
       const { data, error } = await supabase
         .from("profiles")
         .select("company_id")
-        .eq("id", user.id)
+        .eq("id", session.user.id)
         .single();
 
       if (error) throw error;
       return data;
     },
-    enabled: !!user?.id,
+    enabled: !!session?.user?.id,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,6 +46,15 @@ export const NewsForm = ({ onNewsAdded }: { onNewsAdded: () => void }) => {
       toast({
         title: "Error",
         description: "Unable to determine your company. Please try again later.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!session?.user?.id) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to add news.",
         variant: "destructive",
       });
       return;
@@ -60,7 +69,7 @@ export const NewsForm = ({ onNewsAdded }: { onNewsAdded: () => void }) => {
           title: newNews.title,
           content: newNews.content,
           company_id: profile.company_id,
-          created_by: user?.id
+          created_by: session.user.id
         });
 
       if (error) throw error;
