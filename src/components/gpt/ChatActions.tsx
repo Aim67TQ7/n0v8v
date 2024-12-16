@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { MessageCirclePlus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 interface ChatActionsProps {
   onNewChat: () => void;
@@ -7,15 +7,15 @@ interface ChatActionsProps {
 
 export const ChatActions = ({ onNewChat }: ChatActionsProps) => {
   return (
-    <div className="flex justify-between items-center p-4 border-b">
+    <div className="sticky top-0 z-10 flex justify-between items-center p-4 bg-white border-b">
       <h2 className="text-lg font-semibold">Chat</h2>
       <Button
-        variant="outline"
-        size="sm"
         onClick={onNewChat}
+        variant="default"
+        size="sm"
         className="gap-2"
       >
-        <MessageCirclePlus className="h-4 w-4" />
+        <Plus className="h-4 w-4" />
         New Chat
       </Button>
     </div>

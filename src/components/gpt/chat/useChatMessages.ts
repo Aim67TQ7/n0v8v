@@ -22,7 +22,13 @@ export const useChatMessages = (chatId: string | null) => {
     try {
       const { error } = await supabase
         .from('chat_logs')
-        .update({ messages })
+        .update({ 
+          messages: messages.map(msg => ({
+            role: msg.role,
+            content: msg.content,
+            attachment: msg.attachment
+          }))
+        })
         .eq('id', chatId);
 
       if (error) throw error;
@@ -47,7 +53,7 @@ export const useChatMessages = (chatId: string | null) => {
 
     try {
       setIsLoading(true);
-      const userMessage = { role: 'user' as const, content: input };
+      const userMessage: Message = { role: 'user', content: input };
       const newMessages = [...messages, userMessage];
       setMessages(newMessages);
 
@@ -94,8 +100,8 @@ export const useChatMessages = (chatId: string | null) => {
         .from('Knowledge')
         .getPublicUrl(filePath);
 
-      const fileMessage = {
-        role: 'user' as const,
+      const fileMessage: Message = {
+        role: 'user',
         content: `[Attached file: ${file.name}](${publicUrl})`,
         attachment: {
           name: file.name,

@@ -47,7 +47,9 @@ export const ChatContainer = ({
   return (
     <div className="flex flex-col h-full">
       <ChatActions onNewChat={handleNewChat} />
-      <MessageList messages={messages} messagesEndRef={messagesEndRef} />
+      <div className="flex-1 overflow-hidden">
+        <MessageList messages={messages} messagesEndRef={messagesEndRef} />
+      </div>
       <ChatInput
         input=""
         setInput={() => {}}
