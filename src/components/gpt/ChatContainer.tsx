@@ -10,9 +10,10 @@ interface ChatContainerProps {
   messages: any[];
   onMessagesChange: (messages: any[]) => void;
   chatId: string | null;
+  onNewChat?: () => void;
 }
 
-export const ChatContainer = ({ messages, onMessagesChange, chatId }: ChatContainerProps) => {
+export const ChatContainer = ({ messages, onMessagesChange, chatId, onNewChat }: ChatContainerProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState("");
@@ -52,7 +53,9 @@ export const ChatContainer = ({ messages, onMessagesChange, chatId }: ChatContai
   };
 
   const handleNewChat = () => {
-    onMessagesChange([]);
+    if (onNewChat) {
+      onNewChat();
+    }
     setInput("");
   };
 

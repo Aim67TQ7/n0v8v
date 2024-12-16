@@ -54,7 +54,13 @@ export const EmployeeTab = () => {
       if (error) throw error;
 
       if (employeesData) {
-        setEmployees(employeesData as Employee[]);
+        // Type assertion after verifying the shape matches our Employee interface
+        const typedEmployees = employeesData.map(emp => ({
+          ...emp,
+          manager: emp.manager?.[0] // Convert manager array to single object
+        })) as Employee[];
+        
+        setEmployees(typedEmployees);
       }
     } catch (error) {
       console.error('Error fetching employees:', error);
