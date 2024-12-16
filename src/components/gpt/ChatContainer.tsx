@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Send, Loader2, Plus, Paperclip } from "lucide-react";
+import { ChatActions } from "./ChatActions";
+import { ChatInput } from "./ChatInput";
 
 interface ChatContainerProps {
   messages: any[];
@@ -13,12 +12,16 @@ interface ChatContainerProps {
   onNewChat?: () => void;
 }
 
-export const ChatContainer = ({ messages, onMessagesChange, chatId, onNewChat }: ChatContainerProps) => {
+export const ChatContainer = ({ 
+  messages, 
+  onMessagesChange, 
+  chatId, 
+  onNewChat 
+}: ChatContainerProps) => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (chatId && messages.length > 0) {
@@ -140,6 +143,8 @@ export const ChatContainer = ({ messages, onMessagesChange, chatId, onNewChat }:
 
   return (
     <div className="flex flex-col h-full">
+      <ChatActions onNewChat={handleNewChat} />
+      
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message, index) => (
           <Card
@@ -167,47 +172,13 @@ export const ChatContainer = ({ messages, onMessagesChange, chatId, onNewChat }:
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 border-t">
-        <div className="flex gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={handleNewChat}
-            className="shrink-0"
-          >
-            <Plus className="h-4 w-4" />
-          </Button>
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
-            disabled={isLoading}
-          />
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileUpload}
-            className="hidden"
-          />
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={() => fileInputRef.current?.click()}
-            className="shrink-0"
-          >
-            <Paperclip className="h-4 w-4" />
-          </Button>
-          <Button type="submit" disabled={isLoading || !input.trim()}>
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Send className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
-      </form>
+      <ChatInput
+        input={input}
+        setInput={setInput}
+        isLoading={isLoading}
+        onSubmit={handleSubmit}
+        onFileUpload={handleFileUpload}
+      />
     </div>
   );
 };
