@@ -3,14 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { FileText } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
+import { useSessionContext } from "@supabase/auth-helpers-react";
 
 const MarketResearch = () => {
   const [topic, setTopic] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [report, setReport] = useState("");
-  const { session } = useAuth();
+  const { session } = useSessionContext();
   const { toast } = useToast();
 
   const generateReport = async () => {
