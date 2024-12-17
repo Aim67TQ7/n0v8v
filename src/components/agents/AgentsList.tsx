@@ -1,13 +1,10 @@
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Bot, User } from "lucide-react";
+import { Agent } from "@/types/agents";
 
-interface Agent {
-  name: string;
-  role: string;
-  href: string;
-  description: string;
-  category: 'sales' | 'operations' | 'data' | 'service';
+interface AgentsListProps {
+  onAgentDrop: (agent: Agent) => void;
 }
 
 const agents: Agent[] = [
@@ -83,7 +80,11 @@ const agents: Agent[] = [
   }
 ];
 
-export const AgentsList = () => {
+export const AgentsList = ({ onAgentDrop }: AgentsListProps) => {
+  const handleDragStart = (e: React.DragEvent, agent: Agent) => {
+    e.dataTransfer.setData('application/json', JSON.stringify(agent));
+  };
+
   return (
     <Card className="h-[calc(100vh-8rem)]">
       <div className="flex items-center gap-2 p-4 border-b">
@@ -95,7 +96,9 @@ export const AgentsList = () => {
           {agents.map((agent) => (
             <Card 
               key={agent.name}
-              className="p-3 hover:bg-accent transition-colors cursor-pointer"
+              className="p-3 hover:bg-accent transition-colors cursor-move"
+              draggable
+              onDragStart={(e) => handleDragStart(e, agent)}
             >
               <div className="flex items-start gap-3">
                 <User className="h-8 w-8 text-muted-foreground shrink-0" />
