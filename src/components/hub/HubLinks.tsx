@@ -82,6 +82,7 @@ export const HubLinks = () => {
         { name: "Faraday (Technical)", href: "/operations/engineering/research" },
         { name: "Magnus (Service)", href: "/operations/service/research" },
         { name: "Morgan (Complaints)", href: "/operations/complaints/resolution" },
+        { name: "Alex (Cold Calls)", href: "/sales/cold-calls" },
         { name: "Market Research", href: "/marketing/research" },
         { name: "VAVE Analysis", href: "/operations/quality/vave" },
       ]
