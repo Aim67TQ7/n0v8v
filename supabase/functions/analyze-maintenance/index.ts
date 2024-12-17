@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageData, selectedArea, companyId, equipmentDetails } = await req.json();
+    const { imageData, companyId, equipmentDetails } = await req.json();
     console.log('Processing request for equipment analysis');
 
     const supabase = createClient(
@@ -21,73 +21,74 @@ serve(async (req) => {
     );
 
     // Create a detailed system prompt using the equipment details
-    const systemPrompt = `You are an expert in industrial equipment maintenance, specializing in analyzing equipment images. 
-    Analyze the equipment in the image and provide detailed maintenance recommendations.
-    Equipment details provided: ${equipmentDetails}
+    const systemPrompt = `You are an expert in industrial equipment maintenance, specializing in analyzing equipment images and documentation. 
+    Analyze the equipment in the images and provided details to:
+    1. Identify the equipment (make, model, manufacturer)
+    2. Search for and identify relevant product manuals and documentation
+    3. Assess current condition
+    4. Provide detailed maintenance recommendations
+    5. List required tools and skills
+    6. Outline safety precautions
+    7. Suggest maintenance intervals
     
-    Provide your analysis in the following format:
-    1. Equipment identification (make, model, manufacturer if visible)
-    2. Current condition assessment
-    3. Maintenance recommendations
-    4. Required tools and skills
-    5. Safety precautions
-    6. Estimated maintenance intervals`;
+    Equipment details provided: ${equipmentDetails}`;
 
     console.log('Sending request to Perplexity');
 
-    const response = await fetch('https://api.perplexity.ai/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${Deno.env.get('PERPLEXITY_API_KEY')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama-3.1-sonar-large-128k-online',
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt
-          },
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: "Analyze this equipment image and provide detailed maintenance recommendations."
-              },
-              {
-                type: 'image_url',
-                image_url: {
-                  url: `data:image/jpeg;base64,${imageData}`
+    // Process each image with Perplexity
+    const analysisPromises = imageData.map(async (base64Image: string) => {
+      const response = await fetch('https://api.perplexity.ai/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${Deno.env.get('PERPLEXITY_API_KEY')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'llama-3.1-sonar-large-128k-online',
+          messages: [
+            {
+              role: 'system',
+              content: systemPrompt
+            },
+            {
+              role: 'user',
+              content: [
+                {
+                  type: 'text',
+                  text: "Analyze this equipment image and provide detailed maintenance recommendations."
+                },
+                {
+                  type: 'image_url',
+                  image_url: {
+                    url: `data:image/jpeg;base64,${base64Image}`
+                  }
                 }
-              }
-            ]
-          }
-        ],
-        temperature: 0.2,
-        max_tokens: 1000
-      })
+              ]
+            }
+          ],
+          temperature: 0.2,
+          max_tokens: 1000
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Perplexity API error: ${response.status}`);
+      }
+
+      return await response.json();
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Perplexity API error:', errorText);
-      throw new Error(`Perplexity API error: ${response.status} - ${errorText}`);
-    }
-
-    const analysisResult = await response.json();
+    const analysisResults = await Promise.all(analysisPromises);
     console.log('Analysis completed successfully');
 
-    if (!analysisResult.choices || !analysisResult.choices[0]) {
-      throw new Error('Invalid response from Perplexity API');
-    }
-
-    const aiResponse = analysisResult.choices[0].message.content;
+    // Combine and process all analysis results
+    const combinedAnalysis = analysisResults.map(result => result.choices[0].message.content);
     
-    const makeMatch = aiResponse.match(/make:?\s*([^\n]+)/i);
-    const modelMatch = aiResponse.match(/model:?\s*([^\n]+)/i);
-    const manufacturerMatch = aiResponse.match(/manufacturer:?\s*([^\n]+)/i);
-    const typeMatch = aiResponse.match(/type:?\s*([^\n]+)/i);
+    // Extract equipment information from the analysis
+    const makeMatch = combinedAnalysis[0].match(/make:?\s*([^\n]+)/i);
+    const modelMatch = combinedAnalysis[0].match(/model:?\s*([^\n]+)/i);
+    const manufacturerMatch = combinedAnalysis[0].match(/manufacturer:?\s*([^\n]+)/i);
+    const typeMatch = combinedAnalysis[0].match(/type:?\s*([^\n]+)/i);
 
     // Generate a unique filename for the image
     const fileName = `${crypto.randomUUID()}.jpg`;
@@ -111,29 +112,24 @@ serve(async (req) => {
 
     if (equipmentError) throw equipmentError;
 
-    // Upload the base64 image to storage
-    const { error: storageError } = await supabase.storage
-      .from('process-images')
-      .upload(fileName, Buffer.from(imageData, 'base64'), {
-        contentType: 'image/jpeg'
-      });
-
-    if (storageError) throw storageError;
-
-    const maintenanceTasks = aiResponse
-      .split('\n')
-      .filter(line => line.includes('maintenance') || line.includes('inspect'))
-      .map(task => ({
-        equipment_id: equipment.id,
-        task_description: task.trim(),
-        frequency: 'weekly',
-        skill_level: 'intermediate',
-        tools_needed: ['basic hand tools'],
-        estimated_time: null,
-        is_critical: false,
-        safety_precautions: ['wear appropriate PPE'],
-        procedure_steps: ['inspect equipment', 'perform maintenance', 'document results']
-      }));
+    // Extract maintenance tasks and schedules from the analysis
+    const maintenanceTasks = combinedAnalysis
+      .flatMap(analysis => 
+        analysis
+          .split('\n')
+          .filter(line => line.includes('maintenance') || line.includes('inspect'))
+          .map(task => ({
+            equipment_id: equipment.id,
+            task_description: task.trim(),
+            frequency: 'weekly',
+            skill_level: 'intermediate',
+            tools_needed: ['basic hand tools'],
+            estimated_time: null,
+            is_critical: false,
+            safety_precautions: ['wear appropriate PPE'],
+            procedure_steps: ['inspect equipment', 'perform maintenance', 'document results']
+          }))
+      );
 
     const { error: scheduleError } = await supabase
       .from('maintenance_schedules')
@@ -146,7 +142,7 @@ serve(async (req) => {
         message: 'Equipment analyzed and maintenance schedule created',
         equipment,
         maintenanceTasks,
-        analysis: aiResponse
+        analysis: combinedAnalysis
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

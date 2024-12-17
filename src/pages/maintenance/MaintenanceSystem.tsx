@@ -1,54 +1,30 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Wrench } from "lucide-react";
-import { ProcessImageUploader } from "@/components/ProcessImageUploader";
 import { useToast } from "@/hooks/use-toast";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
 import { EquipmentList } from "@/components/maintenance/EquipmentList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
+import { FiveSVisionImageUploader } from "@/components/FiveSVisionImageUploader";
 
 const MaintenanceSystem = () => {
-  const [imagePreview, setImagePreview] = useState("");
-  const [selectedArea, setSelectedArea] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
+  const [images, setImages] = useState<File[]>([]);
   const [equipmentDetails, setEquipmentDetails] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [progress, setProgress] = useState(0);
   const { session } = useSessionContext();
   const { toast } = useToast();
 
-  const handleImageUpload = async (file: File) => {
-    setImagePreview(URL.createObjectURL(file));
-  };
-
-  const handleAreaSelect = (area: { x: number; y: number; width: number; height: number } | null) => {
-    setSelectedArea(area);
-  };
-
-  const convertImageToBase64 = async (imageUrl: string): Promise<string> => {
-    const response = await fetch(imageUrl);
-    const blob = await response.blob();
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        resolve(base64String.split(',')[1]);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  };
-
   const handleAnalyze = async () => {
-    if (!imagePreview || !selectedArea || !session?.user) {
+    if (!images.length || !session?.user) {
       toast({
         title: "Error",
-        description: "Please upload an image and select an area to analyze",
+        description: "Please upload at least one image and provide equipment details",
         variant: "destructive"
       });
       return;
@@ -70,20 +46,53 @@ const MaintenanceSystem = () => {
 
       setProgress(40);
 
-      const base64Image = await convertImageToBase64(imagePreview);
+      // Upload images to storage
+      const imageUrls = [];
+      for (const image of images) {
+        const fileExt = image.name.split('.').pop();
+        const fileName = `${crypto.randomUUID()}.${fileExt}`;
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('process-images')
+          .upload(fileName, image);
+          
+        if (uploadError) throw uploadError;
+        
+        const { data: { publicUrl } } = supabase.storage
+          .from('process-images')
+          .getPublicUrl(fileName);
+          
+        imageUrls.push(publicUrl);
+      }
       
       setProgress(60);
 
+      // Convert images to base64
+      const base64Images = await Promise.all(
+        imageUrls.map(async (url) => {
+          const response = await fetch(url);
+          const blob = await response.blob();
+          return new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const base64String = reader.result as string;
+              resolve(base64String.split(',')[1]);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+        })
+      );
+
+      setProgress(80);
+
       const { data, error } = await supabase.functions.invoke('analyze-maintenance', {
         body: { 
-          imageData: base64Image,
-          selectedArea,
+          imageData: base64Images,
           companyId: profile.company_id,
           equipmentDetails: equipmentDetails
         }
       });
-
-      setProgress(80);
 
       if (error) throw error;
 
@@ -94,8 +103,7 @@ const MaintenanceSystem = () => {
         description: "Equipment has been analyzed and maintenance schedule created"
       });
 
-      setImagePreview("");
-      setSelectedArea(null);
+      setImages([]);
       setEquipmentDetails("");
 
     } catch (error) {
@@ -152,16 +160,16 @@ const MaintenanceSystem = () => {
                 </div>
 
                 <p className="text-muted-foreground mb-4">
-                  Upload a photo of your equipment to generate a suggested maintenance schedule.
+                  Upload photos of your equipment (up to 4) to generate a suggested maintenance schedule.
                   Supported formats: JPG, PNG, WebP
                 </p>
-                <ProcessImageUploader
-                  imagePreview={imagePreview}
-                  onImageUpload={handleImageUpload}
-                  onAreaSelect={handleAreaSelect}
-                  selectedArea={selectedArea}
+                
+                <FiveSVisionImageUploader 
+                  images={images} 
+                  setImages={setImages} 
                 />
-                {imagePreview && selectedArea && (
+
+                {images.length > 0 && (
                   <div className="mt-4 space-y-4">
                     <Button 
                       onClick={handleAnalyze} 
