@@ -49,16 +49,6 @@ export const ChatInput = ({
           >
             <Paperclip className="h-4 w-4" />
           </Button>
-          {onNewChat && (
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={onNewChat}
-              className="shrink-0"
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          )}
         </div>
         <div className="flex flex-col gap-2">
           <Button type="submit" disabled={isLoading || !input.trim()}>
