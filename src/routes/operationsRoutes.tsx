@@ -1,3 +1,4 @@
+import { RouteObject } from "react-router-dom";
 import { lazy } from "react";
 import Facilities from "@/pages/operations/Facilities";
 import Production from "@/pages/operations/Production";
@@ -13,7 +14,7 @@ const Fishbone = lazy(() => import("@/pages/quality/Fishbone"));
 const ProcessImprovement = lazy(() => import("@/pages/quality/ProcessImprovement"));
 const VAVEAnalysis = lazy(() => import("@/pages/operations/VAVEAnalysis"));
 
-export const operationsRoutes = [
+export const operationsRoutes: RouteObject[] = [
   {
     path: "/operations/facilities",
     element: <Facilities />

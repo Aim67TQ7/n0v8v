@@ -88,4 +88,4 @@ export const AppRoutes = () => {
   );
 };
 
-export { routes } from "./authRoutes";
+export { authRoutes };

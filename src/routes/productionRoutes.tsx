@@ -1,3 +1,4 @@
+import { RouteObject } from "react-router-dom";
 import { lazy } from "react";
 
 const ProductionPlanning = lazy(() => import("@/pages/operations/production/Planning"));
@@ -8,7 +9,7 @@ const EquipmentMonitoring = lazy(() => import("@/pages/operations/production/Equ
 const LaborEfficiency = lazy(() => import("@/pages/operations/production/Labor"));
 const ShortagePrediction = lazy(() => import("@/pages/operations/production/Shortages"));
 
-export const productionRoutes = [
+export const productionRoutes: RouteObject[] = [
   {
     path: "/operations/production/planning",
     element: <ProductionPlanning />
