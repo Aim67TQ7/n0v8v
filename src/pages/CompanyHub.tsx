@@ -6,8 +6,8 @@ import { MainContent } from "@/components/hub/layout/MainContent";
 
 const CompanyHub = () => {
   return (
-    <div className="min-h-screen bg-black">
-      <div className="container mx-auto py-6 px-4 sm:px-6">
+    <div className="min-h-[calc(100vh-4rem)] bg-black pt-4">
+      <div className="container mx-auto px-4">
         <Card>
           <MobileMenu />
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 min-h-[calc(100vh-8rem)]">
