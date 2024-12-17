@@ -33,30 +33,30 @@ serve(async (req) => {
     5. Safety precautions
     6. Estimated maintenance intervals`;
 
-    console.log('Sending request to OpenAI');
+    console.log('Sending request to Perplexity');
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'Authorization': `Bearer ${Deno.env.get('PERPLEXITY_API_KEY')}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "gpt-4o",
+        model: 'llama-3.1-sonar-large-128k-online',
         messages: [
           {
-            role: "system",
+            role: 'system',
             content: systemPrompt
           },
           {
-            role: "user",
+            role: 'user',
             content: [
               {
-                type: "text",
+                type: 'text',
                 text: "Analyze this equipment image and provide detailed maintenance recommendations."
               },
               {
-                type: "image_url",
+                type: 'image_url',
                 image_url: {
                   url: `data:image/jpeg;base64,${imageData}`
                 }
@@ -64,21 +64,22 @@ serve(async (req) => {
             ]
           }
         ],
+        temperature: 0.2,
         max_tokens: 1000
       })
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenAI API error:', errorText);
-      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+      console.error('Perplexity API error:', errorText);
+      throw new Error(`Perplexity API error: ${response.status} - ${errorText}`);
     }
 
     const analysisResult = await response.json();
     console.log('Analysis completed successfully');
 
     if (!analysisResult.choices || !analysisResult.choices[0]) {
-      throw new Error('Invalid response from OpenAI API');
+      throw new Error('Invalid response from Perplexity API');
     }
 
     const aiResponse = analysisResult.choices[0].message.content;

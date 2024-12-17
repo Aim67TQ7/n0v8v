@@ -37,7 +37,7 @@ const MaintenanceSystem = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
-        resolve(base64String.split(',')[1]); // Remove data URL prefix
+        resolve(base64String.split(',')[1]);
       };
       reader.onerror = reject;
       reader.readAsDataURL(blob);
@@ -70,12 +70,10 @@ const MaintenanceSystem = () => {
 
       setProgress(40);
 
-      // Convert image to base64
       const base64Image = await convertImageToBase64(imagePreview);
       
       setProgress(60);
 
-      // Process the image with AI
       const { data, error } = await supabase.functions.invoke('analyze-maintenance', {
         body: { 
           imageData: base64Image,
@@ -96,7 +94,6 @@ const MaintenanceSystem = () => {
         description: "Equipment has been analyzed and maintenance schedule created"
       });
 
-      // Reset the form
       setImagePreview("");
       setSelectedArea(null);
       setEquipmentDetails("");
@@ -140,14 +137,23 @@ const MaintenanceSystem = () => {
                       id="equipment"
                       value={equipmentDetails}
                       onChange={(e) => setEquipmentDetails(e.target.value)}
-                      placeholder="Enter any known details about the equipment (make, model, type, serial number, etc.)"
-                      className="min-h-[100px]"
+                      placeholder="Please provide detailed information about the equipment:
+• Make and model
+• Serial number (if visible)
+• Equipment type/category
+• Current condition or concerns
+• Any specific maintenance requirements
+• Operating environment
+• Age or installation date (if known)
+• Previous maintenance history (if available)"
+                      className="min-h-[200px]"
                     />
                   </div>
                 </div>
 
                 <p className="text-muted-foreground mb-4">
                   Upload a photo of your equipment to generate a suggested maintenance schedule.
+                  Supported formats: JPG, PNG, WebP
                 </p>
                 <ProcessImageUploader
                   imagePreview={imagePreview}

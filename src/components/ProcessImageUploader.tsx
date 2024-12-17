@@ -23,6 +23,17 @@ export const ProcessImageUploader = ({
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Check if file type is supported
+      const supportedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!supportedTypes.includes(file.type)) {
+        toast({
+          title: "Unsupported file type",
+          description: "Please upload a JPG, PNG, or WebP image",
+          variant: "destructive"
+        });
+        return;
+      }
+
       try {
         const compressedFile = await compressImage(file);
         onImageUpload(compressedFile);
@@ -75,7 +86,7 @@ export const ProcessImageUploader = ({
         id="image-upload"
         type="file"
         className="hidden"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp"
         capture="environment"
         onChange={handleImageUpload}
       />
@@ -100,7 +111,7 @@ export const ProcessImageUploader = ({
       ) : (
         <AspectRatio ratio={4/3} className="bg-muted rounded-lg flex items-center justify-center">
           <div className="text-muted-foreground text-sm">
-            Upload a photo to begin analysis
+            Upload a photo to begin analysis (JPG, PNG, or WebP)
           </div>
         </AspectRatio>
       )}
