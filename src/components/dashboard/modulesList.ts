@@ -14,7 +14,7 @@ import {
   Activity,
   Settings,
   Package,
-  Tool
+  Wrench as WrenchIcon
 } from "lucide-react";
 import { ModuleCardProps } from "./ModuleCard";
 
@@ -64,7 +64,7 @@ export const modulesList: ModuleCardProps[] = [
   {
     title: "Maintenance",
     description: "Equipment maintenance and scheduling",
-    icon: Tool,
+    icon: WrenchIcon,
     href: "/operations/maintenance",
     status: "ready"
   },

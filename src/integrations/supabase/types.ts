@@ -156,6 +156,7 @@ export type Database = {
       }
       chat_logs: {
         Row: {
+          category: string | null
           company_id: string | null
           created_at: string
           expires_at: string
@@ -166,6 +167,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          category?: string | null
           company_id?: string | null
           created_at?: string
           expires_at?: string
@@ -176,6 +178,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          category?: string | null
           company_id?: string | null
           created_at?: string
           expires_at?: string
