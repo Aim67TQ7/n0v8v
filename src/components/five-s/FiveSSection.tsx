@@ -18,7 +18,7 @@ export const FiveSSection = ({
       <h3 className="text-lg font-semibold mb-4">{title} ({japaneseTitle})</h3>
       
       {checklist?.length > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-4 hidden">
           <ul className="list-disc pl-5 space-y-2">
             {checklist.map((item, index) => (
               <li key={index} className="text-sm">
