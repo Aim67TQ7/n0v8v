@@ -83,8 +83,8 @@ export const HubLinks = () => {
         { name: "Magnus (Service)", href: "/operations/service/research" },
         { name: "Morgan (Complaints)", href: "/operations/complaints/resolution" },
         { name: "Alex (Cold Calls)", href: "/sales/cold-calls" },
-        { name: "Market Research", href: "/marketing/research" },
-        { name: "VAVE Analysis", href: "/operations/quality/vave" },
+        { name: "Riley (Market Research)", href: "/marketing/research" },
+        { name: "Casey (VAVE Analysis)", href: "/operations/quality/vave" },
       ]
     }
   ];
