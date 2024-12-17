@@ -67,6 +67,7 @@ const AppContent = () => {
             {/* Protected routes */}
             <Route element={<AuthWrapper />}>
               <Route path="/operations/lean/5s-vision" element={<FiveSVision />} />
+              <Route path="/operations/hr/company-news" element={<CompanyNews />} />
               {allRoutes
                 .filter(route => !publicRoutes.includes(route.path))
                 .map(route => (

@@ -3,6 +3,7 @@ import { lazy } from "react";
 import Facilities from "@/pages/operations/Facilities";
 import Production from "@/pages/operations/Production";
 import MaintenanceSystem from "@/pages/maintenance/MaintenanceSystem";
+import CompanyNews from "@/pages/operations/hr/CompanyNews";
 
 const HROperations = lazy(() => import("@/pages/operations/hr"));
 const Quality = lazy(() => import("@/pages/operations/Quality"));
@@ -30,6 +31,10 @@ export const operationsRoutes: RouteObject[] = [
   {
     path: "/operations/hr",
     element: <HROperations />
+  },
+  {
+    path: "/operations/hr/company-news",
+    element: <CompanyNews />
   },
   {
     path: "/operations/quality",
