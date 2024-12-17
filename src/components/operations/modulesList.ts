@@ -19,7 +19,6 @@ import {
   GitFork,
   Fish,
   Database,
-  Tool,
   Image
 } from "lucide-react";
 import type { ModuleCardProps } from "./ModuleCard";
