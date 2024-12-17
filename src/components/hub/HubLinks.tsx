@@ -7,12 +7,32 @@ export const HubLinks = () => {
   const navigate = useNavigate();
   
   const handleResourceClick = (href: string) => {
-    if (href === "company-resource://teams") {
-      window.location.href = "msteams://";
-      return;
-    }
-    if (href.startsWith('company-resource://')) {
-      console.log('Electron will handle:', href);
+    switch (href) {
+      case "company-resource://desktop":
+        // Simulate Windows+D keystroke (this will be handled by the desktop app)
+        console.log('Desktop view requested');
+        break;
+      case "company-resource://email":
+        window.location.href = "mailto:";
+        break;
+      case "company-resource://teams":
+        window.location.href = "msteams://";
+        break;
+      case "company-resource://epicor":
+        window.open('https://erp.bunting.com', '_blank');
+        break;
+      case "company-resource://shared":
+        // Will be handled by desktop app
+        console.log('Opening shared folder');
+        break;
+      case "company-resource://windchill":
+        // Will be handled by desktop app
+        console.log('Opening Windchill');
+        break;
+      default:
+        if (!href.startsWith('company-resource://')) {
+          navigate(href);
+        }
     }
   };
 
@@ -61,8 +81,7 @@ export const HubLinks = () => {
           {sections.map((section) => (
             <Card 
               key={section.title} 
-              className="bg-white hover:bg-gray-50 cursor-pointer p-3 shadow-sm"
-              onClick={() => section.title === "Resources" && navigate("/modules")}
+              className="bg-white p-3 shadow-sm"
             >
               <div className="flex items-center gap-2 mb-1.5">
                 <section.icon className="h-4 w-4 text-gray-700" />
