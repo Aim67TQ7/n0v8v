@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { AppProviders } from "@/components/AppProviders";
-import { routes } from "@/routes/routes";
+import { allRoutes } from "@/routes/routes";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { AuthWrapper } from "@/components/AuthWrapper";
 import { useLocation } from "react-router-dom";
@@ -51,7 +51,7 @@ const AppContent = () => {
           />
 
           {/* Public routes (no auth required) */}
-          {routes
+          {allRoutes
             .filter(route => publicRoutes.includes(route.path))
             .map(route => (
               <Route
@@ -64,7 +64,7 @@ const AppContent = () => {
           {/* Protected routes */}
           <Route element={<AuthWrapper />}>
             <Route path="/operations/lean/5s-vision" element={<FiveSVision />} />
-            {routes
+            {allRoutes
               .filter(route => !publicRoutes.includes(route.path))
               .map(route => (
                 <Route

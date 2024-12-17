@@ -4,7 +4,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-export const AuthWrapper = () => {
+export interface AuthWrapperProps {
+  children?: React.ReactNode;
+}
+
+export const AuthWrapper = ({ children }: AuthWrapperProps) => {
   const { isLoading, isAuthenticated, error } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -91,5 +95,5 @@ export const AuthWrapper = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  return <Outlet />;
+  return children || <Outlet />;
 };

@@ -15,8 +15,8 @@ const RouteLoadingComponent = () => (
   </div>
 );
 
-// Combine all routes
-export const routes = [
+// Combine all routes for export
+export const allRoutes = [
   ...authRoutes,
   ...dashboardRoutes,
   ...operationsRoutes,
@@ -53,9 +53,7 @@ export const AppRoutes = () => {
         ))}
 
         {/* Protected routes */}
-        <Route
-          element={<AuthWrapper />}
-        >
+        <Route element={<AuthWrapper />}>
           {/* Dashboard routes */}
           {dashboardRoutes.map(route => (
             <Route
