@@ -37,6 +37,19 @@ export const ChatHistory = ({ className }: ChatHistoryProps) => {
     return acc;
   }, {});
 
+  const categories = [
+    "Today",
+    "This Week",
+    "Recent",
+    "Shared",
+    "New Email",
+    "Email Reply",
+    "Summarize Text",
+    "Meeting Notes",
+    "How To",
+    "Brainstorm"
+  ];
+
   const ChatHistoryContent = () => (
     <div className="space-y-2">
       <div className="relative flex-1">
@@ -51,11 +64,11 @@ export const ChatHistory = ({ className }: ChatHistoryProps) => {
       
       <ScrollArea className="h-[400px]">
         <div className="space-y-2 pr-2">
-          {Object.entries(groupedChats).map(([date, chats]) => (
-            <div key={date} className="space-y-1">
-              <h3 className="text-sm font-semibold text-primary px-2">{date}</h3>
+          {categories.map((category) => (
+            <div key={category} className="space-y-1">
+              <h3 className="text-sm font-semibold text-primary px-2">{category}</h3>
               <div className="space-y-0.5">
-                {(chats as any[]).slice(0, 4).map((chat) => (
+                {(groupedChats[category] || []).slice(0, 4).map((chat) => (
                   <Link
                     key={chat.id}
                     to={`/chat/${chat.id}`}
@@ -92,11 +105,11 @@ export const ChatHistory = ({ className }: ChatHistoryProps) => {
       </div>
       <ScrollArea className="h-[400px]">
         <div className="space-y-2 pr-2">
-          {Object.entries(groupedChats).map(([date, chats]) => (
-            <div key={date} className="space-y-1">
-              <h3 className="text-sm font-semibold text-primary px-2">{date}</h3>
+          {categories.map((category) => (
+            <div key={category} className="space-y-1">
+              <h3 className="text-sm font-semibold text-primary px-2">{category}</h3>
               <div className="space-y-0.5">
-                {(chats as any[]).slice(0, 4).map((chat) => (
+                {(groupedChats[category] || []).slice(0, 4).map((chat) => (
                   <Link
                     key={chat.id}
                     to={`/chat/${chat.id}`}
