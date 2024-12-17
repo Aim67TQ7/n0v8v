@@ -2,10 +2,9 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { FileText } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { supabase } from "@/integrations/supabase/client";
 
 const MarketResearch = () => {
   const [topic, setTopic] = useState("");
@@ -26,37 +25,26 @@ const MarketResearch = () => {
 
     setIsLoading(true);
     try {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("first_name, last_name, company_id")
-        .eq("id", user?.id)
-        .single();
-
-      const { data: company } = await supabase
-        .from("companies")
-        .select("name")
-        .eq("id", profile?.company_id)
-        .single();
-
       const response = await fetch("/api/generate-market-research", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           topic,
-          userName: `${profile?.first_name} ${profile?.last_name}`,
-          companyName: company?.name,
+          userName: user?.email,
+          companyName: "Your Company", // You can get this from your company context if available
         }),
       });
 
       if (!response.ok) throw new Error("Failed to generate report");
 
-      const blob = await response.blob();
+      const report = await response.text();
+      
+      // Create a blob and download the report
+      const blob = new Blob([report], { type: "text/plain" });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `market-research-${topic.toLowerCase().replace(/\s+/g, "-")}.pdf`;
+      a.download = `market-research-${topic.toLowerCase().replace(/\s+/g, "-")}.txt`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -64,12 +52,12 @@ const MarketResearch = () => {
 
       toast({
         title: "Success",
-        description: "Your market research report has been generated",
+        description: "Market research report has been generated",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to generate report. Please try again.",
+        description: "Failed to generate market research report",
         variant: "destructive",
       });
     } finally {
@@ -78,45 +66,47 @@ const MarketResearch = () => {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <Card className="max-w-2xl mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-6">Market Research Generator</h1>
-        
-        <div className="prose max-w-none mb-6">
-          <h2 className="text-xl font-semibold mb-4">Instructions</h2>
-          <p>
-            This tool generates a comprehensive market research report based on your chosen topic.
-            The report includes:
-          </p>
-          <ul className="list-disc pl-6 mb-4">
-            <li>Executive Summary</li>
-            <li>Market Overview</li>
-            <li>Segmentation and Target Market Analysis</li>
-            <li>Competitive Analysis & SWOT Analysis</li>
-            <li>Consumer Insights and Trends</li>
-            <li>Strategic Recommendations</li>
-            <li>Market Forecasts</li>
-          </ul>
-          <p className="text-sm text-muted-foreground mb-6">
-            The report will be customized with your name and company details.
-          </p>
-        </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex items-center gap-3 mb-8">
+        <FileText className="h-8 w-8 text-secondary" />
+        <h1 className="text-3xl font-bold">Market Research Generator</h1>
+      </div>
 
+      <Card className="p-6 mb-6">
+        <h2 className="text-xl font-semibold mb-4">Instructions</h2>
+        <p className="mb-4">
+          This tool generates comprehensive market research reports using advanced AI technology.
+          Your report will include:
+        </p>
+        <ul className="list-disc list-inside mb-4 space-y-2">
+          <li>Executive Summary</li>
+          <li>Market Overview and Size Analysis</li>
+          <li>Segmentation and Target Market Analysis</li>
+          <li>Competitive Analysis & SWOT Analysis</li>
+          <li>Consumer Insights and Trends</li>
+          <li>Strategic Recommendations</li>
+          <li>Market Forecasts and Projections</li>
+        </ul>
+        <p className="text-sm text-muted-foreground">
+          The report will be personalized with your name and company information.
+        </p>
+      </Card>
+
+      <Card className="p-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="topic" className="block text-sm font-medium mb-2">
               What topic would you like to research?
             </label>
-            <Textarea
+            <Input
               id="topic"
-              placeholder="e.g., Electric Vehicle Market in North America"
+              placeholder="e.g., Electric Vehicles Market in North America"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              className="min-h-[100px]"
+              className="w-full"
             />
           </div>
-
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading}>
             {isLoading ? "Generating Report..." : "Generate Market Research Report"}
           </Button>
         </form>
