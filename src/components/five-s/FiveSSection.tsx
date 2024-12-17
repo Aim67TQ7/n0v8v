@@ -19,7 +19,6 @@ export const FiveSSection = ({
       
       {checklist?.length > 0 && (
         <div className="space-y-4">
-          <h4 className="font-medium">Checklist</h4>
           <ul className="list-disc pl-5 space-y-2">
             {checklist.map((item, index) => (
               <li key={index} className="text-sm">
