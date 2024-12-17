@@ -24,6 +24,15 @@ export const MessageInput = ({
     <Card className="fixed bottom-0 left-64 right-64 mx-auto bg-white border-t shadow-lg">
       <form onSubmit={onSubmit} className="p-4">
         <div className="flex gap-2">
+          {onNew && (
+            <Button
+              type="button"
+              onClick={onNew}
+              className="h-[60px] w-[40px] shrink-0"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          )}
           <Textarea
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
@@ -40,29 +49,21 @@ export const MessageInput = ({
             <Button 
               type="submit" 
               disabled={isLoading}
-              className="bg-blue-600 text-white hover:bg-blue-700"
+              className="bg-blue-600 text-white hover:bg-blue-700 h-[60px] w-[40px]"
             >
               <Send className="h-4 w-4" />
             </Button>
-            <Button
-              type="button"
-              onClick={onSave}
-              variant="outline"
-              className="border-blue-600 text-blue-600"
-            >
-              <Save className="h-4 w-4" />
-            </Button>
+            {onSave && (
+              <Button
+                type="button"
+                onClick={onSave}
+                variant="outline"
+                className="border-blue-600 text-blue-600 h-[60px] w-[40px]"
+              >
+                <Save className="h-4 w-4" />
+              </Button>
+            )}
           </div>
-          {onNew && (
-            <Button
-              type="button"
-              onClick={onNew}
-              variant="ghost"
-              className="hover:bg-gray-100"
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          )}
         </div>
       </form>
     </Card>

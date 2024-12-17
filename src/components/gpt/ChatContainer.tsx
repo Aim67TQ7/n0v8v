@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import { ChatActions } from "./ChatActions";
 import { ChatInput } from "./ChatInput";
 import { MessageList } from "./chat/MessageList";
@@ -27,20 +27,22 @@ export const ChatContainer = ({
   onNewChat 
 }: ChatContainerProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [inputValue, setInputValue] = useState("");
   const { 
     messages,
     setMessages,
     isLoading,
-    handleSubmit
+    handleSubmit,
+    handleFileUpload
   } = useChatMessages(chatId);
 
   useEffect(() => {
-    setMessages(initialMessages);
-  }, [initialMessages]);
+    if (initialMessages) {
+      setMessages(initialMessages);
+    }
+  }, [initialMessages, setMessages]);
 
   useEffect(() => {
-    if (onMessagesChange) {
+    if (onMessagesChange && messages) {
       onMessagesChange(messages);
     }
   }, [messages, onMessagesChange]);
@@ -49,11 +51,9 @@ export const ChatContainer = ({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputValue.trim()) return;
-    handleSubmit(inputValue);
-    setInputValue("");
+  const handleFormSubmit = async (input: string) => {
+    if (!input.trim()) return;
+    await handleSubmit(input);
   };
 
   return (
@@ -63,10 +63,19 @@ export const ChatContainer = ({
         <MessageList messages={messages} messagesEndRef={messagesEndRef} />
       </div>
       <ChatInput
-        input={inputValue}
-        setInput={setInputValue}
+        input=""
+        setInput={() => {}}
         isLoading={isLoading}
-        onSubmit={handleFormSubmit}
+        onSubmit={(e) => {
+          e.preventDefault();
+          const form = e.target as HTMLFormElement;
+          const input = form.querySelector('textarea')?.value;
+          if (input) {
+            handleFormSubmit(input);
+            form.reset();
+          }
+        }}
+        onNew={onNewChat}
       />
     </div>
   );
