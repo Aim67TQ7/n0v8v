@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
-import { Folder, Grid, Wrench, Newspaper, Bot, TruckIcon, Megaphone, Phone, FileText } from "lucide-react";
+import { Folder, Grid, Wrench, Bot, TruckIcon, Megaphone, Phone, FileText, Scale } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const HubLinks = () => {
@@ -79,6 +79,7 @@ export const HubLinks = () => {
       icon: Bot,
       links: [
         { name: "Market Research", href: "/marketing/research" },
+        { name: "VAVE Analysis", href: "/operations/quality/vave" },
       ]
     }
   ];
