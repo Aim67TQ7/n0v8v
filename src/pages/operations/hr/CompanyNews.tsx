@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { NewsForm } from "@/components/news/NewsForm";
 import { NewsList } from "@/components/news/NewsList";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const CompanyNews = () => {
   const { data: news, refetch } = useQuery({

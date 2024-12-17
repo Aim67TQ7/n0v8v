@@ -10,6 +10,7 @@ import { useState, Suspense } from "react";
 import { SplashScreen } from "@/components/SplashScreen";
 import { Header } from "@/components/Header";
 import FiveSVision from "@/pages/FiveSVision";
+import CompanyNews from "@/pages/operations/hr/CompanyNews";
 
 // Loading component for route transitions
 const RouteLoadingComponent = () => (
