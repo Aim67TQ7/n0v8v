@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { ChatActions } from "./ChatActions";
 import { ChatInput } from "./ChatInput";
 import { MessageList } from "./chat/MessageList";
@@ -27,12 +27,12 @@ export const ChatContainer = ({
   onNewChat 
 }: ChatContainerProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [inputValue, setInputValue] = useState("");
   const { 
     messages,
     setMessages,
     isLoading,
-    handleSubmit,
-    handleFileUpload
+    handleSubmit
   } = useChatMessages(chatId);
 
   useEffect(() => {
@@ -49,6 +49,13 @@ export const ChatContainer = ({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputValue.trim()) return;
+    handleSubmit(inputValue);
+    setInputValue("");
+  };
+
   return (
     <div className="flex flex-col h-full">
       <ChatActions onNewChat={onNewChat} />
@@ -56,18 +63,10 @@ export const ChatContainer = ({
         <MessageList messages={messages} messagesEndRef={messagesEndRef} />
       </div>
       <ChatInput
-        input=""
-        setInput={() => {}}
+        input={inputValue}
+        setInput={setInputValue}
         isLoading={isLoading}
-        onSubmit={(e) => {
-          e.preventDefault();
-          const input = e.currentTarget.querySelector('input')?.value || '';
-          handleSubmit(input);
-        }}
-        onFileUpload={(e) => {
-          const file = e.target.files?.[0];
-          if (file) handleFileUpload(file);
-        }}
+        onSubmit={handleFormSubmit}
       />
     </div>
   );
