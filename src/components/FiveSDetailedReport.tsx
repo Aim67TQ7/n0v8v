@@ -67,7 +67,7 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
   }
 
   return (
-    <Card className="p-6 mt-8">
+    <Card className="p-6 mt-8 page-break-before landscape-mode">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <FiveSSection
           title="Sort"
