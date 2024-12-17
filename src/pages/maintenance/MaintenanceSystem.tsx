@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Wrench, Database, Calendar, CheckSquare, Clock } from "lucide-react";
+import { Wrench, Database, Calendar, CheckSquare, Clock, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { FiveSVisionImageUploader } from "@/components/FiveSVisionImageUploader";
 import { EquipmentAnalysisResults } from "@/components/maintenance/EquipmentAnalysisResults";
+import { MaintenanceRecallList } from "@/components/maintenance/MaintenanceRecallList";
 
 const MaintenanceSystem = () => {
   const [images, setImages] = useState<File[]>([]);
@@ -105,6 +106,7 @@ const MaintenanceSystem = () => {
         <TabsList>
           <TabsTrigger value="analyze">Analyze Equipment</TabsTrigger>
           <TabsTrigger value="schedules">Maintenance Schedules</TabsTrigger>
+          <TabsTrigger value="recalls">Recall System</TabsTrigger>
         </TabsList>
 
         <TabsContent value="analyze">
@@ -186,6 +188,10 @@ const MaintenanceSystem = () => {
 
         <TabsContent value="schedules">
           <EquipmentList />
+        </TabsContent>
+
+        <TabsContent value="recalls">
+          <MaintenanceRecallList />
         </TabsContent>
       </Tabs>
     </div>
