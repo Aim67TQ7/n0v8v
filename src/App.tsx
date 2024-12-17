@@ -9,6 +9,7 @@ import { Header } from "@/components/Header";
 import { useLocation, Navigate } from "react-router-dom";
 import { useState, Suspense } from "react";
 import { SplashScreen } from "@/components/SplashScreen";
+import FiveSVision from "@/pages/FiveSVision";
 
 // Loading component for route transitions
 const RouteLoadingComponent = () => (
@@ -68,6 +69,7 @@ const AppContent = () => {
               <AuthWrapper>
                 <main className="flex-1">
                   <Routes>
+                    <Route path="/operations/lean/5s-vision" element={<FiveSVision />} />
                     {routes
                       .filter(route => !publicRoutes.includes(route.path))
                       .map(route => (
