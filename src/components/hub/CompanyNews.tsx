@@ -3,8 +3,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { NewsItem } from "./news/NewsItem";
+import { useEffect, useRef } from "react";
 
 export const CompanyNews = () => {
+  const scrollRef = useRef<HTMLDivElement>(null);
   const { data: news } = useQuery({
     queryKey: ["company-news"],
     queryFn: async () => {
@@ -19,9 +21,48 @@ export const CompanyNews = () => {
     },
   });
 
+  useEffect(() => {
+    const scrollContainer = scrollRef.current;
+    if (!scrollContainer || !news?.length) return;
+
+    let animationFrameId: number;
+    let startTime: number;
+    const duration = 20000; // 20 seconds for a complete scroll cycle
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = (elapsed % duration) / duration;
+      
+      const totalHeight = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+      scrollContainer.scrollTop = totalHeight * progress;
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animationFrameId = requestAnimationFrame(animate);
+
+    const handleHover = () => cancelAnimationFrame(animationFrameId);
+    const handleLeave = () => {
+      startTime = 0;
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    scrollContainer.addEventListener('mouseenter', handleHover);
+    scrollContainer.addEventListener('mouseleave', handleLeave);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('mouseenter', handleHover);
+        scrollContainer.removeEventListener('mouseleave', handleLeave);
+      }
+    };
+  }, [news]);
+
   return (
     <Card className="p-1 bg-gradient-to-r from-indigo-50 to-blue-50 border border-blue-100 shadow-lg">
-      <ScrollArea className="h-[120px]">
+      <ScrollArea className="h-[120px]" ref={scrollRef}>
         <div className="divide-y divide-gray-200">
           {news?.map((item) => (
             <div 
