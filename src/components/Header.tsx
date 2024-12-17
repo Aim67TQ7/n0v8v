@@ -29,7 +29,7 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4">
+      <div className="mx-auto max-w-[1280px] px-4">
         <div className="flex items-center justify-between h-16">
           {/* Navigation Links */}
           <nav className="flex items-center space-x-4">
