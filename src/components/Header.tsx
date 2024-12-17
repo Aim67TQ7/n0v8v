@@ -50,6 +50,15 @@ export const Header = () => {
               <Wrench className="h-4 w-4" />
               Tools
             </Button>
+
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate("/agents")} 
+              className="gap-2"
+            >
+              <Bot className="h-4 w-4" />
+              Agents
+            </Button>
             
             {session ? (
               <>

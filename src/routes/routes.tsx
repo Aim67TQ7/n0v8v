@@ -7,6 +7,7 @@ import { dashboardRoutes } from "./dashboardRoutes";
 import { operationsRoutes } from "./operationsRoutes";
 import { productionRoutes } from "./productionRoutes";
 import { marketingRoutes } from "./marketingRoutes";
+import AgentsHub from "@/pages/agents/AgentsHub";
 
 // Loading component for route transitions
 const RouteLoadingComponent = () => (
@@ -21,7 +22,11 @@ export const allRoutes = [
   ...dashboardRoutes,
   ...operationsRoutes,
   ...productionRoutes,
-  ...marketingRoutes
+  ...marketingRoutes,
+  {
+    path: "/agents",
+    element: <AgentsHub />
+  }
 ];
 
 export const AppRoutes = () => {
