@@ -10,7 +10,11 @@ import {
   Briefcase,
   Scale,
   Factory,
-  FileText
+  FileText,
+  Activity,
+  Settings,
+  Package,
+  Tool
 } from "lucide-react";
 import { ModuleCardProps } from "./ModuleCard";
 
@@ -23,10 +27,10 @@ export const modulesList: ModuleCardProps[] = [
     status: "ready"
   },
   {
-    title: "Supply Chain",
-    description: "Manage vendors, inventory, and logistics",
-    icon: TruckIcon,
-    href: "/operations/supply-chain",
+    title: "Production",
+    description: "Manage production planning and execution",
+    icon: Factory,
+    href: "/operations/production",
     status: "ready"
   },
   {
@@ -39,8 +43,29 @@ export const modulesList: ModuleCardProps[] = [
   {
     title: "Lean Manufacturing",
     description: "5S, Kaizen, and continuous improvement tools",
-    icon: Factory,
+    icon: Activity,
     href: "/operations/lean",
+    status: "ready"
+  },
+  {
+    title: "Supply Chain",
+    description: "Manage vendors, inventory, and logistics",
+    icon: TruckIcon,
+    href: "/operations/supply-chain",
+    status: "ready"
+  },
+  {
+    title: "Engineering",
+    description: "Technical documentation and processes",
+    icon: Settings,
+    href: "/operations/engineering",
+    status: "ready"
+  },
+  {
+    title: "Maintenance",
+    description: "Equipment maintenance and scheduling",
+    icon: Tool,
+    href: "/operations/maintenance",
     status: "ready"
   },
   {
@@ -65,10 +90,10 @@ export const modulesList: ModuleCardProps[] = [
     status: "ready"
   },
   {
-    title: "Tools",
-    description: "Access AI-powered tools and automation",
-    icon: Wrench,
-    href: "/tools",
+    title: "Inventory",
+    description: "Manage parts and materials inventory",
+    icon: Package,
+    href: "/operations/inventory",
     status: "ready"
   },
   {
