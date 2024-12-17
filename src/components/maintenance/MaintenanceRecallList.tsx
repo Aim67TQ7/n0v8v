@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Bell, Calendar, Clock, AlertTriangle } from "lucide-react";
-import { format, addDays } from "date-fns";
+import { Bell, Calendar, Clock, AlertTriangle, HardDrive } from "lucide-react";
+import { format } from "date-fns";
 
 interface RecallItem {
   id: string;
@@ -66,7 +66,7 @@ export const MaintenanceRecallList = () => {
                 </th>
                 <th className="text-left p-2">
                   <div className="flex items-center gap-2">
-                    <Database className="w-4 h-4" />
+                    <HardDrive className="w-4 h-4" />
                     Equipment ID
                   </div>
                 </th>

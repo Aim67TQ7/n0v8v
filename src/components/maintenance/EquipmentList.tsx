@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { MaintenanceScheduleList } from "./MaintenanceScheduleList";
-import { Database, Settings, CheckSquare, Calendar, Clock, Tool } from "lucide-react";
+import { HardDrive, Settings, CheckSquare, Calendar, Clock, Wrench } from "lucide-react";
 import { addMonths, format } from "date-fns";
 
 export const EquipmentList = () => {
@@ -69,7 +69,7 @@ export const EquipmentList = () => {
               <tr className="border-b">
                 <th className="text-left p-2">
                   <div className="flex items-center gap-2">
-                    <Database className="w-4 h-4" />
+                    <HardDrive className="w-4 h-4" />
                     ID
                   </div>
                 </th>
@@ -81,7 +81,7 @@ export const EquipmentList = () => {
                 </th>
                 <th className="text-left p-2">
                   <div className="flex items-center gap-2">
-                    <Tool className="w-4 h-4" />
+                    <Wrench className="w-4 h-4" />
                     Maintenance Required
                   </div>
                 </th>
