@@ -52,6 +52,7 @@ export const HubLinks = () => {
     {
       title: "Modules",
       icon: Grid,
+      href: "/modules",
       links: [
         { name: "Company Resources", href: "/modules" },
         { name: "HR Operations", href: "/operations/hr" },
@@ -84,8 +85,20 @@ export const HubLinks = () => {
               className="bg-white p-3 shadow-sm"
             >
               <div className="flex items-center gap-2 mb-1.5">
-                <section.icon className="h-4 w-4 text-gray-700" />
-                <h3 className="text-sm font-medium text-gray-900">{section.title}</h3>
+                {section.href ? (
+                  <Link 
+                    to={section.href}
+                    className="flex items-center gap-2 text-gray-900 hover:text-black"
+                  >
+                    <section.icon className="h-4 w-4 text-gray-700" />
+                    <h3 className="text-sm font-medium">{section.title}</h3>
+                  </Link>
+                ) : (
+                  <>
+                    <section.icon className="h-4 w-4 text-gray-700" />
+                    <h3 className="text-sm font-medium text-gray-900">{section.title}</h3>
+                  </>
+                )}
               </div>
               <div className="space-y-1">
                 {section.links.map((link) => (
