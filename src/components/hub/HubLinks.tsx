@@ -6,6 +6,16 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 export const HubLinks = () => {
   const navigate = useNavigate();
   
+  const handleResourceClick = (href: string) => {
+    if (href === "company-resource://teams") {
+      window.location.href = "msteams://";
+      return;
+    }
+    if (href.startsWith('company-resource://')) {
+      console.log('Electron will handle:', href);
+    }
+  };
+
   const sections = [
     {
       title: "Resources",
@@ -44,13 +54,6 @@ export const HubLinks = () => {
     }
   ];
 
-  const handleLinkClick = (href: string, e: React.MouseEvent) => {
-    if (href.startsWith('company-resource://')) {
-      e.preventDefault();
-      console.log('Electron will handle:', href);
-    }
-  };
-
   return (
     <Card className="card h-[calc(100vh-8rem)] flex flex-col bg-white">
       <ScrollArea className="flex-1 p-4">
@@ -71,7 +74,10 @@ export const HubLinks = () => {
                     key={link.name}
                     to={link.href}
                     className="block text-xs text-gray-700 hover:text-black hover:bg-gray-100 py-0.5 px-2 rounded transition-colors"
-                    onClick={(e) => handleLinkClick(link.href, e)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleResourceClick(link.href);
+                    }}
                   >
                     {link.name}
                   </Link>
