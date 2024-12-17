@@ -21,31 +21,34 @@ serve(async (req) => {
     );
 
     // Create a detailed system prompt using the equipment details
-    const systemPrompt = `You are an expert in industrial equipment maintenance, specializing in analyzing equipment images and documentation. 
-    Your task is to:
+    const systemPrompt = `You are an expert in industrial equipment maintenance and documentation. 
+    Analyze the provided equipment details and/or images to:
     1. Identify the equipment (make, model, manufacturer)
-    2. Search for and identify relevant product manuals and documentation
-    3. Assess current condition
+    2. Find relevant product manuals and documentation
+    3. Assess current condition if images are provided
     4. Provide detailed maintenance recommendations
     5. List required tools and skills
     6. Outline safety precautions
     7. Suggest maintenance intervals
     8. Find manufacturer contact information and support resources
     
+    If manuals cannot be found, provide alternative manufacturer contact methods and support resources.
+    Format your response as a detailed JSON object with all findings.
+    
     Equipment details provided: ${equipmentDetails}`;
 
-    console.log('Sending request to Perplexity');
+    console.log('Sending request to OpenAI');
 
-    // Process each image with Perplexity
+    // Process each image with OpenAI Vision
     const analysisPromises = imageData.map(async (base64Image: string) => {
-      const response = await fetch('https://api.perplexity.ai/chat/completions', {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${Deno.env.get('PERPLEXITY_API_KEY')}`,
+          'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'llama-3.1-sonar-large-128k-online',
+          model: 'gpt-4o',
           messages: [
             {
               role: 'system',
@@ -56,7 +59,7 @@ serve(async (req) => {
               content: [
                 {
                   type: 'text',
-                  text: "Analyze this equipment image and provide detailed maintenance recommendations. If possible, identify any manuals or documentation resources."
+                  text: "Analyze this equipment image and provide detailed maintenance recommendations. If possible, identify any text visible in the image that could help locate manuals or documentation."
                 },
                 {
                   type: 'image_url',
@@ -68,14 +71,12 @@ serve(async (req) => {
             }
           ],
           temperature: 0.2,
-          max_tokens: 2000,
-          search_domain_filter: ['perplexity.ai', 'manuals.plus', 'manualslib.com', 'support.industry.siemens.com'],
-          search_recency_filter: 'year'
+          max_tokens: 2000
         })
       });
 
       if (!response.ok) {
-        throw new Error(`Perplexity API error: ${response.status}`);
+        throw new Error(`OpenAI API error: ${response.status}`);
       }
 
       return await response.json();
