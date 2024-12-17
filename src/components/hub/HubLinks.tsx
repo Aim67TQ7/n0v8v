@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
-import { Folder, Grid, Wrench } from "lucide-react";
+import { Folder, Grid, Wrench, Newspaper } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const HubLinks = () => {
@@ -56,6 +56,7 @@ export const HubLinks = () => {
       links: [
         { name: "Company Resources", href: "/modules" },
         { name: "HR Operations", href: "/operations/hr" },
+        { name: "Company News", href: "/operations/hr/company-news" },
         { name: "Engineering", href: "/operations/engineering" },
         { name: "Facilities", href: "/operations/facilities" },
         { name: "Quality", href: "/operations/quality" },
@@ -66,6 +67,7 @@ export const HubLinks = () => {
       title: "Efficiency Tools",
       icon: Wrench,
       links: [
+        { name: "Company News", href: "/operations/hr/company-news" },
         { name: "5S Scoring", href: "/operations/lean/5s-vision" },
         { name: "Five Whys", href: "/operations/quality/five-whys" },
         { name: "PM Assist", href: "/operations/maintenance" },

@@ -9,7 +9,8 @@ import {
   Building,
   Building2,
   Package,
-  FileText
+  FileText,
+  Newspaper
 } from "lucide-react";
 import type { ModuleCardProps } from "../ModuleCard";
 
@@ -58,7 +59,7 @@ export const operationsModules: ModuleCardProps[] = [
   },
   {
     title: "HR Operations",
-    description: "Employee management and HR tools",
+    description: "Employee management, company news, and HR tools",
     icon: Users,
     href: "/operations/hr",
     status: "ready"
