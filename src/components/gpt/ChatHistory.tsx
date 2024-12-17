@@ -1,7 +1,6 @@
-import { MessageSquare, Search } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 interface ChatSession {
