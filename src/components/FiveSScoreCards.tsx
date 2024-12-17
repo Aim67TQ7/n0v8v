@@ -21,7 +21,7 @@ export const FiveSScoreCards = ({
 }: FiveSScoreCardsProps) => {
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-[80%] mx-auto">
         <Card className="p-3">
           <div className="space-y-2">
             <div className="text-center py-2">
