@@ -23,15 +23,6 @@ export const FiveSScoreCards = ({
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <Card className="p-3">
         <div className="space-y-2">
-          <div>
-            <h2 className="text-xl font-bold text-primary">
-              {evaluationData.workcenter?.name}
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              {format(new Date(evaluationData.created_at), 'PPP')}
-            </p>
-          </div>
-          
           <div className="text-center py-2">
             <div className="text-3xl font-bold text-primary">
               {scorePercentage.toFixed(1)}%
@@ -60,6 +51,17 @@ export const FiveSScoreCards = ({
               canShowAdvancedScores={canShowAdvancedScores}
             />
           </div>
+        </div>
+      </Card>
+
+      <Card className="p-3">
+        <div>
+          <h2 className="text-xl font-bold text-primary">
+            {evaluationData.workcenter?.name}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {format(new Date(evaluationData.created_at), 'PPP')}
+          </p>
         </div>
       </Card>
 
