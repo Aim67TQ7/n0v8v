@@ -68,13 +68,22 @@ export const StepAnalysis = ({ onComplete }: StepAnalysisProps) => {
     }
   };
 
+  // Guard against invalid currentStep
+  if (state.currentStep >= state.steps.length) {
+    return null;
+  }
+
   const currentStep = state.steps[state.currentStep];
+  if (!currentStep) {
+    return null;
+  }
+
   const Icon = categoryIcons[currentStep.category];
 
   return (
     <Card className="p-6">
       <div className="flex items-center gap-3 mb-4">
-        <Icon className="h-6 w-6 text-primary" />
+        {Icon && <Icon className="h-6 w-6 text-primary" />}
         <h2 className="text-xl font-semibold">
           {state.round === 1 ? 'Initial Analysis' : 'Detailed Analysis'}: {currentStep.title}
         </h2>

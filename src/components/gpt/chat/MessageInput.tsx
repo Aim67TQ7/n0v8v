@@ -11,7 +11,13 @@ export interface ChatInputProps {
   onNew?: () => void;
 }
 
-export const MessageInput = ({ input, setInput, isLoading, onSubmit, onNew }: ChatInputProps) => {
+export const MessageInput = ({ 
+  input, 
+  setInput, 
+  isLoading, 
+  onSubmit,
+  onNew 
+}: ChatInputProps) => {
   return (
     <form onSubmit={onSubmit} className="flex items-center gap-2 p-4 border-t">
       {onNew && (

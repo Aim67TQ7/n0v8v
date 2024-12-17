@@ -1,21 +1,14 @@
 import { useRef, useEffect } from "react";
-import { ChatActions } from "./ChatActions";
+import { Button } from "@/components/ui/button";
 import { ChatInput } from "./ChatInput";
 import { MessageList } from "./chat/MessageList";
 import { useChatMessages } from "./chat/useChatMessages";
-
-interface Message {
-  role: 'user' | 'assistant';
-  content: string;
-  attachment?: {
-    name: string;
-    url: string;
-  };
-}
+import { ChatActions } from "./ChatActions";
+import { Save } from "lucide-react";
 
 interface ChatContainerProps {
-  messages: Message[];
-  onMessagesChange: (messages: Message[]) => void;
+  messages: any[];
+  onMessagesChange: (messages: any[]) => void;
   chatId: string | null;
   onNewChat?: () => void;
 }
@@ -32,29 +25,26 @@ export const ChatContainer = ({
     setMessages,
     isLoading,
     handleSubmit,
-    handleFileUpload
   } = useChatMessages(chatId);
 
   useEffect(() => {
-    if (initialMessages) {
-      setMessages(initialMessages);
-    }
-  }, [initialMessages, setMessages]);
+    setMessages(initialMessages);
+  }, [initialMessages]);
 
   useEffect(() => {
-    if (onMessagesChange && messages) {
-      onMessagesChange(messages);
-    }
-  }, [messages, onMessagesChange]);
+    onMessagesChange(messages);
+  }, [messages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleFormSubmit = async (input: string) => {
-    if (!input.trim()) return;
-    await handleSubmit(input);
+  const handleSave = () => {
+    // Implement save functionality here
+    console.log("Saving chat...");
   };
+
+  const [input, setInput] = useState("");
 
   return (
     <div className="flex flex-col h-full">
@@ -62,21 +52,29 @@ export const ChatContainer = ({
       <div className="flex-1 overflow-hidden">
         <MessageList messages={messages} messagesEndRef={messagesEndRef} />
       </div>
-      <ChatInput
-        input=""
-        setInput={() => {}}
-        isLoading={isLoading}
-        onSubmit={(e) => {
-          e.preventDefault();
-          const form = e.target as HTMLFormElement;
-          const input = form.querySelector('textarea')?.value;
-          if (input) {
-            handleFormSubmit(input);
-            form.reset();
-          }
-        }}
-        onNew={onNewChat}
-      />
+      <div className="border-t p-4 space-y-2">
+        <ChatInput
+          input={input}
+          setInput={setInput}
+          isLoading={isLoading}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit(input);
+            setInput("");
+          }}
+          onNew={onNewChat}
+        />
+        <div className="flex justify-end space-x-2">
+          <Button
+            variant="outline"
+            onClick={handleSave}
+            className="gap-2"
+          >
+            <Save className="h-4 w-4" />
+            Save Chat
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
