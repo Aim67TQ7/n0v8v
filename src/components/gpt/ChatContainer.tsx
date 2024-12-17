@@ -4,9 +4,18 @@ import { ChatInput } from "./ChatInput";
 import { MessageList } from "./chat/MessageList";
 import { useChatMessages } from "./chat/useChatMessages";
 
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+  attachment?: {
+    name: string;
+    url: string;
+  };
+}
+
 interface ChatContainerProps {
-  messages: any[];
-  onMessagesChange: (messages: any[]) => void;
+  messages: Message[];
+  onMessagesChange: (messages: Message[]) => void;
   chatId: string | null;
   onNewChat?: () => void;
 }
@@ -31,22 +40,18 @@ export const ChatContainer = ({
   }, [initialMessages]);
 
   useEffect(() => {
-    onMessagesChange(messages);
-  }, [messages]);
+    if (onMessagesChange) {
+      onMessagesChange(messages);
+    }
+  }, [messages, onMessagesChange]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleNewChat = () => {
-    if (onNewChat) {
-      onNewChat();
-    }
-  };
-
   return (
     <div className="flex flex-col h-full">
-      <ChatActions onNewChat={handleNewChat} />
+      <ChatActions onNewChat={onNewChat} />
       <div className="flex-1 overflow-hidden">
         <MessageList messages={messages} messagesEndRef={messagesEndRef} />
       </div>
