@@ -22,16 +22,6 @@ export const FiveSScoreCards = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <Card className="p-3">
-        <h3 className="text-lg font-semibold mb-1">5S Scores</h3>
-        <div className="h-[200px]">
-          <FiveSRadarChart 
-            scores={evaluationData} 
-            canShowAdvancedScores={canShowAdvancedScores}
-          />
-        </div>
-      </Card>
-
-      <Card className="p-3">
         <div className="space-y-2">
           <div>
             <h2 className="text-xl font-bold text-primary">
@@ -62,6 +52,14 @@ export const FiveSScoreCards = ({
                 <span>{Math.abs(scoreDifference).toFixed(1)} points {scoreDifference > 0 ? 'improvement' : 'decrease'}</span>
               </div>
             )}
+          </div>
+
+          <h3 className="text-lg font-semibold mb-1">5S Scores</h3>
+          <div className="h-[200px]">
+            <FiveSRadarChart 
+              scores={evaluationData} 
+              canShowAdvancedScores={canShowAdvancedScores}
+            />
           </div>
         </div>
       </Card>
