@@ -54,7 +54,6 @@ export const FiveSScoreCards = ({
             )}
           </div>
 
-          <h3 className="text-lg font-semibold mb-1">5S Scores</h3>
           <div className="h-[200px]">
             <FiveSRadarChart 
               scores={evaluationData} 
