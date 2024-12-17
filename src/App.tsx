@@ -8,6 +8,7 @@ import { AuthWrapper } from "@/components/AuthWrapper";
 import { useLocation } from "react-router-dom";
 import { useState, Suspense } from "react";
 import { SplashScreen } from "@/components/SplashScreen";
+import { Header } from "@/components/Header";
 import FiveSVision from "@/pages/FiveSVision";
 
 // Loading component for route transitions
@@ -36,36 +37,25 @@ const AppContent = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Suspense fallback={<RouteLoadingComponent />}>
-        <Routes>
-          {/* Default route redirect */}
-          <Route 
-            path="/" 
-            element={
-              isAuthenticated ? (
-                <Navigate to="/company-hub" replace />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            } 
-          />
+      {showHeader && <Header />}
+      <main className="flex-1">
+        <Suspense fallback={<RouteLoadingComponent />}>
+          <Routes>
+            {/* Default route redirect */}
+            <Route 
+              path="/" 
+              element={
+                isAuthenticated ? (
+                  <Navigate to="/company-hub" replace />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              } 
+            />
 
-          {/* Public routes (no auth required) */}
-          {allRoutes
-            .filter(route => publicRoutes.includes(route.path))
-            .map(route => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={route.element}
-              />
-            ))}
-
-          {/* Protected routes */}
-          <Route element={<AuthWrapper />}>
-            <Route path="/operations/lean/5s-vision" element={<FiveSVision />} />
+            {/* Public routes (no auth required) */}
             {allRoutes
-              .filter(route => !publicRoutes.includes(route.path))
+              .filter(route => publicRoutes.includes(route.path))
               .map(route => (
                 <Route
                   key={route.path}
@@ -73,9 +63,23 @@ const AppContent = () => {
                   element={route.element}
                 />
               ))}
-          </Route>
-        </Routes>
-      </Suspense>
+
+            {/* Protected routes */}
+            <Route element={<AuthWrapper />}>
+              <Route path="/operations/lean/5s-vision" element={<FiveSVision />} />
+              {allRoutes
+                .filter(route => !publicRoutes.includes(route.path))
+                .map(route => (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={route.element}
+                  />
+                ))}
+            </Route>
+          </Routes>
+        </Suspense>
+      </main>
       <Toaster />
       <Sonner />
     </div>
