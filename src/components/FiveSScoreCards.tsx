@@ -21,7 +21,7 @@ export const FiveSScoreCards = ({
 }: FiveSScoreCardsProps) => {
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="p-3">
           <div className="space-y-2">
             <div className="text-center py-2">
@@ -56,23 +56,10 @@ export const FiveSScoreCards = ({
         </Card>
 
         <Card className="p-3">
-          <div>
-            <h2 className="text-xl font-bold text-primary">
-              {evaluationData.workcenter?.name}
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              {format(new Date(evaluationData.created_at), 'PPP')}
-            </p>
+          <div className="h-[200px]">
+            <FiveSTrend workcenterId={evaluationData.workcenter_id} />
           </div>
         </Card>
-
-        <div className="md:col-span-1">
-          <Card className="p-3">
-            <div className="h-[200px]">
-              <FiveSTrend workcenterId={evaluationData.workcenter_id} />
-            </div>
-          </Card>
-        </div>
       </div>
     </div>
   );
