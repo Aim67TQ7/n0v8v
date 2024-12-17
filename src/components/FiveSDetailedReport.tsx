@@ -43,7 +43,8 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
         recommendations: Array.isArray(data.recommendations) ? data.recommendations : [],
       };
 
-      console.log('Parsed detailed report data:', parsedData);
+      // Log the Sort checklist items specifically
+      console.log('Sort Checklist Items:', parsedData.sort_checklist);
       return parsedData;
     }
   });
