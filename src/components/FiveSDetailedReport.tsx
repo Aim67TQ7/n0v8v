@@ -68,7 +68,7 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
 
   return (
     <Card className="p-6 mt-8">
-      <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <FiveSSection
           title="Sort"
           japaneseTitle="整理"
@@ -89,7 +89,9 @@ export const FiveSDetailedReport = ({ evaluationId }: FiveSDetailedReportProps) 
           checklist={detailedReport.shine_checklist}
           positiveObservations={detailedReport.shine_positive_observations}
         />
+      </div>
 
+      <div className="mt-8">
         <FiveSFollowUp
           followUpActions={detailedReport.follow_up_actions}
           recommendations={detailedReport.recommendations}
