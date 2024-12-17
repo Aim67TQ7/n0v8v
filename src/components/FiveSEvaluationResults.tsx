@@ -112,17 +112,8 @@ export const FiveSEvaluationResults = ({
         margin: 5,
         filename: `5S-Evaluation-${evaluationData?.workcenter?.name}-${new Date().toISOString().split('T')[0]}.pdf`,
         image: { type: 'jpeg', quality: 0.95 },
-        html2canvas: { 
-          scale: 0.8, // Reduced from 1 to 0.8 (20% decrease)
-          useCORS: true, 
-          letterRendering: true 
-        },
-        jsPDF: { 
-          unit: 'mm', 
-          format: 'letter', 
-          orientation: 'portrait',
-          compress: true
-        }
+        html2canvas: { scale: 1, useCORS: true, letterRendering: true },
+        jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait', compress: true }
       };
 
       await html2pdf().set(opt).from(element).save();
