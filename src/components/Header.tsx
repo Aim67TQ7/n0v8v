@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Package, Mail, Users, Settings, ChevronDown, Bot } from "lucide-react";
+import { Package, Mail, Users, Settings, ChevronDown, Bot, Tools } from "lucide-react";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -44,11 +44,11 @@ export const Header = () => {
             
             <Button 
               variant="ghost" 
-              onClick={() => navigate("/")} 
+              onClick={() => navigate("/tools")} 
               className="gap-2 text-secondary-content interactive-element"
             >
-              <Home className="h-4 w-4" />
-              Home
+              <Tools className="h-4 w-4" />
+              Tools
             </Button>
             
             {session ? (
