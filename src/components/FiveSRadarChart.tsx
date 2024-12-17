@@ -42,11 +42,6 @@ export const FiveSRadarChart = ({ scores, canShowAdvancedScores }: FiveSRadarCha
           />
         </RadarChart>
       </ResponsiveContainer>
-      {!canShowAdvancedScores && (
-        <div className="text-sm text-gray-600 mt-2 text-center">
-          Standardize and Sustain scores will be available when Sort, Set in Order, and Shine total reaches 20 points
-        </div>
-      )}
     </div>
   );
 };
