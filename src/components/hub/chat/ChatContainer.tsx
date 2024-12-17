@@ -1,8 +1,10 @@
 import { useRef, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { ChatInput } from "@/components/gpt/ChatInput";
+import { MessageList } from "@/components/gpt/chat/MessageList";
+import { useChatMessages } from "@/components/gpt/chat/useChatMessages";
 import { ChatActions } from "./ChatActions";
-import { ChatInput } from "./ChatInput";
-import { MessageList } from "./chat/MessageList";
-import { useChatMessages } from "./chat/useChatMessages";
+import { Save } from "lucide-react";
 
 interface ChatContainerProps {
   messages: any[];
@@ -38,32 +40,43 @@ export const ChatContainer = ({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleNewChat = () => {
-    if (onNewChat) {
-      onNewChat();
-    }
+  const handleSave = () => {
+    // Implement save functionality here
+    console.log("Saving chat...");
   };
 
   return (
     <div className="flex flex-col h-full">
-      <ChatActions onNewChat={handleNewChat} />
+      <ChatActions onNewChat={onNewChat} />
       <div className="flex-1 overflow-hidden">
         <MessageList messages={messages} messagesEndRef={messagesEndRef} />
       </div>
-      <ChatInput
-        input=""
-        setInput={() => {}}
-        isLoading={isLoading}
-        onSubmit={(e) => {
-          e.preventDefault();
-          const input = e.currentTarget.querySelector('input')?.value || '';
-          handleSubmit(input);
-        }}
-        onFileUpload={(e) => {
-          const file = e.target.files?.[0];
-          if (file) handleFileUpload(file);
-        }}
-      />
+      <div className="border-t p-4 space-y-2">
+        <ChatInput
+          input=""
+          setInput={() => {}}
+          isLoading={isLoading}
+          onSubmit={(e) => {
+            e.preventDefault();
+            const input = e.currentTarget.querySelector('input')?.value || '';
+            handleSubmit(input);
+          }}
+          onFileUpload={(e) => {
+            const file = e.target.files?.[0];
+            if (file) handleFileUpload(file);
+          }}
+        />
+        <div className="flex justify-end space-x-2">
+          <Button
+            variant="outline"
+            onClick={handleSave}
+            className="gap-2"
+          >
+            <Save className="h-4 w-4" />
+            Save Chat
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
