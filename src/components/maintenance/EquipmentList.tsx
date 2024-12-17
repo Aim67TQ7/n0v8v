@@ -2,22 +2,57 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { MaintenanceScheduleList } from "./MaintenanceScheduleList";
-import { Database, Settings, CheckSquare, Calendar, Clock } from "lucide-react";
+import { Database, Settings, CheckSquare, Calendar, Clock, Tool } from "lucide-react";
+import { addMonths, format } from "date-fns";
 
 export const EquipmentList = () => {
   const { data: equipment, isLoading } = useQuery({
     queryKey: ['equipment'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('equipment')
-        .select(`
-          *,
-          maintenance_schedules (*)
-        `)
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data;
+      // For demonstration, we'll return simulated data
+      const simulatedData = [
+        {
+          id: "EQ001",
+          make: "Mazak",
+          model: "QT-15",
+          maintenance_type: "Spindle Bearing Inspection, Coolant System Cleaning",
+          last_maintenance_date: "2024-03-01",
+          next_maintenance_date: format(addMonths(new Date("2024-03-01"), 6), 'yyyy-MM-dd')
+        },
+        {
+          id: "EQ002",
+          make: "Haas",
+          model: "VF-2",
+          maintenance_type: "Tool Changer Maintenance, Way Lube System Check",
+          last_maintenance_date: "2024-02-15",
+          next_maintenance_date: format(addMonths(new Date("2024-02-15"), 6), 'yyyy-MM-dd')
+        },
+        {
+          id: "EQ003",
+          make: "DMG MORI",
+          model: "NLX 2500",
+          maintenance_type: "Hydraulic System Service, Chuck Maintenance",
+          last_maintenance_date: "2024-03-10",
+          next_maintenance_date: format(addMonths(new Date("2024-03-10"), 6), 'yyyy-MM-dd')
+        },
+        {
+          id: "EQ004",
+          make: "Okuma",
+          model: "LB3000 EX",
+          maintenance_type: "Turret Alignment, Coolant Tank Cleaning",
+          last_maintenance_date: "2024-02-28",
+          next_maintenance_date: format(addMonths(new Date("2024-02-28"), 6), 'yyyy-MM-dd')
+        },
+        {
+          id: "EQ005",
+          make: "Doosan",
+          model: "Puma 2600",
+          maintenance_type: "Ball Screw Inspection, Lubrication System Check",
+          last_maintenance_date: "2024-03-05",
+          next_maintenance_date: format(addMonths(new Date("2024-03-05"), 6), 'yyyy-MM-dd')
+        }
+      ];
+      return simulatedData;
     }
   });
 
@@ -46,6 +81,12 @@ export const EquipmentList = () => {
                 </th>
                 <th className="text-left p-2">
                   <div className="flex items-center gap-2">
+                    <Tool className="w-4 h-4" />
+                    Maintenance Required
+                  </div>
+                </th>
+                <th className="text-left p-2">
+                  <div className="flex items-center gap-2">
                     <CheckSquare className="w-4 h-4" />
                     Maintenance Performed
                   </div>
@@ -67,20 +108,15 @@ export const EquipmentList = () => {
             <tbody>
               {equipment?.map((item) => (
                 <tr key={item.id} className="border-b hover:bg-muted/50">
-                  <td className="p-2">{item.id.slice(0, 8)}</td>
+                  <td className="p-2">{item.id}</td>
                   <td className="p-2">{item.make} {item.model}</td>
+                  <td className="p-2">{item.maintenance_type}</td>
+                  <td className="p-2">Yes</td>
                   <td className="p-2">
-                    {item.last_maintenance_date ? 'Yes' : 'No'}
+                    {new Date(item.last_maintenance_date).toLocaleDateString()}
                   </td>
                   <td className="p-2">
-                    {item.last_maintenance_date ? 
-                      new Date(item.last_maintenance_date).toLocaleDateString() : 
-                      'N/A'}
-                  </td>
-                  <td className="p-2">
-                    {item.next_maintenance_date ? 
-                      new Date(item.next_maintenance_date).toLocaleDateString() : 
-                      'Not Scheduled'}
+                    {new Date(item.next_maintenance_date).toLocaleDateString()}
                   </td>
                 </tr>
               ))}
