@@ -78,6 +78,9 @@ export const HubLinks = () => {
       title: "Agents",
       icon: Bot,
       links: [
+        { name: "Maggie (Inside Sales)", href: "/sales/research" },
+        { name: "Faraday (Technical)", href: "/operations/engineering/research" },
+        { name: "Magnus (Service)", href: "/operations/service/research" },
         { name: "Market Research", href: "/marketing/research" },
         { name: "VAVE Analysis", href: "/operations/quality/vave" },
       ]
