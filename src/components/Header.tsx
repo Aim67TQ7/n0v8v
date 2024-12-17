@@ -28,7 +28,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="card">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Navigation Links */}
@@ -36,19 +36,18 @@ export const Header = () => {
             <Button 
               variant="ghost" 
               onClick={() => navigate("/tools")} 
-              className="gap-2 text-secondary-content interactive-element"
+              className="gap-2"
             >
               <Wrench className="h-4 w-4" />
               Tools
             </Button>
             
             {session ? (
-              // Show these links only for authenticated users
               <>
                 <Button 
                   variant="ghost" 
                   onClick={() => navigate("/modules")} 
-                  className="gap-2 text-secondary-content interactive-element"
+                  className="gap-2"
                 >
                   <Package className="h-4 w-4" />
                   Modules
@@ -56,7 +55,7 @@ export const Header = () => {
                 <Button 
                   variant="ghost" 
                   onClick={openOutlook} 
-                  className="gap-2 text-secondary-content interactive-element"
+                  className="gap-2"
                 >
                   <Mail className="h-4 w-4" />
                   Contact
@@ -64,7 +63,7 @@ export const Header = () => {
                 <Button 
                   variant="ghost" 
                   onClick={openTeams} 
-                  className="gap-2 text-secondary-content interactive-element"
+                  className="gap-2"
                 >
                   <Users className="h-4 w-4" />
                   Teams
@@ -72,7 +71,7 @@ export const Header = () => {
                 <Button 
                   variant="ghost" 
                   onClick={() => navigate("/settings")} 
-                  className="gap-2 text-secondary-content interactive-element"
+                  className="gap-2"
                 >
                   <Settings className="h-4 w-4" />
                   Settings
@@ -86,10 +85,10 @@ export const Header = () => {
             {session && (
               <div className="flex items-center gap-4">
                 <div className="flex flex-col items-end">
-                  <span className="text-sm font-medium text-primary-content">
+                  <span className="text-sm font-medium">
                     {session.user.email}
                   </span>
-                  <span className="text-xs px-2 py-1 content-area rounded-full">
+                  <span className="text-xs px-2 py-1 bg-muted rounded-full">
                     DEMO Company
                   </span>
                 </div>
@@ -99,7 +98,7 @@ export const Header = () => {
                       <ChevronDown className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="card">
+                  <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
                       Sign Out
                     </DropdownMenuItem>

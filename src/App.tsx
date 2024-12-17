@@ -11,6 +11,7 @@ import { SplashScreen } from "@/components/SplashScreen";
 import { Header } from "@/components/Header";
 import FiveSVision from "@/pages/FiveSVision";
 import CompanyNews from "@/pages/operations/hr/CompanyNews";
+import GoogleMapsScraper from "@/pages/leads/GoogleMapsScraper";
 
 // Loading component for route transitions
 const RouteLoadingComponent = () => (
@@ -22,7 +23,7 @@ const RouteLoadingComponent = () => (
 const AppContent = () => {
   const publicRoutes = ['/login', '/reset-password', '/register'];
   const location = useLocation();
-  const hideHeaderRoutes = ['/company-gpt', '/operations/lean/5s-vision'];
+  const hideHeaderRoutes = ['/login', '/reset-password', '/register'];
   const showHeader = !hideHeaderRoutes.includes(location.pathname);
   const [showSplash, setShowSplash] = useState(true);
   const { isAuthenticated } = useAuth();
@@ -69,6 +70,7 @@ const AppContent = () => {
             <Route element={<AuthWrapper />}>
               <Route path="/operations/lean/5s-vision" element={<FiveSVision />} />
               <Route path="/operations/hr/company-news" element={<CompanyNews />} />
+              <Route path="/leads/scraping/google-maps" element={<GoogleMapsScraper />} />
               {allRoutes
                 .filter(route => !publicRoutes.includes(route.path))
                 .map(route => (
