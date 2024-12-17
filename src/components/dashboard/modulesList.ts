@@ -1,4 +1,17 @@
-import { Bot, Building2, Building, ChartBar, Wrench } from "lucide-react";
+import { 
+  Bot, 
+  Building2, 
+  Wrench, 
+  ChartBar, 
+  Building,
+  TruckIcon,
+  ShieldCheck,
+  Users,
+  Briefcase,
+  Scale,
+  Factory,
+  FileText
+} from "lucide-react";
 import { ModuleCardProps } from "./ModuleCard";
 
 export const modulesList: ModuleCardProps[] = [
@@ -10,10 +23,45 @@ export const modulesList: ModuleCardProps[] = [
     status: "ready"
   },
   {
-    title: "Modules",
-    description: "Access all organizational modules and functions",
+    title: "Supply Chain",
+    description: "Manage vendors, inventory, and logistics",
+    icon: TruckIcon,
+    href: "/operations/supply-chain",
+    status: "ready"
+  },
+  {
+    title: "Quality",
+    description: "Quality control and assurance tools",
+    icon: ShieldCheck,
+    href: "/operations/quality",
+    status: "ready"
+  },
+  {
+    title: "Lean Manufacturing",
+    description: "5S, Kaizen, and continuous improvement tools",
+    icon: Factory,
+    href: "/operations/lean",
+    status: "ready"
+  },
+  {
+    title: "HR Operations",
+    description: "Employee management and HR tools",
+    icon: Users,
+    href: "/operations/hr",
+    status: "ready"
+  },
+  {
+    title: "Customer Focus",
+    description: "CRM and customer service tools",
+    icon: Building,
+    href: "/operations/customer-focus",
+    status: "ready"
+  },
+  {
+    title: "Facilities",
+    description: "Manage facilities and maintenance",
     icon: Building2,
-    href: "/modules",
+    href: "/operations/facilities",
     status: "ready"
   },
   {
@@ -24,17 +72,17 @@ export const modulesList: ModuleCardProps[] = [
     status: "ready"
   },
   {
+    title: "Compliance",
+    description: "Regulatory compliance and documentation",
+    icon: FileText,
+    href: "/operations/compliance",
+    status: "ready"
+  },
+  {
     title: "Company Metrics",
     description: "View and analyze key performance indicators",
     icon: ChartBar,
     href: "/metrics",
-    status: "coming-soon"
-  },
-  {
-    title: "Vertical Agents",
-    description: "Industry-specific AI agents for customer engagement",
-    icon: Building,
-    href: "/vertical-agents",
     status: "coming-soon"
   }
 ];
