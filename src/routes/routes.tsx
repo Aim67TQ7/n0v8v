@@ -15,6 +15,15 @@ const RouteLoadingComponent = () => (
   </div>
 );
 
+// Combine all routes
+export const routes = [
+  ...authRoutes,
+  ...dashboardRoutes,
+  ...operationsRoutes,
+  ...productionRoutes,
+  ...marketingRoutes
+];
+
 export const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
   const publicRoutes = ['/login', '/reset-password', '/register'];
@@ -87,5 +96,3 @@ export const AppRoutes = () => {
     </Suspense>
   );
 };
-
-export { authRoutes };

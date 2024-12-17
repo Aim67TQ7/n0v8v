@@ -1,12 +1,11 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { AppProviders } from "@/components/AppProviders";
 import { routes } from "@/routes/routes";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { AuthWrapper } from "@/components/AuthWrapper";
-import { Header } from "@/components/Header";
-import { useLocation, Navigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useState, Suspense } from "react";
 import { SplashScreen } from "@/components/SplashScreen";
 import FiveSVision from "@/pages/FiveSVision";
@@ -37,7 +36,6 @@ const AppContent = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {showHeader && <Header />}
       <Suspense fallback={<RouteLoadingComponent />}>
         <Routes>
           {/* Default route redirect */}
@@ -64,27 +62,18 @@ const AppContent = () => {
             ))}
 
           {/* Protected routes */}
-          <Route
-            path="*"
-            element={
-              <AuthWrapper>
-                <main className="flex-1">
-                  <Routes>
-                    <Route path="/operations/lean/5s-vision" element={<FiveSVision />} />
-                    {routes
-                      .filter(route => !publicRoutes.includes(route.path))
-                      .map(route => (
-                        <Route
-                          key={route.path}
-                          path={route.path}
-                          element={route.element}
-                        />
-                      ))}
-                  </Routes>
-                </main>
-              </AuthWrapper>
-            }
-          />
+          <Route element={<AuthWrapper />}>
+            <Route path="/operations/lean/5s-vision" element={<FiveSVision />} />
+            {routes
+              .filter(route => !publicRoutes.includes(route.path))
+              .map(route => (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={route.element}
+                />
+              ))}
+          </Route>
         </Routes>
       </Suspense>
       <Toaster />
