@@ -9,8 +9,8 @@ import Tools from "@/pages/Tools";
 import CompanyHub from "@/pages/CompanyHub";
 import Facilities from "@/pages/operations/Facilities";
 import Production from "@/pages/operations/Production";
+import MaintenanceSystem from "@/pages/maintenance/MaintenanceSystem";
 
-// Lazy load operation pages
 const HROperations = lazy(() => import("@/pages/operations/hr"));
 const CompanyNews = lazy(() => import("@/pages/operations/hr/CompanyNews"));
 const TrainingMatrix = lazy(() => import("@/pages/training/TrainingMatrix"));
@@ -95,6 +95,10 @@ export const routes = [
   {
     path: "/operations/production",
     element: <Production />
+  },
+  {
+    path: "/operations/maintenance",
+    element: <MaintenanceSystem />
   },
   {
     path: "/operations/production/planning",
