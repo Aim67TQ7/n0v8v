@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send, Loader2 } from "lucide-react";
+import { FormEvent } from "react";
 
 interface ChatInputProps {
   input: string;
   setInput: (value: string) => void;
   isLoading: boolean;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (e: FormEvent) => void;
 }
 
 export const ChatInput = ({ 

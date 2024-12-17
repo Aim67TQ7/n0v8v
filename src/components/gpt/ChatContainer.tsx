@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChatInput } from "./ChatInput";
 import { MessageList } from "./chat/MessageList";
@@ -62,7 +62,6 @@ export const ChatContainer = ({
             handleSubmit(input);
             setInput("");
           }}
-          onNew={onNewChat}
         />
         <div className="flex justify-end space-x-2">
           <Button

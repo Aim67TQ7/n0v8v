@@ -71,8 +71,8 @@ export const ChatInterface = ({
       </div>
 
       <MessageInput
-        inputValue={inputValue}
-        setInputValue={setInputValue}
+        input={inputValue}
+        setInput={setInputValue}
         isLoading={isLoading}
         onSubmit={handleSubmit}
       />
