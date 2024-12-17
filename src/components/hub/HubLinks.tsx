@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
-import { Folder, Grid, Wrench, Newspaper, Robot } from "lucide-react";
+import { Folder, Grid, Wrench, Newspaper, Bot, TruckIcon, Megaphone, Phone, FileText } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const HubLinks = () => {
@@ -54,20 +54,19 @@ export const HubLinks = () => {
       icon: Grid,
       href: "/modules",
       links: [
-        { name: "Company Resources", href: "/modules" },
+        { name: "Lean", href: "/operations/lean" },
+        { name: "Supply Chain", href: "/operations/supply-chain" },
+        { name: "Marketing", href: "/marketing" },
+        { name: "Inside Sales", href: "/sales" },
+        { name: "Compliance", href: "/operations/compliance" },
         { name: "HR Operations", href: "/operations/hr" },
-        { name: "Company News", href: "/operations/hr/company-news" },
         { name: "Engineering", href: "/operations/engineering" },
-        { name: "Facilities", href: "/operations/facilities" },
-        { name: "Quality", href: "/operations/quality" },
-        { name: "Production", href: "/operations/production" },
       ]
     },
     {
       title: "Efficiency Tools",
       icon: Wrench,
       links: [
-        { name: "Company News", href: "/operations/hr/company-news" },
         { name: "5S Scoring", href: "/operations/lean/5s-vision" },
         { name: "Five Whys", href: "/operations/quality/five-whys" },
         { name: "PM Assist", href: "/operations/maintenance" },
@@ -77,7 +76,7 @@ export const HubLinks = () => {
     },
     {
       title: "Agents",
-      icon: Robot,
+      icon: Bot,
       links: [
         { name: "Market Research", href: "/marketing/research" },
       ]
