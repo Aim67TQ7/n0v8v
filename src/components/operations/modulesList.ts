@@ -15,7 +15,12 @@ import {
   MessageSquare,
   User,
   Mail,
-  BarChart2
+  BarChart2,
+  GitFork,
+  Fish,
+  Database,
+  Tool,
+  Image
 } from "lucide-react";
 import type { ModuleCardProps } from "./ModuleCard";
 
@@ -91,6 +96,51 @@ export const customerFocusTools: ModuleCardProps[] = [
     description: "Web scraping tools for automated lead generation",
     icon: Globe,
     href: "/leads/scraping",
+    status: "ready"
+  }
+];
+
+export const efficiencyTools: ModuleCardProps[] = [
+  {
+    title: "5S Analysis",
+    description: "Detailed 5S workplace organization analysis",
+    icon: Database,
+    href: "/operations/lean/5s-vision",
+    status: "ready"
+  },
+  {
+    title: "Five Whys Analysis",
+    description: "Root cause analysis using Five Whys methodology",
+    icon: GitFork,
+    href: "/operations/quality/five-whys",
+    status: "ready"
+  },
+  {
+    title: "Fishbone Analysis",
+    description: "Cause and effect analysis using Fishbone diagram",
+    icon: Fish,
+    href: "/operations/quality/fishbone",
+    status: "ready"
+  },
+  {
+    title: "Process Analysis",
+    description: "Visual process analysis and improvement",
+    icon: Image,
+    href: "/operations/process",
+    status: "ready"
+  },
+  {
+    title: "VAVE Analysis",
+    description: "Value Analysis and Value Engineering",
+    icon: ChartBar,
+    href: "/operations/quality/vave",
+    status: "ready"
+  },
+  {
+    title: "Maintenance Analysis",
+    description: "AI-powered equipment maintenance analysis",
+    icon: Wrench,
+    href: "/operations/maintenance",
     status: "ready"
   }
 ];
