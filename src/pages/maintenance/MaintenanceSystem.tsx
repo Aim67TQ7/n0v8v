@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Wrench } from "lucide-react";
+import { Wrench, Database, Calendar, CheckSquare, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,14 +13,13 @@ import { Progress } from "@/components/ui/progress";
 import { FiveSVisionImageUploader } from "@/components/FiveSVisionImageUploader";
 import { EquipmentAnalysisResults } from "@/components/maintenance/EquipmentAnalysisResults";
 
-// ... keep existing code (imports and initial state setup)
-
 const MaintenanceSystem = () => {
   const [images, setImages] = useState<File[]>([]);
   const [equipmentDetails, setEquipmentDetails] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [analysisResults, setAnalysisResults] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState("analyze");
   const { session } = useSessionContext();
   const { toast } = useToast();
 
@@ -102,7 +101,7 @@ const MaintenanceSystem = () => {
         <h1 className="text-3xl font-bold">AI Maintenance System</h1>
       </div>
 
-      <Tabs defaultValue="analyze" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList>
           <TabsTrigger value="analyze">Analyze Equipment</TabsTrigger>
           <TabsTrigger value="schedules">Maintenance Schedules</TabsTrigger>
@@ -178,7 +177,10 @@ const MaintenanceSystem = () => {
               </div>
             </Card>
 
-            <EquipmentAnalysisResults results={analysisResults} />
+            <EquipmentAnalysisResults 
+              results={analysisResults} 
+              onViewSchedule={() => setActiveTab("schedules")}
+            />
           </div>
         </TabsContent>
 

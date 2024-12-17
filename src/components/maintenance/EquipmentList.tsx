@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { MaintenanceScheduleList } from "./MaintenanceScheduleList";
+import { Database, Settings, CheckSquare, Calendar, Clock } from "lucide-react";
 
 export const EquipmentList = () => {
   const { data: equipment, isLoading } = useQuery({
@@ -26,33 +27,67 @@ export const EquipmentList = () => {
 
   return (
     <div className="space-y-6">
-      {equipment?.map((item) => (
-        <Card key={item.id} className="p-6">
-          <div className="flex items-start gap-4">
-            {item.image_url && (
-              <img 
-                src={item.image_url} 
-                alt={`${item.make} ${item.model}`}
-                className="w-32 h-32 object-cover rounded-lg"
-              />
-            )}
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold">
-                {item.make} {item.model}
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Type: {item.equipment_type}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Manufacturer: {item.manufacturer}
-              </p>
-              <div className="mt-4">
-                <MaintenanceScheduleList schedules={item.maintenance_schedules} />
-              </div>
-            </div>
-          </div>
-        </Card>
-      ))}
+      <Card className="p-6">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left p-2">
+                  <div className="flex items-center gap-2">
+                    <Database className="w-4 h-4" />
+                    ID
+                  </div>
+                </th>
+                <th className="text-left p-2">
+                  <div className="flex items-center gap-2">
+                    <Settings className="w-4 h-4" />
+                    Equipment
+                  </div>
+                </th>
+                <th className="text-left p-2">
+                  <div className="flex items-center gap-2">
+                    <CheckSquare className="w-4 h-4" />
+                    Maintenance Performed
+                  </div>
+                </th>
+                <th className="text-left p-2">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    Date
+                  </div>
+                </th>
+                <th className="text-left p-2">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    Next Due
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {equipment?.map((item) => (
+                <tr key={item.id} className="border-b hover:bg-muted/50">
+                  <td className="p-2">{item.id.slice(0, 8)}</td>
+                  <td className="p-2">{item.make} {item.model}</td>
+                  <td className="p-2">
+                    {item.last_maintenance_date ? 'Yes' : 'No'}
+                  </td>
+                  <td className="p-2">
+                    {item.last_maintenance_date ? 
+                      new Date(item.last_maintenance_date).toLocaleDateString() : 
+                      'N/A'}
+                  </td>
+                  <td className="p-2">
+                    {item.next_maintenance_date ? 
+                      new Date(item.next_maintenance_date).toLocaleDateString() : 
+                      'Not Scheduled'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Calendar } from "lucide-react";
 
 interface EquipmentAnalysisResultsProps {
   results: {
@@ -19,9 +19,10 @@ interface EquipmentAnalysisResultsProps {
     maintenanceSchedule?: any;
     alternativeResources?: string[];
   } | null;
+  onViewSchedule?: () => void;
 }
 
-export const EquipmentAnalysisResults = ({ results }: EquipmentAnalysisResultsProps) => {
+export const EquipmentAnalysisResults = ({ results, onViewSchedule }: EquipmentAnalysisResultsProps) => {
   if (!results) return null;
 
   return (
@@ -99,6 +100,14 @@ export const EquipmentAnalysisResults = ({ results }: EquipmentAnalysisResultsPr
             </div>
           </div>
         )}
+
+        <Button 
+          className="w-full"
+          onClick={onViewSchedule}
+        >
+          <Calendar className="w-4 h-4 mr-2" />
+          Maintenance Schedule
+        </Button>
       </div>
     </Card>
   );
