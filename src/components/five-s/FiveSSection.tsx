@@ -21,11 +21,11 @@ export const FiveSSection = ({
         <div className="space-y-4">
           <ul className="list-disc pl-5 space-y-2">
             {checklist.map((item, index) => (
-              <li key={index} className="text-sm">
-                {item.item} - Score: {item.score}/10
-                {item.description && (
-                  <p className="text-muted-foreground mt-1">{item.description}</p>
-                )}
+              <li key={index} className="text-sm flex justify-between items-baseline gap-2">
+                <span>{item.item}</span>
+                <span className="text-sm text-muted-foreground whitespace-nowrap">
+                  Score: {item.score}/10
+                </span>
               </li>
             ))}
           </ul>
