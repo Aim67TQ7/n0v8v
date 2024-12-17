@@ -22,7 +22,7 @@ serve(async (req) => {
 
     // Create a detailed system prompt using the equipment details
     const systemPrompt = `You are an expert in industrial equipment maintenance, specializing in analyzing equipment images and documentation. 
-    Analyze the equipment in the images and provided details to:
+    Your task is to:
     1. Identify the equipment (make, model, manufacturer)
     2. Search for and identify relevant product manuals and documentation
     3. Assess current condition
@@ -30,6 +30,7 @@ serve(async (req) => {
     5. List required tools and skills
     6. Outline safety precautions
     7. Suggest maintenance intervals
+    8. Find manufacturer contact information and support resources
     
     Equipment details provided: ${equipmentDetails}`;
 
@@ -55,7 +56,7 @@ serve(async (req) => {
               content: [
                 {
                   type: 'text',
-                  text: "Analyze this equipment image and provide detailed maintenance recommendations."
+                  text: "Analyze this equipment image and provide detailed maintenance recommendations. If possible, identify any manuals or documentation resources."
                 },
                 {
                   type: 'image_url',
@@ -67,7 +68,9 @@ serve(async (req) => {
             }
           ],
           temperature: 0.2,
-          max_tokens: 1000
+          max_tokens: 2000,
+          search_domain_filter: ['perplexity.ai', 'manuals.plus', 'manualslib.com', 'support.industry.siemens.com'],
+          search_recency_filter: 'year'
         })
       });
 
@@ -84,11 +87,14 @@ serve(async (req) => {
     // Combine and process all analysis results
     const combinedAnalysis = analysisResults.map(result => result.choices[0].message.content);
     
-    // Extract equipment information from the analysis
+    // Extract equipment information and resources
     const makeMatch = combinedAnalysis[0].match(/make:?\s*([^\n]+)/i);
     const modelMatch = combinedAnalysis[0].match(/model:?\s*([^\n]+)/i);
     const manufacturerMatch = combinedAnalysis[0].match(/manufacturer:?\s*([^\n]+)/i);
     const typeMatch = combinedAnalysis[0].match(/type:?\s*([^\n]+)/i);
+    const manualUrlMatch = combinedAnalysis[0].match(/manual url:?\s*([^\n]+)/i);
+    const manufacturerWebsiteMatch = combinedAnalysis[0].match(/manufacturer website:?\s*([^\n]+)/i);
+    const supportUrlMatch = combinedAnalysis[0].match(/support url:?\s*([^\n]+)/i);
 
     // Generate a unique filename for the image
     const fileName = `${crypto.randomUUID()}.jpg`;
@@ -103,6 +109,7 @@ serve(async (req) => {
         manufacturer: manufacturerMatch?.[1]?.trim() || 'Unknown',
         equipment_type: typeMatch?.[1]?.trim() || 'Unknown',
         image_url: fileName,
+        manual_url: manualUrlMatch?.[1]?.trim(),
         status: 'active',
         last_maintenance_date: new Date().toISOString(),
         next_maintenance_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
@@ -137,13 +144,34 @@ serve(async (req) => {
 
     if (scheduleError) throw scheduleError;
 
+    // Prepare the response with all findings
+    const response = {
+      equipment: {
+        make: makeMatch?.[1]?.trim(),
+        model: modelMatch?.[1]?.trim(),
+        type: typeMatch?.[1]?.trim(),
+      },
+      manualUrl: manualUrlMatch?.[1]?.trim(),
+      manufacturerInfo: {
+        name: manufacturerMatch?.[1]?.trim(),
+        website: manufacturerWebsiteMatch?.[1]?.trim(),
+        support: supportUrlMatch?.[1]?.trim(),
+      },
+      maintenanceSchedule: maintenanceTasks,
+      alternativeResources: combinedAnalysis
+        .flatMap(analysis => 
+          analysis.match(/https?:\/\/[^\s]+/g) || []
+        )
+        .filter(url => 
+          url.includes('manual') || 
+          url.includes('support') || 
+          url.includes('documentation')
+        )
+        .slice(0, 3)
+    };
+
     return new Response(
-      JSON.stringify({ 
-        message: 'Equipment analyzed and maintenance schedule created',
-        equipment,
-        maintenanceTasks,
-        analysis: combinedAnalysis
-      }),
+      JSON.stringify(response),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
