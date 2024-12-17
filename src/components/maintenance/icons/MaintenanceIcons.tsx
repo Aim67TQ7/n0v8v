@@ -1,12 +1,12 @@
-import { HardDrive, Settings, CheckSquare, Calendar, Clock, Wrench, Bell, AlertTriangle } from "lucide-react";
+import { HardDrive, Settings, CheckSquare, Calendar, Clock, Wrench, Bell, Equipment, Alert } from "lucide-react";
 
 export const MaintenanceIcons = {
   Equipment: HardDrive,
-  Settings,
+  Settings: Settings,
   Checkbox: CheckSquare,
-  Calendar,
-  Clock,
+  Calendar: Calendar,
+  Clock: Clock,
   Maintenance: Wrench,
-  Bell,
-  Alert: AlertTriangle
+  Bell: Bell,
+  Alert: Alert
 };
