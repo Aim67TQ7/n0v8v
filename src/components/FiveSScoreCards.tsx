@@ -56,8 +56,18 @@ export const FiveSScoreCards = ({
         </Card>
 
         <Card className="p-3">
-          <div className="h-[200px]">
-            <FiveSTrend workcenterId={evaluationData.workcenter_id} />
+          <div className="space-y-4">
+            <div>
+              <h2 className="text-xl font-bold text-primary">
+                {evaluationData.workcenter?.name}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {format(new Date(evaluationData.created_at), 'PPP')}
+              </p>
+            </div>
+            <div className="h-[200px]">
+              <FiveSTrend workcenterId={evaluationData.workcenter_id} />
+            </div>
           </div>
         </Card>
       </div>
