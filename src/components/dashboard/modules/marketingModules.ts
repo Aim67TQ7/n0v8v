@@ -1,4 +1,4 @@
-import { FileText, TrendingUp } from "lucide-react";
+import { FileText, TrendingUp, Search, ChartBar } from "lucide-react";
 import type { ModuleCardProps } from "../ModuleCard";
 
 export const marketingModules: ModuleCardProps[] = [
