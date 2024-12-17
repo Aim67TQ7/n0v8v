@@ -1,12 +1,14 @@
 import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
-export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
+export const AuthWrapper = () => {
   const { isLoading, isAuthenticated, error } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { toast } = useToast();
   const isDevelopment = process.env.NODE_ENV === 'development';
 
   useEffect(() => {
@@ -51,8 +53,13 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
 
           const isSuperUser = profile?.role === 'superuser';
 
-          // If not a superuser, redirect to login
+          // If not a superuser, show error and redirect to login
           if (!isSuperUser) {
+            toast({
+              title: "Access Denied",
+              description: "You need superuser permissions to access this section",
+              variant: "destructive"
+            });
             console.log("Not authorized, redirecting to login");
             sessionStorage.setItem('redirectAfterLogin', location.pathname);
             navigate("/login");
@@ -60,13 +67,17 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
         }
       } catch (error) {
         console.error('Auth check error:', error);
-        // On any error, redirect to login
+        toast({
+          title: "Authentication Error",
+          description: "Please try logging in again",
+          variant: "destructive"
+        });
         navigate("/login");
       }
     };
 
     checkAuth();
-  }, [isLoading, isAuthenticated, navigate, location.pathname, isDevelopment]);
+  }, [isLoading, isAuthenticated, navigate, location.pathname, isDevelopment, toast]);
 
   if (isLoading) {
     return (
@@ -80,5 +91,5 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
     return <div>Error: {error.message}</div>;
   }
 
-  return <>{children}</>;
+  return <Outlet />;
 };
