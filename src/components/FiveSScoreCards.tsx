@@ -64,7 +64,6 @@ export const FiveSScoreCards = ({
       </Card>
 
       <Card className="p-3">
-        <h3 className="text-lg font-semibold mb-1">Historical 5S Performance</h3>
         <div className="h-[200px]">
           <FiveSTrend workcenterId={evaluationData.workcenter_id} />
         </div>
