@@ -13,7 +13,7 @@ export const MessageBubble = ({ role, content }: MessageBubbleProps) => {
     <div className={cn("flex", role === "user" ? "justify-end" : "justify-start")}>
       <div
         className={cn(
-          "max-w-[80%] rounded-lg p-3 text-sm",
+          "max-w-[80%] rounded-md p-2 text-xs", // Reduced padding and font size
           role === "user" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-900"
         )}
       >
