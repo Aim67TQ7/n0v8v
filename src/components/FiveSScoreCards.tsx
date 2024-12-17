@@ -46,7 +46,7 @@ export const FiveSScoreCards = ({
               )}
             </div>
 
-            <div className="h-[200px]">
+            <div className="h-[260px]">
               <FiveSRadarChart 
                 scores={evaluationData} 
                 canShowAdvancedScores={canShowAdvancedScores}
@@ -65,7 +65,7 @@ export const FiveSScoreCards = ({
                 {format(new Date(evaluationData.created_at), 'PPP')}
               </p>
             </div>
-            <div className="h-[200px]">
+            <div className="h-[260px]">
               <FiveSTrend workcenterId={evaluationData.workcenter_id} />
             </div>
           </div>
