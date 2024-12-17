@@ -13,6 +13,8 @@ import { Progress } from "@/components/ui/progress";
 import { FiveSVisionImageUploader } from "@/components/FiveSVisionImageUploader";
 import { EquipmentAnalysisResults } from "@/components/maintenance/EquipmentAnalysisResults";
 
+// ... keep existing code (imports and initial state setup)
+
 const MaintenanceSystem = () => {
   const [images, setImages] = useState<File[]>([]);
   const [equipmentDetails, setEquipmentDetails] = useState("");
@@ -165,7 +167,7 @@ const MaintenanceSystem = () => {
                         className="w-full relative" 
                         disabled={isAnalyzing}
                       >
-                        {isAnalyzing ? "Analyzing Equipment..." : "Generate Maintenance Schedule"}
+                        {isAnalyzing ? "Analyzing Equipment..." : "Submit"}
                       </Button>
                       {isAnalyzing && (
                         <Progress value={progress} className="w-full h-2" />
