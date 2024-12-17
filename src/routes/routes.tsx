@@ -7,6 +7,7 @@ import CompanyGPT from "@/pages/CompanyGPT";
 import Modules from "@/pages/Modules";
 import Tools from "@/pages/Tools";
 import CompanyHub from "@/pages/CompanyHub";
+import { marketingRoutes } from "./marketingRoutes";
 import Facilities from "@/pages/operations/Facilities";
 import Production from "@/pages/operations/Production";
 import MaintenanceSystem from "@/pages/maintenance/MaintenanceSystem";
@@ -88,6 +89,7 @@ export const routes = [
     path: "/tools",
     element: <Tools />
   },
+  ...marketingRoutes,
   {
     path: "/operations/facilities",
     element: <Facilities />
