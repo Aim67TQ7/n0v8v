@@ -25,7 +25,6 @@ export const ChatContainer = ({
     setMessages,
     isLoading,
     handleSubmit,
-    handleFileUpload
   } = useChatMessages(chatId);
 
   useEffect(() => {
@@ -60,10 +59,6 @@ export const ChatContainer = ({
             e.preventDefault();
             const input = e.currentTarget.querySelector('input')?.value || '';
             handleSubmit(input);
-          }}
-          onFileUpload={(e) => {
-            const file = e.target.files?.[0];
-            if (file) handleFileUpload(file);
           }}
         />
         <div className="flex justify-end space-x-2">
