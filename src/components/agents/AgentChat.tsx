@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { ChatContainer } from "@/components/gpt/ChatContainer";
+import { ChatContainer } from "@/components/hub/chat/ChatContainer";
 import { useState } from "react";
 
 interface Message {

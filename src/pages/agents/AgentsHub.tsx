@@ -4,10 +4,10 @@ import { AgentChat } from "@/components/agents/AgentChat";
 
 const AgentsHub = () => {
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-black pt-4">
+    <div className="min-h-[calc(100vh-4rem)] bg-background/95 pt-4">
       <div className="container mx-auto px-4">
-        <Card>
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 min-h-[calc(100vh-8rem)]">
+        <Card className="p-4">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
             {/* Left Sidebar - Agents List */}
             <div className="md:col-span-3">
               <AgentsList />

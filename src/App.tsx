@@ -12,8 +12,8 @@ import { Header } from "@/components/Header";
 import FiveSVision from "@/pages/FiveSVision";
 import CompanyNews from "@/pages/operations/hr/CompanyNews";
 import GoogleMapsScraper from "@/pages/leads/GoogleMapsScraper";
+import AgentsHub from "@/pages/agents/AgentsHub";
 
-// Loading component for route transitions
 const RouteLoadingComponent = () => (
   <div className="flex items-center justify-center min-h-[50vh]">
     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -68,6 +68,7 @@ const AppContent = () => {
 
             {/* Protected routes */}
             <Route element={<AuthWrapper />}>
+              <Route path="/agents" element={<AgentsHub />} />
               <Route path="/operations/lean/5s-vision" element={<FiveSVision />} />
               <Route path="/operations/hr/company-news" element={<CompanyNews />} />
               <Route path="/leads/scraping/google-maps" element={<GoogleMapsScraper />} />
