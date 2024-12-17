@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Package, Mail, Users, Settings, ChevronDown, Bot, Tools } from "lucide-react";
+import { Package, Mail, Users, Settings, ChevronDown, Bot, Wrench } from "lucide-react";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -35,19 +35,10 @@ export const Header = () => {
           <nav className="flex items-center space-x-4">
             <Button 
               variant="ghost" 
-              onClick={() => navigate("/company-hub")} 
-              className="gap-2 text-secondary-content interactive-element"
-            >
-              <Bot className="h-4 w-4" />
-              Company Hub
-            </Button>
-            
-            <Button 
-              variant="ghost" 
               onClick={() => navigate("/tools")} 
               className="gap-2 text-secondary-content interactive-element"
             >
-              <Tools className="h-4 w-4" />
+              <Wrench className="h-4 w-4" />
               Tools
             </Button>
             
