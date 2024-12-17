@@ -1,18 +1,18 @@
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Wrench, Database, Calendar, CheckSquare, Clock, Bell } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { useSessionContext } from "@supabase/auth-helpers-react";
-import { supabase } from "@/integrations/supabase/client";
-import { EquipmentList } from "@/components/maintenance/EquipmentList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RecallList } from "@/components/maintenance/recalls/RecallList";
+import { EquipmentListView } from "@/components/maintenance/equipment/EquipmentListView";
+import { EquipmentAnalysisResults } from "@/components/maintenance/EquipmentAnalysisResults";
+import { useState } from "react";
+import { Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { FiveSVisionImageUploader } from "@/components/FiveSVisionImageUploader";
-import { EquipmentAnalysisResults } from "@/components/maintenance/EquipmentAnalysisResults";
-import { MaintenanceRecallList } from "@/components/maintenance/MaintenanceRecallList";
+import { useToast } from "@/hooks/use-toast";
+import { useSessionContext } from "@supabase/auth-helpers-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const MaintenanceSystem = () => {
   const [images, setImages] = useState<File[]>([]);
@@ -123,28 +123,7 @@ const MaintenanceSystem = () => {
                         id="equipment"
                         value={equipmentDetails}
                         onChange={(e) => setEquipmentDetails(e.target.value)}
-                        placeholder="Please provide as much detail as possible about the equipment:
-
-• Make and model number
-• Serial number
-• Equipment type/category
-• Year of manufacture (if known)
-• Current operating condition
-• Any specific maintenance concerns
-• Operating environment details
-• Power requirements
-• Physical dimensions
-• Safety features
-• Known maintenance history
-• Warranty information (if available)
-• Any modifications or upgrades
-• Operating hours/usage frequency
-• Location/department where equipment is used
-• Critical components or parts
-• Any recurring issues or patterns
-• Special maintenance requirements
-• Calibration needs (if applicable)
-• Compliance requirements"
+                        placeholder="Please provide as much detail as possible about the equipment..."
                         className="min-h-[300px]"
                       />
                     </div>
@@ -187,11 +166,11 @@ const MaintenanceSystem = () => {
         </TabsContent>
 
         <TabsContent value="schedules">
-          <EquipmentList />
+          <EquipmentListView />
         </TabsContent>
 
         <TabsContent value="recalls">
-          <MaintenanceRecallList />
+          <RecallList />
         </TabsContent>
       </Tabs>
     </div>
