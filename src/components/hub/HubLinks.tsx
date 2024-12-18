@@ -10,9 +10,7 @@ export const HubLinks = () => {
     <Card className="h-full flex flex-col bg-white">
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-3">
-          <Card className="bg-white p-2 shadow-sm">
-            <ResourceLinks />
-          </Card>
+          <ResourceLinks />
           
           <ModuleLinks />
           
