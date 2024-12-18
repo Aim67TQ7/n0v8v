@@ -16,6 +16,11 @@ export const MainContent = () => {
     setMessages(newMessages);
   };
 
+  const handleNewChat = () => {
+    setChatId(null);
+    setMessages([]);
+  };
+
   return (
     <div className="md:col-span-8">
       <div className="flex flex-col space-y-4">
@@ -27,6 +32,7 @@ export const MainContent = () => {
           messages={messages}
           onMessagesChange={handleMessagesChange}
           chatId={chatId}
+          onNewChat={handleNewChat}
         />
       </div>
     </div>

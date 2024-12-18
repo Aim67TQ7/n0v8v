@@ -41,7 +41,6 @@ export const useChatMessages = (chatId: string | null) => {
         description: error.message || "Failed to process message",
         variant: "destructive"
       });
-      // Remove the user message if the AI response failed
       setMessages(messages);
     } finally {
       setIsLoading(false);

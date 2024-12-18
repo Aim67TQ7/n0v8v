@@ -7,12 +7,14 @@ interface ChatContainerProps {
   messages: any[];
   onMessagesChange: (messages: any[]) => void;
   chatId: string | null;
+  onNewChat?: () => void;  // Made optional with ?
 }
 
 export const ChatContainer = ({ 
   messages: initialMessages, 
   onMessagesChange, 
-  chatId
+  chatId,
+  onNewChat
 }: ChatContainerProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
@@ -29,7 +31,7 @@ export const ChatContainer = ({
 
   useEffect(() => {
     onMessagesChange(messages);
-  }, [messages]);
+  }, [messages, onMessagesChange]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -54,6 +56,7 @@ export const ChatContainer = ({
           setInput={setInput}
           isLoading={isLoading}
           onSubmit={handleMessageSubmit}
+          onNew={onNewChat}
         />
       </div>
     </div>
