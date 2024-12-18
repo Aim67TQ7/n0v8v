@@ -6,10 +6,10 @@ import { MainContent } from "@/components/hub/layout/MainContent";
 
 const CompanyHub = () => {
   return (
-    <div className="h-[992px] bg-background/95">
-      <Card className="mx-auto max-w-[1400px] p-4 bg-black text-white h-[992px]">
+    <div className="h-[750px] bg-background/95">
+      <Card className="mx-auto max-w-[1400px] p-4 bg-black text-white h-[750px] relative">
         <MobileMenu />
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 h-[928px]">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 absolute inset-4">
           {/* Left Sidebar */}
           <div className="hidden md:block md:col-span-2 h-full">
             <Card className="h-full p-3 bg-white">
