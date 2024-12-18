@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Package, Mail, Users, Settings, ChevronDown, Bot, Wrench, Home } from "lucide-react";
+import { Package, Mail, Users, Settings, ChevronDown, Bot, Wrench, Home, Newspaper } from "lucide-react";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -85,6 +85,14 @@ export const Header = () => {
                 >
                   <Users className="h-4 w-4" />
                   Teams
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => navigate("/operations/hr/company-news")} 
+                  className="gap-2"
+                >
+                  <Newspaper className="h-4 w-4" />
+                  News
                 </Button>
                 <Button 
                   variant="ghost" 
