@@ -7,7 +7,7 @@ import { MainContent } from "@/components/hub/layout/MainContent";
 const CompanyHub = () => {
   return (
     <div className="h-[calc(100vh-4rem)] bg-[#403E43] overflow-hidden">
-      <Card className="p-4 h-full">
+      <Card className="h-full">
         <MobileMenu />
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 h-[calc(100vh-8rem)]">
           {/* Left Sidebar */}
