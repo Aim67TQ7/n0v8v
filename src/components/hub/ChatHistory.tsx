@@ -62,7 +62,7 @@ export const ChatHistory = ({ className }: ChatHistoryProps) => {
         <Search className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground" />
       </div>
       
-      <ScrollArea className="h-[400px]">
+      <ScrollArea className="h-[360px]">
         <div className="space-y-2 pr-2">
           {categories.map((category) => (
             <div key={category} className="space-y-1">
@@ -103,7 +103,7 @@ export const ChatHistory = ({ className }: ChatHistoryProps) => {
           </DialogContent>
         </Dialog>
       </div>
-      <ScrollArea className="h-[400px]">
+      <ScrollArea className="h-[360px]">
         <div className="space-y-2 pr-2">
           {categories.map((category) => (
             <div key={category} className="space-y-1">
