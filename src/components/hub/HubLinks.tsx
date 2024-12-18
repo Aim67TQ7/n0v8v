@@ -22,9 +22,7 @@ export const HubLinks = () => {
             <ToolLinks />
           </Card>
           
-          <Card className="bg-white p-2 shadow-sm">
-            <AgentLinks />
-          </Card>
+          <AgentLinks />
         </div>
       </ScrollArea>
     </Card>
