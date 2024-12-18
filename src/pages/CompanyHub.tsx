@@ -6,13 +6,13 @@ import { MainContent } from "@/components/hub/layout/MainContent";
 
 const CompanyHub = () => {
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-background/95 pt-4">
-      <div className="container mx-auto px-4">
-        <Card className="p-4">
+    <div className="h-[calc(100vh-4rem)] overflow-hidden bg-background/95">
+      <div className="container h-full mx-auto px-4 py-4">
+        <Card className="h-full p-4">
           <MobileMenu />
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 min-h-[calc(100vh-8rem)]">
+          <div className="grid h-full grid-cols-1 md:grid-cols-12 gap-4">
             {/* Left Sidebar */}
-            <div className="hidden md:block md:col-span-2">
+            <div className="hidden md:block md:col-span-2 overflow-hidden">
               <SidebarContent />
             </div>
 
@@ -20,7 +20,7 @@ const CompanyHub = () => {
             <MainContent />
 
             {/* Right Sidebar */}
-            <div className="hidden md:block md:col-span-2">
+            <div className="hidden md:block md:col-span-2 overflow-hidden">
               <HubLinks />
             </div>
           </div>
