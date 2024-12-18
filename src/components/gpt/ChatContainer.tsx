@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChatInput } from "./ChatInput";
 import { MessageList } from "./chat/MessageList";
@@ -20,6 +20,7 @@ export const ChatContainer = ({
   onNewChat 
 }: ChatContainerProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [input, setInput] = useState("");
   const { 
     messages,
     setMessages,
@@ -43,6 +44,14 @@ export const ChatContainer = ({
     console.log("Saving chat...");
   };
 
+  const handleMessageSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+    
+    await handleSubmit(input);
+    setInput("");
+  };
+
   return (
     <div className="flex flex-col h-[600px]">
       <ChatActions onNewChat={onNewChat} />
@@ -51,14 +60,10 @@ export const ChatContainer = ({
       </div>
       <div className="border-t p-4 space-y-2">
         <ChatInput
-          input=""
-          setInput={() => {}}
+          input={input}
+          setInput={setInput}
           isLoading={isLoading}
-          onSubmit={(e) => {
-            e.preventDefault();
-            const input = e.currentTarget.querySelector('input')?.value || '';
-            handleSubmit(input);
-          }}
+          onSubmit={handleMessageSubmit}
         />
         <div className="flex justify-end space-x-2">
           <Button
