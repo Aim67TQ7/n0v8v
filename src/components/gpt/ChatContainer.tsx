@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChatInput } from "./ChatInput";
 import { MessageList } from "./chat/MessageList";
@@ -40,27 +40,24 @@ export const ChatContainer = ({
   }, [messages]);
 
   const handleSave = () => {
-    // Implement save functionality here
     console.log("Saving chat...");
   };
 
-  const [input, setInput] = useState("");
-
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-[600px]">
       <ChatActions onNewChat={onNewChat} />
       <div className="flex-1 overflow-hidden">
         <MessageList messages={messages} messagesEndRef={messagesEndRef} />
       </div>
       <div className="border-t p-4 space-y-2">
         <ChatInput
-          input={input}
-          setInput={setInput}
+          input=""
+          setInput={() => {}}
           isLoading={isLoading}
           onSubmit={(e) => {
             e.preventDefault();
+            const input = e.currentTarget.querySelector('input')?.value || '';
             handleSubmit(input);
-            setInput("");
           }}
         />
         <div className="flex justify-end space-x-2">
