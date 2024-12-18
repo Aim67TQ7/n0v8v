@@ -22,12 +22,12 @@ export const MainContent = () => {
   };
 
   return (
-    <div className="md:col-span-8">
-      <div className="flex flex-col space-y-4">
-        <Card className="p-4">
-          <h2 className="font-semibold mb-4">Company News</h2>
-          <CompanyNews />
-        </Card>
+    <div className="flex flex-col h-full space-y-4">
+      <Card className="p-4 flex-shrink-0">
+        <h2 className="font-semibold mb-4">Company News</h2>
+        <CompanyNews />
+      </Card>
+      <div className="flex-1">
         <ChatContainer 
           messages={messages}
           onMessagesChange={handleMessagesChange}
