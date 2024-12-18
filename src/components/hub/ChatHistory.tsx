@@ -1,128 +1,92 @@
-import { Search, Maximize2 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Link } from "react-router-dom";
+import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
+interface ChatSession {
+  id: string;
+  title: string;
+  timestamp: Date;
+  isShared?: boolean;
+  category?: string;
+}
+
 interface ChatHistoryProps {
+  sessions?: ChatSession[];
+  onSelect: (sessionId: string) => void;
+  selectedId?: string;
   className?: string;
 }
 
-export const ChatHistory = ({ className }: ChatHistoryProps) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const recentChats = [
-    { title: "Project Kickoff Meeting", id: 1, date: "Today" },
-    { title: "Client Presentation Prep", id: 2, date: "Today" },
-    { title: "Team Sync up", id: 3, date: "Today" },
-    { title: "Product Roadmap Review", id: 4, date: "Today" },
-    { title: "Q4 Planning", id: 5, date: "This Week" },
-    { title: "Design Review", id: 6, date: "This Week" },
-    { title: "Sprint Planning", id: 7, date: "This Week" },
-    { title: "Architecture Discussion", id: 8, date: "This Week" },
-    { title: "Budget Review", id: 9, date: "Recent" },
-    { title: "Marketing Strategy", id: 10, date: "Recent" },
-    { title: "Sales Pipeline", id: 11, date: "Recent" },
-    { title: "Resource Planning", id: 12, date: "Recent" }
-  ];
+const categories = [
+  "Today",
+  "This Week",
+  "Recent",
+  "Shared",
+  "New Email",
+  "Email Reply",
+  "Summarize Text",
+  "Meeting Notes",
+  "How To",
+  "Brainstorm"
+];
 
-  const groupedChats = recentChats.reduce((acc, chat) => {
-    if (!acc[chat.date]) {
-      acc[chat.date] = [];
+export const ChatHistory = ({ sessions = [], onSelect, selectedId, className }: ChatHistoryProps) => {
+  const groupedSessions = sessions.reduce((acc, session) => {
+    let category = "Recent";
+    const now = new Date();
+    const sessionDate = new Date(session.timestamp);
+    
+    if (session.isShared) {
+      category = "Shared";
+    } else if (session.category) {
+      category = session.category;
+    } else if (sessionDate.toDateString() === now.toDateString()) {
+      category = "Today";
+    } else if (sessionDate > new Date(now.setDate(now.getDate() - 7))) {
+      category = "This Week";
     }
-    acc[chat.date].push(chat);
+    
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(session);
     return acc;
-  }, {});
-
-  const categories = [
-    "Today",
-    "This Week",
-    "Recent",
-    "Shared",
-    "New Email",
-    "Email Reply",
-    "Summarize Text",
-    "Meeting Notes",
-    "How To",
-    "Brainstorm"
-  ];
-
-  const ChatHistoryContent = () => (
-    <div className="space-y-2">
-      <div className="relative flex-1">
-        <Input 
-          placeholder="Search chat history..." 
-          className="text-sm bg-accent"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <Search className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground" />
-      </div>
-      
-      <ScrollArea className="h-[324px]">
-        <div className="space-y-2 pr-2">
-          {categories.map((category) => (
-            <div key={category} className="space-y-1">
-              <h3 className="text-sm font-semibold text-primary px-2">{category}</h3>
-              <div className="space-y-0.5">
-                {(groupedChats[category] || []).slice(0, 4).map((chat) => (
-                  <Link
-                    key={chat.id}
-                    to={`/chat/${chat.id}`}
-                    className="block text-xs hover:text-primary hover:bg-accent/50 py-0.5 px-2 rounded transition-colors"
-                  >
-                    {chat.title}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </ScrollArea>
-    </div>
-  );
+  }, {} as Record<string, ChatSession[]>);
 
   return (
-    <Card className={cn("p-2 bg-white h-[750px] flex flex-col", className)}>
-      <div className="mb-2 flex items-center justify-between">
-        <h2 className="font-semibold text-sm">Chat History</h2>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-6 w-6 p-0 hover:bg-accent/50">
-              <Search className="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] bg-white">
-            <div className="p-4">
-              <h2 className="text-lg font-semibold mb-4">Search Chat History</h2>
-              <ChatHistoryContent />
+    <div className={cn("space-y-2", className)}>
+      <ScrollArea className="h-[400px]">
+        {categories.map((category) => (
+          <div key={category} className="mb-4">
+            <h3 className="text-sm font-semibold text-primary px-2 mb-2">{category}</h3>
+            <div className="space-y-0.5">
+              {(groupedSessions[category] || []).map((session) => (
+                <Button
+                  key={session.id}
+                  variant={selectedId === session.id ? "secondary" : "ghost"}
+                  className="justify-start gap-2 h-auto py-3 px-4 w-full text-left hover:bg-accent transition-colors"
+                  onClick={() => onSelect(session.id)}
+                >
+                  <MessageSquare className="h-4 w-4 shrink-0" />
+                  <div className="flex flex-col items-start gap-1 overflow-hidden">
+                    <span className="text-base font-medium text-black truncate w-full">
+                      {session.title}
+                    </span>
+                    <span className="text-sm text-gray-700">
+                      {new Date(session.timestamp).toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })}
+                    </span>
+                  </div>
+                </Button>
+              ))}
             </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-      <ScrollArea className="flex-1">
-        <div className="space-y-2 pr-2">
-          {categories.map((category) => (
-            <div key={category} className="space-y-1">
-              <h3 className="text-sm font-semibold text-primary px-2">{category}</h3>
-              <div className="space-y-0.5">
-                {(groupedChats[category] || []).slice(0, 4).map((chat) => (
-                  <Link
-                    key={chat.id}
-                    to={`/chat/${chat.id}`}
-                    className="block text-xs hover:text-primary hover:bg-accent/50 py-0.5 px-2 rounded transition-colors"
-                  >
-                    {chat.title}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </ScrollArea>
-    </Card>
+    </div>
   );
 };
