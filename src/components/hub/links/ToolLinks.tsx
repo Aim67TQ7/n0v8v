@@ -11,7 +11,7 @@ const toolLinks: ToolLink[] = [
   { name: "Five Whys", href: "/operations/quality/five-whys" },
   { name: "PM Assist", href: "/operations/maintenance" },
   { name: "Lead Scraping", href: "/leads/scraping/google-maps" },
-  { name: "Fishbone Analysis", href: "/operations/quality/fishbone" },
+  { name: "Part Analysis", href: "/operations/quality/part-analysis" },
 ];
 
 export const ToolLinks = () => {
