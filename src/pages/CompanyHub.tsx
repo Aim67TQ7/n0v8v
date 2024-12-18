@@ -14,21 +14,21 @@ const CompanyHub = () => {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 h-full">
             {/* Left Sidebar */}
             <div className="hidden md:block md:col-span-2 h-full">
-              <Card className="h-full p-6 bg-white">
+              <Card className="h-full p-3 bg-white">
                 <SidebarContent />
               </Card>
             </div>
 
             {/* Main Content */}
             <div className="md:col-span-8 h-full">
-              <Card className="h-full p-6 bg-white">
+              <Card className="h-full p-3 bg-white">
                 <MainContent />
               </Card>
             </div>
 
             {/* Right Sidebar */}
             <div className="hidden md:block md:col-span-2 h-full">
-              <Card className="h-full p-6 bg-white">
+              <Card className="h-full p-3 bg-white">
                 <HubLinks />
               </Card>
             </div>
