@@ -17,7 +17,7 @@ export const ChatInput = ({
   onSubmit
 }: ChatInputProps) => {
   return (
-    <form onSubmit={onSubmit} className="p-4">
+    <form onSubmit={onSubmit} className="p-3">
       <div className="flex gap-2">
         <Input
           value={input}
