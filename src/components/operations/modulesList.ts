@@ -115,10 +115,10 @@ export const efficiencyTools: ModuleCardProps[] = [
     status: "ready"
   },
   {
-    title: "Fishbone Analysis",
-    description: "Cause and effect analysis using Fishbone diagram",
-    icon: Fish,
-    href: "/operations/quality/fishbone",
+    title: "Part Analysis",
+    description: "Visual part analysis and quality inspection",
+    icon: Package,
+    href: "/operations/quality/part-analysis",
     status: "ready"
   },
   {
