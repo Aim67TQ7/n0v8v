@@ -33,7 +33,7 @@ export const HubCard = ({ children }: HubCardProps) => {
   const backgroundColor = `${hubColor}${Math.round(opacity * 2.55).toString(16).padStart(2, '0')}`;
 
   return (
-    <Card className="p-6 transition-colors duration-300" style={{ backgroundColor }}>
+    <Card className="transition-colors duration-300" style={{ backgroundColor }}>
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
           <img 
