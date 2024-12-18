@@ -45,6 +45,9 @@ export const AgentChat = ({ selectedAgent }: AgentChatProps) => {
       content: input
     };
 
+    // Log the user message being sent
+    console.log('Sending message:', userMessage);
+
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
@@ -58,6 +61,9 @@ export const AgentChat = ({ selectedAgent }: AgentChatProps) => {
       });
 
       if (error) throw error;
+
+      // Log the API response
+      console.log('API Response:', data);
 
       const assistantMessage: Message = {
         role: 'assistant',
@@ -97,8 +103,8 @@ export const AgentChat = ({ selectedAgent }: AgentChatProps) => {
               <div
                 className={`max-w-[80%] rounded-lg p-3 ${
                   message.role === 'user'
-                    ? 'bg-primary/90 backdrop-blur-sm text-primary-foreground'
-                    : 'bg-muted/90 backdrop-blur-sm'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted'
                 }`}
               >
                 {message.content}
@@ -108,7 +114,7 @@ export const AgentChat = ({ selectedAgent }: AgentChatProps) => {
         </ScrollArea>
       </div>
       
-      <div className="border-t p-4 bg-background/95 backdrop-blur-sm">
+      <div className="border-t p-4">
         <form onSubmit={handleSubmit} className="flex gap-2">
           <input
             type="text"
