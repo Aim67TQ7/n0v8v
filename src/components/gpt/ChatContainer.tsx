@@ -46,8 +46,7 @@ export const ChatContainer = ({
     try {
       const { data, error } = await supabase.functions.invoke('chat-with-anthropic', {
         body: {
-          messages: [...messages, userMessage],
-          model: 'claude-3-sonnet-20240307'
+          messages: [...messages, userMessage]
         }
       });
 
