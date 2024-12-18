@@ -46,9 +46,7 @@ export const ResourceLinks = () => {
   };
 
   return (
-    <div className="flex items-center gap-2 mb-1.5">
-      <Folder className="h-4 w-4 text-gray-700" />
-      <h3 className="text-sm font-medium text-gray-900">Resources</h3>
+    <div>
       <div className="space-y-1">
         {resourceLinks.map((link) => (
           <button
