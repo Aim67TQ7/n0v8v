@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
 import { Agent } from "@/types/agents";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -19,6 +20,7 @@ export const AgentChat = ({ selectedAgent }: AgentChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [chatId, setChatId] = useState<string | null>(null);
   const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -34,16 +36,41 @@ export const AgentChat = ({ selectedAgent }: AgentChatProps) => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || !selectedAgent || isLoading) return;
 
-    const newMessage: Message = {
+    const userMessage: Message = {
       role: 'user',
       content: input
     };
-    setMessages([...messages, newMessage]);
+
+    setMessages(prev => [...prev, userMessage]);
     setInput('');
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('chat-with-anthropic', {
+        body: {
+          messages: [...messages, userMessage],
+          systemPrompt: selectedAgent.description
+        }
+      });
+
+      if (error) throw error;
+
+      const assistantMessage: Message = {
+        role: 'assistant',
+        content: data.content
+      };
+
+      setMessages(prev => [...prev, assistantMessage]);
+    } catch (error) {
+      console.error('Chat error:', error);
+      toast.error('Failed to get response from the agent');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -89,9 +116,9 @@ export const AgentChat = ({ selectedAgent }: AgentChatProps) => {
             onChange={(e) => setInput(e.target.value)}
             placeholder={selectedAgent ? `Chat with ${selectedAgent.name}...` : "Drag an agent to start chatting..."}
             className="flex-1 min-w-0 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-            disabled={!selectedAgent}
+            disabled={!selectedAgent || isLoading}
           />
-          <Button type="submit" size="icon" disabled={!selectedAgent}>
+          <Button type="submit" size="icon" disabled={!selectedAgent || isLoading}>
             <Send className="h-4 w-4" />
           </Button>
         </form>
