@@ -1,7 +1,8 @@
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface ChatSession {
   id: string;
@@ -57,6 +58,13 @@ export const ChatHistory = ({ sessions = [], onSelect, selectedId, className }: 
   return (
     <div className={cn("space-y-2", className)}>
       <ScrollArea className="h-[calc(100vh-12rem)]">
+        <Link 
+          to="/data/rag-upload"
+          className="flex items-center gap-2 px-2 py-3 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+        >
+          <Plus className="h-4 w-4" />
+          Add Training Data
+        </Link>
         {categories.map((category) => (
           <div key={category} className="mb-4">
             <h3 className="text-sm font-semibold text-primary px-2 mb-2">{category}</h3>
