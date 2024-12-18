@@ -6,7 +6,7 @@ import { MainContent } from "@/components/hub/layout/MainContent";
 
 const CompanyHub = () => {
   return (
-    <div className="h-[calc(100vh-4rem)] bg-background/95 pt-4 overflow-hidden">
+    <div className="h-[calc(100vh-4rem)] bg-background/95 overflow-hidden">
       <div className="container mx-auto px-4 h-[108%] bg-[#403E43]">
         <Card className="p-4 h-full">
           <MobileMenu />
