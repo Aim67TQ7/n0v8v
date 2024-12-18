@@ -28,14 +28,12 @@ export const MainContent = () => {
           <h2 className="font-semibold mb-4">Company News</h2>
           <CompanyNews />
         </Card>
-        <Card className="flex-1 overflow-hidden">
-          <ChatContainer 
-            messages={messages}
-            onMessagesChange={handleMessagesChange}
-            chatId={chatId}
-            onNewChat={handleNewChat}
-          />
-        </Card>
+        <ChatContainer 
+          messages={messages}
+          onMessagesChange={handleMessagesChange}
+          chatId={chatId}
+          onNewChat={handleNewChat}
+        />
       </div>
     </div>
   );
