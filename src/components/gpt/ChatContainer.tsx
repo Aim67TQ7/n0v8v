@@ -55,7 +55,10 @@ export const ChatContainer = ({
       console.log('API Response:', data);
 
       if (data.content) {
-        const assistantMessage = { role: "assistant", content: data.content };
+        const assistantMessage = { 
+          role: "assistant", 
+          content: data.content 
+        };
         setMessages(prev => [...prev, assistantMessage]);
       }
     } catch (error) {
