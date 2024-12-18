@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card";
-import { CompanyNews } from "@/components/hub/CompanyNews";
 import { ChatContainer } from "@/components/gpt/ChatContainer";
 import { useState } from "react";
 
@@ -31,10 +30,6 @@ export const MainContent = () => {
           onNewChat={handleNewChat}
         />
       </div>
-      <Card className="p-4 mt-4 flex-shrink-0">
-        <h2 className="font-semibold mb-4">Company News</h2>
-        <CompanyNews />
-      </Card>
     </div>
   );
 };
