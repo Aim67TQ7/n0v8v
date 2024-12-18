@@ -22,11 +22,7 @@ export const MainContent = () => {
   };
 
   return (
-    <div className="flex flex-col h-full space-y-4">
-      <Card className="p-4 flex-shrink-0">
-        <h2 className="font-semibold mb-4">Company News</h2>
-        <CompanyNews />
-      </Card>
+    <div className="flex flex-col h-full">
       <div className="flex-1">
         <ChatContainer 
           messages={messages}
@@ -35,6 +31,10 @@ export const MainContent = () => {
           onNewChat={handleNewChat}
         />
       </div>
+      <Card className="p-4 mt-4 flex-shrink-0">
+        <h2 className="font-semibold mb-4">Company News</h2>
+        <CompanyNews />
+      </Card>
     </div>
   );
 };
