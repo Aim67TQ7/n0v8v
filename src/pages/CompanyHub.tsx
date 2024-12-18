@@ -10,25 +10,25 @@ const CompanyHub = () => {
     <div className="min-h-[calc(100vh-4rem)] bg-background/95">
       <HubCard>
         <MobileMenu />
-        <div className="absolute inset-4">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 min-h-full">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
             {/* Left Sidebar */}
-            <div className="hidden md:block md:col-span-2 sticky top-20 self-start">
-              <Card className="bg-white">
+            <div className="hidden md:block md:col-span-2">
+              <Card className="bg-white h-[calc(100vh-5rem)] sticky top-[4rem]">
                 <SidebarContent />
               </Card>
             </div>
 
             {/* Main Content */}
-            <div className="md:col-span-8 flex flex-col">
-              <Card className="bg-white flex-1">
+            <div className="md:col-span-8">
+              <Card className="bg-white h-[calc(100vh-5rem)] sticky top-[4rem]">
                 <MainContent />
               </Card>
             </div>
 
             {/* Right Sidebar */}
-            <div className="hidden md:block md:col-span-2 sticky top-20 self-start">
-              <Card className="bg-white">
+            <div className="hidden md:block md:col-span-2">
+              <Card className="bg-white h-[calc(100vh-5rem)] sticky top-[4rem]">
                 <HubLinks />
               </Card>
             </div>
