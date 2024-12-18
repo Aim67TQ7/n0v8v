@@ -7,7 +7,7 @@ import { HubCard } from "@/components/hub/HubCard";
 
 const CompanyHub = () => {
   return (
-    <div className="min-h-[calc(100vh-4rem)] pt-6 bg-background/95">
+    <div className="min-h-[calc(100vh-4rem)] bg-background/95">
       <HubCard>
         <MobileMenu />
         <div className="absolute inset-4">
