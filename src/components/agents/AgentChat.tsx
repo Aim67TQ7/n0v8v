@@ -75,14 +75,14 @@ export const AgentChat = ({ selectedAgent }: AgentChatProps) => {
 
   return (
     <Card 
-      className="h-[calc(100vh-8rem)] flex flex-col"
+      className="h-[calc(100vh-8rem)] flex flex-col bg-background/95"
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden relative">
         <ScrollArea className="h-full p-4">
           {selectedAgent && (
-            <div className="mb-4 p-4 bg-accent rounded-lg">
+            <div className="mb-4 p-4 bg-accent/80 backdrop-blur-sm rounded-lg">
               <h3 className="font-medium">{selectedAgent.name}</h3>
               <p className="text-sm text-muted-foreground">{selectedAgent.description}</p>
             </div>
@@ -97,8 +97,8 @@ export const AgentChat = ({ selectedAgent }: AgentChatProps) => {
               <div
                 className={`max-w-[80%] rounded-lg p-3 ${
                   message.role === 'user'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted'
+                    ? 'bg-primary/90 backdrop-blur-sm text-primary-foreground'
+                    : 'bg-muted/90 backdrop-blur-sm'
                 }`}
               >
                 {message.content}
@@ -108,7 +108,7 @@ export const AgentChat = ({ selectedAgent }: AgentChatProps) => {
         </ScrollArea>
       </div>
       
-      <div className="border-t p-4">
+      <div className="border-t p-4 bg-background/95 backdrop-blur-sm">
         <form onSubmit={handleSubmit} className="flex gap-2">
           <input
             type="text"
