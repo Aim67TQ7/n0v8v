@@ -86,7 +86,7 @@ export const ChatHistory = ({ className }: ChatHistoryProps) => {
   );
 
   return (
-    <Card className={cn("p-2 bg-white h-full flex flex-col", className)}>
+    <Card className={cn("p-2 bg-white h-[750px] flex flex-col", className)}>
       <div className="mb-2 flex items-center justify-between">
         <h2 className="font-semibold text-sm">Chat History</h2>
         <Dialog>
