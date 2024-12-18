@@ -1,5 +1,4 @@
 import { ChatHistory } from "./ChatHistory";
-import { TrainingMaterials } from "./TrainingMaterials";
 
 export const SidebarContent = () => {
   const handleSelect = (sessionId: string) => {
@@ -13,9 +12,6 @@ export const SidebarContent = () => {
         onSelect={handleSelect}
         sessions={[]}
       />
-      <div className="mt-4">
-        <TrainingMaterials />
-      </div>
     </div>
   );
 };
