@@ -18,9 +18,7 @@ export const HubLinks = () => {
             <ModuleLinks />
           </Card>
           
-          <Card className="bg-white p-2 shadow-sm">
-            <ToolLinks />
-          </Card>
+          <ToolLinks />
           
           <AgentLinks />
         </div>
