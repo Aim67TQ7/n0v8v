@@ -17,13 +17,14 @@ export const ChatInput = ({
   onSubmit
 }: ChatInputProps) => {
   return (
-    <form onSubmit={onSubmit} className="p-4 border-t">
+    <form onSubmit={onSubmit} className="p-4">
       <div className="flex gap-2">
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type your message..."
           disabled={isLoading}
+          className="flex-1"
         />
         <Button type="submit" disabled={isLoading || !input.trim()}>
           {isLoading ? (

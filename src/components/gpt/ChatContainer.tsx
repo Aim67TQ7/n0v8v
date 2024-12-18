@@ -7,7 +7,7 @@ interface ChatContainerProps {
   messages: any[];
   onMessagesChange: (messages: any[]) => void;
   chatId: string | null;
-  onNewChat?: () => void;  // Made optional with ?
+  onNewChat?: () => void;
 }
 
 export const ChatContainer = ({ 
@@ -46,17 +46,16 @@ export const ChatContainer = ({
   };
 
   return (
-    <div className="flex flex-col h-[600px] bg-background">
-      <div className="flex-1 overflow-hidden">
+    <div className="flex flex-col h-full bg-background relative">
+      <div className="flex-1 overflow-y-auto pb-20">
         <MessageList messages={messages} messagesEndRef={messagesEndRef} />
       </div>
-      <div className="border-t">
+      <div className="absolute bottom-0 left-0 right-0 border-t bg-background">
         <ChatInput
           input={input}
           setInput={setInput}
           isLoading={isLoading}
           onSubmit={handleMessageSubmit}
-          onNew={onNewChat}
         />
       </div>
     </div>
