@@ -1,7 +1,8 @@
 import { useRef, useEffect, useState } from "react";
 import { ChatInput } from "./ChatInput";
 import { MessageList } from "./chat/MessageList";
-import { useChatMessages } from "./chat/useChatMessages";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface ChatContainerProps {
   messages: any[];
@@ -18,12 +19,8 @@ export const ChatContainer = ({
 }: ChatContainerProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
-  const { 
-    messages,
-    setMessages,
-    isLoading,
-    handleSubmit,
-  } = useChatMessages(chatId);
+  const [isLoading, setIsLoading] = useState(false);
+  const [messages, setMessages] = useState(initialMessages);
 
   useEffect(() => {
     setMessages(initialMessages);
@@ -40,9 +37,34 @@ export const ChatContainer = ({
   const handleMessageSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
-    
-    await handleSubmit(input);
+
+    const userMessage = { role: "user", content: input };
+    setMessages(prev => [...prev, userMessage]);
     setInput("");
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('chat-with-anthropic', {
+        body: {
+          messages: [...messages, userMessage],
+          model: 'claude-3-sonnet-20240307'
+        }
+      });
+
+      if (error) throw error;
+
+      console.log('API Response:', data);
+
+      if (data.content) {
+        const assistantMessage = { role: "assistant", content: data.content };
+        setMessages(prev => [...prev, assistantMessage]);
+      }
+    } catch (error) {
+      console.error('Chat error:', error);
+      toast.error("Failed to get response from AI");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
