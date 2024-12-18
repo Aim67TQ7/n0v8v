@@ -23,7 +23,7 @@ const RouteLoadingComponent = () => (
 const AppContent = () => {
   const publicRoutes = ['/login', '/reset-password', '/register'];
   const location = useLocation();
-  const hideHeaderRoutes = ['/login', '/reset-password', '/register'];
+  const hideHeaderRoutes = ['/login', '/reset-password', '/register', '/company-hub'];
   const showHeader = !hideHeaderRoutes.includes(location.pathname);
   const [showSplash, setShowSplash] = useState(true);
   const { isAuthenticated } = useAuth();
