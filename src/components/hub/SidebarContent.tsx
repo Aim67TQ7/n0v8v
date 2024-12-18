@@ -7,7 +7,7 @@ export const SidebarContent = () => {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex flex-col h-auto">
       <ChatHistory 
         className="flex-grow" 
         onSelect={handleSelect}

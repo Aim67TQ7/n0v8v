@@ -13,22 +13,22 @@ const CompanyHub = () => {
         <div className="absolute inset-4">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 h-full">
             {/* Left Sidebar */}
-            <div className="hidden md:block md:col-span-2 h-full">
-              <Card className="h-full bg-white">
+            <div className="hidden md:block md:col-span-2 sticky top-20">
+              <Card className="bg-white">
                 <SidebarContent />
               </Card>
             </div>
 
             {/* Main Content */}
             <div className="md:col-span-8 h-full">
-              <Card className="h-full bg-white">
+              <Card className="bg-white">
                 <MainContent />
               </Card>
             </div>
 
             {/* Right Sidebar */}
-            <div className="hidden md:block md:col-span-2 h-full">
-              <Card className="h-full bg-white">
+            <div className="hidden md:block md:col-span-2 sticky top-20">
+              <Card className="bg-white">
                 <HubLinks />
               </Card>
             </div>
