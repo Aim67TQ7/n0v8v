@@ -70,13 +70,13 @@ export const ChatContainer = ({
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-12rem)] bg-background">
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full overflow-y-auto">
+    <div className="flex flex-col h-full">
+      <div className="flex-1 overflow-hidden relative">
+        <div className="absolute inset-0 overflow-y-auto">
           <MessageList messages={messages} messagesEndRef={messagesEndRef} />
         </div>
       </div>
-      <div className="border-t bg-background">
+      <div className="border-t bg-background sticky bottom-0">
         <ChatInput
           input={input}
           setInput={setInput}
