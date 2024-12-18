@@ -24,7 +24,7 @@ serve(async (req) => {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-3-sonnet',
+        model: 'claude-3-sonnet-20240229',
         messages,
         max_tokens: 1000,
         temperature: 0.7,
