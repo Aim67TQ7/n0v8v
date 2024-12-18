@@ -7,12 +7,12 @@ interface ModuleLink {
 }
 
 const moduleLinks: ModuleLink[] = [
-  { name: "Lean", href: "/operations/lean/5s-vision" },
+  { name: "Lean", href: "/operations/lean" },
   { name: "Supply Chain", href: "/operations/supply-chain" },
-  { name: "Marketing", href: "/marketing/research" },
-  { name: "Inside Sales", href: "/leads/scraping/google-maps" },
+  { name: "Marketing", href: "/marketing" },
+  { name: "Inside Sales", href: "/leads/scraping" },
   { name: "Compliance", href: "/operations/compliance" },
-  { name: "HR Operations", href: "/operations/hr/company-news" },
+  { name: "HR Operations", href: "/operations/hr" },
   { name: "Engineering", href: "/operations/engineering" },
 ];
 
