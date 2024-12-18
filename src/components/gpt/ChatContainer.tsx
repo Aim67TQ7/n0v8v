@@ -76,7 +76,7 @@ export const ChatContainer = ({
           <MessageList messages={messages} messagesEndRef={messagesEndRef} />
         </div>
       </div>
-      <div className="border-t bg-background">
+      <div className="border-t bg-background mt-auto">
         <ChatInput
           input={input}
           setInput={setInput}
