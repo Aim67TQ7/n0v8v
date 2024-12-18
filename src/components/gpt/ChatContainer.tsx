@@ -1,10 +1,7 @@
 import { useRef, useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { ChatInput } from "./ChatInput";
 import { MessageList } from "./chat/MessageList";
 import { useChatMessages } from "./chat/useChatMessages";
-import { ChatActions } from "./ChatActions";
-import { Save } from "lucide-react";
 
 interface ChatContainerProps {
   messages: any[];
@@ -16,8 +13,7 @@ interface ChatContainerProps {
 export const ChatContainer = ({ 
   messages: initialMessages, 
   onMessagesChange, 
-  chatId, 
-  onNewChat 
+  chatId
 }: ChatContainerProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
@@ -40,10 +36,6 @@ export const ChatContainer = ({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSave = () => {
-    console.log("Saving chat...");
-  };
-
   const handleMessageSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
@@ -53,28 +45,17 @@ export const ChatContainer = ({
   };
 
   return (
-    <div className="flex flex-col h-[600px]">
-      <ChatActions onNewChat={onNewChat} />
+    <div className="flex flex-col h-[600px] bg-background">
       <div className="flex-1 overflow-hidden">
         <MessageList messages={messages} messagesEndRef={messagesEndRef} />
       </div>
-      <div className="border-t p-4 space-y-2">
+      <div className="border-t">
         <ChatInput
           input={input}
           setInput={setInput}
           isLoading={isLoading}
           onSubmit={handleMessageSubmit}
         />
-        <div className="flex justify-end space-x-2">
-          <Button
-            variant="outline"
-            onClick={handleSave}
-            className="gap-2"
-          >
-            <Save className="h-4 w-4" />
-            Save Chat
-          </Button>
-        </div>
       </div>
     </div>
   );
