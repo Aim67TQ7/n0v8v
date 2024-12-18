@@ -86,7 +86,7 @@ export const ChatHistory = ({ className }: ChatHistoryProps) => {
   );
 
   return (
-    <Card className={cn("p-3 bg-white", className)}>
+    <Card className={cn("p-2 bg-white h-full flex flex-col", className)}>
       <div className="mb-2 flex items-center justify-between">
         <h2 className="font-semibold text-sm">Chat History</h2>
         <Dialog>
@@ -103,7 +103,7 @@ export const ChatHistory = ({ className }: ChatHistoryProps) => {
           </DialogContent>
         </Dialog>
       </div>
-      <ScrollArea className="h-[324px]">
+      <ScrollArea className="flex-1">
         <div className="space-y-2 pr-2">
           {categories.map((category) => (
             <div key={category} className="space-y-1">

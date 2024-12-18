@@ -7,22 +7,22 @@ import { AgentLinks } from "./links/AgentLinks";
 
 export const HubLinks = () => {
   return (
-    <Card className="card h-[calc(100vh-8rem)] flex flex-col bg-white">
+    <Card className="h-full flex flex-col bg-white">
       <ScrollArea className="flex-1 p-4">
-        <div className="space-y-4">
-          <Card className="bg-white p-3 shadow-sm">
+        <div className="space-y-3">
+          <Card className="bg-white p-2 shadow-sm">
             <ResourceLinks />
           </Card>
           
-          <Card className="bg-white p-3 shadow-sm">
+          <Card className="bg-white p-2 shadow-sm">
             <ModuleLinks />
           </Card>
           
-          <Card className="bg-white p-3 shadow-sm">
+          <Card className="bg-white p-2 shadow-sm">
             <ToolLinks />
           </Card>
           
-          <Card className="bg-white p-3 shadow-sm">
+          <Card className="bg-white p-2 shadow-sm">
             <AgentLinks />
           </Card>
         </div>
