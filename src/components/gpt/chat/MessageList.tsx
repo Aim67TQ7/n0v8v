@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { ReactNode } from "react";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -15,7 +16,7 @@ interface MessageListProps {
 }
 
 export const MessageList = ({ messages, messagesEndRef }: MessageListProps) => {
-  const formatMessage = (content: string | { type: string; text: string }[]) => {
+  const formatMessage = (content: string | { type: string; text: string }[]): ReactNode => {
     // If content is a string, handle it as before
     if (typeof content === 'string') {
       return content.split('\n\n').map((paragraph, i) => (
@@ -39,12 +40,11 @@ export const MessageList = ({ messages, messagesEndRef }: MessageListProps) => {
       });
     }
 
-    // Fallback for unexpected content format
     return <p>Unable to display message</p>;
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="flex-1 p-4 space-y-4">
       {messages.map((message, index) => (
         <Card
           key={index}
@@ -57,7 +57,7 @@ export const MessageList = ({ messages, messagesEndRef }: MessageListProps) => {
           <div className="text-sm">
             {message.attachment ? (
               <a href={message.attachment.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                {message.content}
+                {formatMessage(message.content)}
               </a>
             ) : (
               formatMessage(message.content)

@@ -71,8 +71,10 @@ export const ChatContainer = ({
 
   return (
     <div className="flex flex-col h-[calc(100vh-12rem)] bg-background">
-      <div className="flex-1 overflow-y-auto">
-        <MessageList messages={messages} messagesEndRef={messagesEndRef} />
+      <div className="flex-1 overflow-hidden">
+        <div className="h-full overflow-y-auto">
+          <MessageList messages={messages} messagesEndRef={messagesEndRef} />
+        </div>
       </div>
       <div className="border-t bg-background">
         <ChatInput
