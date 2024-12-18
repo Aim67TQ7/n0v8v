@@ -10,7 +10,7 @@ const toolLinks: ToolLink[] = [
   { name: "5S Scoring", href: "/operations/lean/5s-vision" },
   { name: "Five Whys", href: "/operations/quality/five-whys" },
   { name: "PM Assist", href: "/operations/maintenance" },
-  { name: "Lead Scraping", href: "/leads/scraping" },
+  { name: "Lead Scraping", href: "/leads/scraping/google-maps" },
   { name: "Fishbone Analysis", href: "/operations/quality/fishbone" },
 ];
 
