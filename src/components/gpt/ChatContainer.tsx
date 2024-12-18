@@ -7,7 +7,6 @@ interface ChatContainerProps {
   messages: any[];
   onMessagesChange: (messages: any[]) => void;
   chatId: string | null;
-  onNewChat?: () => void;
 }
 
 export const ChatContainer = ({ 
