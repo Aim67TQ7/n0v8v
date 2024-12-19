@@ -8,7 +8,8 @@ import {
   GitFork,
   Fish,
   Image,
-  Newspaper
+  Newspaper,
+  Upload
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
