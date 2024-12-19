@@ -15,7 +15,13 @@ const Departments = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('departments')
-        .select('*');
+        .select(`
+          *,
+          leader:profiles(
+            first_name,
+            last_name
+          )
+        `);
       if (error) throw error;
       return data;
     }
@@ -30,10 +36,10 @@ const Departments = () => {
       
       <Card className="p-6">
         <DepartmentFilter 
-          filter={filter} 
-          filterBy={filterBy} 
-          onFilterChange={setFilter} 
-          onFilterByChange={setFilterBy} 
+          filter={filter}
+          filterBy={filterBy}
+          onFilterChange={setFilter}
+          onFilterByChange={setFilterBy}
         />
         <DepartmentsList departments={departments} />
       </Card>

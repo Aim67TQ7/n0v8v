@@ -15,7 +15,12 @@ const Categories = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('categories')
-        .select('*');
+        .select(`
+          *,
+          company:companies(name),
+          location:locations(facility_name),
+          department:departments(name)
+        `);
       if (error) throw error;
       return data;
     }
@@ -30,10 +35,10 @@ const Categories = () => {
       
       <Card className="p-6">
         <CategoryFilter 
-          filter={filter} 
-          filterBy={filterBy} 
-          onFilterChange={setFilter} 
-          onFilterByChange={setFilterBy} 
+          filter={filter}
+          filterBy={filterBy}
+          onFilterChange={setFilter}
+          onFilterByChange={setFilterBy}
         />
         <CategoriesList categories={categories} />
       </Card>

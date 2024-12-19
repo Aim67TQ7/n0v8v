@@ -15,7 +15,16 @@ const Locations = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('locations')
-        .select('*');
+        .select(`
+          *,
+          primary_contact:employees(
+            id,
+            profile:profiles(
+              first_name,
+              last_name
+            )
+          )
+        `);
       if (error) throw error;
       return data;
     }
@@ -30,10 +39,10 @@ const Locations = () => {
       
       <Card className="p-6">
         <LocationFilter 
-          filter={filter} 
-          filterBy={filterBy} 
-          onFilterChange={setFilter} 
-          onFilterByChange={setFilterBy} 
+          filter={filter}
+          filterBy={filterBy}
+          onFilterChange={setFilter}
+          onFilterByChange={setFilterBy}
         />
         <LocationsList locations={locations} />
       </Card>
