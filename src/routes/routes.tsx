@@ -9,8 +9,8 @@ import { productionRoutes } from "./productionRoutes";
 import { marketingRoutes } from "./marketingRoutes";
 import AgentsHub from "@/pages/agents/AgentsHub";
 import RAGUpload from "@/pages/data/RAGUpload";
+import DocumentProcessing from "@/pages/tools/DocumentProcessing";
 
-// Loading component for route transitions
 const RouteLoadingComponent = () => (
   <div className="flex items-center justify-center min-h-[50vh]">
     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -30,7 +30,7 @@ export const allRoutes = [
   },
   {
     path: "/tools/process-document",
-    element: <RAGUpload />
+    element: <DocumentProcessing />
   },
   {
     path: "/tools/vectorization",

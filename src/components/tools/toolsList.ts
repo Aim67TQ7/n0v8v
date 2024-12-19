@@ -1,15 +1,13 @@
 import { 
-  Bot, 
   FileText,
-  MessageSquare,
+  Database,
   Brain,
   Mail,
   Phone,
-  Database,
-  Image,
   Wrench,
   GitFork,
   Fish,
+  Image,
   Newspaper
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
@@ -26,23 +24,23 @@ interface Tool {
 export const tools: Tool[] = [
   {
     title: "Document Processing",
-    description: "Process and analyze documents with RAG technology",
+    description: "Upload and process company documents with advanced AI analysis",
     icon: FileText,
     href: "/tools/process-document",
     status: "ready",
     functionName: "process-rag-document"
   },
   {
-    title: "Vectorization",
-    description: "Upload documents to be vectorized for company-specific models",
-    icon: FileText,
+    title: "Knowledge Base",
+    description: "Access and search your company's processed documents",
+    icon: Database,
     href: "/tools/vectorization",
     status: "ready",
   },
   {
     title: "Chat Analysis",
     description: "AI-powered chat analysis with multiple model options",
-    icon: MessageSquare,
+    icon: Mail,
     href: "/company-gpt",
     status: "ready",
     functionName: "chat-with-ai"
@@ -58,7 +56,7 @@ export const tools: Tool[] = [
   {
     title: "AI Status Check",
     description: "Monitor AI services and model availability",
-    icon: Bot,
+    icon: Wrench,
     href: "/tools/ai-status",
     status: "ready",
     functionName: "check-ai-status"
