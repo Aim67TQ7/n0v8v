@@ -69,7 +69,7 @@ export const addBranch = async (
 
   if (error) throw error;
 
-  setBranches(prev => {
+  setBranches((prevBranches: Branch[]) => {
     const updateBranches = (items: Branch[]): Branch[] => {
       return items.map(item => {
         if (item.id === parentId) {
@@ -89,9 +89,9 @@ export const addBranch = async (
     };
 
     if (parentId) {
-      return updateBranches(prev);
+      return updateBranches(prevBranches);
     }
-    return [...prev, newBranch];
+    return [...prevBranches, newBranch];
   });
 
   return newBranch;
