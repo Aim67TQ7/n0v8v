@@ -57,6 +57,22 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
           navigate("/login");
           return;
         }
+
+        // Check if demo access has expired
+        if (profile.demo_access_expires) {
+          const expiryDate = new Date(profile.demo_access_expires);
+          if (expiryDate < new Date()) {
+            toast({
+              title: "Demo Access Expired",
+              description: "Your 48-hour demo access period has expired. Thank you for trying our platform!",
+              variant: "destructive"
+            });
+            await supabase.auth.signOut();
+            navigate("/login");
+            return;
+          }
+        }
+
       } catch (error) {
         console.error('Auth check error:', error);
         toast({
