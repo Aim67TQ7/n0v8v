@@ -53,7 +53,7 @@ const Tools = () => {
 
         <ToolCard
           title="ABC Learning"
-          description="Interactive learning platform for skill development and training"
+          description="Statistical model customization tool for optimizing AI performance to your specific use cases"
           icon={GraduationCap}
           href="/tools/abc-learning"
         />
