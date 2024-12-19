@@ -14,7 +14,7 @@ export const ModuleCard = ({ title, description, icon: Icon, href, status }: Mod
   return (
     <Link 
       to={href}
-      className={`transition-transform duration-200 hover:scale-105 ${
+      className={`block transition-transform duration-200 hover:scale-105 ${
         status === "coming-soon" ? "pointer-events-none opacity-60" : ""
       }`}
     >

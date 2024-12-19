@@ -5,21 +5,11 @@ import {
   Factory, 
   Package, 
   ChartBar,
-  Shield,
   Building2,
-  BookOpen,
-  Globe,
-  Building,
-  FileSpreadsheet,
-  GraduationCap,
-  MessageSquare,
-  User,
-  Mail,
-  BarChart2,
-  GitFork,
-  Fish,
-  Database,
-  Image
+  TruckIcon,
+  Activity,
+  DollarSign,
+  FileText
 } from "lucide-react";
 import type { ModuleCardProps } from "./ModuleCard";
 
@@ -40,106 +30,44 @@ export const modulesList: ModuleCardProps[] = [
   },
   {
     title: "Facilities",
-    description: "Manage facilities, maintenance, and company maps",
+    description: "Manage facilities, maintenance, and company assets",
     icon: Building2,
     href: "/operations/facilities",
     status: "ready"
   },
   {
-    title: "Maintenance",
-    description: "Equipment maintenance and scheduling",
-    icon: Wrench,
-    href: "/operations/maintenance", 
-    status: "ready"
-  }
-];
-
-export const customerFocusTools: ModuleCardProps[] = [
-  {
-    title: "Bot Conversations",
-    description: "AI-powered chat interactions with customers",
-    icon: MessageSquare,
-    href: "/customer-focus/bot-conversations",
-    status: "coming-soon"
-  },
-  {
-    title: "Customer Interaction",
-    description: "Track and improve customer engagement",
-    icon: User,
-    href: "/customer-focus/interactions",
-    status: "coming-soon"
-  },
-  {
-    title: "Training Resources",
-    description: "Customer service training materials",
-    icon: BookOpen,
-    href: "/customer-focus/training",
-    status: "coming-soon"
-  },
-  {
-    title: "Generate Newsletter",
-    description: "AI-powered newsletter content generation",
-    icon: Mail,
-    href: "/customer-focus/newsletter",
-    status: "coming-soon"
-  },
-  {
-    title: "Viral Posts",
-    description: "A/B testing for social media content",
-    icon: BarChart2,
-    href: "/customer-focus/viral-posts",
-    status: "coming-soon"
-  },
-  {
-    title: "Lead Generation",
-    description: "Web scraping tools for automated lead generation",
-    icon: Globe,
-    href: "/leads/scraping",
-    status: "ready"
-  }
-];
-
-export const efficiencyTools: ModuleCardProps[] = [
-  {
-    title: "5S Analysis",
-    description: "Detailed 5S workplace organization analysis",
-    icon: Database,
-    href: "/operations/lean/5s-vision",
+    title: "Supply Chain",
+    description: "Manage vendors, inventory, and logistics",
+    icon: TruckIcon,
+    href: "/operations/supply-chain",
     status: "ready"
   },
   {
-    title: "Five Whys Analysis",
-    description: "Root cause analysis using Five Whys methodology",
-    icon: GitFork,
-    href: "/operations/quality/five-whys",
+    title: "Lean Manufacturing",
+    description: "5S, Kaizen, and continuous improvement tools",
+    icon: Activity,
+    href: "/operations/lean",
     status: "ready"
   },
   {
-    title: "Part Analysis",
-    description: "Visual part analysis and quality inspection",
-    icon: Package,
-    href: "/operations/quality/part-analysis",
+    title: "Quality",
+    description: "Quality control, inspection, and assurance tools",
+    icon: ShieldCheck,
+    href: "/operations/quality",
     status: "ready"
   },
   {
-    title: "Process Analysis",
-    description: "Visual process analysis and improvement",
-    icon: Image,
-    href: "/operations/process",
+    title: "Sales",
+    description: "Sales tracking, forecasting, and customer management",
+    icon: DollarSign,
+    href: "/operations/sales",
     status: "ready"
   },
   {
-    title: "VAVE Analysis",
-    description: "Value Analysis and Value Engineering",
-    icon: ChartBar,
-    href: "/operations/quality/vave",
-    status: "ready"
-  },
-  {
-    title: "Maintenance Analysis",
-    description: "AI-powered equipment maintenance analysis",
-    icon: Wrench,
-    href: "/operations/maintenance",
+    title: "Compliance",
+    description: "Regulatory compliance and documentation management",
+    icon: FileText,
+    href: "/operations/compliance",
     status: "ready"
   }
 ];
