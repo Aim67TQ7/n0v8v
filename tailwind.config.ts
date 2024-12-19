@@ -55,6 +55,9 @@ export default {
           DEFAULT: "#ef4444",
           foreground: "#000000",
           hover: "#dc2626"
+        },
+        icon: {
+          DEFAULT: "#33C3F0"  // Sky Blue for icons
         }
       },
       fontFamily: {

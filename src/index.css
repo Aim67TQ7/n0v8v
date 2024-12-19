@@ -73,6 +73,10 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Add global icon styling */
+  svg[stroke="currentColor"] {
+    @apply text-icon;
+  }
 }
 
 @layer components {
