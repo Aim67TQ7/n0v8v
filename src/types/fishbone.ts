@@ -8,6 +8,14 @@ export interface Cause {
   subcauses?: Cause[];
 }
 
+export interface Branch {
+  id: string;
+  text: string;
+  children?: Branch[];
+  parentId?: string;
+  iteration: number;
+}
+
 export interface AnalysisStep {
   category: CauseCategory;
   title: string;
@@ -20,4 +28,5 @@ export interface FishboneState {
   steps: AnalysisStep[];
   selectedCauses: Cause[];
   round: 1 | 2;
+  branches?: Branch[];
 }

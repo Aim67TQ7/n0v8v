@@ -7,6 +7,7 @@ import { FiveWhysForm } from "@/components/five-whys/FiveWhysForm";
 import { QuestioningInterface } from "@/components/five-whys/QuestioningInterface";
 import { FishboneResult } from "@/components/five-whys/FishboneResult";
 import { AnalysisHeader } from "@/components/five-whys/AnalysisHeader";
+import type { Branch } from "@/types/fishbone";
 
 interface LearningFeedback {
   iteration: number;
@@ -22,7 +23,7 @@ const FiveWhys = () => {
   const [learningFeedback, setLearningFeedback] = useState<LearningFeedback[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
-  const [groupFeedback, setGroupFeedback] = useState<any[]>([]);
+  const [branches, setBranches] = useState<Branch[]>([]);
 
   const startAnalysis = async (statement: string) => {
     if (!statement.trim()) {
@@ -36,6 +37,69 @@ const FiveWhys = () => {
 
     setProblemStatement(statement);
     setCurrentIteration(1);
+  };
+
+  const handleAddBranch = async (parentId: string, text: string) => {
+    if (!session?.user) return;
+
+    try {
+      const newBranch: Branch = {
+        id: crypto.randomUUID(),
+        text,
+        parentId,
+        iteration: currentIteration,
+        children: []
+      };
+
+      const { error } = await supabase
+        .from('five_whys_branches')
+        .insert({
+          analysis_id: analysis?.id,
+          parent_cause_id: parentId,
+          cause_text: text,
+          iteration_number: currentIteration,
+          created_by: session.user.id
+        });
+
+      if (error) throw error;
+
+      setBranches(prev => {
+        const updateBranches = (items: Branch[]): Branch[] => {
+          return items.map(item => {
+            if (item.id === parentId) {
+              return {
+                ...item,
+                children: [...(item.children || []), newBranch]
+              };
+            }
+            if (item.children) {
+              return {
+                ...item,
+                children: updateBranches(item.children)
+              };
+            }
+            return item;
+          });
+        };
+
+        if (parentId) {
+          return updateBranches(prev);
+        }
+        return [...prev, newBranch];
+      });
+
+      toast({
+        title: "Branch added",
+        description: "New cause branch has been added successfully."
+      });
+    } catch (error) {
+      console.error('Error adding branch:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add new branch",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleAnswer = async (answer: string, feedback?: string) => {
@@ -153,6 +217,8 @@ const FiveWhys = () => {
             previousAnswers={answers}
             onAnswer={handleAnswer}
             isAnalyzing={isAnalyzing}
+            branches={branches}
+            onAddBranch={handleAddBranch}
           />
         ) : (
           <FishboneResult

@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { BranchTree } from "./branches/BranchTree";
+import type { Branch } from "@/types/fishbone";
 
 interface QuestioningInterfaceProps {
   problemStatement: string;
@@ -10,6 +12,8 @@ interface QuestioningInterfaceProps {
   previousAnswers: string[];
   onAnswer: (answer: string, feedback?: string) => void;
   isAnalyzing: boolean;
+  branches?: Branch[];
+  onAddBranch?: (parentId: string, text: string) => void;
 }
 
 export const QuestioningInterface = ({
@@ -18,6 +22,8 @@ export const QuestioningInterface = ({
   previousAnswers,
   onAnswer,
   isAnalyzing,
+  branches = [],
+  onAddBranch = () => {},
 }: QuestioningInterfaceProps) => {
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
   const [customAnswer, setCustomAnswer] = useState("");
@@ -64,7 +70,6 @@ export const QuestioningInterface = ({
     }
   };
 
-  // Generate suggested questions based on previous answers and current iteration
   const suggestedQuestions = previousAnswers.length > 0 
     ? [`Why did ${previousAnswers[previousAnswers.length - 1].toLowerCase()}?`]
     : ["What is the immediate cause?", "What factors contributed to this?"];
@@ -127,6 +132,13 @@ export const QuestioningInterface = ({
           </div>
         </div>
       </div>
+
+      {branches.length > 0 && (
+        <div className="mt-4">
+          <h3 className="text-sm font-medium mb-2">Alternative Branches</h3>
+          <BranchTree branches={branches} onAddBranch={onAddBranch} />
+        </div>
+      )}
 
       {isLearning && (
         <Textarea
