@@ -8,6 +8,7 @@ import { operationsRoutes } from "./operationsRoutes";
 import { productionRoutes } from "./productionRoutes";
 import { marketingRoutes } from "./marketingRoutes";
 import AgentsHub from "@/pages/agents/AgentsHub";
+import RAGUpload from "@/pages/data/RAGUpload";
 
 // Loading component for route transitions
 const RouteLoadingComponent = () => (
@@ -26,6 +27,10 @@ export const allRoutes = [
   {
     path: "/agents",
     element: <AgentsHub />
+  },
+  {
+    path: "/tools/process-document",
+    element: <RAGUpload />
   }
 ];
 

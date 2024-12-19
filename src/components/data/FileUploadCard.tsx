@@ -15,11 +15,11 @@ export const FileUploadCard = () => {
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
     const validFiles = selectedFiles.filter(file => {
-      const isValid = file.type === 'application/pdf' || file.type.startsWith('image/');
+      const isValid = file.type === 'application/pdf' || file.type === 'text/plain';
       if (!isValid) {
         toast({
           title: "Invalid file type",
-          description: `${file.name} is not a PDF or scanned image file`,
+          description: `${file.name} is not a PDF or text file`,
           variant: "destructive"
         });
       }
@@ -96,7 +96,7 @@ export const FileUploadCard = () => {
              onClick={() => document.getElementById('file-upload')?.click()}>
           <Upload className="h-8 w-8 text-gray-400 mb-2" />
           <p className="text-sm text-gray-600">Click to upload or drag and drop</p>
-          <p className="text-xs text-gray-500">PDF and scanned documents only</p>
+          <p className="text-xs text-gray-500">PDF and text documents only</p>
         </div>
 
         <input
@@ -104,7 +104,7 @@ export const FileUploadCard = () => {
           type="file"
           className="hidden"
           multiple
-          accept=".pdf,image/*"
+          accept=".pdf,.txt"
           onChange={handleFileSelect}
         />
 

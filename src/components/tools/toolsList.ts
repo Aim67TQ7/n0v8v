@@ -26,6 +26,21 @@ interface Tool {
 
 export const tools: Tool[] = [
   {
+    title: "Document Processing",
+    description: "Process and analyze documents with RAG technology",
+    icon: FileText,
+    href: "/tools/process-document",
+    status: "ready",
+    functionName: "process-rag-document"
+  },
+  {
+    title: "Vectorization",
+    description: "Upload documents to be vectorized for company-specific models",
+    icon: FileText,
+    href: "/tools/vectorization",
+    status: "ready",
+  },
+  {
     title: "Chat Analysis",
     description: "AI-powered chat analysis with multiple model options",
     icon: MessageSquare,
@@ -48,22 +63,6 @@ export const tools: Tool[] = [
     href: "/tools/ai-status",
     status: "ready",
     functionName: "check-ai-status"
-  },
-  {
-    title: "Document Processing",
-    description: "Process and analyze documents with RAG technology",
-    icon: FileText,
-    href: "/tools/process-document",
-    status: "ready",
-    functionName: "process-rag-document"
-  },
-  {
-    title: "Lead Generation",
-    description: "Automated lead scraping and analysis",
-    icon: Search,
-    href: "/leads/scraping",
-    status: "ready",
-    functionName: "scrape-leads"
   },
   {
     title: "Email Automation",
