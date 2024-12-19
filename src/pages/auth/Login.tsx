@@ -12,19 +12,22 @@ const Login = () => {
 
   useEffect(() => {
     // Check current auth status
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
       if (session) {
         navigate('/company-hub')
       }
-    })
+    }
+    
+    checkAuth()
 
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN') {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
         toast({
-          title: "Welcome back!",
+          title: "Welcome!",
           description: "You've successfully signed in.",
         })
         navigate('/company-hub')
