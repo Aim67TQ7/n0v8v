@@ -25,13 +25,9 @@ const AppContent = () => {
   const showHeader = !hideHeaderRoutes.includes(location.pathname);
   const [showSplash, setShowSplash] = useState(true);
 
-  if (showSplash) {
+  // Skip splash screen for auth routes
+  if (showSplash && !hideHeaderRoutes.includes(location.pathname)) {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
-  }
-
-  // Redirect to login if not authenticated
-  if (!session && !hideHeaderRoutes.includes(location.pathname)) {
-    return <Navigate to="/login" replace />;
   }
 
   return (
