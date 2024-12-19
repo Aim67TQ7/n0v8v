@@ -28,7 +28,7 @@ const Login = () => {
 
       toast({
         title: "Check your email",
-        description: "We've sent you a magic link to sign in.",
+        description: "We've sent you a magic link to sign in. If this is your first time signing in, you'll need to confirm your email address first.",
       });
     } catch (error: any) {
       toast({
