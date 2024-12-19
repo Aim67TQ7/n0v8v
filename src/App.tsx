@@ -13,6 +13,7 @@ import FiveSVision from "@/pages/FiveSVision";
 import CompanyNews from "@/pages/operations/hr/CompanyNews";
 import GoogleMapsScraper from "@/pages/leads/GoogleMapsScraper";
 import AgentsHub from "@/pages/agents/AgentsHub";
+import Modules from "@/pages/Modules";
 
 const RouteLoadingComponent = () => (
   <div className="flex items-center justify-center min-h-[50vh]">
@@ -68,6 +69,7 @@ const AppContent = () => {
 
             {/* Protected routes */}
             <Route element={<AuthWrapper />}>
+              <Route path="/modules" element={<Modules />} />
               <Route path="/agents" element={<AgentsHub />} />
               <Route path="/operations/lean/5s-vision" element={<FiveSVision />} />
               <Route path="/operations/hr/company-news" element={<CompanyNews />} />
