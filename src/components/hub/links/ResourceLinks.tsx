@@ -1,4 +1,4 @@
-import { Folder } from "lucide-react";
+import { Folder, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface ResourceLink {
@@ -7,6 +7,7 @@ interface ResourceLink {
 }
 
 const resourceLinks: ResourceLink[] = [
+  { name: "Customize", href: "/tools/process-document" },
   { name: "Desktop", href: "company-resource://desktop" },
   { name: "Email", href: "company-resource://email" },
   { name: "Teams", href: "company-resource://teams" },
@@ -52,8 +53,9 @@ export const ResourceLinks = () => {
           <button
             key={link.name}
             onClick={() => handleResourceClick(link.href)}
-            className="block w-full text-xs text-gray-700 hover:text-black hover:bg-gray-100 py-0.5 px-2 rounded transition-colors text-left"
+            className="flex items-center gap-2 w-full text-xs text-gray-700 hover:text-black hover:bg-gray-100 py-0.5 px-2 rounded transition-colors text-left"
           >
+            {link.name === "Customize" && <Settings className="h-3 w-3" />}
             {link.name}
           </button>
         ))}

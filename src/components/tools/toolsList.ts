@@ -9,7 +9,8 @@ import {
   Fish,
   Image,
   Newspaper,
-  Upload
+  Upload,
+  Settings
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
