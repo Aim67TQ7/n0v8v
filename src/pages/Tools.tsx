@@ -1,4 +1,4 @@
-import { Scale, Search, FileText, ChartBar } from "lucide-react";
+import { Scale, Search, FileText, ChartBar, GraduationCap, Book } from "lucide-react";
 import { ToolCard } from "@/components/tools/ToolCard";
 import { efficiencyTools } from "@/components/operations/modulesList";
 import { ApiStatusIndicator } from "@/components/tools/ApiStatusIndicator";
@@ -49,6 +49,20 @@ const Tools = () => {
           description="Real-time inventory monitoring and stock level analysis"
           icon={ChartBar}
           href="/tools/stock-check"
+        />
+
+        <ToolCard
+          title="ABC Learning"
+          description="Interactive learning platform for skill development and training"
+          icon={GraduationCap}
+          href="/tools/abc-learning"
+        />
+
+        <ToolCard
+          title="Part Trainer"
+          description="Comprehensive training module for part identification and analysis"
+          icon={Book}
+          href="/tools/part-trainer"
         />
       </div>
     </div>
