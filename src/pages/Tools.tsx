@@ -1,4 +1,4 @@
-import { Scale, Search, FileText } from "lucide-react";
+import { Scale, Search, FileText, ChartBar } from "lucide-react";
 import { ToolCard } from "@/components/tools/ToolCard";
 import { efficiencyTools } from "@/components/operations/modulesList";
 import { ApiStatusIndicator } from "@/components/tools/ApiStatusIndicator";
@@ -35,6 +35,20 @@ const Tools = () => {
           description="Generate comprehensive market research reports with AI assistance"
           icon={FileText}
           href="/marketing/research"
+        />
+
+        <ToolCard
+          title="Text Parser"
+          description="Advanced text analysis and processing tool for document automation"
+          icon={FileText}
+          href="/tools/text-parser"
+        />
+
+        <ToolCard
+          title="Stock Check"
+          description="Real-time inventory monitoring and stock level analysis"
+          icon={ChartBar}
+          href="/tools/stock-check"
         />
       </div>
     </div>
