@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Card } from "@/components/ui/card";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -42,11 +43,14 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-lg">
+      <Card className="max-w-md w-full space-y-8 p-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            Welcome Back
           </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Sign in to access your account
+          </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
           <div>
@@ -82,7 +86,7 @@ const Login = () => {
             </button>
           </div>
         </form>
-      </div>
+      </Card>
     </div>
   );
 };
