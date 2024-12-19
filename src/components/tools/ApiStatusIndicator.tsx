@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
+type ServiceStatus = 'checking' | 'up' | 'down';
+
 export const ApiStatusIndicator = () => {
-  const [statuses, setStatuses] = useState({
-    openai: 'checking' as const,
-    anthropic: 'checking' as const
+  const [statuses, setStatuses] = useState<{
+    openai: ServiceStatus;
+    anthropic: ServiceStatus;
+  }>({
+    openai: 'checking',
+    anthropic: 'checking'
   });
 
   const checkApiStatus = async () => {
