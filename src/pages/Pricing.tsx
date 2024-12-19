@@ -2,16 +2,16 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DollarSign, Check, Info, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useSessionContext } from "@supabase/auth-helpers-react";
+import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 
 const PricingPage = () => {
   const navigate = useNavigate();
-  const { session } = useSessionContext();
+  const { isAuthenticated } = useAuth();
   const { toast } = useToast();
 
   // Redirect authenticated users away from pricing
-  if (session) {
+  if (isAuthenticated) {
     navigate('/');
     return null;
   }

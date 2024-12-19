@@ -1,7 +1,7 @@
 import { RouteObject } from "react-router-dom";
-import Login from "@/pages/auth/Login";
-import Register from "@/pages/auth/Register";
-import ResetPassword from "@/pages/auth/ResetPassword";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
+import ResetPassword from "@/pages/ResetPassword";
 
 export const authRoutes: RouteObject[] = [
   {
