@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const Register = () => {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const Register = () => {
     try {
       const { error } = await supabase.auth.signUp({
         email,
+        password,
         options: {
           emailRedirectTo: `${window.location.origin}/company-hub`,
         },
@@ -64,6 +66,21 @@ const Register = () => {
               required
               className="mt-1"
               placeholder="Enter your email"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="mt-1"
+              placeholder="Enter your password"
             />
           </div>
 
