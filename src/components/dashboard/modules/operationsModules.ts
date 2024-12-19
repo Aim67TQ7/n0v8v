@@ -2,28 +2,28 @@ import {
   Building,
   FileText,
   Factory,
-  WrenchIcon,
   ShieldCheck,
   TruckIcon,
   Settings,
   Activity,
-  Building2
+  Building2,
+  DollarSign
 } from "lucide-react";
 import type { ModuleCardProps } from "../ModuleCard";
 
 export const operationsModules: ModuleCardProps[] = [
   {
     title: "Compliance",
-    description: "Regulatory compliance and documentation",
+    description: "Regulatory compliance and documentation management",
     icon: FileText,
     href: "/operations/compliance",
     status: "ready"
   },
   {
-    title: "Customer Focus",
-    description: "CRM and customer service tools",
-    icon: Building,
-    href: "/operations/customer-focus",
+    title: "Facilities",
+    description: "Manage facilities, maintenance, and company assets",
+    icon: Building2,
+    href: "/operations/facilities",
     status: "ready"
   },
   {
@@ -34,13 +34,6 @@ export const operationsModules: ModuleCardProps[] = [
     status: "ready"
   },
   {
-    title: "Facilities",
-    description: "Manage facilities and maintenance",
-    icon: Building2,
-    href: "/operations/facilities",
-    status: "ready"
-  },
-  {
     title: "Lean Manufacturing",
     description: "5S, Kaizen, and continuous improvement tools",
     icon: Activity,
@@ -48,24 +41,17 @@ export const operationsModules: ModuleCardProps[] = [
     status: "ready"
   },
   {
-    title: "Maintenance",
-    description: "Equipment maintenance and scheduling",
-    icon: WrenchIcon,
-    href: "/operations/maintenance",
-    status: "ready"
-  },
-  {
-    title: "Production",
-    description: "Manage production planning and execution",
-    icon: Factory,
-    href: "/operations/production",
-    status: "ready"
-  },
-  {
     title: "Quality",
-    description: "Quality control and assurance tools",
+    description: "Quality control, inspection, and assurance tools",
     icon: ShieldCheck,
     href: "/operations/quality",
+    status: "ready"
+  },
+  {
+    title: "Sales",
+    description: "Sales tracking, forecasting, and customer management",
+    icon: DollarSign,
+    href: "/operations/sales",
     status: "ready"
   },
   {

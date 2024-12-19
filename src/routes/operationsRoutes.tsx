@@ -14,6 +14,10 @@ const FiveWhys = lazy(() => import("@/pages/quality/FiveWhys"));
 const Fishbone = lazy(() => import("@/pages/quality/Fishbone"));
 const ProcessImprovement = lazy(() => import("@/pages/quality/ProcessImprovement"));
 const VAVEAnalysis = lazy(() => import("@/pages/operations/VAVEAnalysis"));
+const Sales = lazy(() => import("@/pages/operations/Sales"));
+const SupplyChain = lazy(() => import("@/pages/operations/SupplyChain"));
+const Compliance = lazy(() => import("@/pages/operations/Compliance"));
+const Lean = lazy(() => import("@/pages/operations/Lean"));
 
 export const operationsRoutes: RouteObject[] = [
   {
@@ -21,12 +25,12 @@ export const operationsRoutes: RouteObject[] = [
     element: <Facilities />
   },
   {
-    path: "/operations/production",
-    element: <Production />
+    path: "/operations/facilities/maintenance",
+    element: <MaintenanceSystem />
   },
   {
-    path: "/operations/maintenance",
-    element: <MaintenanceSystem />
+    path: "/operations/production",
+    element: <Production />
   },
   {
     path: "/operations/hr",
@@ -67,5 +71,21 @@ export const operationsRoutes: RouteObject[] = [
   {
     path: "/operations/quality/vave",
     element: <VAVEAnalysis />
+  },
+  {
+    path: "/operations/sales",
+    element: <Sales />
+  },
+  {
+    path: "/operations/supply-chain",
+    element: <SupplyChain />
+  },
+  {
+    path: "/operations/compliance",
+    element: <Compliance />
+  },
+  {
+    path: "/operations/lean",
+    element: <Lean />
   }
 ];
