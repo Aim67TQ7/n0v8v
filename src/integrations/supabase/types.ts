@@ -318,6 +318,60 @@ export type Database = {
           },
         ]
       }
+      company_documents: {
+        Row: {
+          company_id: string | null
+          content_type: string
+          created_at: string
+          created_by: string | null
+          file_path: string
+          file_size: number | null
+          filename: string
+          id: string
+          processed_at: string | null
+          status: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          content_type: string
+          created_at?: string
+          created_by?: string | null
+          file_path: string
+          file_size?: number | null
+          filename: string
+          id?: string
+          processed_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          content_type?: string
+          created_at?: string
+          created_by?: string | null
+          file_path?: string
+          file_size?: number | null
+          filename?: string
+          id?: string
+          processed_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_documents_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_documents_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_news: {
         Row: {
           company_id: string | null

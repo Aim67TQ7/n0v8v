@@ -31,6 +31,10 @@ export const allRoutes = [
   {
     path: "/tools/process-document",
     element: <RAGUpload />
+  },
+  {
+    path: "/tools/vectorization",
+    element: <RAGUpload />
   }
 ];
 

@@ -2,7 +2,6 @@ import {
   Bot, 
   FileText,
   MessageSquare,
-  Search,
   Brain,
   Mail,
   Phone,
