@@ -14,7 +14,6 @@ const Login = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Check if user is already logged in
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
@@ -31,7 +30,7 @@ const Login = () => {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/company-hub`
+          emailRedirectTo: window.location.origin + '/company-hub'
         }
       });
 
