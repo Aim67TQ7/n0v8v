@@ -9,6 +9,7 @@ import { useLocation } from "react-router-dom";
 import { useState, Suspense } from "react";
 import { SplashScreen } from "@/components/SplashScreen";
 import { Header } from "@/components/Header";
+import Login from "@/pages/auth/Login";
 import FiveSVision from "@/pages/FiveSVision";
 import CompanyNews from "@/pages/operations/hr/CompanyNews";
 import GoogleMapsScraper from "@/pages/leads/GoogleMapsScraper";
@@ -55,16 +56,8 @@ const AppContent = () => {
               } 
             />
 
-            {/* Public routes (no auth required) */}
-            {allRoutes
-              .filter(route => publicRoutes.includes(route.path))
-              .map(route => (
-                <Route
-                  key={route.path}
-                  path={route.path}
-                  element={route.element}
-                />
-              ))}
+            {/* Public routes */}
+            <Route path="/login" element={<Login />} />
 
             {/* Protected routes */}
             <Route element={<AuthWrapper />}>

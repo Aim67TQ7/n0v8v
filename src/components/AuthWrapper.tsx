@@ -25,8 +25,7 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
           throw sessionError;
         }
 
-        // If no session and not in development mode, redirect to login
-        if (!session && !isDevelopment) {
+        if (!session) {
           console.log("No session found, redirecting to login");
           const currentPath = location.pathname;
           if (currentPath !== '/login') {
@@ -36,38 +35,27 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
           return;
         }
 
-        // If in development mode, allow access
-        if (isDevelopment) {
-          console.log("Development mode, allowing access");
-          return;
+        // If we have a session, check if user has a profile
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        if (profileError) {
+          console.error("Error fetching profile:", profileError);
+          throw profileError;
         }
 
-        // If we have a session, check if user is a superuser
-        if (session) {
-          const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
-
-          if (profileError) {
-            console.error("Error fetching profile:", profileError);
-            throw profileError;
-          }
-
-          const isSuperUser = profile?.role === 'superuser';
-
-          // If not a superuser, show error and redirect to login
-          if (!isSuperUser) {
-            toast({
-              title: "Access Denied",
-              description: "You need superuser permissions to access this section",
-              variant: "destructive"
-            });
-            console.log("Not authorized, redirecting to login");
-            sessionStorage.setItem('redirectAfterLogin', location.pathname);
-            navigate("/login");
-          }
+        if (!profile) {
+          toast({
+            title: "Profile Error",
+            description: "Unable to load your profile. Please try logging in again.",
+            variant: "destructive"
+          });
+          await supabase.auth.signOut();
+          navigate("/login");
+          return;
         }
       } catch (error) {
         console.error('Auth check error:', error);
@@ -81,7 +69,7 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
     };
 
     checkAuth();
-  }, [isLoading, isAuthenticated, navigate, location.pathname, isDevelopment, toast]);
+  }, [isLoading, isAuthenticated, navigate, location.pathname, toast]);
 
   if (isLoading) {
     return (
