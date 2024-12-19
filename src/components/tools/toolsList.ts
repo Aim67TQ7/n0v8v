@@ -108,7 +108,7 @@ export const tools: Tool[] = [
     description: "Root cause analysis using Five Whys methodology",
     icon: GitFork,
     href: "/operations/quality/five-whys",
-    status: "ready",
+    status: "coming-soon",
     functionName: "analyze-five-whys"
   },
   {
