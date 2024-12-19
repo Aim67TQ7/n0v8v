@@ -47,7 +47,7 @@ export const addBranch = async (
   analysisId: string | undefined,
   userId: string,
   branches: Branch[],
-  setBranches: (branches: Branch[]) => void
+  setBranches: (value: Branch[] | ((prev: Branch[]) => Branch[])) => void
 ) => {
   const newBranch: Branch = {
     id: crypto.randomUUID(),
