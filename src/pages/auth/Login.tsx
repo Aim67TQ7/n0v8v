@@ -14,6 +14,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [lastAttempt, setLastAttempt] = useState<number | null>(null);
+  const [timeRemaining, setTimeRemaining] = useState(0);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -25,6 +26,39 @@ const Login = () => {
       }
     });
   }, [navigate]);
+
+  // Load last attempt from localStorage and handle countdown
+  useEffect(() => {
+    const stored = localStorage.getItem('lastLoginAttempt');
+    if (stored) {
+      const lastAttemptTime = parseInt(stored);
+      const now = Date.now();
+      if (now - lastAttemptTime < RATE_LIMIT_DURATION) {
+        setLastAttempt(lastAttemptTime);
+      }
+    }
+  }, []);
+
+  // Handle countdown timer
+  useEffect(() => {
+    if (!lastAttempt) return;
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const elapsed = now - lastAttempt;
+      
+      if (elapsed >= RATE_LIMIT_DURATION) {
+        setTimeRemaining(0);
+        setLastAttempt(null);
+        localStorage.removeItem('lastLoginAttempt');
+        clearInterval(interval);
+      } else {
+        setTimeRemaining(Math.ceil((RATE_LIMIT_DURATION - elapsed) / 1000));
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [lastAttempt]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +87,11 @@ const Login = () => {
 
       if (error) {
         if (error.message.includes('rate limit')) {
+          // Update last attempt timestamp
+          const newLastAttempt = Date.now();
+          setLastAttempt(newLastAttempt);
+          localStorage.setItem('lastLoginAttempt', newLastAttempt.toString());
+          
           toast({
             variant: "destructive",
             title: "Too many attempts",
@@ -64,9 +103,10 @@ const Login = () => {
         return;
       }
 
-      // Update last attempt timestamp
-      setLastAttempt(Date.now());
-      localStorage.setItem('lastLoginAttempt', Date.now().toString());
+      // Update last attempt timestamp on successful request
+      const newLastAttempt = Date.now();
+      setLastAttempt(newLastAttempt);
+      localStorage.setItem('lastLoginAttempt', newLastAttempt.toString());
 
       toast({
         title: "Magic link sent!",
@@ -76,7 +116,7 @@ const Login = () => {
       console.error("Login error:", error);
       toast({
         variant: "destructive",
-        title: "Login failed",
+        title: "Error",
         description: error.message,
       });
     } finally {
@@ -84,13 +124,7 @@ const Login = () => {
     }
   };
 
-  // Load last attempt from localStorage
-  useEffect(() => {
-    const stored = localStorage.getItem('lastLoginAttempt');
-    if (stored) {
-      setLastAttempt(parseInt(stored));
-    }
-  }, []);
+  const isRateLimited = lastAttempt && (Date.now() - lastAttempt) < RATE_LIMIT_DURATION;
 
   return (
     <AuthCard>
@@ -107,25 +141,27 @@ const Login = () => {
           onChange={(e) => setEmail(e.target.value)}
           required
           className="w-full"
-          disabled={loading}
+          disabled={loading || isRateLimited}
         />
         
         <Button
           type="submit"
           className="w-full"
-          disabled={loading || (lastAttempt && (Date.now() - lastAttempt) < RATE_LIMIT_DURATION)}
+          disabled={loading || isRateLimited}
         >
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Sending Magic Link...
             </>
+          ) : isRateLimited ? (
+            `Wait ${timeRemaining}s to request again`
           ) : (
             "Send Magic Link"
           )}
         </Button>
 
-        {lastAttempt && (Date.now() - lastAttempt) < RATE_LIMIT_DURATION && (
+        {isRateLimited && (
           <p className="text-sm text-muted-foreground text-center">
             Please wait before requesting another magic link
           </p>
