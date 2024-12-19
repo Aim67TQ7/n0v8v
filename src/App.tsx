@@ -40,12 +40,13 @@ const AppContent = () => {
       <main className="flex-1">
         <Suspense fallback={<RouteLoadingComponent />}>
           <Routes>
+            {/* Public routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             
             {/* Protected routes */}
-            {session && (
+            {session ? (
               <>
                 <Route path="/" element={<Navigate to="/company-hub" replace />} />
                 {allRoutes.map(route => (
@@ -56,6 +57,9 @@ const AppContent = () => {
                   />
                 ))}
               </>
+            ) : (
+              // Redirect to login for any unknown route when not authenticated
+              <Route path="*" element={<Navigate to="/login" replace />} />
             )}
           </Routes>
         </Suspense>
