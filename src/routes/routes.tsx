@@ -1,8 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { AuthWrapper } from "@/components/AuthWrapper";
-import { useAuth } from "@/contexts/AuthContext";
-import { authRoutes } from "./authRoutes";
+import { Routes, Route } from "react-router-dom";
 import { dashboardRoutes } from "./dashboardRoutes";
 import { operationsRoutes } from "./operationsRoutes";
 import { productionRoutes } from "./productionRoutes";
@@ -18,7 +15,6 @@ const RouteLoadingComponent = () => (
 
 // Combine all routes for export
 export const allRoutes = [
-  ...authRoutes,
   ...dashboardRoutes,
   ...operationsRoutes,
   ...productionRoutes,
@@ -30,26 +26,11 @@ export const allRoutes = [
 ];
 
 export const AppRoutes = () => {
-  const { isAuthenticated } = useAuth();
-  const publicRoutes = ['/login', '/reset-password', '/register'];
-
   return (
     <Suspense fallback={<RouteLoadingComponent />}>
       <Routes>
-        {/* Default route redirect */}
-        <Route 
-          path="/" 
-          element={
-            isAuthenticated ? (
-              <Navigate to="/company-hub" replace />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          } 
-        />
-
-        {/* Public routes (no auth required) */}
-        {authRoutes.map(route => (
+        {/* Dashboard routes */}
+        {dashboardRoutes.map(route => (
           <Route
             key={route.path}
             path={route.path}
@@ -57,44 +38,32 @@ export const AppRoutes = () => {
           />
         ))}
 
-        {/* Protected routes */}
-        <Route element={<AuthWrapper />}>
-          {/* Dashboard routes */}
-          {dashboardRoutes.map(route => (
-            <Route
-              key={route.path}
-              path={route.path}
-              element={route.element}
-            />
-          ))}
+        {/* Operations routes */}
+        {operationsRoutes.map(route => (
+          <Route
+            key={route.path}
+            path={route.path}
+            element={route.element}
+          />
+        ))}
 
-          {/* Operations routes */}
-          {operationsRoutes.map(route => (
-            <Route
-              key={route.path}
-              path={route.path}
-              element={route.element}
-            />
-          ))}
+        {/* Production routes */}
+        {productionRoutes.map(route => (
+          <Route
+            key={route.path}
+            path={route.path}
+            element={route.element}
+          />
+        ))}
 
-          {/* Production routes */}
-          {productionRoutes.map(route => (
-            <Route
-              key={route.path}
-              path={route.path}
-              element={route.element}
-            />
-          ))}
-
-          {/* Marketing routes */}
-          {marketingRoutes.map(route => (
-            <Route
-              key={route.path}
-              path={route.path}
-              element={route.element}
-            />
-          ))}
-        </Route>
+        {/* Marketing routes */}
+        {marketingRoutes.map(route => (
+          <Route
+            key={route.path}
+            path={route.path}
+            element={route.element}
+          />
+        ))}
       </Routes>
     </Suspense>
   );
