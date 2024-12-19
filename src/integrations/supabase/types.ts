@@ -899,51 +899,69 @@ export type Database = {
       }
       five_whys_analysis: {
         Row: {
+          attachments: Json | null
+          branching_data: Json | null
           company_id: string | null
+          contributors: Json | null
           created_at: string
           created_by: string | null
           fishbone_data: Json | null
           group_feedback: Json[] | null
           id: string
           immediate_actions: string[] | null
+          last_modified_at: string | null
+          last_modified_by: string | null
           learning_feedback: Json[] | null
           long_term_actions: string[] | null
           problem_statement: string
           root_cause: string | null
           selected_causes: string[]
           selected_questions: Json[] | null
+          status: string | null
           validation_feedback: string | null
         }
         Insert: {
+          attachments?: Json | null
+          branching_data?: Json | null
           company_id?: string | null
+          contributors?: Json | null
           created_at?: string
           created_by?: string | null
           fishbone_data?: Json | null
           group_feedback?: Json[] | null
           id?: string
           immediate_actions?: string[] | null
+          last_modified_at?: string | null
+          last_modified_by?: string | null
           learning_feedback?: Json[] | null
           long_term_actions?: string[] | null
           problem_statement: string
           root_cause?: string | null
           selected_causes?: string[]
           selected_questions?: Json[] | null
+          status?: string | null
           validation_feedback?: string | null
         }
         Update: {
+          attachments?: Json | null
+          branching_data?: Json | null
           company_id?: string | null
+          contributors?: Json | null
           created_at?: string
           created_by?: string | null
           fishbone_data?: Json | null
           group_feedback?: Json[] | null
           id?: string
           immediate_actions?: string[] | null
+          last_modified_at?: string | null
+          last_modified_by?: string | null
           learning_feedback?: Json[] | null
           long_term_actions?: string[] | null
           problem_statement?: string
           root_cause?: string | null
           selected_causes?: string[]
           selected_questions?: Json[] | null
+          status?: string | null
           validation_feedback?: string | null
         }
         Relationships: [
@@ -959,6 +977,110 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "five_whys_analysis_last_modified_by_fkey"
+            columns: ["last_modified_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      five_whys_attachments: {
+        Row: {
+          analysis_id: string | null
+          file_name: string
+          file_path: string
+          file_type: string
+          id: string
+          uploaded_at: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          analysis_id?: string | null
+          file_name: string
+          file_path: string
+          file_type: string
+          id?: string
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          analysis_id?: string | null
+          file_name?: string
+          file_path?: string
+          file_type?: string
+          id?: string
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "five_whys_attachments_analysis_id_fkey"
+            columns: ["analysis_id"]
+            isOneToOne: false
+            referencedRelation: "five_whys_analysis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "five_whys_attachments_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      five_whys_branches: {
+        Row: {
+          analysis_id: string | null
+          cause_text: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          iteration_number: number
+          parent_cause_id: string | null
+        }
+        Insert: {
+          analysis_id?: string | null
+          cause_text: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          iteration_number: number
+          parent_cause_id?: string | null
+        }
+        Update: {
+          analysis_id?: string | null
+          cause_text?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          iteration_number?: number
+          parent_cause_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "five_whys_branches_analysis_id_fkey"
+            columns: ["analysis_id"]
+            isOneToOne: false
+            referencedRelation: "five_whys_analysis"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "five_whys_branches_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "five_whys_branches_parent_cause_id_fkey"
+            columns: ["parent_cause_id"]
+            isOneToOne: false
+            referencedRelation: "five_whys_branches"
             referencedColumns: ["id"]
           },
         ]
