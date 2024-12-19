@@ -9,73 +9,38 @@ interface AgentsListProps {
 
 const agents: Agent[] = [
   {
-    name: "Maggie",
-    role: "Inside Sales",
-    href: "/sales/research",
-    description: "Sales research and lead qualification specialist",
-    category: "sales"
-  },
-  {
-    name: "Faraday",
-    role: "Technical",
-    href: "/operations/engineering/research",
-    description: "Engineering and technical documentation expert",
-    category: "operations"
-  },
-  {
-    name: "Magnus",
-    role: "Service",
-    href: "/operations/service/research",
-    description: "Customer service and support specialist",
+    name: "Riley",
+    role: "Conversation Bot",
+    href: "/agents/conversation",
+    description: "Advanced conversational AI for natural dialogue and assistance",
     category: "service"
   },
   {
     name: "Morgan",
-    role: "Complaints",
-    href: "/operations/complaints/resolution",
-    description: "Customer complaint resolution expert",
+    role: "NLP - Tonality",
+    href: "/agents/nlp",
+    description: "Sentiment analysis and tone detection specialist",
     category: "service"
   },
   {
-    name: "Alex",
-    role: "Cold Calls",
-    href: "/sales/cold-calls",
-    description: "Cold calling and outreach specialist",
-    category: "sales"
-  },
-  {
-    name: "Riley",
-    role: "Market Research",
-    href: "/marketing/research",
-    description: "Market analysis and competitive research expert",
-    category: "sales"
-  },
-  {
-    name: "Casey",
-    role: "VAVE Analysis",
-    href: "/operations/quality/vave",
-    description: "Value analysis and value engineering specialist",
-    category: "operations"
-  },
-  {
-    name: "Chip",
-    role: "Raw Data Analysis",
-    href: "/data/raw-analysis",
-    description: "Raw data processing and analysis expert",
+    name: "Quincy",
+    role: "Scraper",
+    href: "/agents/scraper",
+    description: "Ethical data collection and web scraping expert",
     category: "data"
   },
   {
-    name: "Quincy",
-    role: "Data Metrics",
-    href: "/data/metrics",
-    description: "Business metrics and KPI analysis specialist",
+    name: "Chip",
+    role: "Researcher",
+    href: "/agents/researcher",
+    description: "Comprehensive research and analysis specialist",
     category: "data"
   },
   {
     name: "Dexter",
-    role: "Charts & Graphics",
-    href: "/data/visualizations",
-    description: "Data visualization and reporting expert",
+    role: "Data Analysis",
+    href: "/agents/analysis",
+    description: "Advanced data analysis and visualization expert",
     category: "data"
   }
 ];

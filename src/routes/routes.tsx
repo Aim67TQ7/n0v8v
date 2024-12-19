@@ -10,6 +10,7 @@ import { marketingRoutes } from "./marketingRoutes";
 import AgentsHub from "@/pages/agents/AgentsHub";
 import RAGUpload from "@/pages/data/RAGUpload";
 import DocumentProcessing from "@/pages/tools/DocumentProcessing";
+import FAQ from "@/pages/FAQ";
 
 const RouteLoadingComponent = () => (
   <div className="flex items-center justify-center min-h-[50vh]">
@@ -35,6 +36,10 @@ export const allRoutes = [
   {
     path: "/tools/vectorization",
     element: <RAGUpload />
+  },
+  {
+    path: "/faq",
+    element: <FAQ />
   }
 ];
 
