@@ -6,35 +6,35 @@ const FAQ = () => {
   const faqs = [
     {
       question: "What is AI Ops Master?",
-      answer: "AI Ops Master is a comprehensive platform that combines artificial intelligence with operational excellence. It provides tools for process analysis, data management, and automated assistance through specialized AI agents."
+      answer: "AI Ops Master is a comprehensive platform designed to enhance operational efficiency through AI-powered tools and analytics. It provides solutions for process improvement, data management, quality control, and operational excellence."
     },
     {
-      question: "How do the AI agents work?",
-      answer: "Our AI agents are specialized assistants designed for specific tasks. Each agent has unique capabilities: Riley handles conversations, Morgan analyzes tone and sentiment, Quincy helps with data scraping, Chip conducts research, and Dexter specializes in data analysis."
+      question: "How do I get started?",
+      answer: "Begin by exploring our available tools and modules in the dashboard. Each section has specific documentation and guides. For personalized assistance, use our chat feature or contact support."
     },
     {
       question: "Is my data secure?",
       answer: "Yes, we take data security seriously. All data is encrypted, and we follow industry best practices for data protection. Access is strictly controlled through user authentication and authorization."
     },
     {
-      question: "How can I get started?",
-      answer: "Begin by exploring our available tools and agents. Each tool has specific documentation and guides. For personalized assistance, interact with Riley, our conversation bot."
+      question: "What tools are available?",
+      answer: "Our platform offers various tools including process analysis, quality control, lean manufacturing tools (5S, Five Whys), maintenance tracking, and operational analytics. Each tool is designed to address specific operational needs."
     },
     {
-      question: "What kind of analysis can Dexter perform?",
-      answer: "Dexter can perform various types of data analysis including statistical analysis, trend identification, pattern recognition, and data visualization. Upload your data and specify your analysis needs."
+      question: "How can I customize the platform?",
+      answer: "You can customize your experience through the settings panel, where you can adjust preferences, configure notifications, and set up integrations with your existing systems."
     },
     {
-      question: "How accurate is Morgan's sentiment analysis?",
-      answer: "Morgan uses advanced NLP models for high-accuracy sentiment and tone analysis. The system continuously learns and improves through user feedback and validation."
+      question: "What kind of support is available?",
+      answer: "We offer multiple support channels including in-app chat, email support, and documentation. Enterprise users also have access to dedicated support representatives."
     },
     {
-      question: "What can Chip research?",
-      answer: "Chip can research various topics including market trends, competitor analysis, industry reports, and technical documentation. Simply provide your research query and relevant parameters."
+      question: "Can I integrate with other systems?",
+      answer: "Yes, our platform supports integration with common enterprise systems and can be customized to work with your existing infrastructure. Contact support for specific integration requirements."
     },
     {
-      question: "How do I use Quincy for scraping?",
-      answer: "Quincy helps with ethical data collection from permitted sources. Specify your target data requirements, and Quincy will help gather and structure the information while respecting source websites' terms of service."
+      question: "How often is the platform updated?",
+      answer: "We regularly update our platform with new features, security patches, and performance improvements. All updates are automatically deployed and documented in our changelog."
     }
   ];
 
@@ -45,13 +45,13 @@ const FAQ = () => {
           <HelpCircle className="h-6 w-6 text-primary" />
           <h1 className="text-2xl font-bold">Frequently Asked Questions</h1>
         </div>
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion type="single" collapsible className="w-full text-lg">
           {faqs.map((faq, index) => (
             <AccordionItem key={index} value={`item-${index}`}>
-              <AccordionTrigger className="text-left">
+              <AccordionTrigger className="text-left text-lg">
                 {faq.question}
               </AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent className="text-lg">
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>
