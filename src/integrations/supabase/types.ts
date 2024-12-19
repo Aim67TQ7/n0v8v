@@ -1761,6 +1761,14 @@ export type Database = {
           similarity: number
         }[]
       }
+      send_email: {
+        Args: {
+          to_email: string
+          subject: string
+          html_content: string
+        }
+        Returns: Json
+      }
       sparsevec_out: {
         Args: {
           "": unknown

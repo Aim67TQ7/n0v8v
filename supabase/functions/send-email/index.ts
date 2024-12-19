@@ -25,7 +25,7 @@ serve(async (req) => {
         Authorization: `Bearer ${Deno.env.get('RESEND_API_KEY')}`,
       },
       body: JSON.stringify({
-        from: "n0v8v <onboarding@resend.dev>",
+        from: "CompanyGPT <onboarding@resend.dev>",
         to: Array.isArray(to) ? to : [to],
         subject,
         html,
@@ -44,14 +44,11 @@ serve(async (req) => {
     return new Response(JSON.stringify({ message: 'Email sent successfully' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error sending email:', error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { 
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
   }
 });

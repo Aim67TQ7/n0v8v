@@ -30,7 +30,10 @@ const Login = () => {
         email,
         options: {
           emailRedirectTo: `${window.location.origin}/company-hub`,
-        },
+          data: {
+            email_confirmed: true
+          }
+        }
       });
 
       if (error) throw error;
