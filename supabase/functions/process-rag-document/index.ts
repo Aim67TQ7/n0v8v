@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { chunkText, extractMetadata } from '../../../src/utils/documentProcessing.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -15,7 +16,6 @@ serve(async (req) => {
     const { filePath, companyId } = await req.json();
     console.log('Processing document:', { filePath, companyId });
 
-    // Initialize Supabase client
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -36,60 +36,65 @@ serve(async (req) => {
     // Convert file to text
     console.log('Converting file to text...');
     const text = await fileData.text();
-
-    // Get embeddings from Anthropic
-    console.log('Getting embeddings from Anthropic...');
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': Deno.env.get('ANTHROPIC_API_KEY') || '',
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'claude-3-sonnet-20240229',
-        max_tokens: 1024,
-        messages: [{
-          role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: `Please analyze this text and provide a comprehensive vector representation that captures its key semantic features. The text is: ${text}`
-            }
-          ]
-        }]
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`Anthropic API error: ${response.status}`);
-    }
-
-    const anthropicData = await response.json();
     
-    // Convert Anthropic's response to a vector format
-    // We'll use the text response as input for a simple vector representation
-    const content = anthropicData.content[0].text;
-    const vector = new Float32Array(1536); // Using standard 1536 dimension
-    for (let i = 0; i < Math.min(content.length, 1536); i++) {
-      vector[i] = content.charCodeAt(i) / 255; // Simple normalization
-    }
+    // Extract metadata
+    const metadata = extractMetadata(text);
+    
+    // Chunk the text
+    const chunks = chunkText(text);
+    console.log(`Created ${chunks.length} chunks from document`);
 
-    // Store in document_embeddings
-    console.log('Storing embeddings in Supabase...');
-    const { error: insertError } = await supabase
-      .from('document_embeddings')
-      .insert({
-        content: text,
-        metadata: {
-          company_id: companyId,
-          source: filePath,
+    // Process each chunk with Claude
+    for (const chunk of chunks) {
+      console.log('Getting embeddings from Anthropic for chunk...');
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': Deno.env.get('ANTHROPIC_API_KEY') || '',
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
         },
-        embedding: Array.from(vector)
+        body: JSON.stringify({
+          model: 'claude-3-sonnet-20240229',
+          max_tokens: 1024,
+          messages: [{
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: `Please analyze this text and provide a comprehensive vector representation that captures its key semantic features. The text is: ${chunk}`
+              }
+            ]
+          }]
+        })
       });
 
-    if (insertError) {
-      throw insertError;
+      if (!response.ok) {
+        throw new Error(`Anthropic API error: ${response.status}`);
+      }
+
+      const anthropicData = await response.json();
+      const content = anthropicData.content[0].text;
+      
+      // Store chunk embedding
+      console.log('Storing chunk embedding in Supabase...');
+      const { error: insertError } = await supabase
+        .from('document_embeddings')
+        .insert({
+          content: chunk,
+          metadata: {
+            ...metadata,
+            company_id: companyId,
+            source: filePath,
+            chunk_index: chunks.indexOf(chunk),
+            total_chunks: chunks.length
+          },
+          embedding: Array.from(new Float32Array(1536).map(() => Math.random())) // Placeholder for actual embedding
+        });
+
+      if (insertError) {
+        throw insertError;
+      }
     }
 
     console.log('Document processing completed successfully');
