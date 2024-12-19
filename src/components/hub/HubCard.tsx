@@ -7,7 +7,7 @@ interface HubCardProps {
 }
 
 export const HubCard = ({ children }: HubCardProps) => {
-  const [hubColor, setHubColor] = useState("#9b87f5");
+  const [hubColor, setHubColor] = useState("#F1F0FB"); // Light gray color
   const [opacity, setOpacity] = useState(100);
   const { user } = useAuth();
 
