@@ -7,16 +7,11 @@ interface AgentLink {
 }
 
 const agentLinks: AgentLink[] = [
-  { name: "Maggie (Inside Sales)", href: "/sales/research" },
-  { name: "Faraday (Technical)", href: "/operations/engineering/research" },
-  { name: "Magnus (Service)", href: "/operations/service/research" },
-  { name: "Morgan (Complaints)", href: "/operations/complaints/resolution" },
-  { name: "Alex (Cold Calls)", href: "/sales/cold-calls" },
-  { name: "Riley (Market Research)", href: "/marketing/research" },
-  { name: "Casey (VAVE Analysis)", href: "/operations/quality/vave" },
-  { name: "Chip (Raw Data Analysis)", href: "/data/raw-analysis" },
-  { name: "Quincy (Data Metrics)", href: "/data/metrics" },
-  { name: "Dexter (Charts & Graphics)", href: "/data/visualizations" },
+  { name: "Riley (Conversation Bot)", href: "/agents/conversation" },
+  { name: "Morgan (NLP - Tonality)", href: "/agents/nlp" },
+  { name: "Quincy (Scraper)", href: "/agents/scraper" },
+  { name: "Chip (Researcher)", href: "/agents/research" },
+  { name: "Dexter (Data Analysis)", href: "/agents/analysis" },
 ];
 
 export const AgentLinks = () => {
