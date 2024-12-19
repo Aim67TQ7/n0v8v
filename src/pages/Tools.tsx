@@ -1,4 +1,4 @@
-import { Scale } from "lucide-react";
+import { Scale, Search, FileText } from "lucide-react";
 import { ToolCard } from "@/components/tools/ToolCard";
 import { efficiencyTools } from "@/components/operations/modulesList";
 import { ApiStatusIndicator } from "@/components/tools/ApiStatusIndicator";
@@ -22,6 +22,20 @@ const Tools = () => {
             href={tool.href}
           />
         ))}
+        
+        <ToolCard
+          title="Lead Scraper"
+          description="Automated lead generation tool for scraping business information from Google Maps"
+          icon={Search}
+          href="/leads/scraping/google-maps"
+        />
+        
+        <ToolCard
+          title="Market Research"
+          description="Generate comprehensive market research reports with AI assistance"
+          icon={FileText}
+          href="/marketing/research"
+        />
       </div>
     </div>
   );
