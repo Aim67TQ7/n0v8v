@@ -19,6 +19,7 @@ const SupplyChain = lazy(() => import("@/pages/operations/SupplyChain"));
 const Compliance = lazy(() => import("@/pages/operations/Compliance"));
 const Lean = lazy(() => import("@/pages/operations/Lean"));
 const RootCauseAnalysis = lazy(() => import("@/pages/operations/quality/RootCauseAnalysis"));
+const IterativeAnalysis = lazy(() => import("@/pages/operations/quality/IterativeAnalysis"));
 
 export const operationsRoutes: RouteObject[] = [
   {
@@ -76,5 +77,9 @@ export const operationsRoutes: RouteObject[] = [
   {
     path: "/operations/quality/root-cause-analysis",
     element: <RootCauseAnalysis />
+  },
+  {
+    path: "/operations/quality/iterative-analysis",
+    element: <IterativeAnalysis />
   }
 ];
