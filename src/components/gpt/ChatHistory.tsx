@@ -1,6 +1,7 @@
 import { MessageSquare, Calendar, Clock, History, Mail, Reply, FileText, Users, HelpCircle, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface ChatSession {
@@ -90,16 +91,16 @@ export const ChatHistory = ({ sessions = [], onSelect, selectedId, className }: 
         <h3 className="text-sm font-semibold text-gray-900 mb-2">Chat Templates</h3>
         <div className="grid grid-cols-2 gap-2">
           {templates.map(({ id, label, icon: Icon }) => (
-            <Button
+            <Card
               key={id}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
+              className="p-2 hover:bg-accent cursor-pointer transition-colors"
               onClick={() => onSelect(id)}
             >
-              <Icon className="h-4 w-4" />
-              <span className="text-xs">{label}</span>
-            </Button>
+              <div className="flex items-center gap-2">
+                <Icon className="h-4 w-4 text-gray-500" />
+                <span className="text-xs">{label}</span>
+              </div>
+            </Card>
           ))}
         </div>
       </div>
