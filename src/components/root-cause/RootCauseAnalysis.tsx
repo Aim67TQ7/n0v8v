@@ -15,6 +15,7 @@ interface Iteration {
 
 export const RootCauseAnalysis = () => {
   const [problemStatement, setProblemStatement] = useState("");
+  const [userReason, setUserReason] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [iterations, setIterations] = useState<Iteration[]>([]);
@@ -42,7 +43,6 @@ export const RootCauseAnalysis = () => {
 
       if (error) throw error;
 
-      // Parse the JSON response from GPT
       const gptResponse = JSON.parse(data.content);
       
       if (currentStep === 0) {
@@ -60,49 +60,48 @@ export const RootCauseAnalysis = () => {
     }
   };
 
-  const handleAssumptionSelect = async (assumption: string) => {
-    const newIteration: Iteration = {
-      whyQuestion,
-      assumptions: currentAssumptions,
-      selectedAssumption: assumption
-    };
+  const handleSubmit = async () => {
+    if (!userReason.trim()) {
+      toast.error("Please enter your reason");
+      return;
+    }
 
-    setIterations([...iterations, newIteration]);
-    setSelectedAssumption(assumption);
-    setCurrentStep(prev => prev + 1);
-
-    if (currentStep < 4) {
-      // Proceed to next iteration
-      setIsAnalyzing(true);
-      try {
-        const { data, error } = await supabase.functions.invoke('analyze-root-cause', {
-          body: {
-            currentStep: currentStep + 1,
-            problemStatement,
-            selectedAssumption: assumption,
-            iterationHistory: [...iterations, newIteration]
-          }
+    try {
+      const { error } = await supabase
+        .from('root_cause_iterations')
+        .insert({
+          analysis_id: iterations[0]?.id,
+          iteration_number: currentStep + 1,
+          why_question: whyQuestion,
+          selected_assumption: userReason
         });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        const gptResponse = JSON.parse(data.content);
-        setWhyQuestion(gptResponse.whyQuestion);
-        setCurrentAssumptions(gptResponse.assumptions);
-      } catch (error) {
-        console.error('Analysis error:', error);
-        toast.error("Failed to proceed with analysis");
-      } finally {
-        setIsAnalyzing(false);
+      const newIteration: Iteration = {
+        whyQuestion,
+        assumptions: currentAssumptions,
+        selectedAssumption: userReason
+      };
+
+      setIterations([...iterations, newIteration]);
+      setUserReason("");
+      setCurrentStep(prev => prev + 1);
+
+      if (currentStep < 4) {
+        await handleAnalyze();
+      } else {
+        toast.success("Root cause analysis complete!");
       }
-    } else {
-      // Final step reached
-      toast.success("Root cause analysis complete!");
+    } catch (error) {
+      console.error('Error submitting reason:', error);
+      toast.error("Failed to submit reason");
     }
   };
 
   const handleReset = () => {
     setProblemStatement("");
+    setUserReason("");
     setCurrentStep(0);
     setIterations([]);
     setCurrentAssumptions([]);
@@ -142,9 +141,27 @@ export const RootCauseAnalysis = () => {
         {whyQuestion && (
           <div className="space-y-4">
             <h3 className="font-medium">{whyQuestion}</h3>
+            
+            <div className="space-y-4">
+              <Label htmlFor="user-reason">Your Reason</Label>
+              <Textarea
+                id="user-reason"
+                value={userReason}
+                onChange={(e) => setUserReason(e.target.value)}
+                placeholder="Enter your reason..."
+                className="min-h-[100px]"
+              />
+              <Button 
+                onClick={handleSubmit}
+                disabled={!userReason.trim() || isAnalyzing}
+              >
+                Submit Reason
+              </Button>
+            </div>
+
             <RadioGroup
               value={selectedAssumption}
-              onValueChange={handleAssumptionSelect}
+              onValueChange={setSelectedAssumption}
               className="space-y-3"
             >
               {currentAssumptions.map((assumption, index) => (
