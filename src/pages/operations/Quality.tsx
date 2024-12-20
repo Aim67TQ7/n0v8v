@@ -34,10 +34,10 @@ const modules = [
     status: "ready"
   },
   {
-    title: "Five Whys Analysis",
-    description: "AI-guided root cause analysis",
+    title: "Root Cause Analysis",
+    description: "Comprehensive tools for identifying root causes using Five Whys and Fishbone analysis",
     icon: GitFork,
-    href: "/operations/quality/five-whys",
+    href: "/operations/quality/root-cause-analysis",
     status: "ready"
   },
   {
