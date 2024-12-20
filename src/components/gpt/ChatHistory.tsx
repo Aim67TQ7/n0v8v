@@ -54,13 +54,13 @@ export const ChatHistory = ({ sessions = [], onSelect, selectedId, className }: 
 
   return (
     <div className={cn("flex flex-col h-full", className)}>
-      <div className="flex items-center gap-2 px-2 py-3 border-b">
+      <div className="flex items-center gap-2 px-4 py-3 border-b">
         <MessageSquare className="h-5 w-5" />
         <h2 className="text-lg font-semibold">Chat History</h2>
       </div>
       
       <ScrollArea className="flex-1">
-        <div className="p-2 space-y-6">
+        <div className="p-4 space-y-6">
           {/* History Categories */}
           {categories.map(({ id, label, icon: Icon }) => (
             <div key={id} className="space-y-2">
@@ -86,8 +86,8 @@ export const ChatHistory = ({ sessions = [], onSelect, selectedId, className }: 
       </ScrollArea>
 
       {/* Templates Section */}
-      <div className="border-t p-2">
-        <h3 className="text-sm font-semibold text-gray-900 mb-2 px-2">Chat Templates</h3>
+      <div className="border-t p-4">
+        <h3 className="text-sm font-semibold text-gray-900 mb-2">Chat Templates</h3>
         <div className="grid grid-cols-2 gap-2">
           {templates.map(({ id, label, icon: Icon }) => (
             <Button
