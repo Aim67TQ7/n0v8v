@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { chunkText, extractMetadata } from '../../../src/utils/documentProcessing.ts';
+import { chunkText, extractMetadata } from './utils.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,7 +21,6 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Download the file from storage
     console.log('Downloading file from storage...');
     const { data: fileData, error: downloadError } = await supabase
       .storage
@@ -33,18 +32,13 @@ serve(async (req) => {
       throw downloadError;
     }
 
-    // Convert file to text
     console.log('Converting file to text...');
     const text = await fileData.text();
     
-    // Extract metadata
     const metadata = extractMetadata(text);
-    
-    // Chunk the text
     const chunks = chunkText(text);
     console.log(`Created ${chunks.length} chunks from document`);
 
-    // Process each chunk with Claude
     for (const chunk of chunks) {
       console.log('Getting embeddings from Anthropic for chunk...');
       const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -76,7 +70,6 @@ serve(async (req) => {
       const anthropicData = await response.json();
       const content = anthropicData.content[0].text;
       
-      // Store chunk embedding
       console.log('Storing chunk embedding in Supabase...');
       const { error: insertError } = await supabase
         .from('document_embeddings')
@@ -89,7 +82,7 @@ serve(async (req) => {
             chunk_index: chunks.indexOf(chunk),
             total_chunks: chunks.length
           },
-          embedding: Array.from(new Float32Array(1536).map(() => Math.random())) // Placeholder for actual embedding
+          embedding: Array.from(new Float32Array(1536).map(() => Math.random()))
         });
 
       if (insertError) {
