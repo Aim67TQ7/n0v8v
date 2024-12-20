@@ -1,6 +1,7 @@
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Calendar, Clock, History, Mail, Reply, FileText, Users, HelpCircle, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface ChatSession {
@@ -19,32 +20,30 @@ interface ChatHistoryProps {
 }
 
 const categories = [
-  "Today",
-  "This Week",
-  "Recent",
-  "Shared",
-  "New Email",
-  "Email Reply",
-  "Summarize Text",
-  "Meeting Notes",
-  "How To",
-  "Brainstorm"
+  { id: "today", label: "Today", icon: Calendar },
+  { id: "this-week", label: "This Week", icon: Clock },
+  { id: "recent", label: "Recent", icon: History }
+];
+
+const templates = [
+  { id: "new-email", label: "New Email", icon: Mail },
+  { id: "email-reply", label: "Email Reply", icon: Reply },
+  { id: "summarize", label: "Summarize Text", icon: FileText },
+  { id: "meeting", label: "Meeting Notes", icon: Users },
+  { id: "how-to", label: "How To", icon: HelpCircle },
+  { id: "brainstorm", label: "Brainstorm", icon: Lightbulb }
 ];
 
 export const ChatHistory = ({ sessions = [], onSelect, selectedId, className }: ChatHistoryProps) => {
   const groupedSessions = sessions.reduce((acc, session) => {
-    let category = "Recent";
+    let category = "recent";
     const now = new Date();
     const sessionDate = new Date(session.timestamp);
     
-    if (session.isShared) {
-      category = "Shared";
-    } else if (session.category) {
-      category = session.category;
-    } else if (sessionDate.toDateString() === now.toDateString()) {
-      category = "Today";
+    if (sessionDate.toDateString() === now.toDateString()) {
+      category = "today";
     } else if (sessionDate > new Date(now.setDate(now.getDate() - 7))) {
-      category = "This Week";
+      category = "this-week";
     }
     
     if (!acc[category]) {
@@ -55,42 +54,54 @@ export const ChatHistory = ({ sessions = [], onSelect, selectedId, className }: 
   }, {} as Record<string, ChatSession[]>);
 
   return (
-    <div className={cn("space-y-2", className)}>
+    <div className={cn("flex flex-col h-full", className)}>
       <div className="flex items-center gap-2 px-4 py-3 border-b">
         <MessageSquare className="h-5 w-5" />
         <h2 className="text-lg font-semibold">Chat History</h2>
       </div>
-      <ScrollArea className="h-[400px]">
-        {categories.map((category) => (
-          <div key={category} className="mb-4">
-            <h3 className="text-sm font-semibold text-primary px-2 mb-2">{category}</h3>
-            <div className="space-y-0.5">
-              {(groupedSessions[category] || []).map((session) => (
-                <Button
-                  key={session.id}
-                  variant={selectedId === session.id ? "secondary" : "ghost"}
-                  className="justify-start gap-2 h-auto py-3 px-4 w-full text-left hover:bg-accent transition-colors"
-                  onClick={() => onSelect(session.id)}
-                >
-                  <MessageSquare className="h-4 w-4 shrink-0" />
-                  <div className="flex flex-col items-start gap-1 overflow-hidden">
-                    <span className="text-base font-medium text-black truncate w-full">
-                      {session.title}
-                    </span>
-                    <span className="text-sm text-gray-700">
-                      {new Date(session.timestamp).toLocaleDateString(undefined, {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                      })}
-                    </span>
-                  </div>
-                </Button>
-              ))}
+      
+      <ScrollArea className="flex-1">
+        <div className="p-4 space-y-6">
+          {categories.map(({ id, label, icon: Icon }) => (
+            <div key={id} className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Icon className="h-4 w-4 text-gray-500" />
+                <h3 className="text-lg font-semibold text-gray-900">{label}</h3>
+              </div>
+              <div className="space-y-1">
+                {(groupedSessions[id] || []).map((session) => (
+                  <Button
+                    key={session.id}
+                    variant={selectedId === session.id ? "secondary" : "ghost"}
+                    className="justify-start w-full text-left hover:bg-accent transition-colors"
+                    onClick={() => onSelect(session.id)}
+                  >
+                    <span className="truncate">{session.title}</span>
+                  </Button>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </ScrollArea>
+
+      <div className="border-t p-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">Chat Templates</h3>
+        <div className="grid grid-cols-2 gap-2">
+          {templates.map(({ id, label, icon: Icon }) => (
+            <Card
+              key={id}
+              className="p-2 hover:bg-accent cursor-pointer transition-colors"
+              onClick={() => onSelect(id)}
+            >
+              <div className="flex items-center gap-2">
+                <Icon className="h-4 w-4 text-gray-500" />
+                <span className="text-xs">{label}</span>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
