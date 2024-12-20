@@ -5,90 +5,90 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-
-interface Iteration {
-  whyQuestion: string;
-  assumptions: string[];
-  selectedAssumption: string;
-}
+import { analyzeRootCause, submitIteration } from "@/services/rootCauseService";
+import { Iteration, RootCauseState } from "@/types/root-cause";
+import { useSessionContext } from "@supabase/auth-helpers-react";
+import { useNavigate } from "react-router-dom";
 
 export const RootCauseAnalysis = () => {
-  const [problemStatement, setProblemStatement] = useState("");
-  const [userReason, setUserReason] = useState("");
-  const [currentStep, setCurrentStep] = useState(0);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [iterations, setIterations] = useState<Iteration[]>([]);
-  const [currentAssumptions, setCurrentAssumptions] = useState<string[]>([]);
-  const [selectedAssumption, setSelectedAssumption] = useState<string>("");
-  const [whyQuestion, setWhyQuestion] = useState<string>("");
-  const [rephrasedProblem, setRephrasedProblem] = useState<string>("");
+  const { session } = useSessionContext();
+  const navigate = useNavigate();
+  const [state, setState] = useState<RootCauseState>({
+    problemStatement: "",
+    userReason: "",
+    currentStep: 0,
+    isAnalyzing: false,
+    iterations: [],
+    currentAssumptions: [],
+    selectedAssumption: "",
+    whyQuestion: "",
+    rephrasedProblem: ""
+  });
+
+  // Check authentication
+  if (!session) {
+    navigate("/login");
+    return null;
+  }
 
   const handleAnalyze = async () => {
-    if (!problemStatement.trim()) {
+    if (!state.problemStatement.trim()) {
       toast.error("Please enter a problem statement");
       return;
     }
 
-    setIsAnalyzing(true);
+    setState(prev => ({ ...prev, isAnalyzing: true }));
     try {
-      const { data, error } = await supabase.functions.invoke('analyze-root-cause', {
-        body: {
-          currentStep,
-          problemStatement,
-          selectedAssumption,
-          iterationHistory: iterations
-        }
-      });
-
-      if (error) throw error;
-
-      const gptResponse = JSON.parse(data.content);
+      const gptResponse = await analyzeRootCause(
+        state.currentStep,
+        state.problemStatement,
+        state.selectedAssumption,
+        state.iterations
+      );
       
-      if (currentStep === 0) {
-        setRephrasedProblem(gptResponse.rephrased);
-      }
-      
-      setWhyQuestion(gptResponse.whyQuestion);
-      setCurrentAssumptions(gptResponse.assumptions);
+      setState(prev => ({
+        ...prev,
+        rephrasedProblem: state.currentStep === 0 ? gptResponse.rephrased : prev.rephrasedProblem,
+        whyQuestion: gptResponse.whyQuestion,
+        currentAssumptions: gptResponse.assumptions
+      }));
       
     } catch (error) {
       console.error('Analysis error:', error);
       toast.error("Failed to analyze the problem");
     } finally {
-      setIsAnalyzing(false);
+      setState(prev => ({ ...prev, isAnalyzing: false }));
     }
   };
 
   const handleSubmit = async () => {
-    if (!userReason.trim()) {
+    if (!state.userReason.trim()) {
       toast.error("Please enter your reason");
       return;
     }
 
     try {
-      const { error } = await supabase
-        .from('root_cause_iterations')
-        .insert({
-          analysis_id: iterations[0]?.id,
-          iteration_number: currentStep + 1,
-          why_question: whyQuestion,
-          selected_assumption: userReason
-        });
-
-      if (error) throw error;
+      await submitIteration(
+        state.iterations[0]?.id,
+        state.currentStep + 1,
+        state.whyQuestion,
+        state.userReason
+      );
 
       const newIteration: Iteration = {
-        whyQuestion,
-        assumptions: currentAssumptions,
-        selectedAssumption: userReason
+        whyQuestion: state.whyQuestion,
+        assumptions: state.currentAssumptions,
+        selectedAssumption: state.userReason
       };
 
-      setIterations([...iterations, newIteration]);
-      setUserReason("");
-      setCurrentStep(prev => prev + 1);
+      setState(prev => ({
+        ...prev,
+        iterations: [...prev.iterations, newIteration],
+        userReason: "",
+        currentStep: prev.currentStep + 1
+      }));
 
-      if (currentStep < 4) {
+      if (state.currentStep < 4) {
         await handleAnalyze();
       } else {
         toast.success("Root cause analysis complete!");
@@ -100,71 +100,74 @@ export const RootCauseAnalysis = () => {
   };
 
   const handleReset = () => {
-    setProblemStatement("");
-    setUserReason("");
-    setCurrentStep(0);
-    setIterations([]);
-    setCurrentAssumptions([]);
-    setSelectedAssumption("");
-    setWhyQuestion("");
-    setRephrasedProblem("");
+    setState({
+      problemStatement: "",
+      userReason: "",
+      currentStep: 0,
+      isAnalyzing: false,
+      iterations: [],
+      currentAssumptions: [],
+      selectedAssumption: "",
+      whyQuestion: "",
+      rephrasedProblem: ""
+    });
   };
 
   return (
     <Card className="p-6 max-w-3xl mx-auto">
       <div className="space-y-6">
-        {currentStep === 0 ? (
+        {state.currentStep === 0 ? (
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">Problem Statement</h2>
             <Textarea
-              value={problemStatement}
-              onChange={(e) => setProblemStatement(e.target.value)}
+              value={state.problemStatement}
+              onChange={(e) => setState(prev => ({ ...prev, problemStatement: e.target.value }))}
               placeholder="Describe the problem you're facing..."
               className="min-h-[100px]"
             />
             <Button 
               onClick={handleAnalyze} 
-              disabled={isAnalyzing || !problemStatement.trim()}
+              disabled={state.isAnalyzing || !state.problemStatement.trim()}
             >
-              {isAnalyzing ? "Analyzing..." : "Start Analysis"}
+              {state.isAnalyzing ? "Analyzing..." : "Start Analysis"}
             </Button>
           </div>
         ) : null}
 
-        {rephrasedProblem && (
+        {state.rephrasedProblem && (
           <div className="bg-muted p-4 rounded-lg">
             <h3 className="font-medium mb-2">Rephrased Problem:</h3>
-            <p>{rephrasedProblem}</p>
+            <p>{state.rephrasedProblem}</p>
           </div>
         )}
 
-        {whyQuestion && (
+        {state.whyQuestion && (
           <div className="space-y-4">
-            <h3 className="font-medium">{whyQuestion}</h3>
+            <h3 className="font-medium">{state.whyQuestion}</h3>
             
             <div className="space-y-4">
               <Label htmlFor="user-reason">Your Reason</Label>
               <Textarea
                 id="user-reason"
-                value={userReason}
-                onChange={(e) => setUserReason(e.target.value)}
+                value={state.userReason}
+                onChange={(e) => setState(prev => ({ ...prev, userReason: e.target.value }))}
                 placeholder="Enter your reason..."
                 className="min-h-[100px]"
               />
               <Button 
                 onClick={handleSubmit}
-                disabled={!userReason.trim() || isAnalyzing}
+                disabled={!state.userReason.trim() || state.isAnalyzing}
               >
                 Submit Reason
               </Button>
             </div>
 
             <RadioGroup
-              value={selectedAssumption}
-              onValueChange={setSelectedAssumption}
+              value={state.selectedAssumption}
+              onValueChange={(value) => setState(prev => ({ ...prev, selectedAssumption: value }))}
               className="space-y-3"
             >
-              {currentAssumptions.map((assumption, index) => (
+              {state.currentAssumptions.map((assumption, index) => (
                 <div key={index} className="flex items-center space-x-2">
                   <RadioGroupItem value={assumption} id={`assumption-${index}`} />
                   <Label htmlFor={`assumption-${index}`}>{assumption}</Label>
@@ -174,11 +177,11 @@ export const RootCauseAnalysis = () => {
           </div>
         )}
 
-        {iterations.length > 0 && (
+        {state.iterations.length > 0 && (
           <div className="space-y-4 mt-6">
             <h3 className="font-medium">Analysis History:</h3>
             <div className="space-y-3">
-              {iterations.map((iteration, index) => (
+              {state.iterations.map((iteration, index) => (
                 <div key={index} className="bg-muted p-3 rounded-lg">
                   <p className="font-medium">{iteration.whyQuestion}</p>
                   <p className="text-sm text-muted-foreground mt-1">
@@ -190,7 +193,7 @@ export const RootCauseAnalysis = () => {
           </div>
         )}
 
-        {(currentStep > 0 || iterations.length > 0) && (
+        {(state.currentStep > 0 || state.iterations.length > 0) && (
           <Button variant="outline" onClick={handleReset}>
             Start New Analysis
           </Button>
