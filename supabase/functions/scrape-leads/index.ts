@@ -1,19 +1,18 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
   try {
-    const { location, searchTerm, resultCount } = await req.json();
-    console.log('Processing scraping request:', { location, searchTerm, resultCount });
+    // Parse the request body
+    const { query, resultCount = 10 } = await req.json();
+    
+    if (!query) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Query parameter is required' }),
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+    }
 
+    // Get the Apify API key from environment variables
     const APIFY_API_KEY = Deno.env.get('APIFY_API_KEY');
     if (!APIFY_API_KEY) {
       console.error('APIFY_API_KEY not found in environment variables');
@@ -21,13 +20,11 @@ serve(async (req) => {
     }
 
     // Construct the search query for Google Maps
-    const query = `${searchTerm} in ${location}`;
     console.log('Making request to Apify API with query:', query);
 
     // Create and start the Apify actor run
-    // Using the correct actor ID for Google Places Scraper
     const actorResponse = await fetch(
-      'https://api.apify.com/v2/actor-tasks/~drobnikj+google-places-scraper/run-sync-get-dataset-items?token=' + APIFY_API_KEY,
+      `https://api.apify.com/v2/actor-tasks/drobnikj~google-places-scraper/runs?token=${APIFY_API_KEY}`,
       {
         method: 'POST',
         headers: {
@@ -55,42 +52,74 @@ serve(async (req) => {
       throw new Error(`Apify API error: ${actorResponse.status} - ${errorText}`);
     }
 
-    const results = await actorResponse.json();
-    console.log(`Found ${results.length} results`);
-
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        data: results.slice(0, resultCount).map(place => ({
+    const actorRun = await actorResponse.json();
+    
+    // Wait for and fetch results
+    const datasetId = actorRun.data.defaultDatasetId;
+    let results = [];
+    let attempts = 0;
+    const maxAttempts = 30;
+    
+    while (attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds between checks
+      
+      const dataResponse = await fetch(
+        `https://api.apify.com/v2/datasets/${datasetId}/items?token=${APIFY_API_KEY}`
+      );
+      
+      if (!dataResponse.ok) {
+        console.error('Failed to fetch dataset:', dataResponse.statusText);
+        continue;
+      }
+      
+      const places = await dataResponse.json();
+      if (places.length > 0) {
+        results = places.slice(0, resultCount).map(place => ({
           name: place.name,
           address: place.address,
           phone: place.phoneNumber,
           website: place.website,
           rating: place.rating
-        }))
+        }));
+        break;
+      }
+      
+      attempts++;
+    }
+
+    if (results.length === 0) {
+      console.log('No results found after maximum attempts');
+    } else {
+      console.log(`Found ${results.length} results`);
+    }
+
+    return new Response(
+      JSON.stringify({ 
+        success: true, 
+        data: results
       }),
       { 
         headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        } 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST',
+          'Access-Control-Allow-Headers': 'Content-Type'
+        }
       }
     );
 
   } catch (error) {
     console.error('Error in scrape-leads function:', error);
-    
     return new Response(
       JSON.stringify({ 
-        error: error.message,
-        details: error.stack
+        success: false, 
+        error: error.message 
       }),
       { 
-        status: 500,
         headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        } 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
       }
     );
   }
