@@ -13,18 +13,13 @@ serve(async (req) => {
 
   try {
     const { problemStatement, currentIteration, previousAnswers } = await req.json();
+    console.log('Processing request:', { problemStatement, currentIteration, previousAnswers });
 
-    const messages = [
-      {
-        role: "system",
-        content: "You are an AI assistant helping with root cause analysis. Generate 3 possible causes or follow-up questions based on the context. Keep responses concise and focused."
-      },
-      {
-        role: "user",
-        content: `Problem: ${problemStatement}\nIteration: ${currentIteration}\nPrevious answers: ${previousAnswers.join(", ")}\n\nProvide 3 possible causes or follow-up questions.`
-      }
-    ];
+    const systemPrompt = `You are an AI assistant helping with root cause analysis. Generate 3 possible causes or follow-up questions based on the context. Keep responses concise and focused.`;
 
+    const userMessage = `Problem: ${problemStatement}\nIteration: ${currentIteration}\nPrevious answers: ${previousAnswers.join(", ")}\n\nProvide 3 possible causes or follow-up questions.`;
+
+    console.log('Sending request to Anthropic...');
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -34,18 +29,38 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: 'claude-3-sonnet-20240229',
-        messages,
+        messages: [
+          {
+            role: 'system',
+            content: systemPrompt
+          },
+          {
+            role: 'user',
+            content: userMessage
+          }
+        ],
         temperature: 0.7,
         max_tokens: 1000,
       }),
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Anthropic API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText
+      });
       throw new Error(`Anthropic API error: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('Analysis response:', data);
+    console.log('Received response from Anthropic:', data);
+
+    if (!data.content || !data.content[0] || !data.content[0].text) {
+      console.error('Unexpected response structure:', data);
+      throw new Error('Invalid response structure from Anthropic API');
+    }
 
     // Parse the response to extract 3 options
     const content = data.content[0].text;
@@ -54,6 +69,8 @@ serve(async (req) => {
       .filter(Boolean)
       .map(option => option.trim())
       .slice(0, 3);
+
+    console.log('Extracted options:', options);
 
     return new Response(
       JSON.stringify({ options }),
