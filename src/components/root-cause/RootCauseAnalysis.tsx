@@ -6,9 +6,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { analyzeRootCause, submitIteration } from "@/services/rootCauseService";
-import { Iteration, RootCauseState } from "@/types/root-cause";
+import { RootCauseState } from "@/types/root-cause";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useNavigate } from "react-router-dom";
+import { RootCauseForm } from "./RootCauseForm";
+import { RootCauseHistory } from "./RootCauseHistory";
 
 export const RootCauseAnalysis = () => {
   const { session } = useSessionContext();
@@ -32,11 +34,6 @@ export const RootCauseAnalysis = () => {
   }
 
   const handleAnalyze = async () => {
-    if (!state.problemStatement.trim()) {
-      toast.error("Please enter a problem statement");
-      return;
-    }
-
     setState(prev => ({ ...prev, isAnalyzing: true }));
     try {
       const gptResponse = await analyzeRootCause(
@@ -75,15 +72,14 @@ export const RootCauseAnalysis = () => {
         state.userReason
       );
 
-      const newIteration: Iteration = {
-        whyQuestion: state.whyQuestion,
-        assumptions: state.currentAssumptions,
-        selectedAssumption: state.userReason
-      };
-
       setState(prev => ({
         ...prev,
-        iterations: [...prev.iterations, newIteration],
+        iterations: [...prev.iterations, {
+          id: crypto.randomUUID(),
+          whyQuestion: prev.whyQuestion,
+          assumptions: prev.currentAssumptions,
+          selectedAssumption: prev.userReason
+        }],
         userReason: "",
         currentStep: prev.currentStep + 1
       }));
@@ -117,21 +113,11 @@ export const RootCauseAnalysis = () => {
     <Card className="p-6 max-w-3xl mx-auto">
       <div className="space-y-6">
         {state.currentStep === 0 ? (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Problem Statement</h2>
-            <Textarea
-              value={state.problemStatement}
-              onChange={(e) => setState(prev => ({ ...prev, problemStatement: e.target.value }))}
-              placeholder="Describe the problem you're facing..."
-              className="min-h-[100px]"
-            />
-            <Button 
-              onClick={handleAnalyze} 
-              disabled={state.isAnalyzing || !state.problemStatement.trim()}
-            >
-              {state.isAnalyzing ? "Analyzing..." : "Start Analysis"}
-            </Button>
-          </div>
+          <RootCauseForm 
+            state={state}
+            onAnalyze={handleAnalyze}
+            onStateChange={(newState) => setState(prev => ({ ...prev, ...newState }))}
+          />
         ) : null}
 
         {state.rephrasedProblem && (
@@ -177,27 +163,11 @@ export const RootCauseAnalysis = () => {
           </div>
         )}
 
-        {state.iterations.length > 0 && (
-          <div className="space-y-4 mt-6">
-            <h3 className="font-medium">Analysis History:</h3>
-            <div className="space-y-3">
-              {state.iterations.map((iteration, index) => (
-                <div key={index} className="bg-muted p-3 rounded-lg">
-                  <p className="font-medium">{iteration.whyQuestion}</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Selected: {iteration.selectedAssumption}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {(state.currentStep > 0 || state.iterations.length > 0) && (
-          <Button variant="outline" onClick={handleReset}>
-            Start New Analysis
-          </Button>
-        )}
+        <RootCauseHistory 
+          iterations={state.iterations}
+          onReset={handleReset}
+          showReset={state.currentStep > 0 || state.iterations.length > 0}
+        />
       </div>
     </Card>
   );

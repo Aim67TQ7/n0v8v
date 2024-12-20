@@ -1,5 +1,5 @@
 export interface Iteration {
-  id?: string;
+  id?: string;  // Added id property
   whyQuestion: string;
   assumptions: string[];
   selectedAssumption: string;
