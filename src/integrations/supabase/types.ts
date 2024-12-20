@@ -1127,6 +1127,69 @@ export type Database = {
           },
         ]
       }
+      iterative_analysis: {
+        Row: {
+          company_id: string | null
+          created_at: string | null
+          created_by: string | null
+          current_iteration: number | null
+          custom_answers: string[] | null
+          follow_up_plan: string | null
+          id: string
+          problem_statement: string
+          root_cause: string | null
+          selected_options: Json[] | null
+          solutions: Json | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          current_iteration?: number | null
+          custom_answers?: string[] | null
+          follow_up_plan?: string | null
+          id?: string
+          problem_statement: string
+          root_cause?: string | null
+          selected_options?: Json[] | null
+          solutions?: Json | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          current_iteration?: number | null
+          custom_answers?: string[] | null
+          follow_up_plan?: string | null
+          id?: string
+          problem_statement?: string
+          root_cause?: string | null
+          selected_options?: Json[] | null
+          solutions?: Json | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "iterative_analysis_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "iterative_analysis_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       learning_feedback: {
         Row: {
           created_at: string

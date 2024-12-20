@@ -8,7 +8,8 @@ import {
   Fish,
   Scale,
   FileSpreadsheet,
-  BarChart2
+  BarChart2,
+  GitBranch
 } from "lucide-react";
 
 const modules = [
@@ -35,7 +36,7 @@ const modules = [
   },
   {
     title: "Root Cause Analysis",
-    description: "Comprehensive tools for identifying root causes using Five Whys and Fishbone analysis",
+    description: "Comprehensive tools for identifying root causes using Five Whys, Fishbone, and Iterative analysis",
     icon: GitFork,
     href: "/operations/quality/root-cause-analysis",
     status: "ready"

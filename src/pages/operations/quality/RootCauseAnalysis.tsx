@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { GitFork, Fish } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { GitFork, Fish, GitBranch } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const RootCauseAnalysis = () => {
@@ -31,6 +30,19 @@ const RootCauseAnalysis = () => {
         "Detailed reporting",
         "Historical tracking"
       ]
+    },
+    {
+      title: "Iterative Analysis",
+      description: "Dynamic problem-solving with AI-guided options and custom inputs",
+      icon: GitBranch,
+      href: "/operations/quality/iterative-analysis",
+      features: [
+        "AI-generated solution options",
+        "Custom answer input",
+        "Guided problem exploration",
+        "Root cause identification",
+        "Implementation planning"
+      ]
     }
   ];
 
@@ -41,7 +53,7 @@ const RootCauseAnalysis = () => {
         <h1 className="text-3xl font-bold">Root Cause Analysis Tools</h1>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {tools.map((tool) => (
           <Link 
             key={tool.title} 
