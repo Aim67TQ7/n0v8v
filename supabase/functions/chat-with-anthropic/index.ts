@@ -13,9 +13,25 @@ serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json();
+    const { messages, systemPrompt } = await req.json();
 
-    console.log('Sending request to Anthropic API with messages:', JSON.stringify(messages));
+    // Add n0v8v context to system prompt
+    const enhancedSystemPrompt = {
+      role: "system",
+      content: `${systemPrompt || ""}
+You are an AI assistant integrated with the n0v8v platform, which is a comprehensive manufacturing operations system. 
+When providing responses, consider:
+- Manufacturing best practices and industry standards
+- Quality control and continuous improvement methodologies
+- Lean manufacturing principles
+- Safety protocols and compliance requirements
+- Production efficiency and waste reduction
+Please provide practical, actionable advice that aligns with manufacturing operations.`
+    };
+
+    const allMessages = [enhancedSystemPrompt, ...messages];
+
+    console.log('Sending request to Anthropic API with messages:', JSON.stringify(allMessages));
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -26,9 +42,9 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: 'claude-3-sonnet-20240229',
-        messages,
-        max_tokens: 1000,
+        messages: allMessages,
         temperature: 0.7,
+        max_tokens: 1000,
       }),
     });
 
