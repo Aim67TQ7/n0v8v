@@ -10,7 +10,8 @@ import {
   Image,
   Newspaper,
   Upload,
-  Settings
+  Settings,
+  ClipboardCheck
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
@@ -24,6 +25,13 @@ interface Tool {
 }
 
 export const tools: Tool[] = [
+  {
+    title: "5S Scoring",
+    description: "Evaluate and track workplace organization using 5S methodology",
+    icon: ClipboardCheck,
+    href: "/operations/lean/5s-vision",
+    status: "ready",
+  },
   {
     title: "Document Processing",
     description: "Upload and process company documents with advanced AI analysis",
