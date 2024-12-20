@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -53,7 +54,7 @@ export const IterativeQuestions = ({
   }, [currentIteration]);
 
   const handleSubmit = () => {
-    const answer = selectedOption || customAnswer;
+    const answer = selectedOption === "custom" ? customAnswer : selectedOption;
     if (answer.trim()) {
       onAnswer(answer.trim());
       setSelectedOption("");
@@ -79,71 +80,49 @@ export const IterativeQuestions = ({
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>
       ) : (
-        <div className="space-y-4">
-          {options.map((option, index) => (
-            <div key={index} className="flex items-start space-x-2">
-              <Checkbox
-                id={`option-${index}`}
-                checked={selectedOption === option}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    setSelectedOption(option);
-                    setCustomAnswer("");
-                  } else {
-                    setSelectedOption("");
-                  }
-                }}
-              />
-              <label
-                htmlFor={`option-${index}`}
-                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                {option}
-              </label>
-            </div>
-          ))}
-
-          <div className="space-y-2">
+        <div className="space-y-6">
+          <RadioGroup
+            value={selectedOption}
+            onValueChange={setSelectedOption}
+            className="space-y-4"
+          >
+            {options.map((option, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <RadioGroupItem value={option} id={`option-${index}`} />
+                <Label htmlFor={`option-${index}`}>{option}</Label>
+              </div>
+            ))}
             <div className="flex items-center space-x-2">
-              <Checkbox
-                id="custom"
-                checked={customAnswer.trim() !== ""}
-                onCheckedChange={(checked) => {
-                  if (!checked) {
-                    setCustomAnswer("");
-                  }
-                  setSelectedOption("");
-                }}
-              />
-              <label htmlFor="custom" className="text-sm">Custom Answer</label>
+              <RadioGroupItem value="custom" id="custom" />
+              <Label htmlFor="custom">Other (specify)</Label>
             </div>
+          </RadioGroup>
+
+          {selectedOption === "custom" && (
             <Input
               value={customAnswer}
-              onChange={(e) => {
-                setCustomAnswer(e.target.value);
-                setSelectedOption("");
-              }}
+              onChange={(e) => setCustomAnswer(e.target.value)}
               placeholder="Enter your own answer..."
-              className="w-full"
+              className="w-full mt-2"
             />
-          </div>
+          )}
+
+          <Button
+            onClick={handleSubmit}
+            disabled={(!selectedOption || (selectedOption === "custom" && !customAnswer.trim())) || isAnalyzing || loading}
+            className="w-full"
+          >
+            {isAnalyzing ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Analyzing...
+              </>
+            ) : (
+              'Submit Reason'
+            )}
+          </Button>
         </div>
       )}
-
-      <Button
-        onClick={handleSubmit}
-        disabled={(!selectedOption && !customAnswer.trim()) || isAnalyzing || loading}
-        className="w-full"
-      >
-        {isAnalyzing ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Analyzing...
-          </>
-        ) : (
-          'Next'
-        )}
-      </Button>
     </div>
   );
 };
