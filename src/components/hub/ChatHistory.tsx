@@ -56,6 +56,10 @@ export const ChatHistory = ({ sessions = [], onSelect, selectedId, className }: 
 
   return (
     <div className={cn("space-y-2", className)}>
+      <div className="flex items-center gap-2 px-4 py-3 border-b">
+        <MessageSquare className="h-5 w-5" />
+        <h2 className="text-lg font-semibold">Chat History</h2>
+      </div>
       <ScrollArea className="h-[400px]">
         {categories.map((category) => (
           <div key={category} className="mb-4">
