@@ -17,7 +17,7 @@ serve(async (req) => {
     console.log('Processing request for evaluation:', evaluationId);
     console.log('Number of images:', imageUrls.length);
 
-    const systemPrompt = `You are a 5S workplace organization expert conducting a detailed evaluation. Analyze the provided images and generate a comprehensive report with the following structure:
+    const systemPrompt = `You are a 5S workplace organization expert conducting a detailed evaluation. Analyze the provided images and generate a comprehensive report.
 
     For each category (Sort, Set in Order, and Shine):
     1. Score each of the 10 checklist items (0, 0.5, or 1.0)
@@ -26,7 +26,7 @@ serve(async (req) => {
     
     Provide specific, actionable recommendations and follow-up actions.
     
-    Format your response as a JSON object with the following structure:
+    Format your response as a JSON object with this exact structure:
     {
       "sort": {
         "checklist": [{"item": "string", "score": number, "description": "string"}],
@@ -80,7 +80,7 @@ serve(async (req) => {
         model: 'claude-3-sonnet-20240229',
         system: systemPrompt,
         messages,
-        temperature: 0.7,
+        temperature: 0.5, // Reduced temperature for more consistent output
         max_tokens: 2000
       }),
     });
@@ -105,7 +105,15 @@ serve(async (req) => {
 
     let analysis;
     try {
-      analysis = JSON.parse(result.content[0].text);
+      // Extract JSON from the response text - look for JSON structure
+      const text = result.content[0].text;
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        console.error('No JSON found in response:', text);
+        throw new Error('No JSON structure found in AI response');
+      }
+      
+      analysis = JSON.parse(jsonMatch[0]);
       console.log('Successfully parsed analysis:', analysis);
     } catch (error) {
       console.error('Failed to parse Anthropic response:', error);
@@ -118,6 +126,16 @@ serve(async (req) => {
       console.error('Invalid analysis structure:', analysis);
       throw new Error('AI response missing required fields');
     }
+
+    // Ensure all required arrays exist with defaults
+    analysis.sort.positiveObservations = analysis.sort.positiveObservations || [];
+    analysis.sort.concerns = analysis.sort.concerns || [];
+    analysis.setInOrder.positiveObservations = analysis.setInOrder.positiveObservations || [];
+    analysis.setInOrder.concerns = analysis.setInOrder.concerns || [];
+    analysis.shine.positiveObservations = analysis.shine.positiveObservations || [];
+    analysis.shine.concerns = analysis.shine.concerns || [];
+    analysis.recommendations = analysis.recommendations || [];
+    analysis.followUpActions = analysis.followUpActions || [];
 
     // Save detailed report to database
     const supabase = createClient(
