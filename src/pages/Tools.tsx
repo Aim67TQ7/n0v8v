@@ -1,4 +1,4 @@
-import { Scale, Search, FileText, ChartBar, GraduationCap, Book } from "lucide-react";
+import { Scale, Search, FileText, ChartBar, GraduationCap, Book, GitFork } from "lucide-react";
 import { ToolCard } from "@/components/tools/ToolCard";
 import { modulesList } from "@/components/operations/modulesList";
 import { ApiStatusIndicator } from "@/components/tools/ApiStatusIndicator";
@@ -22,6 +22,13 @@ const Tools = () => {
             href={tool.href}
           />
         ))}
+        
+        <ToolCard
+          title="Root Cause Analysis"
+          description="Comprehensive tools for identifying and analyzing root causes of problems using Five Whys and Fishbone techniques"
+          icon={GitFork}
+          href="/operations/quality/root-cause-analysis"
+        />
         
         <ToolCard
           title="Lead Scraper"

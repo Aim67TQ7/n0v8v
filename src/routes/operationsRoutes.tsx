@@ -18,6 +18,7 @@ const Sales = lazy(() => import("@/pages/operations/Sales"));
 const SupplyChain = lazy(() => import("@/pages/operations/SupplyChain"));
 const Compliance = lazy(() => import("@/pages/operations/Compliance"));
 const Lean = lazy(() => import("@/pages/operations/Lean"));
+const RootCauseAnalysis = lazy(() => import("@/pages/operations/quality/RootCauseAnalysis"));
 
 export const operationsRoutes: RouteObject[] = [
   {
@@ -73,19 +74,7 @@ export const operationsRoutes: RouteObject[] = [
     element: <VAVEAnalysis />
   },
   {
-    path: "/operations/sales",
-    element: <Sales />
-  },
-  {
-    path: "/operations/supply-chain",
-    element: <SupplyChain />
-  },
-  {
-    path: "/operations/compliance",
-    element: <Compliance />
-  },
-  {
-    path: "/operations/lean",
-    element: <Lean />
+    path: "/operations/quality/root-cause-analysis",
+    element: <RootCauseAnalysis />
   }
 ];
