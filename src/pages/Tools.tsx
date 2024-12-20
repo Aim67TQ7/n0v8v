@@ -1,6 +1,5 @@
 import { Scale, Search, FileText, ChartBar, GraduationCap, Book, GitFork } from "lucide-react";
 import { ToolCard } from "@/components/tools/ToolCard";
-import { modulesList } from "@/components/operations/modulesList";
 import { ApiStatusIndicator } from "@/components/tools/ApiStatusIndicator";
 
 const Tools = () => {
@@ -13,16 +12,6 @@ const Tools = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {modulesList.map((tool) => (
-          <ToolCard
-            key={tool.title}
-            title={tool.title}
-            description={tool.description}
-            icon={tool.icon}
-            href={tool.href}
-          />
-        ))}
-        
         <ToolCard
           title="Root Cause Analysis"
           description="Comprehensive tools for identifying and analyzing root causes of problems using Five Whys and Fishbone techniques"
