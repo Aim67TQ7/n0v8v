@@ -1689,6 +1689,89 @@ export type Database = {
           },
         ]
       }
+      root_cause_analyses: {
+        Row: {
+          company_id: string | null
+          created_at: string | null
+          created_by: string | null
+          current_iteration: number | null
+          id: string
+          problem_statement: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          current_iteration?: number | null
+          id?: string
+          problem_statement: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          current_iteration?: number | null
+          id?: string
+          problem_statement?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "root_cause_analyses_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "root_cause_analyses_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      root_cause_iterations: {
+        Row: {
+          analysis_id: string | null
+          created_at: string | null
+          id: string
+          iteration_number: number
+          selected_assumption: string | null
+          why_question: string
+        }
+        Insert: {
+          analysis_id?: string | null
+          created_at?: string | null
+          id?: string
+          iteration_number: number
+          selected_assumption?: string | null
+          why_question: string
+        }
+        Update: {
+          analysis_id?: string | null
+          created_at?: string | null
+          id?: string
+          iteration_number?: number
+          selected_assumption?: string | null
+          why_question?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "root_cause_iterations_analysis_id_fkey"
+            columns: ["analysis_id"]
+            isOneToOne: false
+            referencedRelation: "root_cause_analyses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       skills_matrix: {
         Row: {
           created_at: string
