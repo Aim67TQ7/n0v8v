@@ -51,38 +51,32 @@ export const AgentsList = ({ onAgentDrop }: AgentsListProps) => {
   };
 
   return (
-    <Card className="h-[calc(100vh-8rem)]">
-      <div className="flex items-center gap-2 p-4 border-b">
-        <Bot className="h-5 w-5 text-primary" />
-        <h2 className="text-lg font-semibold">AI Agents</h2>
-      </div>
-      <ScrollArea className="h-[calc(100vh-12rem)]">
-        <div className="space-y-2 p-4">
-          {agents.map((agent) => (
-            <Card 
-              key={agent.name}
-              className="p-3 hover:bg-accent transition-colors cursor-move"
-              draggable
-              onDragStart={(e) => handleDragStart(e, agent)}
-            >
-              <div className="flex items-start gap-3">
-                <User className="h-8 w-8 text-muted-foreground shrink-0" />
-                <div>
-                  <h3 className="font-medium flex items-center gap-2">
-                    {agent.name}
-                    <span className="text-xs text-muted-foreground">
-                      {agent.role}
-                    </span>
-                  </h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {agent.description}
-                  </p>
-                </div>
+    <ScrollArea className="h-[300px]">
+      <div className="space-y-2">
+        {agents.map((agent) => (
+          <Card 
+            key={agent.name}
+            className="p-3 hover:bg-accent transition-colors cursor-move"
+            draggable
+            onDragStart={(e) => handleDragStart(e, agent)}
+          >
+            <div className="flex items-start gap-3">
+              <User className="h-8 w-8 text-muted-foreground shrink-0" />
+              <div>
+                <h3 className="font-medium flex items-center gap-2">
+                  {agent.name}
+                  <span className="text-xs text-muted-foreground">
+                    {agent.role}
+                  </span>
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {agent.description}
+                </p>
               </div>
-            </Card>
-          ))}
-        </div>
-      </ScrollArea>
-    </Card>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </ScrollArea>
   );
 };

@@ -13,14 +13,14 @@ const CompanyHub = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
             {/* Left Sidebar */}
-            <div className="hidden md:block md:col-span-2">
-              <Card className="bg-white h-[calc(100vh-5.375rem)] sticky top-[4rem]">
+            <div className="hidden md:block md:col-span-3">
+              <Card className="bg-white h-[calc(100vh-5.375rem)] sticky top-[4rem] overflow-hidden">
                 <SidebarContent />
               </Card>
             </div>
 
             {/* Main Content */}
-            <div className="md:col-span-8">
+            <div className="md:col-span-7">
               <Card className="bg-white h-[calc(100vh-5.375rem)] sticky top-[4rem]">
                 <MainContent />
               </Card>
