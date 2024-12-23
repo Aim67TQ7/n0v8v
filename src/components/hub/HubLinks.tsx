@@ -1,9 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ResourceLinks } from "./links/ResourceLinks";
-import { ModuleLinks } from "./links/ModuleLinks";
 import { ToolLinks } from "./links/ToolLinks";
-import { AgentLinks } from "./links/AgentLinks";
 import { Link } from "react-router-dom";
 import { HelpCircle } from "lucide-react";
 
@@ -13,9 +11,7 @@ export const HubLinks = () => {
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-3">
           <ResourceLinks />
-          <ModuleLinks />
           <ToolLinks />
-          <AgentLinks />
           
           <div className="pt-4 mt-4 border-t">
             <Link

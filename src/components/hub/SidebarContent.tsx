@@ -1,7 +1,8 @@
 import { ChatHistory } from "./ChatHistory";
 import { AgentsList } from "@/components/agents/AgentsList";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Bot } from "lucide-react";
+import { Bot, Grid } from "lucide-react";
+import { ModuleLinks } from "./links/ModuleLinks";
 
 export const SidebarContent = () => {
   const handleSelect = (sessionId: string) => {
@@ -32,6 +33,19 @@ export const SidebarContent = () => {
           <AccordionContent>
             <div className="px-4">
               <AgentsList onAgentDrop={handleAgentDrop} />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="roles" className="border-none">
+          <AccordionTrigger className="px-4 py-2 hover:no-underline">
+            <div className="flex items-center gap-2">
+              <Grid className="h-5 w-5" />
+              <span className="text-sm font-medium">Department Roles</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="px-4">
+              <ModuleLinks />
             </div>
           </AccordionContent>
         </AccordionItem>
