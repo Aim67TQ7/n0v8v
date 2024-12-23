@@ -1,4 +1,4 @@
-import { Scale, Search, FileText, ChartBar, GraduationCap, Book, GitFork, ClipboardCheck } from "lucide-react";
+import { Scale, Search, FileText, ChartBar, GraduationCap, Book, GitFork, ClipboardCheck, UserSearch } from "lucide-react";
 import { ToolCard } from "@/components/tools/ToolCard";
 import { ApiStatusIndicator } from "@/components/tools/ApiStatusIndicator";
 
@@ -12,6 +12,13 @@ const Tools = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <ToolCard
+          title="Candidate Analysis"
+          description="AI-powered tool for analyzing and assessing job candidates"
+          icon={UserSearch}
+          href="/tools/candidate-analysis"
+        />
+
         <ToolCard
           title="5S Scoring"
           description="Evaluate and track workplace organization using 5S methodology"
