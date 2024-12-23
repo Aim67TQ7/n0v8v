@@ -93,21 +93,29 @@ export const ChatHistory = ({ sessions = [], onSelect, selectedId, className }: 
       </ScrollArea>
 
       <div className="border-t p-4">
-        <h3 className="text-sm font-semibold text-gray-900 mb-2">Chat Templates</h3>
-        <div className="grid grid-cols-2 gap-2">
-          {templates.map(({ id, label, icon: Icon }) => (
-            <Card
-              key={id}
-              className="p-2 hover:bg-accent cursor-pointer transition-colors"
-              onClick={() => onSelect(id)}
-            >
-              <div className="flex items-center gap-2">
-                <Icon className="h-4 w-4 text-gray-500" />
-                <span className="text-xs">{label}</span>
+        <Accordion type="single" collapsible>
+          <AccordionItem value="templates" className="border-none">
+            <AccordionTrigger className="hover:no-underline">
+              <h3 className="text-sm font-semibold text-gray-900">Chat Templates</h3>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                {templates.map(({ id, label, icon: Icon }) => (
+                  <Card
+                    key={id}
+                    className="p-2 hover:bg-accent cursor-pointer transition-colors"
+                    onClick={() => onSelect(id)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Icon className="h-4 w-4 text-gray-500" />
+                      <span className="text-xs">{label}</span>
+                    </div>
+                  </Card>
+                ))}
               </div>
-            </Card>
-          ))}
-        </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
     </div>
   );
