@@ -7,7 +7,6 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -15,23 +14,10 @@ serve(async (req) => {
   try {
     const { messages, systemPrompt } = await req.json();
 
-    // Add n0v8v context to system prompt
-    const enhancedSystemPrompt = {
-      role: "system",
-      content: `${systemPrompt || ""}
-You are an AI assistant integrated with the n0v8v platform, which is a comprehensive manufacturing operations system. 
-When providing responses, consider:
-- Manufacturing best practices and industry standards
-- Quality control and continuous improvement methodologies
-- Lean manufacturing principles
-- Safety protocols and compliance requirements
-- Production efficiency and waste reduction
-Please provide practical, actionable advice that aligns with manufacturing operations.`
-    };
-
-    const allMessages = [enhancedSystemPrompt, ...messages];
-
-    console.log('Sending request to Anthropic API with messages:', JSON.stringify(allMessages));
+    // Filter out system messages and use them as the system parameter
+    const userAssistantMessages = messages.filter(msg => msg.role !== 'system');
+    
+    console.log('Sending request to Anthropic API with messages:', JSON.stringify(userAssistantMessages));
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -42,7 +28,8 @@ Please provide practical, actionable advice that aligns with manufacturing opera
       },
       body: JSON.stringify({
         model: 'claude-3-sonnet-20240229',
-        messages: allMessages,
+        messages: userAssistantMessages,
+        system: systemPrompt || "You are a helpful AI assistant integrated with the n0v8v platform.",
         temperature: 0.7,
         max_tokens: 1000,
       }),
