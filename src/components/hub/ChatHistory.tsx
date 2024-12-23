@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 interface ChatSession {
   id: string;
@@ -61,46 +62,60 @@ export const ChatHistory = ({ sessions = [], onSelect, selectedId, className }: 
       </div>
       
       <ScrollArea className="flex-1">
-        <div className="p-4 space-y-6">
-          {categories.map(({ id, label, icon: Icon }) => (
-            <div key={id} className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Icon className="h-4 w-4 text-gray-500" />
-                <h3 className="text-lg font-semibold text-gray-900">{label}</h3>
-              </div>
-              <div className="space-y-1">
-                {(groupedSessions[id] || []).map((session) => (
-                  <Button
-                    key={session.id}
-                    variant={selectedId === session.id ? "secondary" : "ghost"}
-                    className="justify-start w-full text-left hover:bg-accent transition-colors"
-                    onClick={() => onSelect(session.id)}
-                  >
-                    <span className="truncate">{session.title}</span>
-                  </Button>
-                ))}
-              </div>
-            </div>
-          ))}
+        <div className="p-4">
+          <Accordion type="single" collapsible className="space-y-2">
+            {categories.map(({ id, label, icon: Icon }) => (
+              <AccordionItem key={id} value={id} className="border rounded-lg">
+                <AccordionTrigger className="px-4 py-2 hover:no-underline">
+                  <div className="flex items-center gap-2">
+                    <Icon className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">{label}</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-3">
+                  <div className="space-y-1">
+                    {(groupedSessions[id] || []).map((session) => (
+                      <Button
+                        key={session.id}
+                        variant={selectedId === session.id ? "secondary" : "ghost"}
+                        className="justify-start w-full text-left hover:bg-accent transition-colors"
+                        onClick={() => onSelect(session.id)}
+                      >
+                        <span className="truncate">{session.title}</span>
+                      </Button>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </ScrollArea>
 
       <div className="border-t p-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Chat Templates</h3>
-        <div className="grid grid-cols-2 gap-2">
-          {templates.map(({ id, label, icon: Icon }) => (
-            <Card
-              key={id}
-              className="p-2 hover:bg-accent cursor-pointer transition-colors"
-              onClick={() => onSelect(id)}
-            >
-              <div className="flex items-center gap-2">
-                <Icon className="h-4 w-4 text-gray-500" />
-                <span className="text-xs">{label}</span>
+        <Accordion type="single" collapsible>
+          <AccordionItem value="templates" className="border-none">
+            <AccordionTrigger className="hover:no-underline">
+              <h3 className="text-sm font-semibold text-gray-900">Chat Templates</h3>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                {templates.map(({ id, label, icon: Icon }) => (
+                  <Card
+                    key={id}
+                    className="p-2 hover:bg-accent cursor-pointer transition-colors"
+                    onClick={() => onSelect(id)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Icon className="h-4 w-4 text-gray-500" />
+                      <span className="text-xs">{label}</span>
+                    </div>
+                  </Card>
+                ))}
               </div>
-            </Card>
-          ))}
-        </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
     </div>
   );
