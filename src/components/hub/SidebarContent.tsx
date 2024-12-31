@@ -27,8 +27,8 @@ export const SidebarContent = () => {
         <AccordionItem value="agents" className="border-none">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
             <div className="flex items-center gap-2">
-              <Bot className="h-5 w-5" />
-              <span className="text-sm font-medium">AI Agents</span>
+              <Bot className="h-4 w-4" />
+              <span className="text-xs font-medium">AI Agents</span>
             </div>
           </AccordionTrigger>
           <AccordionContent>
@@ -40,8 +40,8 @@ export const SidebarContent = () => {
         <AccordionItem value="roles" className="border-none">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
             <div className="flex items-center gap-2">
-              <Grid className="h-5 w-5" />
-              <span className="text-sm font-medium">Department Roles</span>
+              <Grid className="h-4 w-4" />
+              <span className="text-xs font-medium">Department Roles</span>
             </div>
           </AccordionTrigger>
           <AccordionContent>
@@ -53,8 +53,8 @@ export const SidebarContent = () => {
         <AccordionItem value="tools" className="border-none">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
             <div className="flex items-center gap-2">
-              <Wrench className="h-5 w-5" />
-              <span className="text-sm font-medium">Efficiency Tools</span>
+              <Wrench className="h-4 w-4" />
+              <span className="text-xs font-medium">Efficiency Tools</span>
             </div>
           </AccordionTrigger>
           <AccordionContent>
