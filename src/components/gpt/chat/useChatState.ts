@@ -70,26 +70,29 @@ export const useChatState = (
         return;
       }
 
-      const response = await supabase.functions.invoke('chat-with-anthropic', {
+      const { data, error } = await supabase.functions.invoke('chat-with-anthropic', {
         body: {
-          messages: [...messages, userMessage]
-        },
+          messages: [...messages, userMessage],
+          model: 'claude-3-sonnet-20240229'
+        }
       });
 
-      if (response.error) {
-        throw new Error(response.error.message);
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
       }
 
-      const assistantMessage = { 
-        role: "assistant" as const, 
-        content: response.data.content[0].text 
-      };
-      
-      const updatedMessages = [...messages, userMessage, assistantMessage];
-      setMessages(updatedMessages);
-      await saveChatLog(updatedMessages);
-
-    } catch (error) {
+      if (data?.content) {
+        const assistantMessage = { 
+          role: "assistant" as const, 
+          content: data.content 
+        };
+        
+        const updatedMessages = [...messages, userMessage, assistantMessage];
+        setMessages(updatedMessages);
+        await saveChatLog(updatedMessages);
+      }
+    } catch (error: any) {
       console.error('Error:', error);
       toast({
         title: "Error",

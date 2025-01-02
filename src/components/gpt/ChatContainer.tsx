@@ -46,22 +46,24 @@ export const ChatContainer = ({
     try {
       const { data, error } = await supabase.functions.invoke('chat-with-anthropic', {
         body: {
-          messages: [...messages, userMessage]
+          messages: [...messages, userMessage],
+          model: 'claude-3-sonnet-20240229'
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
+      }
 
-      console.log('API Response:', data);
-
-      if (data.content) {
+      if (data?.content) {
         const assistantMessage = { 
           role: "assistant", 
           content: data.content 
         };
         setMessages(prev => [...prev, assistantMessage]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Chat error:', error);
       toast.error("Failed to get response from AI");
     } finally {
