@@ -44,6 +44,8 @@ export const ChatContainer = ({
     setIsLoading(true);
 
     try {
+      console.log('Sending message to chat-with-anthropic:', userMessage);
+      
       const { data, error } = await supabase.functions.invoke('chat-with-anthropic', {
         body: {
           messages: [...messages, userMessage],
@@ -55,6 +57,8 @@ export const ChatContainer = ({
         console.error('Supabase function error:', error);
         throw error;
       }
+
+      console.log('Received response:', data);
 
       if (data?.content) {
         const assistantMessage = { 

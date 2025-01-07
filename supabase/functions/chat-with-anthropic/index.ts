@@ -12,12 +12,9 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, systemPrompt } = await req.json();
+    const { messages, model } = await req.json();
 
-    // Filter out system messages and use them as the system parameter
-    const userAssistantMessages = messages.filter(msg => msg.role !== 'system');
-    
-    console.log('Sending request to Anthropic API with messages:', JSON.stringify(userAssistantMessages));
+    console.log('Sending request to Anthropic API with messages:', JSON.stringify(messages));
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -27,10 +24,8 @@ serve(async (req) => {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-3-sonnet-20240229',
-        messages: userAssistantMessages,
-        system: systemPrompt || "You are a helpful AI assistant integrated with the n0v8v platform.",
-        temperature: 0.7,
+        model: model || 'claude-3-sonnet-20240229',
+        messages: messages.filter(msg => msg.role !== 'system'),
         max_tokens: 1000,
       }),
     });
@@ -48,16 +43,16 @@ serve(async (req) => {
     const data = await response.json();
     console.log('Anthropic API response:', data);
 
-    return new Response(JSON.stringify(data), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({ content: data.content[0].text }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   } catch (error) {
     console.error('Error in chat-with-anthropic function:', error);
     return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        details: error.stack 
-      }),
+      JSON.stringify({ error: error.message }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
