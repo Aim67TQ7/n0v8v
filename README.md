@@ -1,69 +1,66 @@
-# Welcome to your Lovable project
+# Company-Wide Intranet GPT Integration
 
-## Project info
+## Overview
 
-**URL**: https://lovable.dev/projects/34f056c7-5f9e-418b-a426-1efe17740bd7
+This project involves expanding the initial GPT-like interface to include multiple specialized GPT models tailored for different functions within the company, such as visual assistance, product support, and inspection training. By integrating these specialized GPTs, the intranet is transformed into a dynamic conversational hub that can handle specific queries with greater accuracy and relevance.
 
-## How can I edit this code?
+## Goals
 
-There are several ways of editing your application.
+### Primary Goal
 
-**Use Lovable**
+- Enhance the intranet’s functionality by integrating specialized GPTs to address specific operational needs.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/34f056c7-5f9e-418b-a426-1efe17740bd7) and start prompting.
+### Secondary Goals
 
-Changes made via Lovable will be committed automatically to this repo.
+- Streamline workflows by providing precise information and training through conversational AI.
 
-**Use your preferred IDE**
+## Specialized GPT Integration
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **Visual Assistant GPT**: Handles queries related to visual data interpretation, such as reading diagrams or providing guided visual tours of products.
+- **Product Assistance GPT**: Offers detailed product information, troubleshooting, and advice based on the latest product data.
+- **Inspection Teaching GPT**: Provides step-by-step guidance for inspection processes and safety protocols.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Technology Enhancements
 
-Follow these steps:
+- **AI Model Management**: Utilize a model management system to efficiently switch between different GPTs based on the context of the query.
+- **Dynamic Loading**: Implement dynamic model loading to ensure that the system uses resources efficiently, loading only the necessary models based on user interaction.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## User Interface Adaptations
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+- **Contextual Interface Changes**: The UI adapts dynamically to the type of query, displaying relevant tools, and options.
+- **Interactive Elements**: Incorporate interactive elements such as buttons or sliders to allow users to specify the nature of their queries more effectively.
 
-# Step 3: Install the necessary dependencies.
-npm i
+## Backend Enhancements
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+- **API Gateway**: Use an API gateway to manage requests to different GPT models, ensuring smooth transitions and accurate request routing.
+- **Data Integration**: Strengthen integration with internal databases and APIs to provide real-time data to the GPTs, enhancing response accuracy.
 
-**Edit a file directly in GitHub**
+## Security and Compliance
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- **Enhanced Authentication**: Implement role-based access control (RBAC) to ensure that employees can access only those resources pertinent to their roles.
+- **Audit Trails**: Maintain comprehensive logs and audit trails to monitor the usage of the AI systems and ensure compliance with internal policies.
 
-**Use GitHub Codespaces**
+## Testing and Quality Assurance
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- **Specialized Testing**: Conduct domain-specific testing for each GPT model to ensure accuracy and reliability.
+- **User Acceptance Testing (UAT)**: Engage with end-users from each domain to validate the usefulness and usability of the system.
 
-## What technologies are used for this project?
+## Deployment and Scaling
 
-This project is built with .
+- **Scalable Architecture**: Design the backend to scale different GPT models independently based on demand.
+- **Cloud Deployment**: Consider deploying on a cloud platform that supports auto-scaling and dynamic resource allocation.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Future Considerations
 
-## How can I deploy this project?
+- **Continuous Improvement**: Regularly update the models based on new data and user feedback.
+- **Expansion Potential**: Explore the addition of new specialized GPTs as new needs arise within the company.
 
-Simply open [Lovable](https://lovable.dev/projects/34f056c7-5f9e-418b-a426-1efe17740bd7) and click on Share -> Publish.
+## Getting Started
 
-## I want to use a custom domain - is that possible?
+To get started with this project, please ensure you have the following prerequisites:
+- Node.js installed on your machine.
+- Access to the relevant company APIs and data sources.
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+### Installation
+
+1. Clone the repository:
