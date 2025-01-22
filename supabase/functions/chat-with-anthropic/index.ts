@@ -14,6 +14,10 @@ serve(async (req) => {
   try {
     const { messages, model } = await req.json();
 
+    if (!messages || !Array.isArray(messages)) {
+      throw new Error('Invalid messages format');
+    }
+
     console.log('Sending request to Anthropic API with messages:', JSON.stringify(messages));
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {

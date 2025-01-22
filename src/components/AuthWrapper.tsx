@@ -22,6 +22,8 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
         
         if (sessionError) {
           console.error("Session error:", sessionError);
+          // Clear any invalid session data
+          await supabase.auth.signOut();
           throw sessionError;
         }
 
@@ -48,7 +50,7 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
             .from('profiles')
             .select('role')
             .eq('id', session.user.id)
-            .single();
+            .maybeSingle();
 
           if (profileError) {
             console.error("Error fetching profile:", profileError);
@@ -69,7 +71,7 @@ export const AuthWrapper = ({ children }: AuthWrapperProps) => {
             navigate("/login");
           }
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Auth check error:', error);
         toast({
           title: "Authentication Error",
