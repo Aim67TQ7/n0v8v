@@ -9,6 +9,9 @@ import { supabase } from "@/integrations/supabase/client";
 export const EmailSignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [licenseNumber, setLicenseNumber] = useState(() => {
+    return sessionStorage.getItem("companyLicense") || "";
+  });
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -18,12 +21,41 @@ export const EmailSignIn = () => {
     setLoading(true);
 
     try {
+      if (!licenseNumber) {
+        navigate("/");
+        toast({
+          variant: "destructive",
+          title: "License Required",
+          description: "Please obtain a company license to proceed with login.",
+        });
+        return;
+      }
+
+      // Verify license exists
+      const { data: companyData, error: licenseError } = await supabase
+        .from('companies')
+        .select('id, name')
+        .eq('license_number', licenseNumber)
+        .single();
+
+      if (licenseError || !companyData) {
+        toast({
+          variant: "destructive",
+          title: "Invalid License",
+          description: "Please check your company license number.",
+        });
+        return;
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) throw error;
+
+      // Store license in session storage
+      sessionStorage.setItem("companyLicense", licenseNumber);
 
       toast({
         title: "Welcome back!",
@@ -45,6 +77,14 @@ export const EmailSignIn = () => {
 
   return (
     <form onSubmit={handleSignIn} className="space-y-4">
+      <Input
+        type="text"
+        required
+        placeholder="Company License Number"
+        value={licenseNumber}
+        onChange={(e) => setLicenseNumber(e.target.value)}
+        className="mb-4"
+      />
       <Input
         type="email"
         required
@@ -72,6 +112,16 @@ export const EmailSignIn = () => {
           "Sign In"
         )}
       </Button>
+      <div className="text-center mt-4">
+        <Button
+          variant="link"
+          type="button"
+          onClick={() => navigate("/")}
+          className="text-sm text-muted-foreground"
+        >
+          Need a license? Click here to get started
+        </Button>
+      </div>
     </form>
   );
 };

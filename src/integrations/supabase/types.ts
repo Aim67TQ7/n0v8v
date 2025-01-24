@@ -468,6 +468,84 @@ export type Database = {
           },
         ]
       }
+      configuration_values: {
+        Row: {
+          configuration_id: string
+          dimension_id: string
+          value: number
+        }
+        Insert: {
+          configuration_id: string
+          dimension_id: string
+          value: number
+        }
+        Update: {
+          configuration_id?: string
+          dimension_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "configuration_values_configuration_id_fkey"
+            columns: ["configuration_id"]
+            isOneToOne: false
+            referencedRelation: "configurations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "configuration_values_dimension_id_fkey"
+            columns: ["dimension_id"]
+            isOneToOne: false
+            referencedRelation: "dimensions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      configurations: {
+        Row: {
+          comments: string | null
+          created_at: string
+          id: string
+          name: string
+          profile_id: string | null
+          style_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          comments?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          profile_id?: string | null
+          style_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          comments?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          profile_id?: string | null
+          style_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "configurations_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "configurations_style_id_fkey"
+            columns: ["style_id"]
+            isOneToOne: false
+            referencedRelation: "product_styles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       departments: {
         Row: {
           accounting_code: string | null
@@ -518,6 +596,62 @@ export type Database = {
             columns: ["leader_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dimensions: {
+        Row: {
+          calculation_formula: string | null
+          created_at: string
+          default_value: number | null
+          id: string
+          is_calculated: boolean
+          label: string
+          max_value: number | null
+          min_value: number | null
+          position_x: number
+          position_y: number
+          style_id: string | null
+          unit: Database["public"]["Enums"]["dimension_unit"]
+          updated_at: string
+        }
+        Insert: {
+          calculation_formula?: string | null
+          created_at?: string
+          default_value?: number | null
+          id?: string
+          is_calculated?: boolean
+          label: string
+          max_value?: number | null
+          min_value?: number | null
+          position_x: number
+          position_y: number
+          style_id?: string | null
+          unit?: Database["public"]["Enums"]["dimension_unit"]
+          updated_at?: string
+        }
+        Update: {
+          calculation_formula?: string | null
+          created_at?: string
+          default_value?: number | null
+          id?: string
+          is_calculated?: boolean
+          label?: string
+          max_value?: number | null
+          min_value?: number | null
+          position_x?: number
+          position_y?: number
+          style_id?: string | null
+          unit?: Database["public"]["Enums"]["dimension_unit"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dimensions_style_id_fkey"
+            columns: ["style_id"]
+            isOneToOne: false
+            referencedRelation: "product_styles"
             referencedColumns: ["id"]
           },
         ]
@@ -1636,6 +1770,108 @@ export type Database = {
           },
         ]
       }
+      product_styles: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          product_id: string | null
+          sketch_url: string
+          sketch_version: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          product_id?: string | null
+          sketch_url: string
+          sketch_version?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          product_id?: string | null
+          sketch_url?: string
+          sketch_version?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_styles_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_styles_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           company_id: string | null
@@ -2154,7 +2390,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      dimension_unit: "mm" | "cm" | "inch" | "ft"
     }
     CompositeTypes: {
       [_ in never]: never
