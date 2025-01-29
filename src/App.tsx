@@ -22,7 +22,6 @@ const RouteLoadingComponent = () => (
 );
 
 const AppContent = () => {
-  const publicRoutes = ['/login', '/reset-password', '/register'];
   const location = useLocation();
   const hideHeaderRoutes = ['/login', '/reset-password', '/register'];
   const showHeader = !hideHeaderRoutes.includes(location.pathname);
@@ -31,11 +30,6 @@ const AppContent = () => {
 
   if (showSplash) {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
-  }
-
-  // Redirect to login if not authenticated and not on a public route
-  if (!isAuthenticated && !publicRoutes.includes(location.pathname)) {
-    return <Navigate to="/login" replace />;
   }
 
   return (
@@ -47,25 +41,8 @@ const AppContent = () => {
             {/* Default route redirect */}
             <Route 
               path="/" 
-              element={
-                isAuthenticated ? (
-                  <Navigate to="/company-hub" replace />
-                ) : (
-                  <Navigate to="/login" replace />
-                )
-              } 
+              element={<Navigate to="/company-hub" replace />}
             />
-
-            {/* Public routes (no auth required) */}
-            {allRoutes
-              .filter(route => publicRoutes.includes(route.path))
-              .map(route => (
-                <Route
-                  key={route.path}
-                  path={route.path}
-                  element={route.element}
-                />
-              ))}
 
             {/* Protected routes */}
             <Route element={<AuthWrapper />}>
@@ -75,7 +52,7 @@ const AppContent = () => {
               <Route path="/operations/hr/company-news" element={<CompanyNews />} />
               <Route path="/leads/scraping/google-maps" element={<GoogleMapsScraper />} />
               {allRoutes
-                .filter(route => !publicRoutes.includes(route.path))
+                .filter(route => !['/login', '/reset-password', '/register'].includes(route.path))
                 .map(route => (
                   <Route
                     key={route.path}
